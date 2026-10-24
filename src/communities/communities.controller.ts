@@ -129,7 +129,6 @@ export class CommunitiesController {
   }
 
   @Get(':communityId')
-  @UseGuards(CommunityMemberGuard)
   findOne(
     @Req() req,
     @Param('communityId', ParseIntPipe) communityId: number,

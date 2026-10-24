@@ -29,7 +29,7 @@ export type CommunityMember = {
 };
 
 export type CommunityWithRole = CommunityModel & {
-  role: CommunityRole;
+  role: CommunityRole | null;
   memberCount?: number;
 };
 
@@ -483,7 +483,7 @@ export class CommunitiesService {
       }),
       this.roleOf(userId, id),
     ]);
-    if (!community || !role) return null;
+    if (!community || (!role && !community.isPublic)) return null;
 
     const { _count, ...rest } = community;
     return { ...rest, role, memberCount: _count.memberships };
