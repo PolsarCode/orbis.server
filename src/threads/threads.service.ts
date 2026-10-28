@@ -184,7 +184,7 @@ export class ThreadsService {
       authorId: userId,
       place: { communityId, wallUserId: null },
       message: `mentioned you in the thread “${thread.title}”`,
-      link: `/communities/${communityId}?tab=forum`,
+      link: `/communities/${communityId}?tab=forum&thread=${thread.id}`,
     });
     void this.discordChannel.threadCreated(thread.id);
     const [created] = await this.withNicknames([
@@ -251,7 +251,7 @@ export class ThreadsService {
       authorId: userId,
       place: { communityId: thread.communityId, wallUserId: null },
       message: `mentioned you in the thread “${updated.title}”`,
-      link: `/communities/${thread.communityId}?tab=forum`,
+      link: `/communities/${thread.communityId}?tab=forum&thread=${threadId}`,
     });
     void this.discordChannel.contentEdited('thread', threadId);
 

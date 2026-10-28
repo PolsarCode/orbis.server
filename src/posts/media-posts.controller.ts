@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   ParseEnumPipe,
+  ParseIntPipe,
   Post,
   Query,
   Req,
@@ -34,6 +35,21 @@ export class MediaPostsController {
       sourceId,
       cursor,
       exclude,
+    );
+  }
+
+  @Get(':postId')
+  findOne(
+    @Req() req,
+    @Param('type', new ParseEnumPipe(MediaType)) type: MediaType,
+    @Param('sourceId') sourceId: string,
+    @Param('postId', ParseIntPipe) postId: number,
+  ) {
+    return this.postsService.findOneForMedia(
+      req.user.userId,
+      type,
+      sourceId,
+      postId,
     );
   }
 

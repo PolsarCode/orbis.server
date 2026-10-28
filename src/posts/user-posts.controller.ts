@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Query,
   Req,
@@ -40,6 +41,34 @@ export class UserPostsController {
   @AllowGuest()
   search(@Req() req, @Param('username') username: string, @Query('q') q = '') {
     return this.postsService.searchProfile(req.user.userId, username, q);
+  }
+
+  @Get('activities/:activityId')
+  @AllowGuest()
+  findActivity(
+    @Req() req,
+    @Param('username') username: string,
+    @Param('activityId', ParseIntPipe) activityId: number,
+  ) {
+    return this.postsService.findActivityForProfile(
+      req.user.userId,
+      username,
+      activityId,
+    );
+  }
+
+  @Get(':postId')
+  @AllowGuest()
+  findOne(
+    @Req() req,
+    @Param('username') username: string,
+    @Param('postId', ParseIntPipe) postId: number,
+  ) {
+    return this.postsService.findOneForProfile(
+      req.user.userId,
+      username,
+      postId,
+    );
   }
 
   @RateLimit(10, MINUTE)

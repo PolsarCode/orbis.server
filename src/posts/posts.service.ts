@@ -715,6 +715,55 @@ export class PostsService {
     return { items, nextCursor: nextCursor(merged, page) };
   }
 
+  async findOneForProfile(
+    viewerId: number,
+    username: string,
+    postId: number,
+  ): Promise<FeedItem> {
+    if (postId < 1 || postId > MAX_INT) {
+      throw new NotFoundException('Post not found');
+    }
+    const owner = await this.viewableProfile(viewerId, username);
+    const reported = await reportedBy(this.prisma, viewerId);
+    const post = await this.prisma.post.findFirst({
+      where: {
+        AND: [
+          { id: postId },
+          profilePosts(owner.id, viewerId),
+          visibleTo(viewerId, reported.post),
+        ],
+      },
+      include: postInclude,
+    });
+    if (!post) throw new NotFoundException('Post not found');
+
+    const [item] = await this.engage(viewerId, [{ ...post, type: 'post' }]);
+    return item;
+  }
+
+  async findActivityForProfile(
+    viewerId: number,
+    username: string,
+    activityId: number,
+  ): Promise<FeedItem> {
+    if (activityId < 1 || activityId > MAX_INT) {
+      throw new NotFoundException('Library update not found');
+    }
+    const owner = await this.viewableProfile(viewerId, username);
+    const nsfw = nsfwEntries(await showsNsfw(this.prisma, viewerId));
+    const activity = await this.prisma.libraryActivity.findFirst({
+      where: {
+        id: activityId,
+        entry: { userId: owner.id, isPublic: true, ...nsfw },
+      },
+      include: activityInclude,
+    });
+    if (!activity) throw new NotFoundException('Library update not found');
+
+    const [item] = await this.engage(viewerId, [toActivity(activity)]);
+    return item;
+  }
+
   async searchProfile(
     viewerId: number,
     username: string,
@@ -791,7 +840,7 @@ export class PostsService {
       data: { wallUserId: owner.id, authorId, ...data },
       include: postInclude,
     });
-    const link = `/users/${owner.username}`;
+    const link = `/users/${owner.username}?post=${post.id}`;
     await this.notifications.notify([
       {
         userId: owner.id,
@@ -850,6 +899,30 @@ export class PostsService {
     return { items, nextCursor: nextCursor(merged, page) };
   }
 
+  async findOneForMedia(
+    viewerId: number,
+    mediaType: MediaType,
+    mediaSourceId: string,
+    postId: number,
+  ): Promise<FeedItem> {
+    if (postId < 1 || postId > MAX_INT) {
+      throw new NotFoundException('Post not found');
+    }
+    const post = await this.prisma.post.findFirst({
+      where: {
+        id: postId,
+        mediaType,
+        mediaSourceId,
+        ...visibleTo(viewerId, (await reportedBy(this.prisma, viewerId)).post),
+      },
+      include: postInclude,
+    });
+    if (!post) throw new NotFoundException('Post not found');
+
+    const [item] = await this.engage(viewerId, [{ ...post, type: 'post' }]);
+    return item;
+  }
+
   async createOnMedia(
     mediaType: MediaType,
     mediaSourceId: string,
@@ -875,7 +948,7 @@ export class PostsService {
       authorId,
       place: { communityId: null, wallUserId: null },
       message: 'mentioned you in a post',
-      link: `/library/${mediaType}/${mediaSourceId}`,
+      link: `/library/${mediaType}/${mediaSourceId}?post=${post.id}`,
     });
     return {
       ...post,
@@ -901,7 +974,7 @@ export class PostsService {
       authorId,
       place: { communityId, wallUserId: null },
       message: 'mentioned you in a post',
-      link: `/communities/${communityId}`,
+      link: `/communities/${communityId}?post=${post.id}`,
     });
     void this.discordChannel.postCreated(post.id);
     const withNickname = await loadNicknames(this.prisma, [
@@ -958,10 +1031,10 @@ export class PostsService {
       place: { communityId: post.communityId, wallUserId: post.wallUserId },
       message: 'mentioned you in a post',
       link: post.mediaType
-        ? `/library/${post.mediaType}/${post.mediaSourceId}`
+        ? `/library/${post.mediaType}/${post.mediaSourceId}?post=${postId}`
         : post.wallUser
-          ? `/users/${post.wallUser.username}`
-          : `/communities/${post.communityId}`,
+          ? `/users/${post.wallUser.username}?post=${postId}`
+          : `/communities/${post.communityId}?post=${postId}`,
     });
     void this.discordChannel.contentEdited('post', postId);
 

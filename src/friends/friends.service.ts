@@ -180,13 +180,17 @@ export class FriendsService {
         },
         data: { status: 'accepted' },
       });
+      const me = await this.prisma.user.findUniqueOrThrow({
+        where: { id: userId },
+        select: { username: true },
+      });
       await this.notifications.notify([
         {
           userId: target.id,
           actorId: userId,
           type: 'friend_accepted',
           message: 'accepted your friend request',
-          link: '/',
+          link: `/users/${me.username}`,
         },
       ]);
     } else {
@@ -199,7 +203,7 @@ export class FriendsService {
           actorId: userId,
           type: 'friend_request',
           message: 'sent you a friend request',
-          link: '/',
+          link: '/requests',
         },
       ]);
     }

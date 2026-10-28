@@ -364,11 +364,12 @@ export class CommentsService {
         where: { id: profileOwner },
         select: { username: true },
       }));
+    const item = `${target.type}=${target.id}`;
     return target.mediaType
-      ? `/library/${target.mediaType}/${target.mediaSourceId}`
+      ? `/library/${target.mediaType}/${target.mediaSourceId}?${item}`
       : profile
-        ? `/users/${profile.username}`
-        : `/communities/${target.communityId}${target.type === 'thread' ? '?tab=forum' : ''}`;
+        ? `/users/${profile.username}?${item}`
+        : `/communities/${target.communityId}?${target.type === 'thread' ? 'tab=forum&' : ''}${item}`;
   }
 
   private async mentionPlace(target: EngagementTarget): Promise<MentionPlace> {

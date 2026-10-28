@@ -67,7 +67,7 @@ describe('ThreadsService.create', () => {
         actorId: 1,
         type: 'mention',
         message: 'mentioned you in the thread “Friday”',
-        link: '/communities/3?tab=forum',
+        link: '/communities/3?tab=forum&thread=4',
       },
     ]);
   });
