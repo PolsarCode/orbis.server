@@ -19,6 +19,17 @@ import { loadSteamLinks, SteamLink } from '../steam/steam-links';
 import { DiscordChannelService } from '../discord-channel/discord-channel.service';
 
 const PROGRESS_MERGE_WINDOW = 5 * 60 * 1000;
+const SPOTLIGHT_CANDIDATES = 10;
+const SPOTLIGHT_TTL_MS = 10 * 60 * 1000;
+const SPOTLIGHT_RETRY_MS = 60 * 1000;
+
+export type Spotlight = {
+  type: 'anime';
+  sourceId: string;
+  title: string;
+  coverImage: string | null;
+  bannerImage: string | null;
+};
 
 const entrySelect = {
   id: true,
@@ -63,10 +74,63 @@ const toResult = (media: Media) => ({
 
 @Injectable()
 export class LibraryService {
+  private spotlights: { value: Spotlight[]; expiresAt: number } | null = null;
+
   constructor(
     private prisma: PrismaService,
     private discordChannel: DiscordChannelService,
   ) {}
+
+  async spotlight(): Promise<Spotlight | null> {
+    if (!this.spotlights || this.spotlights.expiresAt <= Date.now()) {
+      const value = await this.loadSpotlights();
+      this.spotlights = {
+        value,
+        expiresAt:
+          Date.now() + (value.length ? SPOTLIGHT_TTL_MS : SPOTLIGHT_RETRY_MS),
+      };
+    }
+    const { value } = this.spotlights;
+    return value.length
+      ? value[Math.floor(Math.random() * value.length)]
+      : null;
+  }
+
+  private async loadSpotlights(): Promise<Spotlight[]> {
+    const entries = await this.prisma.libraryEntry.findMany({
+      where: {
+        mediaType: 'anime',
+        isPublic: true,
+        isAdult: false,
+        user: { isPublic: true },
+      },
+      orderBy: { updatedAt: 'desc' },
+      distinct: ['sourceId'],
+      take: SPOTLIGHT_CANDIDATES,
+      select: { sourceId: true, title: true, coverImage: true },
+    });
+    const spotlights = await Promise.all(
+      entries.map(async (entry): Promise<Spotlight | null> => {
+        try {
+          const media = await getMedia('anime', entry.sourceId, false);
+          if (media.isAdult) return null;
+          const coverImage = media.coverImage ?? entry.coverImage;
+          const bannerImage = media.bannerImage ?? null;
+          if (!coverImage && !bannerImage) return null;
+          return {
+            type: 'anime',
+            sourceId: entry.sourceId,
+            title: media.title || entry.title,
+            coverImage,
+            bannerImage,
+          };
+        } catch {
+          return null;
+        }
+      }),
+    );
+    return spotlights.filter((spotlight) => spotlight !== null);
+  }
 
   async search(userId: number, q?: string) {
     const query = q?.trim() ?? '';

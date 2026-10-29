@@ -14,6 +14,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt.guard';
+import { AllowGuest } from '../auth/allow-guest';
 import { AddLibraryEntryDto } from './dto/add-library-entry.dto';
 import { UpdateLibraryEntryDto } from './dto/update-library-entry.dto';
 import { LibraryService } from './library.service';
@@ -35,6 +36,14 @@ export class LibraryController {
     return this.libraryService.search(req.user.userId, q);
   }
 
+  @AllowGuest()
+  @RateLimit(60, MINUTE)
+  @Get('spotlight')
+  spotlight() {
+    return this.libraryService.spotlight();
+  }
+
+  @AllowGuest()
   @Get('media/:type/:sourceId')
   media(
     @Req() req,

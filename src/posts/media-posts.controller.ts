@@ -13,6 +13,7 @@ import {
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { JwtAuthGuard } from '../auth/jwt.guard';
+import { AllowGuest } from '../auth/allow-guest';
 import { MediaType } from '../../prisma/generated/client';
 import { RateLimit, MINUTE } from '../common/throttle';
 
@@ -21,6 +22,7 @@ import { RateLimit, MINUTE } from '../common/throttle';
 export class MediaPostsController {
   constructor(private readonly postsService: PostsService) {}
 
+  @AllowGuest()
   @Get()
   findForMedia(
     @Req() req,
@@ -38,6 +40,7 @@ export class MediaPostsController {
     );
   }
 
+  @AllowGuest()
   @Get(':postId')
   findOne(
     @Req() req,
