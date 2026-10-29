@@ -66,6 +66,7 @@ export type PublicProfile = {
     online: boolean;
     status: PresenceStatus;
     playing: string | null;
+    twitchLogin: string | null;
   }[];
   library: {
     id: number;
@@ -331,7 +332,7 @@ export class UsersService {
       status: UserStatus;
       friends: (Omit<
         PublicProfile['friends'][number],
-        'online' | 'status' | 'playing'
+        'online' | 'status' | 'playing' | 'twitchLogin'
       > & {
         appearOffline: boolean;
         status: UserStatus;

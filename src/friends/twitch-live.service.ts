@@ -92,7 +92,7 @@ export class TwitchLiveService implements OnModuleInit, OnModuleDestroy {
       const [accounts, communities] = await Promise.all([
         this.prisma.oAuthAccount.findMany({
           where: { provider: 'twitch', showLive: true },
-          select: { userId: true, providerAccountId: true },
+          select: { userId: true, providerAccountId: true, username: true },
         }),
         this.prisma.community.findMany({
           where: { twitchUserId: { not: null }, showTwitchLive: true },
@@ -116,10 +116,10 @@ export class TwitchLiveService implements OnModuleInit, OnModuleDestroy {
       }
 
       await this.presence.updateLive(
-        new Set(
+        new Map(
           accounts
             .filter((account) => liveIds.has(account.providerAccountId))
-            .map((account) => account.userId),
+            .map((account) => [account.userId, account.username]),
         ),
       );
       await this.presence.updateLiveCommunities(

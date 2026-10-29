@@ -24,6 +24,7 @@ export type Friend = FriendUser & {
   online: boolean;
   status: PresenceStatus;
   playing: string | null;
+  twitchLogin: string | null;
 };
 
 export type FriendList = {
@@ -89,6 +90,7 @@ export class FriendsService {
           online: status !== 'offline',
           status,
           playing: this.presence.playingOf(other.id, other),
+          twitchLogin: this.presence.twitchOf(other.id, other),
         });
       } else if (friendship.addresseeId === userId) {
         list.incoming.push(user);

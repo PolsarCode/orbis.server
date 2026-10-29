@@ -55,22 +55,33 @@ describe('PresenceGateway', () => {
   });
 
   it('shows a live stream even without a connection', async () => {
-    await gateway.updateLive(new Set([7]));
+    await gateway.updateLive(new Map([[7, 'naruto_live']]));
 
     expect(gateway.statusOf(7, visible)).toBe('streaming');
   });
 
   it('keeps appear offline over a live stream', async () => {
-    await gateway.updateLive(new Set([7]));
+    await gateway.updateLive(new Map([[7, 'naruto_live']]));
 
     expect(gateway.statusOf(7, { ...visible, appearOffline: true })).toBe(
       'offline',
     );
   });
 
+  it('shares the Twitch channel only while someone is visibly live', async () => {
+    await gateway.updateLive(new Map([[7, 'naruto_live']]));
+
+    expect(gateway.twitchOf(7, visible)).toBe('naruto_live');
+    expect(gateway.twitchOf(7, { ...visible, appearOffline: true })).toBeNull();
+    expect(gateway.twitchOf(8, visible)).toBeNull();
+
+    await gateway.updateLive(new Map());
+    expect(gateway.twitchOf(7, visible)).toBeNull();
+  });
+
   it('stops showing a stream once it ends', async () => {
-    await gateway.updateLive(new Set([7]));
-    await gateway.updateLive(new Set());
+    await gateway.updateLive(new Map([[7, 'naruto_live']]));
+    await gateway.updateLive(new Map());
 
     expect(gateway.statusOf(7, visible)).toBe('offline');
   });
@@ -131,6 +142,7 @@ describe('PresenceGateway', () => {
       online: true,
       status: 'online',
       playing: 'NBA 2K26',
+      twitchLogin: null,
     });
   });
 });

@@ -162,13 +162,20 @@ export class ReportsService {
         ],
       },
       orderBy: { username: 'asc' },
-      select: { ...author.select, email: true, appearOffline: true },
+      select: {
+        ...author.select,
+        email: true,
+        appearOffline: true,
+        status: true,
+      },
     });
 
-    return admins.map(({ email, appearOffline, ...admin }) => ({
+    return admins.map(({ email, appearOffline, status, ...admin }) => ({
       ...admin,
       isHeadAdmin: isHeadAdmin(email),
       online: !appearOffline && this.presence.isOnline(admin.id),
+      status: this.presence.statusOf(admin.id, { appearOffline, status }),
+      twitchLogin: this.presence.twitchOf(admin.id, { appearOffline, status }),
     }));
   }
 

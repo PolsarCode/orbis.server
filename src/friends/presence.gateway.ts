@@ -30,7 +30,7 @@ export class PresenceGateway
 
   private connections = new Map<number, number>();
   private idleConnections = new Map<number, number>();
-  private live = new Set<number>();
+  private live = new Map<number, string>();
   private playing = new Map<number, string>();
   private liveCommunities = new Set<number>();
 
@@ -116,6 +116,15 @@ export class PresenceGateway
     return status === 'idle' || this.isIdle(userId) ? 'idle' : 'online';
   }
 
+  twitchOf(
+    userId: number,
+    user: { appearOffline: boolean; status: UserStatus },
+  ) {
+    return this.statusOf(userId, user) === 'streaming'
+      ? (this.live.get(userId) ?? null)
+      : null;
+  }
+
   playingOf(
     userId: number,
     user: { appearOffline: boolean; status: UserStatus },
@@ -138,9 +147,9 @@ export class PresenceGateway
     await this.broadcastPresence(userId);
   }
 
-  async updateLive(live: Set<number>) {
-    const changed = [...new Set([...this.live, ...live])].filter(
-      (userId) => this.live.has(userId) !== live.has(userId),
+  async updateLive(live: Map<number, string>) {
+    const changed = [...new Set([...this.live.keys(), ...live.keys()])].filter(
+      (userId) => this.live.get(userId) !== live.get(userId),
     );
     this.live = live;
     for (const userId of changed) await this.broadcastPresence(userId);
@@ -231,6 +240,7 @@ export class PresenceGateway
       online: status !== 'offline',
       status,
       playing: this.playingOf(userId, user),
+      twitchLogin: this.twitchOf(userId, user),
     });
   }
 }

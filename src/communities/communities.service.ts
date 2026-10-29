@@ -30,6 +30,7 @@ export type CommunityMember = {
   online: boolean;
   status: PresenceStatus;
   playing: string | null;
+  twitchLogin: string | null;
   nickname: string | null;
   joinedAt: Date;
   isOwner: boolean;
@@ -598,6 +599,7 @@ export class CommunitiesService {
           online: !user.appearOffline && this.presence.isOnline(user.id),
           status: this.presence.statusOf(user.id, user),
           playing: this.presence.playingOf(user.id, user),
+          twitchLogin: this.presence.twitchOf(user.id, user),
           nickname,
           joinedAt,
           isOwner,

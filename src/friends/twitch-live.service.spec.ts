@@ -27,8 +27,8 @@ describe('TwitchLiveService', () => {
 
   it('marks connected accounts that are live on Twitch', async () => {
     prisma.oAuthAccount.findMany.mockResolvedValue([
-      { userId: 1, providerAccountId: 'a' },
-      { userId: 2, providerAccountId: 'b' },
+      { userId: 1, providerAccountId: 'a', username: 'alpha' },
+      { userId: 2, providerAccountId: 'b', username: 'bravo' },
     ]);
     fetchMock
       .mockResolvedValueOnce({
@@ -49,12 +49,12 @@ describe('TwitchLiveService', () => {
       }),
     );
     expect(fetchMock.mock.calls[1][0]).toContain('user_id=a&user_id=b');
-    expect(presence.updateLive).toHaveBeenCalledWith(new Set([2]));
+    expect(presence.updateLive).toHaveBeenCalledWith(new Map([[2, 'bravo']]));
   });
 
   it('keeps the current live list when Twitch can’t be reached', async () => {
     prisma.oAuthAccount.findMany.mockResolvedValue([
-      { userId: 1, providerAccountId: 'a' },
+      { userId: 1, providerAccountId: 'a', username: 'alpha' },
     ]);
     fetchMock.mockRejectedValue(new Error('offline'));
 
@@ -65,7 +65,7 @@ describe('TwitchLiveService', () => {
 
   it('marks communities whose Twitch channel is live', async () => {
     prisma.oAuthAccount.findMany.mockResolvedValue([
-      { userId: 1, providerAccountId: 'a' },
+      { userId: 1, providerAccountId: 'a', username: 'alpha' },
     ]);
     prisma.community.findMany.mockResolvedValue([
       { id: 12, twitchUserId: 'c' },
@@ -80,7 +80,7 @@ describe('TwitchLiveService', () => {
 
     await service.poll();
 
-    expect(presence.updateLive).toHaveBeenCalledWith(new Set());
+    expect(presence.updateLive).toHaveBeenCalledWith(new Map());
     expect(presence.updateLiveCommunities).toHaveBeenCalledWith(new Set([12]));
     expect(prisma.community.findMany).toHaveBeenCalledWith({
       where: { twitchUserId: { not: null }, showTwitchLive: true },

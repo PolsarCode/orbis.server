@@ -215,6 +215,10 @@ export class UsersController {
             appearOffline,
             status,
           }),
+          twitchLogin: this.presence.twitchOf(friend.userId, {
+            appearOffline,
+            status,
+          }),
         };
       }),
     };
