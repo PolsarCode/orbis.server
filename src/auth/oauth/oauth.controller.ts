@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -71,8 +72,17 @@ export class OAuthController {
   url(
     @Param('provider', provider) name: AuthProvider,
     @Query('nonce') nonce = '',
+    @Query('client') client = 'web',
   ) {
-    return { url: this.oauth.authorizeUrl(name, nonce, null) };
+    return {
+      url: this.oauth.authorizeUrl(
+        name,
+        nonce,
+        null,
+        null,
+        this.client(client),
+      ),
+    };
   }
 
   @RateLimit(30, MINUTE)
@@ -103,14 +113,32 @@ export class OAuthController {
     @Req() req,
     @Param('provider', provider) name: AuthProvider,
     @Query('nonce') nonce = '',
+    @Query('client') client = 'web',
   ) {
-    return { url: this.oauth.authorizeUrl(name, nonce, req.user.userId) };
+    return {
+      url: this.oauth.authorizeUrl(
+        name,
+        nonce,
+        req.user.userId,
+        null,
+        this.client(client),
+      ),
+    };
   }
 
   @RateLimit(10, MINUTE)
   @Post('signup')
-  finishSignup(@Body() { token, username }: FinishOAuthSignupDto) {
-    return this.oauth.finishSignup(token, username);
+  finishSignup(
+    @Body() { token, username, useProviderAvatar }: FinishOAuthSignupDto,
+  ) {
+    return this.oauth.finishSignup(token, username, useProviderAvatar);
+  }
+
+  private client(value: string): 'web' | 'mobile' {
+    if (value !== 'web' && value !== 'mobile') {
+      throw new BadRequestException('Unsupported OAuth client.');
+    }
+    return value;
   }
 
   @RateLimit(10, MINUTE)

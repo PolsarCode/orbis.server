@@ -61,9 +61,10 @@ export const oauthProviders: Record<AuthProvider, ProviderConfig> = {
         displayName: user.global_name ?? null,
         email: user.email ?? null,
         emailVerified: user.verified === true,
-        avatarUrl: user.avatar
-          ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=512`
-          : null,
+        avatarUrl:
+          typeof user.avatar === 'string'
+            ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=512`
+            : null,
       };
     },
   },

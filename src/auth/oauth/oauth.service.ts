@@ -34,7 +34,7 @@ import {
 
 export type OAuthResult =
   | { access_token: string }
-  | { signup: { token: string; username: string } }
+  | { signup: { token: string; username: string; avatarUrl: string | null } }
   | { linked: AuthProvider; avatar?: { url: string; token: string } }
   | {
       linked: AuthProvider;
@@ -57,6 +57,7 @@ type StateClaims = {
   provider: AuthProvider;
   nonce: string;
   uid: number | null;
+  client: 'web' | 'mobile';
   communityId?: number | null;
   channel?: boolean;
 };
@@ -154,6 +155,7 @@ export class OAuthService {
     nonce: string,
     uid: number | null,
     communityId: number | null = null,
+    client: 'web' | 'mobile' = 'web',
     channel = false,
   ) {
     const config = this.configured(provider);
@@ -164,6 +166,7 @@ export class OAuthService {
       nonce,
       uid,
       communityId,
+      client,
       ...(channel && { channel }),
     };
     const state = this.jwt.sign(claims, {
@@ -210,7 +213,14 @@ export class OAuthService {
         throw new BadRequestException(PRIVATE_COMMUNITY);
       }
     }
-    return this.authorizeUrl(provider, nonce, userId, communityId, channel);
+    return this.authorizeUrl(
+      provider,
+      nonce,
+      userId,
+      communityId,
+      'web',
+      channel,
+    );
   }
 
   async complete(
@@ -286,11 +296,16 @@ export class OAuthService {
           expiresIn: '30m',
         }),
         username: await this.freeUsername(profile.username),
+        avatarUrl: profile.avatarUrl,
       },
     };
   }
 
-  async finishSignup(token: string, username: string) {
+  async finishSignup(
+    token: string,
+    username: string,
+    useProviderAvatar = true,
+  ) {
     let claims: SignupClaims;
     try {
       claims = this.jwt.verify<SignupClaims>(token, { secret: signupSecret() });
@@ -328,6 +343,7 @@ export class OAuthService {
           emailVerifiedAt: new Date(),
           username: normalized,
           name: displayName,
+          avatarUrl: useProviderAvatar ? avatarUrl : null,
           oauthAccounts: {
             create: {
               provider,
@@ -338,7 +354,7 @@ export class OAuthService {
         },
         select: { id: true, email: true },
       });
-      if (avatarUrl)
+      if (useProviderAvatar && avatarUrl)
         await this.importAvatar(user.id, avatarUrl).catch(() => null);
       return this.auth.generateToken(user.id, user.email);
     } catch (error) {
