@@ -74,6 +74,7 @@ export type PublicProfile = {
     sourceId: string;
     title: string;
     coverImage: string | null;
+    year: number | null;
     status: LibraryStatus;
     progress: number;
     total: number | null;
@@ -455,6 +456,7 @@ export class UsersService {
           sourceId: true,
           title: true,
           coverImage: true,
+          year: true,
           status: true,
           progress: true,
           total: true,
