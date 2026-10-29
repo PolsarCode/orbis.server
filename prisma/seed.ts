@@ -60,23 +60,13 @@ type SeedCommunity = {
   posts: [UserKey, number, string][];
 };
 
-type Votes = { up?: UserKey[]; down?: UserKey[] };
-
-type SeedComment = Votes & {
+type SeedComment = {
   author: UserKey;
   ago: number;
   content: string;
   linkUrl?: string;
+  likes?: UserKey[];
   replies?: SeedComment[];
-};
-
-type SeedThread = Votes & {
-  author: UserKey;
-  ago: number;
-  title: string;
-  content: string;
-  linkUrl?: string;
-  comments?: SeedComment[];
 };
 
 const hours = (count: number) => count * 60;
@@ -86,7 +76,7 @@ const communities: SeedCommunity[] = [
   {
     name: 'Seasonal Anime Club',
     description:
-      'Weekly threads for everything airing this season. Hot takes, episode reactions, and what to drop.',
+      'Weekly discussions for everything airing this season. Hot takes, episode reactions, and what to drop.',
     owner: 'admin',
     isPublic: true,
     isVerified: true,
@@ -361,317 +351,6 @@ const communities: SeedCommunity[] = [
   },
 ];
 
-const forums: Record<string, SeedThread[]> = {
-  'Seasonal Anime Club': [
-    {
-      author: 'admin',
-      ago: days(2),
-      title: 'What are you watching this season? 📺',
-      content: `<p>Drop your current lineup below. Bonus points for hidden gems nobody else is talking about.</p>`,
-      up: ['anya', 'spike', 'itadori', 'nami', 'tanjiro', 'naruto'],
-      comments: [
-        {
-          author: 'naruto',
-          ago: days(2) - hours(1),
-          content: `<p>Anything with ninjas. Obviously.</p>`,
-          linkUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-          up: ['admin', 'tanjiro'],
-          replies: [
-            {
-              author: 'spike',
-              ago: days(2) - hours(3),
-              content: `<p>Ninjas are fine. Needs more jazz.</p>`,
-              up: ['naruto'],
-              replies: [
-                {
-                  author: 'naruto',
-                  ago: days(2) - hours(4),
-                  content: `<p>Ninja jazz?! I'd watch that!</p>`,
-                },
-              ],
-            },
-          ],
-        },
-        {
-          author: 'tanjiro',
-          ago: days(1) + hours(20),
-          content: `<p>A slice-of-life about a family bakery. It's <strong>so</strong> wholesome!</p>`,
-          up: ['admin', 'nami', 'anya'],
-          replies: [
-            {
-              author: 'nami',
-              ago: days(1) + hours(18),
-              content: `<p>Is the bread expensive? Asking for budget reasons.</p>`,
-              replies: [
-                {
-                  author: 'tanjiro',
-                  ago: days(1) + hours(17),
-                  content: `<p>Very affordable! 😊</p>`,
-                  up: ['nami'],
-                },
-              ],
-            },
-          ],
-        },
-        {
-          author: 'anya',
-          ago: days(1) + hours(6),
-          content: `<p>Anya is watching a spy show. Anya will not tell Papa.</p>`,
-          up: ['spike', 'itadori'],
-        },
-      ],
-    },
-    {
-      author: 'spike',
-      ago: days(1) + hours(4),
-      title: 'Unpopular opinion: dubs are fine',
-      content: `<p>Some dubs are genuinely great. Fight me.</p>`,
-      up: ['admin', 'nami'],
-      down: ['naruto', 'itadori'],
-      comments: [
-        {
-          author: 'itadori',
-          ago: days(1) + hours(2),
-          content: `<p>Subs for life, but respect.</p>`,
-          up: ['spike'],
-          replies: [
-            {
-              author: 'admin',
-              ago: days(1),
-              content: `<p>Depends on the show for me. Some voice casts absolutely nail it.</p>`,
-              up: ['spike', 'itadori'],
-            },
-          ],
-        },
-        {
-          author: 'naruto',
-          ago: hours(22),
-          content: `<p>Believe it! Subs!</p>`,
-          down: ['spike'],
-        },
-      ],
-    },
-    {
-      author: 'itadori',
-      ago: hours(8),
-      title: 'Best fight scene of all time?',
-      content: `<p>Asking for science. And training.</p>`,
-      linkUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-      up: ['naruto', 'tanjiro', 'spike'],
-      comments: [
-        {
-          author: 'naruto',
-          ago: hours(7),
-          content: `<p>Rasengan vs. Chidori. Nothing else comes close.</p>`,
-          up: ['itadori'],
-          replies: [
-            {
-              author: 'itadori',
-              ago: hours(6),
-              content: `<p>Classic.</p>`,
-            },
-          ],
-        },
-        {
-          author: 'tanjiro',
-          ago: hours(5),
-          content: `<p>Any fight where the hero is protecting someone they love.</p>`,
-          up: ['admin', 'anya'],
-        },
-      ],
-    },
-  ],
-  'Hidden Leaf Village': [
-    {
-      author: 'naruto',
-      ago: days(2) + hours(6),
-      title: 'Ramen rankings: Ichiraku is #1, change my mind',
-      content: `<ol><li>Ichiraku</li><li>Ichiraku (again)</li><li>Instant ramen</li></ol>`,
-      up: ['sakura', 'admin', 'itadori'],
-      down: ['sasuke'],
-      comments: [
-        {
-          author: 'sasuke',
-          ago: days(2) + hours(4),
-          content: `<p>Hn. Instant ramen shouldn't be on the list.</p>`,
-          up: ['sakura'],
-          replies: [
-            {
-              author: 'naruto',
-              ago: days(2) + hours(3),
-              content: `<p>It's on the list because it's on <strong>my</strong> list!</p>`,
-              up: ['itadori'],
-              replies: [
-                {
-                  author: 'sakura',
-                  ago: days(2) + hours(2),
-                  content: `<p>Both of you, eat a vegetable.</p>`,
-                  up: ['admin', 'sasuke'],
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-    {
-      author: 'sakura',
-      ago: hours(14),
-      title: 'Team 7 training schedule (please read)',
-      content: `<p>Training ground 3, every morning at 6. <strong>No excuses.</strong></p>`,
-      up: ['admin', 'sasuke', 'naruto'],
-      comments: [
-        {
-          author: 'naruto',
-          ago: hours(13),
-          content: `<p>6 AM?! That's so early!</p>`,
-          replies: [
-            {
-              author: 'sakura',
-              ago: hours(12),
-              content: `<p>Kakashi-sensei will be late anyway.</p>`,
-              up: ['naruto', 'sasuke'],
-            },
-          ],
-        },
-      ],
-    },
-  ],
-  'Straw Hat Pirates': [
-    {
-      author: 'nami',
-      ago: days(3),
-      title: 'Ship budget: where did the meat money go?',
-      content: `<p>Someone spent 80% of the food budget on meat. <em>I wonder who.</em></p>`,
-      up: ['zoro', 'admin', 'goku'],
-      comments: [
-        {
-          author: 'luffy',
-          ago: days(3) - hours(1),
-          content: `<p>Not me!! (it was me)</p>`,
-          up: ['goku', 'zoro', 'admin'],
-          replies: [
-            {
-              author: 'nami',
-              ago: days(3) - hours(2),
-              content: `<p>I'm adding interest.</p>`,
-              up: ['zoro'],
-            },
-          ],
-        },
-        {
-          author: 'zoro',
-          ago: days(2) + hours(20),
-          content: `<p>Spent mine on sake. Worth it.</p>`,
-          down: ['nami'],
-        },
-      ],
-    },
-    {
-      author: 'zoro',
-      ago: hours(20),
-      title: 'Directions to the training deck?',
-      content: `<p>Asking for a friend. The friend is me. The deck keeps moving.</p>`,
-      up: ['luffy', 'goku'],
-      comments: [
-        {
-          author: 'nami',
-          ago: hours(19),
-          content: `<p>It's literally the deck you're standing on.</p>`,
-          up: ['luffy', 'admin'],
-          replies: [
-            {
-              author: 'zoro',
-              ago: hours(18),
-              content: `<p>...I knew that.</p>`,
-              up: ['luffy'],
-            },
-          ],
-        },
-      ],
-    },
-  ],
-  'Saiyan Training Grounds': [
-    {
-      author: 'vegeta',
-      ago: days(1),
-      title: 'Gravity room etiquette',
-      content: `<ol><li>Do not touch my settings.</li><li>Kakarot, that includes you.</li></ol>`,
-      up: ['goku'],
-      down: ['luffy'],
-      comments: [
-        {
-          author: 'goku',
-          ago: hours(20),
-          content: `<p>Sorry Vegeta! I turned it up to 500x.</p>`,
-          replies: [
-            {
-              author: 'vegeta',
-              ago: hours(19),
-              content: `<p><strong>KAKAROT.</strong></p>`,
-              up: ['luffy', 'goku'],
-            },
-          ],
-        },
-      ],
-    },
-  ],
-  'Demon Slayer Corps': [
-    {
-      author: 'tanjiro',
-      ago: days(2),
-      title: 'Breathing technique tips for beginners',
-      content: `<p>Start with Total Concentration while walking, then while running, then while sleeping. Small steps!</p>`,
-      up: ['mikasa', 'admin', 'nezuko'],
-      comments: [
-        {
-          author: 'mikasa',
-          ago: days(1) + hours(22),
-          content: `<p>Similar to maneuvering gear balance training. Consistency is everything.</p>`,
-          up: ['tanjiro'],
-          replies: [
-            {
-              author: 'tanjiro',
-              ago: days(1) + hours(21),
-              content: `<p>Thank you, Mikasa! I'll try that.</p>`,
-            },
-          ],
-        },
-        {
-          author: 'nezuko',
-          ago: days(1) + hours(10),
-          content: `<p>Mmmph! 🎋</p>`,
-          up: ['tanjiro', 'admin'],
-        },
-      ],
-    },
-  ],
-  'Jujutsu High': [
-    {
-      author: 'gojo',
-      ago: hours(30),
-      title: "Pop quiz: who's the strongest?",
-      content: `<p>Trick question. It's me. 😎</p>`,
-      up: ['itadori'],
-      comments: [
-        {
-          author: 'itadori',
-          ago: hours(29),
-          content: `<p>Sensei, that's not a quiz.</p>`,
-          up: ['gojo'],
-          replies: [
-            {
-              author: 'gojo',
-              ago: hours(28),
-              content: `<p>Correct answer, full marks! 💯</p>`,
-            },
-          ],
-        },
-      ],
-    },
-  ],
-};
-
 const postComments: Record<string, Record<number, SeedComment[]>> = {
   'Seasonal Anime Club': {
     0: [
@@ -679,7 +358,7 @@ const postComments: Record<string, Record<number, SeedComment[]>> = {
         author: 'anya',
         ago: days(3) - hours(2),
         content: `<p>Anya will follow the rules. Mostly.</p>`,
-        up: ['admin', 'spike'],
+        likes: ['admin', 'spike'],
       },
       {
         author: 'tanjiro',
@@ -690,7 +369,7 @@ const postComments: Record<string, Record<number, SeedComment[]>> = {
             author: 'admin',
             ago: days(3) - hours(6),
             content: `<p>Glad to have you, Tanjiro!</p>`,
-            up: ['tanjiro'],
+            likes: ['tanjiro'],
           },
         ],
       },
@@ -707,13 +386,13 @@ const postComments: Record<string, Record<number, SeedComment[]>> = {
             author: 'sakura',
             ago: days(2) - hours(2),
             content: `<p>It's a yes.</p>`,
-            up: ['naruto'],
+            likes: ['naruto'],
             replies: [
               {
                 author: 'sasuke',
                 ago: days(2) - hours(3),
                 content: `<p>Hn.</p>`,
-                up: ['sakura', 'naruto'],
+                likes: ['sakura', 'naruto'],
               },
             ],
           },
@@ -727,7 +406,7 @@ const postComments: Record<string, Record<number, SeedComment[]>> = {
         author: 'zoro',
         ago: days(5) - hours(1),
         content: `<p>It was you, Luffy.</p>`,
-        up: ['nami', 'admin'],
+        likes: ['nami', 'admin'],
         replies: [
           {
             author: 'luffy',
@@ -740,7 +419,7 @@ const postComments: Record<string, Record<number, SeedComment[]>> = {
         author: 'nami',
         ago: days(4) + hours(20),
         content: `<p>Meat is now 3,000 berries per piece.</p>`,
-        up: ['zoro'],
+        likes: ['zoro'],
       },
     ],
   },
@@ -802,7 +481,11 @@ const chats: SeedChat[] = [
       ['luffy', 'Are you coming to the Grand Line Crew watch party?', 300],
       ['admin', 'Wouldn’t miss it. Bringing snacks!', 290],
       ['luffy', 'MEAT. Bring meat.', 288],
-      ['admin', 'Brushing up before Friday https://en.wikipedia.org/wiki/One_Piece', 285],
+      [
+        'admin',
+        'Brushing up before Friday https://en.wikipedia.org/wiki/One_Piece',
+        285,
+      ],
       ['admin', 'Meat it is 🍖', 280],
     ],
   },
@@ -861,45 +544,17 @@ const groups: SeedGroup[] = [
   },
 ];
 
-function voters({ up = [], down = [] }: Votes) {
-  return [...up, ...down];
-}
-
 function participants(comments: SeedComment[] = []): UserKey[] {
   return comments.flatMap((comment) => [
     comment.author,
-    ...voters(comment),
+    ...(comment.likes ?? []),
     ...participants(comment.replies),
   ]);
 }
 
-async function createVotes(
-  communityId: number | null,
-  votableType: 'thread' | 'comment',
-  votableId: number,
-  { up = [], down = [] }: Votes,
-) {
-  await prisma.vote.createMany({
-    data: [
-      ...up.map((key) => ({ key, value: 1 })),
-      ...down.map((key) => ({ key, value: -1 })),
-    ].map(({ key, value }) => ({
-      userId: userIds[key],
-      votableType,
-      votableId,
-      communityId,
-      value,
-    })),
-  });
-}
-
-function scoreOf({ up = [], down = [] }: Votes) {
-  return up.length - down.length;
-}
-
 async function createComments(
   communityId: number | null,
-  commentableType: 'post' | 'thread' | 'activity',
+  commentableType: 'post' | 'activity',
   commentableId: number,
   comments: SeedComment[] = [],
   parentId?: number,
@@ -907,9 +562,8 @@ async function createComments(
   let count = 0;
 
   for (const comment of comments) {
-    const votes = voters(comment).includes(comment.author)
-      ? comment
-      : { ...comment, up: [comment.author, ...(comment.up ?? [])] };
+    const likes = comment.likes ?? [];
+    const createdAt = minutesAgo(comment.ago);
     const created = await prisma.comment.create({
       data: {
         communityId,
@@ -919,11 +573,23 @@ async function createComments(
         authorId: userIds[comment.author],
         content: comment.content,
         linkUrl: comment.linkUrl,
-        score: scoreOf(votes),
-        createdAt: minutesAgo(comment.ago),
+        likeCount: likes.length,
+        createdAt,
       },
     });
-    await createVotes(communityId, 'comment', created.id, votes);
+    await prisma.like.createMany({
+      data: likes.map((key, index) => ({
+        userId: userIds[key],
+        likeableType: 'comment' as const,
+        likeableId: created.id,
+        createdAt: new Date(
+          Math.min(
+            Date.now(),
+            createdAt.getTime() + (index + 1) * 7 * 60 * 1000,
+          ),
+        ),
+      })),
+    });
     count +=
       1 +
       (await createComments(
@@ -1042,7 +708,7 @@ const titlePosts: {
       {
         author: 'nami',
         ago: hours(18),
-        content: '<p>Spoilers in this thread and I’m charging interest.</p>',
+        content: '<p>Spoilers in here and I’m charging interest.</p>',
       },
     ],
   },
@@ -1209,20 +875,20 @@ const reports: [
     'bug',
     'in_progress',
     240,
-    'Thread list jumped back to the top after I voted. Clean that up.',
-    '/explore',
+    'Feed jumped back to the top after I liked a post. Clean that up.',
+    '/',
     {
       assignee: 'admin',
       comments: [
         [
           'admin',
           200,
-          'Reproduced on Chrome. Voting refetches the whole list, which resets the scroll.',
+          'Reproduced on Chrome. Liking refetches the whole feed, which resets the scroll.',
         ],
         [
           'admin',
           150,
-          'Switching to an optimistic update so the list stays put. Testing on mobile next.',
+          'Switching to an optimistic update so the feed stays put. Testing on mobile next.',
         ],
       ],
     },
@@ -1232,7 +898,7 @@ const reports: [
     'idea',
     'todo',
     600,
-    'Let community owners pin a thread so the rules stay at the top of the forum.',
+    'Let community owners pin a post so the rules stay at the top of the feed.',
     '/explore',
     {
       comments: [
@@ -1313,7 +979,7 @@ async function createContentReports() {
       targetType: 'post' as const,
       targetId: sasukePost.id,
       reason: 'harassment' as const,
-      details: 'He keeps calling me a loser in every thread.',
+      details: 'He keeps calling me a loser in every post.',
       createdAt: minutesAgo(hours(2)),
     },
     luffyComment && {
@@ -1476,7 +1142,9 @@ async function createChats() {
     const last = messages.at(-1);
     const quoted =
       last &&
-      [...messages].reverse().find(({ senderId }) => senderId !== last.senderId);
+      [...messages]
+        .reverse()
+        .find(({ senderId }) => senderId !== last.senderId);
     if (last && quoted) {
       await prisma.message.update({
         where: { id: last.id },
@@ -1502,7 +1170,7 @@ async function createNotifications() {
     readAt: Date | null;
   }[] = [];
 
-  const [posts, threads, comments, activities] = await Promise.all([
+  const [posts, comments, activities] = await Promise.all([
     prisma.post.findMany({
       select: {
         id: true,
@@ -1515,9 +1183,6 @@ async function createNotifications() {
         createdAt: true,
         wallUser: { select: { username: true } },
       },
-    }),
-    prisma.thread.findMany({
-      select: { id: true, authorId: true, title: true },
     }),
     prisma.comment.findMany({
       select: {
@@ -1591,25 +1256,18 @@ async function createNotifications() {
       });
     }
   }
-  const threadsById = new Map(threads.map((thread) => [thread.id, thread]));
 
   for (const comment of comments) {
-    const isThread = comment.commentableType === 'thread';
     const isActivity = comment.commentableType === 'activity';
-    const thread = threadsById.get(comment.commentableId);
     const activityOwner = isActivity
       ? activityOwners.get(comment.commentableId)
       : undefined;
-    const ownerId = isThread
-      ? thread?.authorId
-      : isActivity
-        ? activityOwner?.id
-        : postAuthors.get(comment.commentableId);
-    const wall = isThread
-      ? undefined
-      : isActivity
-        ? activityOwner?.username
-        : postWalls.get(comment.commentableId);
+    const ownerId = isActivity
+      ? activityOwner?.id
+      : postAuthors.get(comment.commentableId);
+    const wall = isActivity
+      ? activityOwner?.username
+      : postWalls.get(comment.commentableId);
     const titleLink =
       comment.commentableType === 'post'
         ? postTitles.get(comment.commentableId)
@@ -1618,9 +1276,7 @@ async function createNotifications() {
       actorId: comment.authorId,
       link:
         titleLink ??
-        (wall
-          ? `/users/${wall}`
-          : `/communities/${comment.communityId}${isThread ? '?tab=forum' : ''}`),
+        (wall ? `/users/${wall}` : `/communities/${comment.communityId}`),
       createdAt: comment.createdAt,
       readAt: readAt(comment.createdAt),
     };
@@ -1641,12 +1297,10 @@ async function createNotifications() {
       notifications.push({
         ...base,
         userId: ownerId,
-        type: isThread ? 'thread_comment' : 'post_comment',
-        message: isThread
-          ? `commented on your thread “${thread!.title}”`
-          : isActivity
-            ? 'commented on your library update'
-            : 'commented on your post',
+        type: 'post_comment',
+        message: isActivity
+          ? 'commented on your library update'
+          : 'commented on your post',
       });
     }
   }
@@ -2167,17 +1821,11 @@ async function main() {
 
   for (const community of communities) {
     const memberKeys = new Set(community.members.map(([key]) => key));
-    const threads = forums[community.name] ?? [];
     const commentsByPost = postComments[community.name] ?? {};
     const outsider = [
       community.owner,
       ...(community.admins ?? []),
       ...community.posts.map(([key]) => key),
-      ...threads.flatMap((thread) => [
-        thread.author,
-        ...voters(thread),
-        ...participants(thread.comments),
-      ]),
       ...Object.values(commentsByPost).flatMap((comments) =>
         participants(comments),
       ),
@@ -2260,31 +1908,6 @@ async function main() {
       );
       await prisma.post.update({
         where: { id: post.id },
-        data: { commentCount },
-      });
-    }
-
-    for (const thread of threads) {
-      const createdThread = await prisma.thread.create({
-        data: {
-          communityId: created.id,
-          authorId: userIds[thread.author],
-          title: thread.title,
-          content: thread.content,
-          linkUrl: thread.linkUrl,
-          score: scoreOf(thread),
-          createdAt: minutesAgo(thread.ago),
-        },
-      });
-      await createVotes(created.id, 'thread', createdThread.id, thread);
-      const commentCount = await createComments(
-        created.id,
-        'thread',
-        createdThread.id,
-        thread.comments,
-      );
-      await prisma.thread.update({
-        where: { id: createdThread.id },
         data: { commentCount },
       });
     }

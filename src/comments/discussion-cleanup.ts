@@ -11,21 +11,17 @@ export async function discussionCleanup(
     select: { id: true },
   });
   return [
-    prisma.vote.deleteMany({
+    prisma.like.deleteMany({
       where: {
-        votableType: 'comment',
-        votableId: { in: comments.map(({ id }) => id) },
+        likeableType: 'comment',
+        likeableId: { in: comments.map(({ id }) => id) },
       },
     }),
     prisma.comment.deleteMany({
       where: { commentableType: type, commentableId: { in: ids } },
     }),
-    type === 'thread'
-      ? prisma.vote.deleteMany({
-          where: { votableType: 'thread', votableId: { in: ids } },
-        })
-      : prisma.like.deleteMany({
-          where: { likeableType: type, likeableId: { in: ids } },
-        }),
+    prisma.like.deleteMany({
+      where: { likeableType: type, likeableId: { in: ids } },
+    }),
   ];
 }

@@ -337,10 +337,10 @@ export class LibraryService {
       select: { id: true },
     });
     await this.prisma.$transaction([
-      this.prisma.vote.deleteMany({
+      this.prisma.like.deleteMany({
         where: {
-          votableType: 'comment',
-          votableId: { in: comments.map((comment) => comment.id) },
+          likeableType: 'comment',
+          likeableId: { in: comments.map((comment) => comment.id) },
         },
       }),
       this.prisma.comment.deleteMany({

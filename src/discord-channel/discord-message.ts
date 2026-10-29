@@ -29,7 +29,6 @@ const COLOR = 0xc4432d;
 const EXCERPT_LENGTH = 500;
 const NAME_LENGTH = 80;
 const THREAD_NAME_LENGTH = 100;
-const TITLE_LENGTH = 256;
 const BLOCKED_NAME = /discord|clyde/i;
 const RESERVED_NAMES = new Set(['everyone', 'here']);
 const URL_PATTERN = /(https?:\/\/[^\s<]+)/;
@@ -156,10 +155,6 @@ export function postLink(communityId: number, postId: number) {
   return `${webUrl()}/communities/${communityId}?post=${postId}`;
 }
 
-export function threadLink(communityId: number, threadId: number) {
-  return `${webUrl()}/communities/${communityId}?tab=forum&thread=${threadId}`;
-}
-
 export function activityLink(communityId: number, activityId: number) {
   return `${webUrl()}/communities/${communityId}?activity=${activityId}`;
 }
@@ -185,32 +180,6 @@ export function postMessage(
     },
     firstLine(text) || `Post by ${webhookName(post.author)}`,
     post.linkUrl,
-  );
-}
-
-export function threadMessage(
-  thread: {
-    id: number;
-    title: string;
-    content: string;
-    linkUrl: string | null;
-    createdAt: Date;
-    author: MessageAuthor;
-  },
-  community: MessageCommunity,
-) {
-  const text = plainText(thread.content);
-  return fromAuthor(
-    thread.author,
-    community,
-    threadLink(community.id, thread.id),
-    {
-      title: excerpt(thread.title, TITLE_LENGTH),
-      ...(text && { description: escapeMarkdown(excerpt(text)) }),
-      timestamp: thread.createdAt.toISOString(),
-    },
-    thread.title,
-    thread.linkUrl,
   );
 }
 
@@ -291,7 +260,7 @@ export function connectedMessage(community: MessageCommunity): RenderedMessage {
         {
           title: 'Connected to Orbis',
           url: link,
-          description: `New posts, threads, and library updates from **${escapeMarkdown(community.name)}** on Orbis will show up here.`,
+          description: `New posts and library updates from **${escapeMarkdown(community.name)}** on Orbis will show up here.`,
           color: COLOR,
         },
       ],

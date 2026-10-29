@@ -314,23 +314,6 @@ export type EnumMediaTypeNullableWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumMediaTypeNullableFilter<$PrismaModel>
 }
 
-export type EnumVotableTypeFilter<$PrismaModel = never> = {
-  equals?: $Enums.VotableType | Prisma.EnumVotableTypeFieldRefInput<$PrismaModel>
-  in?: $Enums.VotableType[] | Prisma.ListEnumVotableTypeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.VotableType[] | Prisma.ListEnumVotableTypeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumVotableTypeFilter<$PrismaModel> | $Enums.VotableType
-}
-
-export type EnumVotableTypeWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.VotableType | Prisma.EnumVotableTypeFieldRefInput<$PrismaModel>
-  in?: $Enums.VotableType[] | Prisma.ListEnumVotableTypeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.VotableType[] | Prisma.ListEnumVotableTypeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumVotableTypeWithAggregatesFilter<$PrismaModel> | $Enums.VotableType
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumVotableTypeFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumVotableTypeFilter<$PrismaModel>
-}
-
 export type EnumLikeableTypeFilter<$PrismaModel = never> = {
   equals?: $Enums.LikeableType | Prisma.EnumLikeableTypeFieldRefInput<$PrismaModel>
   in?: $Enums.LikeableType[] | Prisma.ListEnumLikeableTypeFieldRefInput<$PrismaModel>
@@ -853,23 +836,6 @@ export type NestedEnumMediaTypeNullableWithAggregatesFilter<$PrismaModel = never
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedEnumMediaTypeNullableFilter<$PrismaModel>
   _max?: Prisma.NestedEnumMediaTypeNullableFilter<$PrismaModel>
-}
-
-export type NestedEnumVotableTypeFilter<$PrismaModel = never> = {
-  equals?: $Enums.VotableType | Prisma.EnumVotableTypeFieldRefInput<$PrismaModel>
-  in?: $Enums.VotableType[] | Prisma.ListEnumVotableTypeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.VotableType[] | Prisma.ListEnumVotableTypeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumVotableTypeFilter<$PrismaModel> | $Enums.VotableType
-}
-
-export type NestedEnumVotableTypeWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.VotableType | Prisma.EnumVotableTypeFieldRefInput<$PrismaModel>
-  in?: $Enums.VotableType[] | Prisma.ListEnumVotableTypeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.VotableType[] | Prisma.ListEnumVotableTypeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumVotableTypeWithAggregatesFilter<$PrismaModel> | $Enums.VotableType
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumVotableTypeFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumVotableTypeFilter<$PrismaModel>
 }
 
 export type NestedEnumLikeableTypeFilter<$PrismaModel = never> = {

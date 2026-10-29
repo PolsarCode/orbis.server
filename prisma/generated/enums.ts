@@ -11,7 +11,6 @@
 
 export const CommentableType = {
   post: 'post',
-  thread: 'thread',
   activity: 'activity'
 } as const
 
@@ -20,18 +19,11 @@ export type CommentableType = (typeof CommentableType)[keyof typeof CommentableT
 
 export const LikeableType = {
   post: 'post',
-  activity: 'activity'
-} as const
-
-export type LikeableType = (typeof LikeableType)[keyof typeof LikeableType]
-
-
-export const VotableType = {
-  thread: 'thread',
+  activity: 'activity',
   comment: 'comment'
 } as const
 
-export type VotableType = (typeof VotableType)[keyof typeof VotableType]
+export type LikeableType = (typeof LikeableType)[keyof typeof LikeableType]
 
 
 export const FriendshipStatus = {
@@ -72,7 +64,6 @@ export type ConversationStatus = (typeof ConversationStatus)[keyof typeof Conver
 
 export const NotificationType = {
   post_comment: 'post_comment',
-  thread_comment: 'thread_comment',
   comment_reply: 'comment_reply',
   friend_request: 'friend_request',
   friend_accepted: 'friend_accepted',
@@ -106,7 +97,6 @@ export type ReportStatus = (typeof ReportStatus)[keyof typeof ReportStatus]
 
 export const ContentReportTarget = {
   post: 'post',
-  thread: 'thread',
   comment: 'comment',
   user: 'user',
   community: 'community'

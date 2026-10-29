@@ -23,7 +23,7 @@ import {
   requireTargetAccess,
   targetOf,
 } from '../posts/wall-access';
-import { VotesService } from '../votes/votes.service';
+import { LikesService } from '../likes/likes.service';
 import { reportedBy } from '../moderation/visibility';
 import { loadNicknames } from '../communities/nicknames';
 import { CreateCommentDto } from './dto/create-comment.dto';
@@ -42,7 +42,7 @@ const commentSelect = {
   parentId: true,
   content: true,
   linkUrl: true,
-  score: true,
+  likeCount: true,
   hiddenAt: true,
   editedAt: true,
   deletedAt: true,
@@ -53,7 +53,7 @@ const commentSelect = {
 export type CommentView = Prisma.CommentGetPayload<{
   select: typeof commentSelect;
 }> & {
-  myVote: number;
+  liked: boolean;
   hidden: 'review' | 'reported' | null;
   deleted: boolean;
   canDelete: boolean;
@@ -63,13 +63,13 @@ export type CommentView = Prisma.CommentGetPayload<{
 export class CommentsService {
   constructor(
     private prisma: PrismaService,
-    private votes: VotesService,
+    private likes: LikesService,
     private notifications: NotificationsService,
   ) {}
 
   async list(userId: number, type: string, id: number): Promise<CommentView[]> {
     if (!Object.values(CommentableType).includes(type as CommentableType)) {
-      throw new BadRequestException('type must be post, thread, or activity');
+      throw new BadRequestException('type must be post or activity');
     }
 
     const commentableType = type as CommentableType;
@@ -91,8 +91,8 @@ export class CommentsService {
       take: MAX_COMMENTS,
       select: commentSelect,
     });
-    const [mine, reported, withNickname, managed] = await Promise.all([
-      this.votes.myVotes(
+    const [liked, reported, withNickname, managed] = await Promise.all([
+      this.likes.likedBy(
         userId,
         'comment',
         comments.map((comment) => comment.id),
@@ -121,7 +121,7 @@ export class CommentsService {
         author: withNickname(communityId, comment.author),
         content: hidden || deleted ? '' : comment.content,
         linkUrl: hidden || deleted ? null : comment.linkUrl,
-        myVote: mine.get(comment.id) ?? 0,
+        liked: liked.has(comment.id),
         hidden,
         deleted,
         canDelete:
@@ -174,24 +174,12 @@ export class CommentsService {
           authorId: userId,
           content: linked,
           linkUrl: linkUrl ?? null,
-          score: 1,
         },
         select: commentSelect,
       });
-      await tx.vote.create({
-        data: {
-          userId,
-          votableType: 'comment',
-          votableId: created.id,
-          communityId: home.communityId,
-          value: 1,
-        },
-      });
       await (type === 'post'
         ? tx.post.update({ where: { id }, data: increment })
-        : type === 'thread'
-          ? tx.thread.update({ where: { id }, data: increment })
-          : tx.libraryActivity.update({ where: { id }, data: increment }));
+        : tx.libraryActivity.update({ where: { id }, data: increment }));
       return created;
     });
 
@@ -202,7 +190,7 @@ export class CommentsService {
     return {
       ...comment,
       author: withNickname(home.communityId, comment.author),
-      myVote: 1,
+      liked: false,
       hidden: null,
       deleted: false,
       canDelete: true,
@@ -270,14 +258,14 @@ export class CommentsService {
       link: await this.linkTo(home),
     });
 
-    const [mine, withNickname] = await Promise.all([
-      this.votes.myVotes(userId, 'comment', [commentId]),
+    const [liked, withNickname] = await Promise.all([
+      this.likes.likedBy(userId, 'comment', [commentId]),
       loadNicknames(this.prisma, [{ communityId: home.communityId, userId }]),
     ]);
     return {
       ...updated,
       author: withNickname(home.communityId, updated.author),
-      myVote: mine.get(commentId) ?? 0,
+      liked: liked.has(commentId),
       hidden: null,
       deleted: false,
       canDelete: true,
@@ -342,8 +330,8 @@ export class CommentsService {
 
   private removeComment(id: number) {
     return [
-      this.prisma.vote.deleteMany({
-        where: { votableType: 'comment', votableId: id },
+      this.prisma.like.deleteMany({
+        where: { likeableType: 'comment', likeableId: id },
       }),
       this.prisma.comment.delete({ where: { id } }),
     ];
@@ -356,9 +344,7 @@ export class CommentsService {
     };
     return type === 'post'
       ? this.prisma.post.updateMany(args)
-      : type === 'thread'
-        ? this.prisma.thread.updateMany(args)
-        : this.prisma.libraryActivity.updateMany(args);
+      : this.prisma.libraryActivity.updateMany(args);
   }
 
   private async linkTo(target: EngagementTarget) {
@@ -375,7 +361,7 @@ export class CommentsService {
       ? `/library/${target.mediaType}/${target.mediaSourceId}?${item}`
       : profile
         ? `/users/${profile.username}?${item}`
-        : `/communities/${target.communityId}?${target.type === 'thread' ? 'tab=forum&' : ''}${item}`;
+        : `/communities/${target.communityId}?${item}`;
   }
 
   private async mentionPlace(target: EngagementTarget): Promise<MentionPlace> {
@@ -400,14 +386,7 @@ export class CommentsService {
     mentioned: MentionedUser[],
     parentAuthorId?: number,
   ) {
-    const { type, id } = target;
-    const thread =
-      type === 'thread'
-        ? await this.prisma.thread.findUnique({
-            where: { id },
-            select: { title: true },
-          })
-        : null;
+    const { type } = target;
     const link = await this.linkTo(target);
     const notifications: NewNotification[] = [];
 
@@ -424,10 +403,9 @@ export class CommentsService {
       notifications.push({
         userId: target.ownerId,
         actorId: userId,
-        type: type === 'thread' ? 'thread_comment' : 'post_comment',
-        message: thread
-          ? `commented on your thread “${thread.title}”`
-          : type === 'activity'
+        type: 'post_comment',
+        message:
+          type === 'activity'
             ? 'commented on your library update'
             : 'commented on your post',
         link,

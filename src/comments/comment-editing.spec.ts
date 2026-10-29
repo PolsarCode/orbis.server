@@ -1,7 +1,7 @@
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { PrismaService } from '../prisma.service';
-import { VotesService } from '../votes/votes.service';
+import { LikesService } from '../likes/likes.service';
 import { NotificationsService } from '../notifications/notifications.service';
 
 jest.mock('../posts/wall-access', () => ({
@@ -35,19 +35,18 @@ describe('Editing and deleting comments', () => {
       update: jest.fn(),
       delete: jest.fn(),
     },
-    vote: { deleteMany: jest.fn() },
+    like: { deleteMany: jest.fn() },
     post: { updateMany: jest.fn() },
-    thread: { updateMany: jest.fn() },
     libraryActivity: { updateMany: jest.fn() },
     user: { findMany: jest.fn().mockResolvedValue([]), findUnique: jest.fn() },
     contentReport: { findMany: jest.fn().mockResolvedValue([]) },
     membership: { findMany: jest.fn() },
     $transaction: jest.fn((operations: unknown[]) => Promise.all(operations)),
   };
-  const votes = { myVotes: jest.fn().mockResolvedValue(new Map()) };
+  const likes = { likedBy: jest.fn().mockResolvedValue(new Set()) };
   const service = new CommentsService(
     prisma as unknown as PrismaService,
-    votes as unknown as VotesService,
+    likes as unknown as LikesService,
     { notify: jest.fn() } as unknown as NotificationsService,
   );
 
@@ -68,14 +67,14 @@ describe('Editing and deleting comments', () => {
     prisma.membership.findMany.mockResolvedValue([]);
   });
 
-  it('removes a comment with no replies and lowers the count', async () => {
+  it('removes a comment with no replies, its likes, and lowers the count', async () => {
     prisma.comment.findUnique.mockResolvedValue(comment());
 
     await service.remove(1, 11);
 
     expect(prisma.comment.delete).toHaveBeenCalledWith({ where: { id: 11 } });
-    expect(prisma.vote.deleteMany).toHaveBeenCalledWith({
-      where: { votableType: 'comment', votableId: 11 },
+    expect(prisma.like.deleteMany).toHaveBeenCalledWith({
+      where: { likeableType: 'comment', likeableId: 11 },
     });
     expect(prisma.post.updateMany).toHaveBeenCalledWith({
       where: { id: 7 },
@@ -138,7 +137,7 @@ describe('Editing and deleting comments', () => {
         parentId: null,
         content: '',
         linkUrl: null,
-        score: 1,
+        likeCount: 1,
         hiddenAt: null,
         editedAt: null,
         deletedAt: new Date(),
@@ -161,7 +160,7 @@ describe('Editing and deleting comments', () => {
     prisma.comment.update.mockImplementation(({ data }) => ({
       id: 11,
       parentId: null,
-      score: 1,
+      likeCount: 1,
       hiddenAt: null,
       deletedAt: null,
       createdAt: new Date(),

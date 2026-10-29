@@ -1,12 +1,10 @@
 import { ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { PostsService } from '../posts/posts.service';
-import { ThreadsService } from '../threads/threads.service';
 import { CommentsService } from '../comments/comments.service';
 import { CommunitiesService } from '../communities/communities.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { LikesService } from '../likes/likes.service';
-import { VotesService } from '../votes/votes.service';
 import { DiscordChannelService } from '../discord-channel/discord-channel.service';
 import { StorageService } from '../storage/storage.service';
 import { PresenceGateway } from '../friends/presence.gateway';
@@ -38,7 +36,6 @@ describe('Limits for new accounts', () => {
   const prisma = {
     user: { findUnique: jest.fn(), findMany: jest.fn().mockResolvedValue([]) },
     post: { findUnique: jest.fn(), update: jest.fn() },
-    thread: { findUnique: jest.fn() },
     comment: { findUnique: jest.fn(), update: jest.fn() },
     community: { count: jest.fn() },
     membership: { count: jest.fn(), findMany: jest.fn().mockResolvedValue([]) },
@@ -50,20 +47,13 @@ describe('Limits for new accounts', () => {
   } as unknown as NotificationsService;
   const posts = new PostsService(
     prisma as unknown as PrismaService,
-    {} as ThreadsService,
     notifications,
     {} as LikesService,
     discordChannel,
   );
-  const threads = new ThreadsService(
-    prisma as unknown as PrismaService,
-    {} as VotesService,
-    notifications,
-    discordChannel,
-  );
   const comments = new CommentsService(
     prisma as unknown as PrismaService,
-    {} as VotesService,
+    {} as LikesService,
     notifications,
   );
   const communities = new CommunitiesService(
@@ -77,11 +67,6 @@ describe('Limits for new accounts', () => {
     jest.clearAllMocks();
     prisma.post.findUnique.mockResolvedValue({ authorId: 1, content: '' });
     prisma.post.update.mockRejectedValue(saved);
-    prisma.thread.findUnique.mockResolvedValue({
-      authorId: 1,
-      content: '',
-      communityId: 3,
-    });
     prisma.comment.findUnique.mockResolvedValue({
       authorId: 1,
       content: '',
@@ -102,7 +87,6 @@ describe('Limits for new accounts', () => {
           linkUrl: 'https://spam.test',
         }),
     ],
-    ['threads', () => threads.create(1, 3, { title: 'Deals', content: link })],
     ['comments', () => comments.update(1, 8, { content: link })],
   ];
 

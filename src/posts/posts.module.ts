@@ -7,18 +7,12 @@ import { PostsService } from './posts.service';
 import { CommunityMemberGuard } from '../communities/community-member.guard';
 import { CommunityViewerGuard } from '../communities/community-viewer.guard';
 import { PrismaService } from '../prisma.service';
-import { ThreadsModule } from '../threads/threads.module';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { LikesModule } from '../likes/likes.module';
 import { DiscordChannelModule } from '../discord-channel/discord-channel.module';
 
 @Module({
-  imports: [
-    ThreadsModule,
-    NotificationsModule,
-    LikesModule,
-    DiscordChannelModule,
-  ],
+  imports: [NotificationsModule, LikesModule, DiscordChannelModule],
   controllers: [
     PostsController,
     PostController,

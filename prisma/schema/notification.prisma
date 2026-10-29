@@ -1,6 +1,5 @@
 enum NotificationType {
   post_comment
-  thread_comment
   comment_reply
   friend_request
   friend_accepted

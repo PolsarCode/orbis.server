@@ -1,7 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { LikeableType } from '../../prisma/generated/client';
 import { PrismaService } from '../prisma.service';
-import { requireTargetAccess, targetOf } from '../posts/wall-access';
+import {
+  EngagementTarget,
+  requireTargetAccess,
+  targetOf,
+} from '../posts/wall-access';
+import { reportedBy, visibleTo } from '../moderation/visibility';
 import { LikeDto } from './dto/like.dto';
 
 export type LikeResult = { likeCount: number; liked: boolean };
@@ -23,11 +28,32 @@ export class LikesService {
     return new Set(likes.map(({ likeableId }) => likeableId));
   }
 
+  private async targetFor(
+    userId: number,
+    type: LikeableType,
+    id: number,
+  ): Promise<EngagementTarget> {
+    if (type !== 'comment') return targetOf(this.prisma, userId, type, id);
+
+    const reported = await reportedBy(this.prisma, userId);
+    const comment = await this.prisma.comment.findFirst({
+      where: { id, deletedAt: null, ...visibleTo(userId, reported.comment) },
+      select: { commentableType: true, commentableId: true },
+    });
+    if (!comment) throw new NotFoundException('Not found');
+    return targetOf(
+      this.prisma,
+      userId,
+      comment.commentableType,
+      comment.commentableId,
+    );
+  }
+
   async setLike(
     userId: number,
     { type, id, liked }: LikeDto,
   ): Promise<LikeResult> {
-    const target = await targetOf(this.prisma, userId, type, id);
+    const target = await this.targetFor(userId, type, id);
     await requireTargetAccess(this.prisma, userId, target);
 
     return this.prisma.$transaction(async (tx) => {
@@ -54,7 +80,9 @@ export class LikesService {
       const { likeCount } =
         type === 'post'
           ? await tx.post.update({ where: { id }, data, select })
-          : await tx.libraryActivity.update({ where: { id }, data, select });
+          : type === 'activity'
+            ? await tx.libraryActivity.update({ where: { id }, data, select })
+            : await tx.comment.update({ where: { id }, data, select });
 
       return { likeCount, liked };
     });

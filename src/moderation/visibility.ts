@@ -3,7 +3,6 @@ import { PrismaService } from '../prisma.service';
 
 export type ReportedIds = {
   post: number[];
-  thread: number[];
   comment: number[];
 };
 
@@ -15,11 +14,11 @@ export async function reportedBy(
     where: {
       reporterId: viewerId,
       resolvedAt: null,
-      targetType: { in: ['post', 'thread', 'comment'] },
+      targetType: { in: ['post', 'comment'] },
     },
     select: { targetType: true, targetId: true },
   });
-  const ids: ReportedIds = { post: [], thread: [], comment: [] };
+  const ids: ReportedIds = { post: [], comment: [] };
   for (const { targetType, targetId } of reports) {
     if (targetType in ids) ids[targetType as keyof ReportedIds].push(targetId);
   }
@@ -32,7 +31,5 @@ export function visibleTo(viewerId: number, reported: number[]) {
       { OR: [{ hiddenAt: null }, { authorId: viewerId }] },
       ...(reported.length > 0 ? [{ id: { notIn: reported } }] : []),
     ],
-  } satisfies Prisma.PostWhereInput &
-    Prisma.ThreadWhereInput &
-    Prisma.CommentWhereInput;
+  } satisfies Prisma.PostWhereInput & Prisma.CommentWhereInput;
 }

@@ -4,7 +4,6 @@ import {
   escapeMarkdown,
   plainText,
   postMessage,
-  threadMessage,
   webhookName,
 } from './discord-message';
 
@@ -129,27 +128,6 @@ describe('Discord messages', () => {
     );
   });
 
-  it('titles threads and links to them on the Threads tab', () => {
-    const message = threadMessage(
-      {
-        id: 4,
-        title: 'Best arc?',
-        content: '',
-        linkUrl: null,
-        createdAt,
-        author,
-      },
-      community,
-    );
-
-    expect(message.body.embeds[0]).toMatchObject({
-      title: 'Best arc?',
-      url: 'https://orbis.test/communities/7?tab=forum&thread=4',
-    });
-    expect(message.body.embeds[0]).not.toHaveProperty('description');
-    expect(message.threadName).toBe('Best arc?');
-  });
-
   it('describes library progress with the cover', () => {
     const message = activityMessage(
       {
@@ -204,6 +182,8 @@ describe('Discord messages', () => {
     expect(message.body.embeds[0]).toMatchObject({
       title: 'Connected to Orbis',
       url: 'https://orbis.test/communities/7',
+      description:
+        'New posts and library updates from **Hidden Leaf Village** on Orbis will show up here.',
     });
   });
 });

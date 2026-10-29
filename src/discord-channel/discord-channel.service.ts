@@ -17,7 +17,6 @@ import {
   MessageCommunity,
   postMessage,
   RenderedMessage,
-  threadMessage,
 } from './discord-message';
 import {
   deleteMessage,
@@ -38,7 +37,6 @@ export type IncomingWebhook = {
 
 export type DiscordChannelSettings = {
   sendPosts?: boolean;
-  sendThreads?: boolean;
   sendLibrary?: boolean;
 };
 
@@ -48,7 +46,6 @@ const viewSelect = {
   channelId: true,
   isForum: true,
   sendPosts: true,
-  sendThreads: true,
   sendLibrary: true,
   lostAt: true,
   createdAt: true,
@@ -60,7 +57,6 @@ const channelSelect = {
   webhookToken: true,
   isForum: true,
   sendPosts: true,
-  sendThreads: true,
   sendLibrary: true,
   lostAt: true,
   community: {
@@ -93,7 +89,6 @@ type Channel = {
 
 type SendingChannel = Channel & {
   sendPosts: boolean;
-  sendThreads: boolean;
   sendLibrary: boolean;
   lostAt: Date | null;
   community: MessageCommunity & { isPublic: boolean };
@@ -236,21 +231,10 @@ export class DiscordChannelService implements OnModuleDestroy {
     }
   }
 
-  async threadCreated(threadId: number) {
-    try {
-      await this.sendThread(threadId);
-    } catch (error) {
-      this.logger.warn(
-        `Couldn’t send thread ${threadId} to Discord: ${String(error)}`,
-      );
-    }
-  }
-
-  async hiddenChanged(type: 'post' | 'thread', id: number, hidden: boolean) {
+  async hiddenChanged(type: 'post', id: number, hidden: boolean) {
     try {
       if (hidden) await this.remove(type, [id]);
-      else if (type === 'post') await this.sendPost(id);
-      else await this.sendThread(id);
+      else await this.sendPost(id);
     } catch (error) {
       this.logger.warn(
         `Couldn’t update ${type} ${id} on Discord: ${String(error)}`,
@@ -258,17 +242,14 @@ export class DiscordChannelService implements OnModuleDestroy {
     }
   }
 
-  async contentEdited(type: 'post' | 'thread', id: number) {
+  async contentEdited(type: 'post', id: number) {
     try {
       const rows = await this.prisma.discordMessage.findMany({
         where: { targetType: type, targetId: id },
         select: rowSelect,
       });
       if (rows.length === 0) return;
-      const rendered =
-        type === 'post'
-          ? await this.renderPost(id)
-          : await this.renderThread(id);
+      const rendered = await this.renderPost(id);
       if (!rendered) return;
       for (const row of rows) {
         try {
@@ -284,7 +265,7 @@ export class DiscordChannelService implements OnModuleDestroy {
     }
   }
 
-  async contentDeleted(type: 'post' | 'thread', id: number) {
+  async contentDeleted(type: 'post', id: number) {
     try {
       await this.remove(type, [id]);
     } catch (error) {
@@ -445,52 +426,12 @@ export class DiscordChannelService implements OnModuleDestroy {
     };
   }
 
-  private async renderThread(threadId: number) {
-    const thread = await this.prisma.thread.findUnique({
-      where: { id: threadId },
-      select: {
-        id: true,
-        title: true,
-        content: true,
-        linkUrl: true,
-        hiddenAt: true,
-        createdAt: true,
-        author,
-        community: { select: { discordChannel: { select: channelSelect } } },
-      },
-    });
-    const channel = thread?.community.discordChannel;
-    if (!thread || !channel) return null;
-
-    const withAuthor = await this.withNickname(
-      channel.communityId,
-      thread.author,
-    );
-    return {
-      channel,
-      hidden: thread.hiddenAt !== null,
-      enabled: channel.sendThreads,
-      message: threadMessage(
-        { ...thread, author: withAuthor },
-        channel.community,
-      ),
-    };
-  }
-
   private async sendPost(postId: number) {
     await this.sendRendered('post', postId, await this.renderPost(postId));
   }
 
-  private async sendThread(threadId: number) {
-    await this.sendRendered(
-      'thread',
-      threadId,
-      await this.renderThread(threadId),
-    );
-  }
-
   private async sendRendered(
-    type: 'post' | 'thread',
+    type: 'post',
     id: number,
     rendered: Awaited<ReturnType<DiscordChannelService['renderPost']>>,
   ) {

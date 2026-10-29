@@ -1,7 +1,6 @@
 import { ForbiddenException } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { PrismaService } from '../prisma.service';
-import { ThreadsService } from '../threads/threads.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { LikesService } from '../likes/likes.service';
 import { DiscordChannelService } from '../discord-channel/discord-channel.service';
@@ -23,7 +22,6 @@ describe('Editing and deleting posts', () => {
       delete: jest.fn(),
     },
     comment: { findMany: jest.fn(), deleteMany: jest.fn() },
-    vote: { deleteMany: jest.fn() },
     like: { deleteMany: jest.fn() },
     user: { findMany: jest.fn() },
     contentReport: { findMany: jest.fn() },
@@ -38,7 +36,6 @@ describe('Editing and deleting posts', () => {
   };
   const service = new PostsService(
     prisma as unknown as PrismaService,
-    {} as ThreadsService,
     notifications as unknown as NotificationsService,
     {
       likedBy: jest.fn().mockResolvedValue(new Set()),
@@ -124,8 +121,8 @@ describe('Editing and deleting posts', () => {
 
     await service.remove(9, 3);
 
-    expect(prisma.vote.deleteMany).toHaveBeenCalledWith({
-      where: { votableType: 'comment', votableId: { in: [40] } },
+    expect(prisma.like.deleteMany).toHaveBeenCalledWith({
+      where: { likeableType: 'comment', likeableId: { in: [40] } },
     });
     expect(prisma.comment.deleteMany).toHaveBeenCalledWith({
       where: { commentableType: 'post', commentableId: { in: [3] } },

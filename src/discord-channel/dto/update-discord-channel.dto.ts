@@ -7,9 +7,5 @@ export class UpdateDiscordChannelDto {
 
   @IsOptional()
   @IsBoolean()
-  sendThreads?: boolean;
-
-  @IsOptional()
-  @IsBoolean()
   sendLibrary?: boolean;
 }

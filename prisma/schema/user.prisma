@@ -43,9 +43,7 @@ model User {
   wallPosts            Post[]               @relation("WallPosts")
   sentFriendships      Friendship[]         @relation("FriendshipRequester")
   receivedFriendships  Friendship[]         @relation("FriendshipAddressee")
-  threads              Thread[]
   comments             Comment[]
-  votes                Vote[]
   reports              Report[]             @relation("ReportAuthor")
   assignedReports      Report[]             @relation("ReportAssignee")
   reportComments       ReportComment[]

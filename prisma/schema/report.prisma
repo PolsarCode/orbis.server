@@ -43,7 +43,6 @@ model ReportComment {
 
 enum ContentReportTarget {
   post
-  thread
   comment
   user
   community

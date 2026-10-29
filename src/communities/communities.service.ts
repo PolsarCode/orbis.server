@@ -18,6 +18,7 @@ import { NextStream, TwitchLiveService } from '../friends/twitch-live.service';
 import { isHeadAdmin } from '../users/head-admin';
 import { DiscordWidget, discordWidget } from './discord-widget';
 import { deleteWebhook } from '../discord-channel/discord-webhook';
+import { discussionCleanup } from '../comments/discussion-cleanup';
 import { requireEstablishedAccount } from '../common/new-account';
 
 export type CommunityMember = {
@@ -784,9 +785,44 @@ export class CommunitiesService {
       where: { communityId },
       select: { webhookId: true, webhookToken: true },
     });
-    const community = await this.prisma.community.delete({
-      where: { id: communityId },
-    });
+    const postIds = (
+      await this.prisma.post.findMany({
+        where: { communityId },
+        select: { id: true },
+      })
+    ).map(({ id }) => id);
+    const commentIds = (
+      await this.prisma.comment.findMany({
+        where: { commentableType: 'post', commentableId: { in: postIds } },
+        select: { id: true },
+      })
+    ).map(({ id }) => id);
+    const link = `/communities/${communityId}`;
+    const operations = [
+      ...(await discussionCleanup(this.prisma, 'post', postIds)),
+      this.prisma.contentReport.deleteMany({
+        where: {
+          OR: [
+            { targetType: 'community', targetId: communityId },
+            { targetType: 'post', targetId: { in: postIds } },
+            { targetType: 'comment', targetId: { in: commentIds } },
+          ],
+        },
+      }),
+      this.prisma.notification.deleteMany({
+        where: {
+          OR: [
+            { link },
+            { link: { startsWith: `${link}?` } },
+            { link: { startsWith: `${link}/` } },
+          ],
+        },
+      }),
+    ];
+    const [community] = await this.prisma.$transaction([
+      this.prisma.community.delete({ where: { id: communityId } }),
+      ...operations,
+    ]);
     if (channel) {
       await deleteWebhook({
         id: channel.webhookId,

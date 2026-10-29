@@ -311,7 +311,7 @@ export class UsersService {
         isVerified: true,
         appearOffline: true,
         _count: {
-          select: { posts: recent, threads: recent, comments: recent },
+          select: { posts: recent, comments: recent },
         },
       },
     });
@@ -319,7 +319,7 @@ export class UsersService {
     return users.map(({ id, _count, ...user }) => ({
       userId: id,
       ...user,
-      activity: _count.posts + _count.threads + _count.comments,
+      activity: _count.posts + _count.comments,
     }));
   }
 
@@ -432,41 +432,39 @@ export class UsersService {
     } as const;
     const [twitch] = user.oauthAccounts;
     const liveChannel = twitch?.showLive ? twitch : null;
-    const [friendships, posts, threads, library, nextStream] =
-      await Promise.all([
-        this.prisma.friendship.findMany({
-          where: {
-            status: 'accepted',
-            OR: [{ requesterId: user.id }, { addresseeId: user.id }],
-          },
-          orderBy: { createdAt: 'desc' },
-          select: { requester: friendUser, addressee: friendUser },
-        }),
-        this.prisma.post.count({ where: { authorId: user.id } }),
-        this.prisma.thread.count({ where: { authorId: user.id } }),
-        this.prisma.libraryEntry.findMany({
-          where: {
-            userId: user.id,
-            isPublic: true,
-            ...nsfwEntries(await showsNsfw(this.prisma, viewerId)),
-          },
-          orderBy: { updatedAt: 'desc' },
-          select: {
-            id: true,
-            mediaType: true,
-            sourceId: true,
-            title: true,
-            coverImage: true,
-            status: true,
-            progress: true,
-            total: true,
-            steamAppId: true,
-          },
-        }),
-        liveChannel
-          ? this.twitch.nextStream(liveChannel.providerAccountId)
-          : null,
-      ]);
+    const [friendships, posts, library, nextStream] = await Promise.all([
+      this.prisma.friendship.findMany({
+        where: {
+          status: 'accepted',
+          OR: [{ requesterId: user.id }, { addresseeId: user.id }],
+        },
+        orderBy: { createdAt: 'desc' },
+        select: { requester: friendUser, addressee: friendUser },
+      }),
+      this.prisma.post.count({ where: { authorId: user.id } }),
+      this.prisma.libraryEntry.findMany({
+        where: {
+          userId: user.id,
+          isPublic: true,
+          ...nsfwEntries(await showsNsfw(this.prisma, viewerId)),
+        },
+        orderBy: { updatedAt: 'desc' },
+        select: {
+          id: true,
+          mediaType: true,
+          sourceId: true,
+          title: true,
+          coverImage: true,
+          status: true,
+          progress: true,
+          total: true,
+          steamAppId: true,
+        },
+      }),
+      liveChannel
+        ? this.twitch.nextStream(liveChannel.providerAccountId)
+        : null,
+    ]);
     const steamOf = await loadSteamLinks(
       this.prisma,
       library.map((entry) => ({ userId: user.id, appId: entry.steamAppId })),
@@ -497,7 +495,7 @@ export class UsersService {
           status: friend.status,
         };
       }),
-      postCount: posts + threads,
+      postCount: posts,
       communityCount: memberships.length,
       library: library.map(({ steamAppId, ...entry }) => ({
         ...entry,
@@ -593,7 +591,6 @@ export class UsersService {
       user,
       memberships,
       posts,
-      threads,
       comments,
       friendships,
       reports,
@@ -613,7 +610,6 @@ export class UsersService {
       }),
       this.prisma.membership.count({ where: { userId: id } }),
       this.prisma.post.count({ where: { authorId: id } }),
-      this.prisma.thread.count({ where: { authorId: id } }),
       this.prisma.comment.count({ where: { authorId: id } }),
       this.prisma.friendship.count({
         where: {
@@ -634,7 +630,7 @@ export class UsersService {
       steps: {
         avatar: user.avatarUrl !== null,
         community: memberships > 0,
-        post: posts + threads > 0,
+        post: posts > 0,
         comment: comments > 0,
         friend: friendships > 0,
         feedback: reports > 0,

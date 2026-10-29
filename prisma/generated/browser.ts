@@ -63,20 +63,10 @@ export type DiscordMessage = Prisma.DiscordMessageModel
  */
 export type Post = Prisma.PostModel
 /**
- * Model Thread
- * 
- */
-export type Thread = Prisma.ThreadModel
-/**
  * Model Comment
  * 
  */
 export type Comment = Prisma.CommentModel
-/**
- * Model Vote
- * 
- */
-export type Vote = Prisma.VoteModel
 /**
  * Model Like
  * 

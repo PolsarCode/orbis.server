@@ -7,7 +7,6 @@ describe('Keeping Discord in step with moderation', () => {
   const prisma = {
     contentReport: { updateMany: jest.fn() },
     post: { updateMany: jest.fn() },
-    thread: { updateMany: jest.fn() },
     comment: { updateMany: jest.fn() },
   };
   const discordChannel = { hiddenChanged: jest.fn() };
@@ -34,11 +33,11 @@ describe('Keeping Discord in step with moderation', () => {
     expect(discordChannel.hiddenChanged).toHaveBeenCalledWith('post', 5, false);
   });
 
-  it('leaves Discord alone when dismissing reports on a visible thread', async () => {
-    prisma.thread.updateMany.mockResolvedValue({ count: 0 });
+  it('leaves Discord alone when dismissing reports on a visible post', async () => {
+    prisma.post.updateMany.mockResolvedValue({ count: 0 });
 
     await service.resolve(1, {
-      type: 'thread',
+      type: 'post',
       id: 6,
       resolution: 'dismissed',
     });

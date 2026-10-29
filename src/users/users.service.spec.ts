@@ -73,7 +73,6 @@ describe('Onboarding', () => {
     },
     membership: count(1),
     post: count(0),
-    thread: count(0),
     comment: count(0),
     friendship: count(0),
     report: count(0),
@@ -120,7 +119,6 @@ describe('Twitch on profiles', () => {
     user: { findUnique: jest.fn() },
     friendship: { findMany: jest.fn(), findFirst: jest.fn() },
     post: { count: jest.fn() },
-    thread: { count: jest.fn() },
     libraryEntry: { findMany: jest.fn() },
   };
   const twitch = { nextStream: jest.fn() };
@@ -173,7 +171,6 @@ describe('Twitch on profiles', () => {
     prisma.friendship.findMany.mockResolvedValue([]);
     prisma.friendship.findFirst.mockResolvedValue(null);
     prisma.post.count.mockResolvedValue(0);
-    prisma.thread.count.mockResolvedValue(0);
     prisma.libraryEntry.findMany.mockResolvedValue([]);
     twitch.nextStream.mockResolvedValue(next);
   });

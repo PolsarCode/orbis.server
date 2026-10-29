@@ -35,7 +35,6 @@ function channel(overrides: Record<string, unknown> = {}) {
     webhookToken: 'secret-token',
     isForum: false,
     sendPosts: true,
-    sendThreads: true,
     sendLibrary: true,
     lostAt: null,
     community: {
@@ -64,7 +63,6 @@ describe('DiscordChannelService', () => {
     },
     community: { findUnique: jest.fn() },
     post: { findUnique: jest.fn() },
-    thread: { findUnique: jest.fn() },
     libraryEntry: { findUnique: jest.fn() },
     membership: { findMany: jest.fn() },
     $transaction: jest.fn((operations: unknown[]) => Promise.all(operations)),

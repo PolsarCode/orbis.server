@@ -1,7 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { PrismaService } from '../prisma.service';
-import { VotesService } from '../votes/votes.service';
+import { LikesService } from '../likes/likes.service';
 import { NotificationsService } from '../notifications/notifications.service';
 
 jest.mock('../posts/wall-access', () => ({
@@ -19,19 +19,19 @@ jest.mock('../common/rich-text', () => ({ sanitizeRichText: jest.fn() }));
 describe('CommentsService.create', () => {
   const comment = jest.fn(({ data }) => ({
     id: 11,
+    likeCount: 0,
     ...data,
     createdAt: new Date(),
     author: { id: 1, username: 'reader', name: null, avatarUrl: null },
   }));
-  const voteCreate = jest.fn();
+  const likeCreate = jest.fn();
   const prisma = {
     comment: {
       create: comment,
       findUnique: jest.fn(),
     },
-    vote: { create: voteCreate },
+    like: { create: likeCreate },
     post: { update: jest.fn() },
-    thread: { findUnique: jest.fn() },
     user: { findUnique: jest.fn() },
     membership: { findMany: jest.fn().mockResolvedValue([]) },
     $transaction: jest.fn((run) => run(prisma)),
@@ -39,7 +39,7 @@ describe('CommentsService.create', () => {
   const notifications = { notify: jest.fn() };
   const service = new CommentsService(
     prisma as unknown as PrismaService,
-    {} as VotesService,
+    {} as LikesService,
     notifications as unknown as NotificationsService,
   );
   const sanitize = jest.requireMock('../common/rich-text')
@@ -47,7 +47,7 @@ describe('CommentsService.create', () => {
 
   beforeEach(() => jest.clearAllMocks());
 
-  it('starts the comment at 1 with the author’s own upvote', async () => {
+  it('starts the comment with no likes, not even the author’s', async () => {
     sanitize.mockReturnValue({ html: '<p>Nice</p>', empty: false });
 
     const created = await service.create(1, {
@@ -56,21 +56,13 @@ describe('CommentsService.create', () => {
       content: '<p>Nice</p>',
     });
 
-    expect(comment.mock.calls[0][0].data.score).toBe(1);
-    expect(voteCreate).toHaveBeenCalledWith({
-      data: {
-        userId: 1,
-        votableType: 'comment',
-        votableId: 11,
-        communityId: 3,
-        value: 1,
-      },
-    });
+    expect(comment.mock.calls[0][0].data).not.toHaveProperty('likeCount');
+    expect(likeCreate).not.toHaveBeenCalled();
     expect(prisma.post.update).toHaveBeenCalledWith({
       where: { id: 7 },
       data: { commentCount: { increment: 1 } },
     });
-    expect(created).toMatchObject({ score: 1, myVote: 1 });
+    expect(created).toMatchObject({ likeCount: 0, liked: false });
   });
 
   it('saves the link with the comment', async () => {

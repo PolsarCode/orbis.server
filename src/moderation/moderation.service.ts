@@ -63,9 +63,9 @@ export function hideThreshold(members: number | null) {
   return Math.min(25, Math.max(3, Math.ceil(members / 50)));
 }
 
-type Hideable = 'post' | 'thread' | 'comment';
+type Hideable = 'post' | 'comment';
 const hideable = (type: ContentReportTarget): type is Hideable =>
-  type === 'post' || type === 'thread' || type === 'comment';
+  type === 'post' || type === 'comment';
 
 function excerpt(html: string, length = 200) {
   const text = html
@@ -123,26 +123,11 @@ export class ModerationService {
       };
     }
 
-    if (type === 'thread') {
-      const thread = await this.prisma.thread.findUnique({
-        where: { id },
-        select: { title: true, content: true, communityId: true, author },
-      });
-      if (!thread) return null;
-      return {
-        title: thread.title,
-        excerpt: thread.content ? excerpt(thread.content) : null,
-        author: thread.author,
-        link: `/communities/${thread.communityId}?tab=forum`,
-      };
-    }
-
     if (type === 'comment') {
       const comment = await this.prisma.comment.findUnique({
         where: { id },
         select: {
           content: true,
-          communityId: true,
           commentableType: true,
           commentableId: true,
           author,
@@ -150,12 +135,7 @@ export class ModerationService {
       });
       if (!comment) return null;
       let link = '/';
-      if (
-        comment.commentableType === 'thread' &&
-        comment.communityId !== null
-      ) {
-        link = `/communities/${comment.communityId}?tab=forum`;
-      } else if (comment.commentableType === 'post') {
+      if (comment.commentableType === 'post') {
         const post = await this.prisma.post.findUnique({
           where: { id: comment.commentableId },
           select: {
@@ -229,9 +209,7 @@ export class ModerationService {
     const row =
       type === 'post'
         ? await this.prisma.post.findUnique(select)
-        : type === 'thread'
-          ? await this.prisma.thread.findUnique(select)
-          : await this.prisma.comment.findUnique(select);
+        : await this.prisma.comment.findUnique(select);
     return row?.authorId ?? null;
   }
 
@@ -365,10 +343,7 @@ export class ModerationService {
       await this.prisma.comment.updateMany(args);
       return;
     }
-    const { count } =
-      type === 'post'
-        ? await this.prisma.post.updateMany(args)
-        : await this.prisma.thread.updateMany(args);
+    const { count } = await this.prisma.post.updateMany(args);
     if (count > 0) {
       void this.discordChannel.hiddenChanged(type, id, hiddenAt !== null);
     }
@@ -383,9 +358,7 @@ export class ModerationService {
     const row =
       type === 'post'
         ? await this.prisma.post.findUnique({ where: { id }, select })
-        : type === 'thread'
-          ? await this.prisma.thread.findUnique({ where: { id }, select })
-          : await this.prisma.comment.findUnique({ where: { id }, select });
+        : await this.prisma.comment.findUnique({ where: { id }, select });
     if (!row) return null;
 
     const community =

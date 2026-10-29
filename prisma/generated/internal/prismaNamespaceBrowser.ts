@@ -60,9 +60,7 @@ export const ModelName = {
   DiscordChannel: 'DiscordChannel',
   DiscordMessage: 'DiscordMessage',
   Post: 'Post',
-  Thread: 'Thread',
   Comment: 'Comment',
-  Vote: 'Vote',
   Like: 'Like',
   Friendship: 'Friendship',
   LibraryEntry: 'LibraryEntry',
@@ -192,7 +190,6 @@ export const DiscordChannelScalarFieldEnum = {
   channelId: 'channelId',
   isForum: 'isForum',
   sendPosts: 'sendPosts',
-  sendThreads: 'sendThreads',
   sendLibrary: 'sendLibrary',
   lostAt: 'lostAt',
   createdAt: 'createdAt'
@@ -233,23 +230,6 @@ export const PostScalarFieldEnum = {
 export type PostScalarFieldEnum = (typeof PostScalarFieldEnum)[keyof typeof PostScalarFieldEnum]
 
 
-export const ThreadScalarFieldEnum = {
-  id: 'id',
-  communityId: 'communityId',
-  authorId: 'authorId',
-  title: 'title',
-  content: 'content',
-  linkUrl: 'linkUrl',
-  score: 'score',
-  commentCount: 'commentCount',
-  hiddenAt: 'hiddenAt',
-  editedAt: 'editedAt',
-  createdAt: 'createdAt'
-} as const
-
-export type ThreadScalarFieldEnum = (typeof ThreadScalarFieldEnum)[keyof typeof ThreadScalarFieldEnum]
-
-
 export const CommentScalarFieldEnum = {
   id: 'id',
   communityId: 'communityId',
@@ -259,7 +239,7 @@ export const CommentScalarFieldEnum = {
   authorId: 'authorId',
   content: 'content',
   linkUrl: 'linkUrl',
-  score: 'score',
+  likeCount: 'likeCount',
   hiddenAt: 'hiddenAt',
   editedAt: 'editedAt',
   deletedAt: 'deletedAt',
@@ -267,17 +247,6 @@ export const CommentScalarFieldEnum = {
 } as const
 
 export type CommentScalarFieldEnum = (typeof CommentScalarFieldEnum)[keyof typeof CommentScalarFieldEnum]
-
-
-export const VoteScalarFieldEnum = {
-  userId: 'userId',
-  votableType: 'votableType',
-  votableId: 'votableId',
-  communityId: 'communityId',
-  value: 'value'
-} as const
-
-export type VoteScalarFieldEnum = (typeof VoteScalarFieldEnum)[keyof typeof VoteScalarFieldEnum]
 
 
 export const LikeScalarFieldEnum = {

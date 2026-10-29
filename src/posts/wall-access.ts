@@ -99,7 +99,7 @@ export async function requirePostAccess(
   }
 }
 
-export type EngagementType = 'post' | 'thread' | 'activity';
+export type EngagementType = 'post' | 'activity';
 
 export type EngagementTarget = {
   type: EngagementType;
@@ -132,23 +132,6 @@ export async function targetOf(
     });
     if (!post) throw new NotFoundException('Not found');
     return { type, id, ...post, ownerId: post.authorId };
-  }
-
-  if (type === 'thread') {
-    const thread = await prisma.thread.findUnique({
-      where: { id },
-      select: { communityId: true, authorId: true },
-    });
-    if (!thread) throw new NotFoundException('Not found');
-    return {
-      type,
-      id,
-      communityId: thread.communityId,
-      wallUserId: null,
-      mediaType: null,
-      mediaSourceId: null,
-      ownerId: thread.authorId,
-    };
   }
 
   const activity = await prisma.libraryActivity.findUnique({

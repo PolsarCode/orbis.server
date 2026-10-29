@@ -22,9 +22,7 @@ model Community {
   memberships   Membership[]
   roles         Role[]
   posts         Post[]
-  threads       Thread[]
   comments      Comment[]
-  votes         Vote[]
   invites       Invite[]
   discordChannel DiscordChannel?
 
@@ -112,7 +110,6 @@ model DiscordChannel {
   channelId    String
   isForum      Boolean          @default(false)
   sendPosts    Boolean          @default(true)
-  sendThreads  Boolean          @default(true)
   sendLibrary  Boolean          @default(true)
   lostAt       DateTime?
   createdAt    DateTime         @default(now())

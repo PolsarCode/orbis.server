@@ -1,16 +1,11 @@
 enum CommentableType {
   post
-  thread
   activity
 }
 
 enum LikeableType {
   post
   activity
-}
-
-enum VotableType {
-  thread
   comment
 }
 
@@ -37,25 +32,6 @@ model Post {
   @@index([mediaType, mediaSourceId, createdAt(sort: Desc)])
 }
 
-model Thread {
-  id           Int       @id @default(autoincrement())
-  communityId  Int
-  authorId     Int
-  title        String
-  content      String    @default("")
-  linkUrl      String?
-  score        Int       @default(1)
-  commentCount Int       @default(0)
-  hiddenAt     DateTime?
-  editedAt     DateTime?
-  createdAt    DateTime  @default(now())
-  community    Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
-  author       User      @relation(fields: [authorId], references: [id])
-
-  @@index([communityId, createdAt(sort: Desc)])
-  @@index([communityId, score])
-}
-
 model Comment {
   id              Int             @id @default(autoincrement())
   communityId     Int?
@@ -65,7 +41,7 @@ model Comment {
   authorId        Int
   content         String
   linkUrl         String?
-  score           Int             @default(1)
+  likeCount       Int             @default(0)
   hiddenAt        DateTime?
   editedAt        DateTime?
   deletedAt       DateTime?
@@ -77,19 +53,6 @@ model Comment {
 
   @@index([commentableType, commentableId, createdAt])
   @@index([parentId])
-}
-
-model Vote {
-  userId      Int
-  votableType VotableType
-  votableId   Int
-  communityId Int?
-  value       Int
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  community   Community?  @relation(fields: [communityId], references: [id], onDelete: Cascade)
-
-  @@id([userId, votableType, votableId])
-  @@index([votableType, votableId])
 }
 
 model Like {

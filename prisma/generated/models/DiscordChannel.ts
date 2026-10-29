@@ -43,7 +43,6 @@ export type DiscordChannelMinAggregateOutputType = {
   channelId: string | null
   isForum: boolean | null
   sendPosts: boolean | null
-  sendThreads: boolean | null
   sendLibrary: boolean | null
   lostAt: Date | null
   createdAt: Date | null
@@ -58,7 +57,6 @@ export type DiscordChannelMaxAggregateOutputType = {
   channelId: string | null
   isForum: boolean | null
   sendPosts: boolean | null
-  sendThreads: boolean | null
   sendLibrary: boolean | null
   lostAt: Date | null
   createdAt: Date | null
@@ -73,7 +71,6 @@ export type DiscordChannelCountAggregateOutputType = {
   channelId: number
   isForum: number
   sendPosts: number
-  sendThreads: number
   sendLibrary: number
   lostAt: number
   createdAt: number
@@ -98,7 +95,6 @@ export type DiscordChannelMinAggregateInputType = {
   channelId?: true
   isForum?: true
   sendPosts?: true
-  sendThreads?: true
   sendLibrary?: true
   lostAt?: true
   createdAt?: true
@@ -113,7 +109,6 @@ export type DiscordChannelMaxAggregateInputType = {
   channelId?: true
   isForum?: true
   sendPosts?: true
-  sendThreads?: true
   sendLibrary?: true
   lostAt?: true
   createdAt?: true
@@ -128,7 +123,6 @@ export type DiscordChannelCountAggregateInputType = {
   channelId?: true
   isForum?: true
   sendPosts?: true
-  sendThreads?: true
   sendLibrary?: true
   lostAt?: true
   createdAt?: true
@@ -230,7 +224,6 @@ export type DiscordChannelGroupByOutputType = {
   channelId: string
   isForum: boolean
   sendPosts: boolean
-  sendThreads: boolean
   sendLibrary: boolean
   lostAt: Date | null
   createdAt: Date
@@ -268,7 +261,6 @@ export type DiscordChannelWhereInput = {
   channelId?: Prisma.StringFilter<"DiscordChannel"> | string
   isForum?: Prisma.BoolFilter<"DiscordChannel"> | boolean
   sendPosts?: Prisma.BoolFilter<"DiscordChannel"> | boolean
-  sendThreads?: Prisma.BoolFilter<"DiscordChannel"> | boolean
   sendLibrary?: Prisma.BoolFilter<"DiscordChannel"> | boolean
   lostAt?: Prisma.DateTimeNullableFilter<"DiscordChannel"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"DiscordChannel"> | Date | string
@@ -285,7 +277,6 @@ export type DiscordChannelOrderByWithRelationInput = {
   channelId?: Prisma.SortOrder
   isForum?: Prisma.SortOrder
   sendPosts?: Prisma.SortOrder
-  sendThreads?: Prisma.SortOrder
   sendLibrary?: Prisma.SortOrder
   lostAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -305,7 +296,6 @@ export type DiscordChannelWhereUniqueInput = Prisma.AtLeast<{
   channelId?: Prisma.StringFilter<"DiscordChannel"> | string
   isForum?: Prisma.BoolFilter<"DiscordChannel"> | boolean
   sendPosts?: Prisma.BoolFilter<"DiscordChannel"> | boolean
-  sendThreads?: Prisma.BoolFilter<"DiscordChannel"> | boolean
   sendLibrary?: Prisma.BoolFilter<"DiscordChannel"> | boolean
   lostAt?: Prisma.DateTimeNullableFilter<"DiscordChannel"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"DiscordChannel"> | Date | string
@@ -322,7 +312,6 @@ export type DiscordChannelOrderByWithAggregationInput = {
   channelId?: Prisma.SortOrder
   isForum?: Prisma.SortOrder
   sendPosts?: Prisma.SortOrder
-  sendThreads?: Prisma.SortOrder
   sendLibrary?: Prisma.SortOrder
   lostAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -345,7 +334,6 @@ export type DiscordChannelScalarWhereWithAggregatesInput = {
   channelId?: Prisma.StringWithAggregatesFilter<"DiscordChannel"> | string
   isForum?: Prisma.BoolWithAggregatesFilter<"DiscordChannel"> | boolean
   sendPosts?: Prisma.BoolWithAggregatesFilter<"DiscordChannel"> | boolean
-  sendThreads?: Prisma.BoolWithAggregatesFilter<"DiscordChannel"> | boolean
   sendLibrary?: Prisma.BoolWithAggregatesFilter<"DiscordChannel"> | boolean
   lostAt?: Prisma.DateTimeNullableWithAggregatesFilter<"DiscordChannel"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"DiscordChannel"> | Date | string
@@ -359,7 +347,6 @@ export type DiscordChannelCreateInput = {
   channelId: string
   isForum?: boolean
   sendPosts?: boolean
-  sendThreads?: boolean
   sendLibrary?: boolean
   lostAt?: Date | string | null
   createdAt?: Date | string
@@ -376,7 +363,6 @@ export type DiscordChannelUncheckedCreateInput = {
   channelId: string
   isForum?: boolean
   sendPosts?: boolean
-  sendThreads?: boolean
   sendLibrary?: boolean
   lostAt?: Date | string | null
   createdAt?: Date | string
@@ -391,7 +377,6 @@ export type DiscordChannelUpdateInput = {
   channelId?: Prisma.StringFieldUpdateOperationsInput | string
   isForum?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sendPosts?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  sendThreads?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sendLibrary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lostAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -408,7 +393,6 @@ export type DiscordChannelUncheckedUpdateInput = {
   channelId?: Prisma.StringFieldUpdateOperationsInput | string
   isForum?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sendPosts?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  sendThreads?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sendLibrary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lostAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -424,7 +408,6 @@ export type DiscordChannelCreateManyInput = {
   channelId: string
   isForum?: boolean
   sendPosts?: boolean
-  sendThreads?: boolean
   sendLibrary?: boolean
   lostAt?: Date | string | null
   createdAt?: Date | string
@@ -438,7 +421,6 @@ export type DiscordChannelUpdateManyMutationInput = {
   channelId?: Prisma.StringFieldUpdateOperationsInput | string
   isForum?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sendPosts?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  sendThreads?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sendLibrary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lostAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -453,7 +435,6 @@ export type DiscordChannelUncheckedUpdateManyInput = {
   channelId?: Prisma.StringFieldUpdateOperationsInput | string
   isForum?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sendPosts?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  sendThreads?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sendLibrary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lostAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -473,7 +454,6 @@ export type DiscordChannelCountOrderByAggregateInput = {
   channelId?: Prisma.SortOrder
   isForum?: Prisma.SortOrder
   sendPosts?: Prisma.SortOrder
-  sendThreads?: Prisma.SortOrder
   sendLibrary?: Prisma.SortOrder
   lostAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -492,7 +472,6 @@ export type DiscordChannelMaxOrderByAggregateInput = {
   channelId?: Prisma.SortOrder
   isForum?: Prisma.SortOrder
   sendPosts?: Prisma.SortOrder
-  sendThreads?: Prisma.SortOrder
   sendLibrary?: Prisma.SortOrder
   lostAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -507,7 +486,6 @@ export type DiscordChannelMinOrderByAggregateInput = {
   channelId?: Prisma.SortOrder
   isForum?: Prisma.SortOrder
   sendPosts?: Prisma.SortOrder
-  sendThreads?: Prisma.SortOrder
   sendLibrary?: Prisma.SortOrder
   lostAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -576,7 +554,6 @@ export type DiscordChannelCreateWithoutCommunityInput = {
   channelId: string
   isForum?: boolean
   sendPosts?: boolean
-  sendThreads?: boolean
   sendLibrary?: boolean
   lostAt?: Date | string | null
   createdAt?: Date | string
@@ -591,7 +568,6 @@ export type DiscordChannelUncheckedCreateWithoutCommunityInput = {
   channelId: string
   isForum?: boolean
   sendPosts?: boolean
-  sendThreads?: boolean
   sendLibrary?: boolean
   lostAt?: Date | string | null
   createdAt?: Date | string
@@ -622,7 +598,6 @@ export type DiscordChannelUpdateWithoutCommunityInput = {
   channelId?: Prisma.StringFieldUpdateOperationsInput | string
   isForum?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sendPosts?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  sendThreads?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sendLibrary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lostAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -637,7 +612,6 @@ export type DiscordChannelUncheckedUpdateWithoutCommunityInput = {
   channelId?: Prisma.StringFieldUpdateOperationsInput | string
   isForum?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sendPosts?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  sendThreads?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sendLibrary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lostAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -652,7 +626,6 @@ export type DiscordChannelCreateWithoutMessagesInput = {
   channelId: string
   isForum?: boolean
   sendPosts?: boolean
-  sendThreads?: boolean
   sendLibrary?: boolean
   lostAt?: Date | string | null
   createdAt?: Date | string
@@ -668,7 +641,6 @@ export type DiscordChannelUncheckedCreateWithoutMessagesInput = {
   channelId: string
   isForum?: boolean
   sendPosts?: boolean
-  sendThreads?: boolean
   sendLibrary?: boolean
   lostAt?: Date | string | null
   createdAt?: Date | string
@@ -698,7 +670,6 @@ export type DiscordChannelUpdateWithoutMessagesInput = {
   channelId?: Prisma.StringFieldUpdateOperationsInput | string
   isForum?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sendPosts?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  sendThreads?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sendLibrary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lostAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -714,7 +685,6 @@ export type DiscordChannelUncheckedUpdateWithoutMessagesInput = {
   channelId?: Prisma.StringFieldUpdateOperationsInput | string
   isForum?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sendPosts?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  sendThreads?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sendLibrary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lostAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -760,7 +730,6 @@ export type DiscordChannelSelect<ExtArgs extends runtime.Types.Extensions.Intern
   channelId?: boolean
   isForum?: boolean
   sendPosts?: boolean
-  sendThreads?: boolean
   sendLibrary?: boolean
   lostAt?: boolean
   createdAt?: boolean
@@ -778,7 +747,6 @@ export type DiscordChannelSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   channelId?: boolean
   isForum?: boolean
   sendPosts?: boolean
-  sendThreads?: boolean
   sendLibrary?: boolean
   lostAt?: boolean
   createdAt?: boolean
@@ -794,7 +762,6 @@ export type DiscordChannelSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   channelId?: boolean
   isForum?: boolean
   sendPosts?: boolean
-  sendThreads?: boolean
   sendLibrary?: boolean
   lostAt?: boolean
   createdAt?: boolean
@@ -810,13 +777,12 @@ export type DiscordChannelSelectScalar = {
   channelId?: boolean
   isForum?: boolean
   sendPosts?: boolean
-  sendThreads?: boolean
   sendLibrary?: boolean
   lostAt?: boolean
   createdAt?: boolean
 }
 
-export type DiscordChannelOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"communityId" | "webhookId" | "webhookToken" | "guildId" | "guildName" | "channelId" | "isForum" | "sendPosts" | "sendThreads" | "sendLibrary" | "lostAt" | "createdAt", ExtArgs["result"]["discordChannel"]>
+export type DiscordChannelOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"communityId" | "webhookId" | "webhookToken" | "guildId" | "guildName" | "channelId" | "isForum" | "sendPosts" | "sendLibrary" | "lostAt" | "createdAt", ExtArgs["result"]["discordChannel"]>
 export type DiscordChannelInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   community?: boolean | Prisma.CommunityDefaultArgs<ExtArgs>
   messages?: boolean | Prisma.DiscordChannel$messagesArgs<ExtArgs>
@@ -844,7 +810,6 @@ export type $DiscordChannelPayload<ExtArgs extends runtime.Types.Extensions.Inte
     channelId: string
     isForum: boolean
     sendPosts: boolean
-    sendThreads: boolean
     sendLibrary: boolean
     lostAt: Date | null
     createdAt: Date
@@ -1281,7 +1246,6 @@ export interface DiscordChannelFieldRefs {
   readonly channelId: Prisma.FieldRef<"DiscordChannel", 'String'>
   readonly isForum: Prisma.FieldRef<"DiscordChannel", 'Boolean'>
   readonly sendPosts: Prisma.FieldRef<"DiscordChannel", 'Boolean'>
-  readonly sendThreads: Prisma.FieldRef<"DiscordChannel", 'Boolean'>
   readonly sendLibrary: Prisma.FieldRef<"DiscordChannel", 'Boolean'>
   readonly lostAt: Prisma.FieldRef<"DiscordChannel", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"DiscordChannel", 'DateTime'>

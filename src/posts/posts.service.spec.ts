@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { PrismaService } from '../prisma.service';
-import { ThreadsService } from '../threads/threads.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { LikesService } from '../likes/likes.service';
 import { DiscordChannelService } from '../discord-channel/discord-channel.service';
@@ -19,13 +18,6 @@ const post = {
   createdAt: date,
   commentCount: 0,
   content: 'Post',
-  author: person,
-};
-const thread = {
-  id: 2,
-  createdAt: date,
-  commentCount: 0,
-  title: 'Thread',
   author: person,
 };
 const activity = {
@@ -47,18 +39,15 @@ const activity = {
 describe('Feed content filters', () => {
   const prisma = {
     post: { findMany: jest.fn() },
-    thread: { findMany: jest.fn() },
     libraryActivity: { findMany: jest.fn() },
     contentReport: { findMany: jest.fn() },
     user: { findUnique: jest.fn() },
     friendship: { findFirst: jest.fn() },
     membership: { findMany: jest.fn() },
   };
-  const threads = { withMyVotes: jest.fn() };
   const likes = { likedBy: jest.fn() };
   const service = new PostsService(
     prisma as unknown as PrismaService,
-    threads as unknown as ThreadsService,
     {} as NotificationsService,
     likes as unknown as LikesService,
     {} as DiscordChannelService,
@@ -67,82 +56,67 @@ describe('Feed content filters', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     prisma.post.findMany.mockResolvedValue([post]);
-    prisma.thread.findMany.mockResolvedValue([thread]);
     prisma.libraryActivity.findMany.mockResolvedValue([activity]);
     prisma.contentReport.findMany.mockResolvedValue([]);
     prisma.user.findUnique.mockResolvedValue(person);
     prisma.friendship.findFirst.mockResolvedValue(null);
     prisma.membership.findMany.mockResolvedValue([]);
-    threads.withMyVotes.mockImplementation((_userId, items) =>
-      Promise.resolve(items),
-    );
     likes.likedBy.mockResolvedValue(new Set());
   });
 
   it('includes all types by default', async () => {
     const result = await service.findForMember(1);
-    expect(result.items.map((item) => item.type)).toEqual([
-      'activity',
-      'thread',
-      'post',
-    ]);
+    expect(result.items.map((item) => item.type)).toEqual(['activity', 'post']);
   });
 
-  it('can hide library updates and threads together', async () => {
-    const result = await service.findForMember(1, undefined, 'activity,thread');
+  it('can hide library updates', async () => {
+    const result = await service.findForMember(1, undefined, 'activity');
     expect(result.items.map((item) => item.type)).toEqual(['post']);
     expect(prisma.libraryActivity.findMany).not.toHaveBeenCalled();
-    expect(prisma.thread.findMany).not.toHaveBeenCalled();
   });
 
   it('can show only library updates', async () => {
     expect(
-      (await service.findForMember(1, undefined, 'post,thread')).items.map(
+      (await service.findForMember(1, undefined, 'post')).items.map(
         (item) => item.type,
       ),
     ).toEqual(['activity']);
     expect(prisma.post.findMany).not.toHaveBeenCalled();
-    expect(prisma.thread.findMany).not.toHaveBeenCalled();
   });
 
   it('can hide all types', async () => {
-    expect(
-      await service.findForMember(1, undefined, 'post,thread,activity'),
-    ).toEqual({ items: [], nextCursor: null });
+    expect(await service.findForMember(1, undefined, 'post,activity')).toEqual({
+      items: [],
+      nextCursor: null,
+    });
     expect(prisma.post.findMany).not.toHaveBeenCalled();
-    expect(prisma.thread.findMany).not.toHaveBeenCalled();
     expect(prisma.libraryActivity.findMany).not.toHaveBeenCalled();
   });
 
-  it.each(['activity,unknown', 'post,,thread', 'constructor'])(
-    'rejects invalid filter %s',
-    async (filter) => {
-      await expect(
-        service.findForMember(1, undefined, filter),
-      ).rejects.toBeInstanceOf(BadRequestException);
-      expect(prisma.post.findMany).not.toHaveBeenCalled();
-    },
-  );
+  it.each([
+    ['thread', ['activity', 'post']],
+    ['activity,thread', ['post']],
+    ['post,,unknown', ['activity']],
+    ['constructor', ['activity', 'post']],
+  ])('ignores unknown types in the filter %s', async (filter, types) => {
+    const { items } = await service.findForMember(1, undefined, filter);
+    expect(items.map((item) => item.type)).toEqual(types);
+  });
 
   it('filters community feeds before pagination', async () => {
     expect(
-      (
-        await service.findForCommunity(1, 9, undefined, 'activity,thread')
-      ).items.map((item) => item.type),
+      (await service.findForCommunity(1, 9, undefined, 'activity')).items.map(
+        (item) => item.type,
+      ),
     ).toEqual(['post']);
     expect(prisma.libraryActivity.findMany).not.toHaveBeenCalled();
-    expect(prisma.thread.findMany).not.toHaveBeenCalled();
   });
 
-  it('includes the community’s threads in its feed', async () => {
+  it('shows posts and library updates in a community’s feed', async () => {
     const { items } = await service.findForCommunity(1, 9);
 
-    expect(items.map((item) => item.type)).toEqual([
-      'activity',
-      'thread',
-      'post',
-    ]);
-    expect(prisma.thread.findMany).toHaveBeenCalledWith(
+    expect(items.map((item) => item.type)).toEqual(['activity', 'post']);
+    expect(prisma.post.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
         where: expect.objectContaining({ communityId: 9 }),
       }),
@@ -152,10 +126,9 @@ describe('Feed content filters', () => {
   it('filters profile feeds', async () => {
     expect(
       (
-        await service.findForProfile(1, 'reader', undefined, 'thread,activity')
+        await service.findForProfile(1, 'reader', undefined, 'activity')
       ).items.map((item) => item.type),
     ).toEqual(['post']);
-    expect(prisma.thread.findMany).not.toHaveBeenCalled();
     expect(prisma.libraryActivity.findMany).not.toHaveBeenCalled();
   });
 
@@ -170,14 +143,14 @@ describe('Feed content filters', () => {
     prisma.post.findMany.mockResolvedValue(
       Array.from({ length: 11 }, (_, index) => ({ ...post, id: 11 - index })),
     );
-    const first = await service.findForMember(1, undefined, 'activity,thread');
+    const first = await service.findForMember(1, undefined, 'activity');
     expect(first.items).toHaveLength(10);
     expect(first.nextCursor).toBe(`${date.getTime()}_0_2`);
     prisma.post.findMany.mockResolvedValue([{ ...post, id: 1 }]);
     const second = await service.findForMember(
       1,
       first.nextCursor!,
-      'activity,thread',
+      'activity',
     );
     expect(second.items).toHaveLength(1);
     expect(second.nextCursor).toBeNull();
@@ -203,7 +176,7 @@ describe('Feed content filters', () => {
       1,
       'reader',
       `${date.getTime()}_0_2`,
-      'activity,thread',
+      'activity',
     );
     const where = prisma.post.findMany.mock.calls[0][0].where;
     expect(where.AND[0].OR).toEqual(
@@ -219,10 +192,10 @@ describe('Feed content filters', () => {
     );
   });
 
-  it('searches only the posts and threads a profile shows', async () => {
+  it('searches only the posts a profile shows', async () => {
     const result = await service.searchProfile(1, 'reader', ' Post ');
 
-    expect(result.map((item) => item.type)).toEqual(['thread', 'post']);
+    expect(result.map((item) => item.type)).toEqual(['post']);
     const postWhere = prisma.post.findMany.mock.calls[0][0].where;
     expect(postWhere.AND[0].OR).toEqual(
       expect.arrayContaining([
@@ -236,12 +209,6 @@ describe('Feed content filters', () => {
     expect(postWhere.AND[1]).toEqual({
       content: { contains: 'Post', mode: 'insensitive' },
     });
-    expect(prisma.thread.findMany.mock.calls[0][0].where).toEqual(
-      expect.objectContaining({
-        authorId: person.id,
-        community: expect.any(Object),
-      }),
-    );
   });
 
   it('shows community authors by their nickname there', async () => {
@@ -254,13 +221,13 @@ describe('Feed content filters', () => {
       1,
       5,
       undefined,
-      'thread,activity',
+      'activity',
     );
 
     expect(items[0].author).toEqual({ ...person, nickname: 'Navigator' });
   });
 
-  it('searches posts and threads from the same places as the home feed', async () => {
+  it('searches posts from the same places as the home feed', async () => {
     await service.searchFeed(1, '  frieren ');
     await service.findForMember(1);
 
@@ -270,15 +237,6 @@ describe('Feed content filters', () => {
     );
     expect(searchPosts[0]).toEqual(feedPosts[0]);
     expect(searchPosts).toContainEqual({ content: contains });
-
-    const [searchThreads, feedThreads] = prisma.thread.findMany.mock.calls.map(
-      ([args]) => args.where,
-    );
-    expect(searchThreads.community).toEqual(feedThreads.community);
-    expect(searchThreads.OR).toEqual([
-      { title: contains },
-      { content: contains },
-    ]);
   });
 
   it('waits for at least two characters before searching everywhere', async () => {
@@ -323,7 +281,6 @@ describe('Feed content filters', () => {
   it('waits for at least two characters before searching a profile', async () => {
     expect(await service.searchProfile(1, 'reader', 'a')).toEqual([]);
     expect(prisma.post.findMany).not.toHaveBeenCalled();
-    expect(prisma.thread.findMany).not.toHaveBeenCalled();
   });
 
   it('refuses to search a private profile you can’t see', async () => {
@@ -350,7 +307,6 @@ describe('Creating posts with a link card', () => {
         }),
       },
     } as unknown as PrismaService,
-    {} as ThreadsService,
     {} as NotificationsService,
     {} as LikesService,
     { postCreated: jest.fn() } as unknown as DiscordChannelService,
@@ -411,7 +367,6 @@ describe('Opening a post or library update from a link', () => {
   const likes = { likedBy: jest.fn().mockResolvedValue(new Set()) };
   const service = new PostsService(
     prisma as unknown as PrismaService,
-    {} as ThreadsService,
     {} as NotificationsService,
     likes as unknown as LikesService,
     {} as DiscordChannelService,
