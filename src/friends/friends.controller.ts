@@ -11,7 +11,12 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { FriendList, FriendUser, FriendsService } from './friends.service';
+import {
+  FriendList,
+  FriendSuggestion,
+  FriendUser,
+  FriendsService,
+} from './friends.service';
 import { AddFriendDto } from './dto/add-friend.dto';
 import { SearchPeopleDto } from './dto/search-people.dto';
 import { JwtAuthGuard } from '../auth/jwt.guard';
@@ -31,6 +36,12 @@ export class FriendsController {
   @Get('search')
   search(@Req() req, @Query() { q }: SearchPeopleDto): Promise<FriendUser[]> {
     return this.friendsService.search(req.user.userId, q);
+  }
+
+  @RateLimit(30, MINUTE)
+  @Get('suggestions')
+  suggestions(@Req() req): Promise<FriendSuggestion[]> {
+    return this.friendsService.suggestions(req.user.userId);
   }
 
   @RateLimit(20, HOUR, 5)

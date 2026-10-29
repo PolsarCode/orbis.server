@@ -9,8 +9,21 @@ import { AddFriendDto } from './dto/add-friend.dto';
 import { PresenceGateway, PresenceStatus } from './presence.gateway';
 import { normalizeUsername } from '../users/username';
 import { NotificationsService } from '../notifications/notifications.service';
+import type { Prisma } from '../../prisma/generated/client';
+import { nsfwEntries, showsNsfw } from '../users/nsfw';
+import { notSuspended } from '../users/suspension';
+import {
+  MUTUAL_PREVIEW,
+  SHARED_STATUSES,
+  SUGGESTION_LIMIT,
+  communityReason,
+  mutualReason,
+  rankCandidates,
+  titleReason,
+} from './suggestions';
 
 const MAX_INT = 2147483647;
+const CANDIDATE_LIMIT = 50;
 
 export type FriendUser = {
   userId: number;
@@ -25,6 +38,11 @@ export type Friend = FriendUser & {
   status: PresenceStatus;
   playing: string | null;
   twitchLogin: string | null;
+};
+
+export type FriendSuggestion = FriendUser & {
+  reason: string;
+  mutualFriends: FriendUser[];
 };
 
 export type FriendList = {
@@ -44,6 +62,21 @@ const person = {
     status: true,
   },
 } as const;
+
+const publicPerson = {
+  id: true,
+  username: true,
+  name: true,
+  avatarUrl: true,
+  isVerified: true,
+} satisfies Prisma.UserSelect;
+
+function toFriendUser({
+  id,
+  ...user
+}: Prisma.UserGetPayload<{ select: typeof publicPerson }>): FriendUser {
+  return { userId: id, ...user };
+}
 
 function between(userId: number, otherId: number) {
   return {
@@ -145,6 +178,191 @@ export class FriendsService {
       .sort((a, b) => rank(a) - rank(b) || a.username.localeCompare(b.username))
       .slice(0, 8)
       .map(({ id, ...user }) => ({ userId: id, ...user }));
+  }
+
+  async suggestions(userId: number): Promise<FriendSuggestion[]> {
+    const [friendships, memberships, library, showNsfw] = await Promise.all([
+      this.prisma.friendship.findMany({
+        where: { OR: [{ requesterId: userId }, { addresseeId: userId }] },
+        select: { requesterId: true, addresseeId: true, status: true },
+      }),
+      this.prisma.membership.findMany({
+        where: { userId },
+        select: { communityId: true },
+      }),
+      this.prisma.libraryEntry.findMany({
+        where: { userId },
+        select: { mediaId: true },
+      }),
+      showsNsfw(this.prisma, userId),
+    ]);
+
+    const friendIds: number[] = [];
+    const known = new Set([userId]);
+    for (const { requesterId, addresseeId, status } of friendships) {
+      const other = requesterId === userId ? addresseeId : requesterId;
+      known.add(other);
+      if (status === 'accepted') friendIds.push(other);
+    }
+    const excluded = [...known];
+    const communityIds = memberships.map(({ communityId }) => communityId);
+    const sharedTitle = {
+      mediaId: { in: library.map(({ mediaId }) => mediaId) },
+      isPublic: true,
+      status: { in: SHARED_STATUSES },
+      ...nsfwEntries(showNsfw),
+      user: {
+        OR: [
+          { isPublic: true },
+          { memberships: { some: { communityId: { in: communityIds } } } },
+        ],
+      },
+    } satisfies Prisma.LibraryEntryWhereInput;
+
+    const [friendsOfFriends, communityCounts, titleCounts] = await Promise.all([
+      friendIds.length === 0
+        ? []
+        : this.prisma.friendship.findMany({
+            where: {
+              status: 'accepted',
+              OR: [
+                {
+                  requesterId: { in: friendIds },
+                  addresseeId: { notIn: excluded },
+                },
+                {
+                  addresseeId: { in: friendIds },
+                  requesterId: { notIn: excluded },
+                },
+              ],
+            },
+            select: { requesterId: true, addresseeId: true },
+          }),
+      communityIds.length === 0
+        ? []
+        : this.prisma.membership.groupBy({
+            by: ['userId'],
+            where: {
+              communityId: { in: communityIds },
+              userId: { notIn: excluded },
+            },
+            _count: { userId: true },
+            orderBy: { _count: { userId: 'desc' } },
+            take: CANDIDATE_LIMIT,
+          }),
+      library.length === 0
+        ? []
+        : this.prisma.libraryEntry.groupBy({
+            by: ['userId'],
+            where: { ...sharedTitle, userId: { notIn: excluded } },
+            _count: { userId: true },
+            orderBy: { _count: { userId: 'desc' } },
+            take: CANDIDATE_LIMIT,
+          }),
+    ]);
+
+    const mutual = new Map<number, number[]>();
+    for (const { requesterId, addresseeId } of friendsOfFriends) {
+      const [friend, candidate] = known.has(requesterId)
+        ? [requesterId, addresseeId]
+        : [addresseeId, requesterId];
+      mutual.set(candidate, [...(mutual.get(candidate) ?? []), friend]);
+    }
+    const counts = (rows: { userId: number; _count: { userId: number } }[]) =>
+      new Map(rows.map(({ userId: id, _count }) => [id, _count.userId]));
+    const ranked = rankCandidates({
+      mutual,
+      communities: counts(communityCounts),
+      titles: counts(titleCounts),
+    }).slice(0, CANDIDATE_LIMIT * 2);
+    if (ranked.length === 0) return [];
+
+    const candidates = await this.prisma.user.findMany({
+      where: { id: { in: ranked }, ...notSuspended() },
+      select: publicPerson,
+    });
+    const byId = new Map(candidates.map((user) => [user.id, user]));
+    const chosen = ranked
+      .filter((id) => byId.has(id))
+      .slice(0, SUGGESTION_LIMIT);
+
+    const needsCommunity = chosen.filter((id) => !mutual.has(id));
+    const previewIds = [
+      ...new Set(
+        chosen.flatMap((id) => (mutual.get(id) ?? []).slice(0, MUTUAL_PREVIEW)),
+      ),
+    ];
+    const [previews, sharedCommunities, sharedTitles] = await Promise.all([
+      previewIds.length === 0
+        ? []
+        : this.prisma.user.findMany({
+            where: { id: { in: previewIds } },
+            select: publicPerson,
+          }),
+      needsCommunity.length === 0 || communityIds.length === 0
+        ? []
+        : this.prisma.membership.findMany({
+            where: {
+              userId: { in: needsCommunity },
+              communityId: { in: communityIds },
+            },
+            orderBy: { joinedAt: 'asc' },
+            select: { userId: true, community: { select: { name: true } } },
+          }),
+      needsCommunity.length === 0 || library.length === 0
+        ? []
+        : this.prisma.libraryEntry.findMany({
+            where: { ...sharedTitle, userId: { in: needsCommunity } },
+            orderBy: { updatedAt: 'desc' },
+            select: {
+              userId: true,
+              title: true,
+              mediaType: true,
+              status: true,
+            },
+          }),
+    ]);
+
+    const previewById = new Map(
+      previews.map((user) => [user.id, user] as const),
+    );
+    const communityOf = new Map<number, string>();
+    for (const { userId: id, community } of sharedCommunities) {
+      if (!communityOf.has(id)) communityOf.set(id, community.name);
+    }
+    const titleOf = new Map<number, (typeof sharedTitles)[number]>();
+    for (const entry of sharedTitles) {
+      const current = titleOf.get(entry.userId);
+      if (
+        !current ||
+        (current.status !== 'current' && entry.status === 'current')
+      ) {
+        titleOf.set(entry.userId, entry);
+      }
+    }
+
+    return chosen.map((id) => {
+      const mutualIds = mutual.get(id) ?? [];
+      const community = communityOf.get(id);
+      const title = titleOf.get(id);
+      return {
+        ...toFriendUser(byId.get(id)!),
+        reason:
+          mutualIds.length > 0
+            ? mutualReason(mutualIds.length)
+            : community
+              ? communityReason(community)
+              : title
+                ? titleReason(title)
+                : '',
+        mutualFriends: mutualIds
+          .slice(0, MUTUAL_PREVIEW)
+          .flatMap((friendId) => {
+            const friend = previewById.get(friendId);
+            return friend ? [toFriendUser(friend)] : [];
+          }),
+      };
+    });
   }
 
   async add(userId: number, { userId: targetId, username }: AddFriendDto) {
