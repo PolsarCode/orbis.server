@@ -22,6 +22,7 @@ import { isHeadAdmin } from './head-admin';
 import { StorageService } from '../storage/storage.service';
 import { canViewProfile } from '../posts/wall-access';
 import { PresenceGateway, PresenceStatus } from '../friends/presence.gateway';
+import { NextStream, TwitchLiveService } from '../friends/twitch-live.service';
 
 export type PublicUser = Omit<UserModel, 'password'>;
 
@@ -38,6 +39,8 @@ export type PublicProfile = {
   isPublic: boolean;
   restricted: boolean;
   hasClips: boolean;
+  twitchLogin: string | null;
+  nextStream: NextStream | null;
   createdAt: Date;
   online: boolean;
   status: PresenceStatus;
@@ -195,6 +198,7 @@ export class UsersService {
     private prisma: PrismaService,
     private storage: StorageService,
     private presence: PresenceGateway,
+    private twitch: TwitchLiveService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<PublicUser> {
@@ -351,8 +355,13 @@ export class UsersService {
         isPublic: true,
         createdAt: true,
         oauthAccounts: {
-          where: { provider: 'twitch', showClips: true },
-          select: { id: true },
+          where: { provider: 'twitch' },
+          select: {
+            username: true,
+            providerAccountId: true,
+            showLive: true,
+            showClips: true,
+          },
         },
         memberships: {
           orderBy: { joinedAt: 'asc' },
@@ -394,6 +403,8 @@ export class UsersService {
         isPublic: false,
         restricted: true,
         hasClips: false,
+        twitchLogin: null,
+        nextStream: null,
         appearOffline: true,
         status: 'online',
         createdAt: user.createdAt,
@@ -418,37 +429,43 @@ export class UsersService {
         status: true,
       },
     } as const;
-    const [friendships, posts, threads, library] = await Promise.all([
-      this.prisma.friendship.findMany({
-        where: {
-          status: 'accepted',
-          OR: [{ requesterId: user.id }, { addresseeId: user.id }],
-        },
-        orderBy: { createdAt: 'desc' },
-        select: { requester: friendUser, addressee: friendUser },
-      }),
-      this.prisma.post.count({ where: { authorId: user.id } }),
-      this.prisma.thread.count({ where: { authorId: user.id } }),
-      this.prisma.libraryEntry.findMany({
-        where: {
-          userId: user.id,
-          isPublic: true,
-          ...nsfwEntries(await showsNsfw(this.prisma, viewerId)),
-        },
-        orderBy: { updatedAt: 'desc' },
-        select: {
-          id: true,
-          mediaType: true,
-          sourceId: true,
-          title: true,
-          coverImage: true,
-          status: true,
-          progress: true,
-          total: true,
-          steamAppId: true,
-        },
-      }),
-    ]);
+    const [twitch] = user.oauthAccounts;
+    const liveChannel = twitch?.showLive ? twitch : null;
+    const [friendships, posts, threads, library, nextStream] =
+      await Promise.all([
+        this.prisma.friendship.findMany({
+          where: {
+            status: 'accepted',
+            OR: [{ requesterId: user.id }, { addresseeId: user.id }],
+          },
+          orderBy: { createdAt: 'desc' },
+          select: { requester: friendUser, addressee: friendUser },
+        }),
+        this.prisma.post.count({ where: { authorId: user.id } }),
+        this.prisma.thread.count({ where: { authorId: user.id } }),
+        this.prisma.libraryEntry.findMany({
+          where: {
+            userId: user.id,
+            isPublic: true,
+            ...nsfwEntries(await showsNsfw(this.prisma, viewerId)),
+          },
+          orderBy: { updatedAt: 'desc' },
+          select: {
+            id: true,
+            mediaType: true,
+            sourceId: true,
+            title: true,
+            coverImage: true,
+            status: true,
+            progress: true,
+            total: true,
+            steamAppId: true,
+          },
+        }),
+        liveChannel
+          ? this.twitch.nextStream(liveChannel.providerAccountId)
+          : null,
+      ]);
     const steamOf = await loadSteamLinks(
       this.prisma,
       library.map((entry) => ({ userId: user.id, appId: entry.steamAppId })),
@@ -461,7 +478,9 @@ export class UsersService {
       isAdmin: rest.isAdmin || headAdmin,
       isHeadAdmin: headAdmin,
       restricted: false,
-      hasClips: oauthAccounts.length > 0,
+      hasClips: oauthAccounts.some((account) => account.showClips),
+      twitchLogin: liveChannel?.username ?? null,
+      nextStream,
       userId: id,
       friendCount: friendships.length,
       friends: friendships.map(({ requester, addressee }) => {

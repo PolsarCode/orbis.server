@@ -20,6 +20,7 @@ describe('Verification', () => {
     prisma as unknown as PrismaService,
     {} as StorageService,
     presence as unknown as PresenceGateway,
+    {} as TwitchLiveService,
   );
   const communities = new CommunitiesService(
     prisma as unknown as PrismaService,
