@@ -19,9 +19,11 @@ import { loadSteamLinks, SteamLink } from '../steam/steam-links';
 import { DiscordChannelService } from '../discord-channel/discord-channel.service';
 
 const PROGRESS_MERGE_WINDOW = 5 * 60 * 1000;
-const SPOTLIGHT_CANDIDATES = 10;
-const SPOTLIGHT_TTL_MS = 10 * 60 * 1000;
-const SPOTLIGHT_RETRY_MS = 60 * 1000;
+const SPOTLIGHT_KEY = 'anime-spotlight';
+const SPOTLIGHT_SIZE = 10;
+const SPOTLIGHT_CANDIDATES = 40;
+const SPOTLIGHT_LIFETIME_MS = 24 * 60 * 60 * 1000;
+const SPOTLIGHT_RETRY_MS = 60 * 60 * 1000;
 
 export type Spotlight = {
   type: 'anime';
@@ -29,6 +31,14 @@ export type Spotlight = {
   title: string;
   coverImage: string | null;
   bannerImage: string | null;
+};
+
+type StoredSpotlight = Spotlight & { addedAt: number };
+
+type SpotlightList = {
+  items: StoredSpotlight[];
+  retired: string[];
+  checkedAt: number;
 };
 
 const entrySelect = {
@@ -74,62 +84,130 @@ const toResult = (media: Media) => ({
 
 @Injectable()
 export class LibraryService {
-  private spotlights: { value: Spotlight[]; expiresAt: number } | null = null;
-
   constructor(
     private prisma: PrismaService,
     private discordChannel: DiscordChannelService,
   ) {}
 
   async spotlight(): Promise<Spotlight | null> {
-    if (!this.spotlights || this.spotlights.expiresAt <= Date.now()) {
-      const value = await this.loadSpotlights();
-      this.spotlights = {
-        value,
-        expiresAt:
-          Date.now() + (value.length ? SPOTLIGHT_TTL_MS : SPOTLIGHT_RETRY_MS),
-      };
-    }
-    const { value } = this.spotlights;
-    return value.length
-      ? value[Math.floor(Math.random() * value.length)]
-      : null;
+    const { items } = await this.rollSpotlights(Date.now());
+    if (items.length === 0) return null;
+    const { addedAt, ...spotlight } =
+      items[Math.floor(Math.random() * items.length)];
+    return spotlight;
   }
 
-  private async loadSpotlights(): Promise<Spotlight[]> {
+  private async rollSpotlights(now: number): Promise<SpotlightList> {
+    const stored = await this.readSpotlights();
+    const fresh = stored.items.filter(
+      (item) => now - item.addedAt < SPOTLIGHT_LIFETIME_MS,
+    );
+    const expired = stored.items.filter((item) => !fresh.includes(item));
+    const missing = SPOTLIGHT_SIZE - fresh.length;
+    const retry = now - stored.checkedAt >= SPOTLIGHT_RETRY_MS;
+    if (expired.length === 0 && (missing === 0 || !retry)) return stored;
+
+    const retired = [
+      ...expired.map((item) => item.sourceId),
+      ...stored.retired,
+    ].slice(0, SPOTLIGHT_SIZE);
+    const added =
+      missing > 0 && (expired.length > 0 || retry)
+        ? await this.nextSpotlights(
+            missing,
+            fresh.map((item) => item.sourceId),
+            retired,
+          )
+        : [];
+    const step = SPOTLIGHT_LIFETIME_MS / SPOTLIGHT_SIZE;
+    const list: SpotlightList = {
+      items: [
+        ...fresh,
+        ...added.map((spotlight, index) => ({
+          ...spotlight,
+          addedAt: now - index * step,
+        })),
+      ],
+      retired,
+      checkedAt: now,
+    };
+    await this.prisma.setting.upsert({
+      where: { key: SPOTLIGHT_KEY },
+      create: { key: SPOTLIGHT_KEY, value: JSON.stringify(list) },
+      update: { value: JSON.stringify(list) },
+    });
+    return list;
+  }
+
+  private async readSpotlights(): Promise<SpotlightList> {
+    const setting = await this.prisma.setting.findUnique({
+      where: { key: SPOTLIGHT_KEY },
+      select: { value: true },
+    });
+    try {
+      const list = JSON.parse(setting?.value ?? '') as Partial<SpotlightList>;
+      return {
+        items: Array.isArray(list.items) ? list.items : [],
+        retired: Array.isArray(list.retired) ? list.retired : [],
+        checkedAt: typeof list.checkedAt === 'number' ? list.checkedAt : 0,
+      };
+    } catch {
+      return { items: [], retired: [], checkedAt: 0 };
+    }
+  }
+
+  private async nextSpotlights(
+    count: number,
+    current: string[],
+    retired: string[],
+  ): Promise<Spotlight[]> {
     const entries = await this.prisma.libraryEntry.findMany({
       where: {
         mediaType: 'anime',
         isPublic: true,
         isAdult: false,
         user: { isPublic: true },
+        sourceId: { notIn: current },
       },
       orderBy: { updatedAt: 'desc' },
       distinct: ['sourceId'],
       take: SPOTLIGHT_CANDIDATES,
       select: { sourceId: true, title: true, coverImage: true },
     });
-    const spotlights = await Promise.all(
-      entries.map(async (entry): Promise<Spotlight | null> => {
-        try {
-          const media = await getMedia('anime', entry.sourceId, false);
-          if (media.isAdult) return null;
-          const coverImage = media.coverImage ?? entry.coverImage;
-          const bannerImage = media.bannerImage ?? null;
-          if (!coverImage && !bannerImage) return null;
-          return {
-            type: 'anime',
-            sourceId: entry.sourceId,
-            title: media.title || entry.title,
-            coverImage,
-            bannerImage,
-          };
-        } catch {
-          return null;
-        }
-      }),
-    );
-    return spotlights.filter((spotlight) => spotlight !== null);
+    const candidates = [
+      ...entries.filter((entry) => !retired.includes(entry.sourceId)),
+      ...entries.filter((entry) => retired.includes(entry.sourceId)),
+    ];
+    const added: Spotlight[] = [];
+    for (const entry of candidates) {
+      if (added.length === count) break;
+      const spotlight = await this.toSpotlight(entry);
+      if (spotlight) added.push(spotlight);
+    }
+    return added;
+  }
+
+  private async toSpotlight(entry: {
+    sourceId: string;
+    title: string;
+    coverImage: string | null;
+  }): Promise<Spotlight | null> {
+    try {
+      const media = await getMedia('anime', entry.sourceId, false);
+      if (media.isAdult) return null;
+      const coverImage = media.coverImage ?? entry.coverImage;
+      const bannerImage = media.bannerImage ?? null;
+      if (!coverImage && !bannerImage) return null;
+      return {
+        type: 'anime',
+        sourceId: entry.sourceId,
+        title: media.title || entry.title,
+        coverImage,
+        bannerImage,
+      };
+    } catch {
+      return null;
+    }
   }
 
   async search(userId: number, q?: string) {
