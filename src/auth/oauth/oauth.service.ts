@@ -354,7 +354,9 @@ export class OAuthService {
   ): Promise<{ communityId: number; name: string } & DiscordWidget> {
     let claims: ServerClaims;
     try {
-      claims = this.jwt.verify<ServerClaims>(token, { secret: serversSecret() });
+      claims = this.jwt.verify<ServerClaims>(token, {
+        secret: serversSecret(),
+      });
     } catch {
       throw new BadRequestException(SERVERS_EXPIRED);
     }
@@ -519,7 +521,8 @@ export class OAuthService {
         }),
         signal: AbortSignal.timeout(OAUTH_TIMEOUT_MS),
       });
-      if (!response.ok) throw new Error(`Token request failed with ${response.status}`);
+      if (!response.ok)
+        throw new Error(`Token request failed with ${response.status}`);
       const { access_token: accessToken, webhook } = await response.json();
       return {
         profile: await config.profile(accessToken, clientId),
@@ -693,7 +696,10 @@ export class OAuthService {
       if (!isUniqueViolation(error)) throw error;
       const owner = await this.prisma.oAuthAccount.findUnique({
         where: {
-          provider_providerAccountId: { provider, providerAccountId: profile.id },
+          provider_providerAccountId: {
+            provider,
+            providerAccountId: profile.id,
+          },
         },
         select: { userId: true },
       });

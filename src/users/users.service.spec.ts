@@ -56,7 +56,9 @@ describe('Saving preferences', () => {
 });
 
 describe('Onboarding', () => {
-  const count = (value: number) => ({ count: jest.fn().mockResolvedValue(value) });
+  const count = (value: number) => ({
+    count: jest.fn().mockResolvedValue(value),
+  });
   const prisma = {
     user: {
       findUniqueOrThrow: jest.fn().mockResolvedValue({
@@ -91,8 +93,14 @@ describe('Onboarding', () => {
       connections: false,
       folders: true,
     });
-    expect(prisma.steamAccount.count).toHaveBeenCalledWith({ where: { userId: 1 } });
-    expect(prisma.oAuthAccount.count).toHaveBeenCalledWith({ where: { userId: 1 } });
-    expect(prisma.railFolder.count).toHaveBeenCalledWith({ where: { userId: 1 } });
+    expect(prisma.steamAccount.count).toHaveBeenCalledWith({
+      where: { userId: 1 },
+    });
+    expect(prisma.oAuthAccount.count).toHaveBeenCalledWith({
+      where: { userId: 1 },
+    });
+    expect(prisma.railFolder.count).toHaveBeenCalledWith({
+      where: { userId: 1 },
+    });
   });
 });

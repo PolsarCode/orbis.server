@@ -25,6 +25,7 @@ import { CreateThreadDto } from './dto/create-thread.dto';
 import { DiscordChannelService } from '../discord-channel/discord-channel.service';
 import { managedCommunities } from '../communities/managed-communities';
 import { discussionCleanup } from '../comments/discussion-cleanup';
+import { containsLink, requireEstablishedAccount } from '../common/new-account';
 
 export const threadInclude = { author, community: communitySummary } as const;
 
@@ -150,6 +151,9 @@ export class ThreadsService {
     { title, content = '', linkUrl }: CreateThreadDto,
   ): Promise<ThreadSummary> {
     const { html, empty } = sanitizeRichText(content);
+    if (containsLink(html, linkUrl)) {
+      await requireEstablishedAccount(this.prisma, userId, 'post links');
+    }
     const { html: linked, mentioned } = await resolveMentions(
       this.prisma,
       empty ? '' : html,
@@ -227,6 +231,9 @@ export class ThreadsService {
     }
 
     const { html, empty } = sanitizeRichText(unlinkMentions(content));
+    if (containsLink(html, linkUrl)) {
+      await requireEstablishedAccount(this.prisma, userId, 'post links');
+    }
     const { html: linked, mentioned } = await resolveMentions(
       this.prisma,
       empty ? '' : html,

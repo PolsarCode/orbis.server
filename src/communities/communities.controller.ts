@@ -256,7 +256,10 @@ export class CommunitiesController {
     @Req() req,
     @Param('communityId', ParseIntPipe) communityId: number,
   ): Promise<void> {
-    return this.communitiesService.disconnectTwitch(req.user.userId, communityId);
+    return this.communitiesService.disconnectTwitch(
+      req.user.userId,
+      communityId,
+    );
   }
 
   @Delete(':communityId/discord')
@@ -266,7 +269,10 @@ export class CommunitiesController {
     @Req() req,
     @Param('communityId', ParseIntPipe) communityId: number,
   ): Promise<void> {
-    return this.communitiesService.disconnectDiscord(req.user.userId, communityId);
+    return this.communitiesService.disconnectDiscord(
+      req.user.userId,
+      communityId,
+    );
   }
 
   @Delete(':communityId')

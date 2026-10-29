@@ -2,11 +2,7 @@ import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { ConfirmedEmailGuard } from './auth/confirmed-email.guard';
 import { ThrottlerModule } from '@nestjs/throttler';
-import {
-  AppThrottlerGuard,
-  MINUTE,
-  RATE_LIMIT_MESSAGE,
-} from './common/throttle';
+import { AppThrottlerGuard, throttlerOptions } from './common/throttle';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { CommunitiesModule } from './communities/communities.module';
@@ -34,10 +30,7 @@ import { PrismaService } from './prisma.service';
 
 @Module({
   imports: [
-    ThrottlerModule.forRoot({
-      throttlers: [{ ttl: MINUTE, limit: 300 }],
-      errorMessage: RATE_LIMIT_MESSAGE,
-    }),
+    ThrottlerModule.forRoot(throttlerOptions),
     UsersModule,
     AuthModule,
     CommunitiesModule,

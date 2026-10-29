@@ -62,13 +62,11 @@ describe('Adding library progress', () => {
   });
 
   it('stores chapter progress when the manga total is unknown', async () => {
-    jest
-      .mocked(getMedia)
-      .mockResolvedValue({
-        ...media,
-        type: 'MANGA',
-        details: { chapters: null },
-      });
+    jest.mocked(getMedia).mockResolvedValue({
+      ...media,
+      type: 'MANGA',
+      details: { chapters: null },
+    });
     expect(
       await service.add(1, { type: 'manga', sourceId: '1', progress: 120 }),
     ).toMatchObject({ progress: 120, total: null });

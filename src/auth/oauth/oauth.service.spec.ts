@@ -243,7 +243,11 @@ describe('OAuthService', () => {
     await expect(
       service.complete(
         'discord',
-        { code: 'code', state: stateFor(null), nonce: 'other-0123456789abcdef' },
+        {
+          code: 'code',
+          state: stateFor(null),
+          nonce: 'other-0123456789abcdef',
+        },
         0,
       ),
     ).rejects.toThrow(BadRequestException);
@@ -344,7 +348,9 @@ describe('OAuthService', () => {
       .mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          data: [{ id: '77', login: 'seasonalclub', display_name: 'Seasonal Club' }],
+          data: [
+            { id: '77', login: 'seasonalclub', display_name: 'Seasonal Club' },
+          ],
         }),
       });
     const url = await service.communityAuthorizeUrl(5, 'twitch', 12, NONCE);
@@ -366,10 +372,28 @@ describe('OAuthService', () => {
 
   describe('Discord servers for communities', () => {
     const guilds = [
-      { id: '900', name: 'Seasonal Club', icon: 'abc', owner: true, permissions: '0' },
-      { id: '901', name: 'Mod Team', icon: null, owner: false, permissions: '32' },
+      {
+        id: '900',
+        name: 'Seasonal Club',
+        icon: 'abc',
+        owner: true,
+        permissions: '0',
+      },
+      {
+        id: '901',
+        name: 'Mod Team',
+        icon: null,
+        owner: false,
+        permissions: '32',
+      },
       { id: '902', name: 'Admins', icon: null, owner: false, permissions: '8' },
-      { id: '903', name: 'Just a member', icon: null, owner: false, permissions: '1024' },
+      {
+        id: '903',
+        name: 'Just a member',
+        icon: null,
+        owner: false,
+        permissions: '1024',
+      },
     ];
 
     function discordWithServers(servers: unknown[] = guilds) {
@@ -380,18 +404,25 @@ describe('OAuthService', () => {
     async function connectCommunity(viewer = 5) {
       const url = await service.communityAuthorizeUrl(5, 'discord', 12, NONCE);
       const state = new URL(url).searchParams.get('state')!;
-      return service.complete('discord', { code: 'code', state, nonce: NONCE }, viewer);
+      return service.complete(
+        'discord',
+        { code: 'code', state, nonce: NONCE },
+        viewer,
+      );
     }
 
     async function serverToken() {
       discordWithServers();
       const result = await connectCommunity();
-      if (!('servers' in result) || !result.servers) throw new Error('Expected servers');
+      if (!('servers' in result) || !result.servers)
+        throw new Error('Expected servers');
       return result.servers.token;
     }
 
     it('asks Discord for the server list only when connecting a community', async () => {
-      const community = new URL(await service.communityAuthorizeUrl(5, 'discord', 12, NONCE));
+      const community = new URL(
+        await service.communityAuthorizeUrl(5, 'discord', 12, NONCE),
+      );
       const login = new URL(service.authorizeUrl('discord', NONCE, null));
 
       expect(community.searchParams.get('scope')).toBe('identify guilds');
@@ -440,7 +471,9 @@ describe('OAuthService', () => {
         inviteUrl: 'https://discord.com/invite/abc',
       });
 
-      await expect(service.connectDiscordServer(5, token, '901')).resolves.toEqual({
+      await expect(
+        service.connectDiscordServer(5, token, '901'),
+      ).resolves.toEqual({
         communityId: 12,
         name: 'Mod Team',
         online: 42,
@@ -455,18 +488,18 @@ describe('OAuthService', () => {
     it('refuses a server that wasn’t offered', async () => {
       const token = await serverToken();
 
-      await expect(service.connectDiscordServer(5, token, '903')).rejects.toThrow(
-        BadRequestException,
-      );
+      await expect(
+        service.connectDiscordServer(5, token, '903'),
+      ).rejects.toThrow(BadRequestException);
       expect(communities.connectDiscord).not.toHaveBeenCalled();
     });
 
     it('refuses a pick from another account', async () => {
       const token = await serverToken();
 
-      await expect(service.connectDiscordServer(6, token, '900')).rejects.toThrow(
-        ForbiddenException,
-      );
+      await expect(
+        service.connectDiscordServer(6, token, '900'),
+      ).rejects.toThrow(ForbiddenException);
       expect(communities.connectDiscord).not.toHaveBeenCalled();
     });
 
@@ -477,9 +510,9 @@ describe('OAuthService', () => {
         servers: [{ id: '903', name: 'Just a member' }],
       });
 
-      await expect(service.connectDiscordServer(5, forged, '903')).rejects.toThrow(
-        BadRequestException,
-      );
+      await expect(
+        service.connectDiscordServer(5, forged, '903'),
+      ).rejects.toThrow(BadRequestException);
       expect(communities.connectDiscord).not.toHaveBeenCalled();
     });
   });
@@ -589,11 +622,15 @@ describe('OAuthService', () => {
   });
 
   describe('profile pictures', () => {
-    const DISCORD_PICTURE = 'https://cdn.discordapp.com/avatars/42/abc.png?size=512';
+    const DISCORD_PICTURE =
+      'https://cdn.discordapp.com/avatars/42/abc.png?size=512';
     const STORED = 'https://files.test/avatars/new.webp';
 
     beforeEach(() => {
-      storage.uploadImage.mockResolvedValue({ key: 'avatars/new.webp', url: STORED });
+      storage.uploadImage.mockResolvedValue({
+        key: 'avatars/new.webp',
+        url: STORED,
+      });
       prisma.user.updateMany.mockResolvedValue({ count: 1 });
     });
 
@@ -625,14 +662,24 @@ describe('OAuthService', () => {
 
     it('copies the Discord picture onto a new account', async () => {
       const { token } = await startSignup({ avatar: 'abc' });
-      prisma.user.create.mockResolvedValueOnce({ id: 9, email: 'naruto@anime.test' });
+      prisma.user.create.mockResolvedValueOnce({
+        id: 9,
+        email: 'naruto@anime.test',
+      });
       picture();
 
       await expect(service.finishSignup(token, 'hokage')).resolves.toEqual({
         access_token: 'token-9',
       });
-      expect(fetchMock).toHaveBeenLastCalledWith(DISCORD_PICTURE, expect.anything());
-      expect(storage.uploadImage).toHaveBeenCalledWith(expect.any(Buffer), 'avatars', 384);
+      expect(fetchMock).toHaveBeenLastCalledWith(
+        DISCORD_PICTURE,
+        expect.anything(),
+      );
+      expect(storage.uploadImage).toHaveBeenCalledWith(
+        expect.any(Buffer),
+        'avatars',
+        384,
+      );
       expect(prisma.user.updateMany).toHaveBeenCalledWith({
         where: { id: 9, avatarUrl: null },
         data: { avatarUrl: STORED },
@@ -641,7 +688,10 @@ describe('OAuthService', () => {
 
     it('still creates the account when the picture can’t be fetched', async () => {
       const { token } = await startSignup({ avatar: 'abc' });
-      prisma.user.create.mockResolvedValueOnce({ id: 9, email: 'naruto@anime.test' });
+      prisma.user.create.mockResolvedValueOnce({
+        id: 9,
+        email: 'naruto@anime.test',
+      });
       picture(false);
 
       await expect(service.finishSignup(token, 'hokage')).resolves.toEqual({
@@ -653,7 +703,10 @@ describe('OAuthService', () => {
 
     it('skips Discord’s default picture', async () => {
       const { token } = await startSignup({ avatar: null });
-      prisma.user.create.mockResolvedValueOnce({ id: 9, email: 'naruto@anime.test' });
+      prisma.user.create.mockResolvedValueOnce({
+        id: 9,
+        email: 'naruto@anime.test',
+      });
 
       await service.finishSignup(token, 'hokage');
 
@@ -666,18 +719,29 @@ describe('OAuthService', () => {
         fetchMock.mockResolvedValueOnce({
           ok: true,
           json: async () => ({
-            data: [{ id: '77', login: 'seasonalclub', profile_image_url: image }],
+            data: [
+              { id: '77', login: 'seasonalclub', profile_image_url: image },
+            ],
           }),
         });
 
-      twitchUser('https://static-cdn.jtvnw.net/user-default-pictures-uv/x-profile_image-300x300.png');
-      await expect(oauthProviders.twitch.profile('token', 'client')).resolves.toMatchObject({
+      twitchUser(
+        'https://static-cdn.jtvnw.net/user-default-pictures-uv/x-profile_image-300x300.png',
+      );
+      await expect(
+        oauthProviders.twitch.profile('token', 'client'),
+      ).resolves.toMatchObject({
         avatarUrl: null,
       });
 
-      twitchUser('https://static-cdn.jtvnw.net/jtv_user_pictures/me-profile_image-300x300.png');
-      await expect(oauthProviders.twitch.profile('token', 'client')).resolves.toMatchObject({
-        avatarUrl: 'https://static-cdn.jtvnw.net/jtv_user_pictures/me-profile_image-300x300.png',
+      twitchUser(
+        'https://static-cdn.jtvnw.net/jtv_user_pictures/me-profile_image-300x300.png',
+      );
+      await expect(
+        oauthProviders.twitch.profile('token', 'client'),
+      ).resolves.toMatchObject({
+        avatarUrl:
+          'https://static-cdn.jtvnw.net/jtv_user_pictures/me-profile_image-300x300.png',
       });
     });
 
@@ -692,7 +756,9 @@ describe('OAuthService', () => {
     });
 
     it('doesn’t offer it when the account already has a picture', async () => {
-      prisma.user.findUnique.mockResolvedValueOnce({ avatarUrl: 'https://files.test/mine.webp' });
+      prisma.user.findUnique.mockResolvedValueOnce({
+        avatarUrl: 'https://files.test/mine.webp',
+      });
 
       await expect(connect()).resolves.toEqual({ linked: 'discord' });
     });
@@ -702,8 +768,13 @@ describe('OAuthService', () => {
       prisma.user.findUnique.mockResolvedValueOnce({ avatarUrl: null });
       picture();
 
-      await expect(service.useLinkedAvatar(5, token)).resolves.toEqual({ avatarUrl: STORED });
-      expect(fetchMock).toHaveBeenLastCalledWith(DISCORD_PICTURE, expect.anything());
+      await expect(service.useLinkedAvatar(5, token)).resolves.toEqual({
+        avatarUrl: STORED,
+      });
+      expect(fetchMock).toHaveBeenLastCalledWith(
+        DISCORD_PICTURE,
+        expect.anything(),
+      );
       expect(prisma.user.updateMany).toHaveBeenCalledWith({
         where: { id: 5, avatarUrl: null },
         data: { avatarUrl: STORED },
@@ -713,15 +784,21 @@ describe('OAuthService', () => {
     it('refuses an offer made for another account', async () => {
       const token = await offer();
 
-      await expect(service.useLinkedAvatar(6, token)).rejects.toThrow(ForbiddenException);
+      await expect(service.useLinkedAvatar(6, token)).rejects.toThrow(
+        ForbiddenException,
+      );
       expect(storage.uploadImage).not.toHaveBeenCalled();
     });
 
     it('never replaces a picture set since the offer', async () => {
       const token = await offer();
-      prisma.user.findUnique.mockResolvedValueOnce({ avatarUrl: 'https://files.test/mine.webp' });
+      prisma.user.findUnique.mockResolvedValueOnce({
+        avatarUrl: 'https://files.test/mine.webp',
+      });
 
-      await expect(service.useLinkedAvatar(5, token)).rejects.toThrow(ConflictException);
+      await expect(service.useLinkedAvatar(5, token)).rejects.toThrow(
+        ConflictException,
+      );
       expect(storage.uploadImage).not.toHaveBeenCalled();
     });
 
@@ -731,7 +808,9 @@ describe('OAuthService', () => {
       prisma.user.updateMany.mockResolvedValueOnce({ count: 0 });
       picture();
 
-      await expect(service.useLinkedAvatar(5, token)).rejects.toThrow(ConflictException);
+      await expect(service.useLinkedAvatar(5, token)).rejects.toThrow(
+        ConflictException,
+      );
       expect(storage.delete).toHaveBeenCalledWith('avatars/new.webp');
     });
 
@@ -741,7 +820,9 @@ describe('OAuthService', () => {
         url: 'https://example.test/picture.png',
       });
 
-      await expect(service.useLinkedAvatar(5, forged)).rejects.toThrow(BadRequestException);
+      await expect(service.useLinkedAvatar(5, forged)).rejects.toThrow(
+        BadRequestException,
+      );
       expect(fetchMock).not.toHaveBeenCalled();
     });
   });

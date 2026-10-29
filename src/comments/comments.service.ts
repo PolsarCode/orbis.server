@@ -23,13 +23,13 @@ import {
   requireTargetAccess,
   targetOf,
 } from '../posts/wall-access';
-import { MAX_INT } from '../communities/community-member.guard';
 import { VotesService } from '../votes/votes.service';
 import { reportedBy } from '../moderation/visibility';
 import { loadNicknames } from '../communities/nicknames';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { managedCommunities } from '../communities/managed-communities';
+import { containsLink, requireEstablishedAccount } from '../common/new-account';
 import {
   NewNotification,
   NotificationsService,
@@ -154,6 +154,9 @@ export class CommentsService {
     if (empty && !linkUrl) {
       throw new BadRequestException('Comment cannot be empty');
     }
+    if (containsLink(html, linkUrl)) {
+      await requireEstablishedAccount(this.prisma, userId, 'post links');
+    }
     const { html: linked, mentioned } = await resolveMentions(
       this.prisma,
       empty ? '' : html,
@@ -231,6 +234,9 @@ export class CommentsService {
     const { html, empty } = sanitizeRichText(unlinkMentions(content));
     if (empty && !linkUrl) {
       throw new BadRequestException('Comment cannot be empty');
+    }
+    if (containsLink(html, linkUrl)) {
+      await requireEstablishedAccount(this.prisma, userId, 'post links');
     }
     const { html: linked, mentioned } = await resolveMentions(
       this.prisma,

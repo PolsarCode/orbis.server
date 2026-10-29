@@ -44,7 +44,9 @@ describe('TwitchLiveService', () => {
     await service.poll();
 
     expect(prisma.oAuthAccount.findMany).toHaveBeenCalledWith(
-      expect.objectContaining({ where: { provider: 'twitch', showLive: true } }),
+      expect.objectContaining({
+        where: { provider: 'twitch', showLive: true },
+      }),
     );
     expect(fetchMock.mock.calls[1][0]).toContain('user_id=a&user_id=b');
     expect(presence.updateLive).toHaveBeenCalledWith(new Set([2]));

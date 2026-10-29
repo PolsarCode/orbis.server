@@ -26,7 +26,14 @@ describe('ThreadsService.create', () => {
     thread: { create },
     vote: { create: voteCreate },
     membership: { findMany: membershipFind },
-    user: { findMany: userFind },
+    user: {
+      findMany: userFind,
+      findUnique: jest.fn().mockResolvedValue({
+        createdAt: new Date('2026-01-01'),
+        isAdmin: false,
+        email: 'reader@anime.test',
+      }),
+    },
     community: { findUnique: communityFind },
     $transaction: jest.fn((run) => run(prisma)),
   };

@@ -26,6 +26,11 @@ import { DiscordChannelModule } from '../discord-channel/discord-channel.module'
     UserPostsController,
     MediaPostsController,
   ],
-  providers: [PostsService, CommunityMemberGuard, CommunityViewerGuard, PrismaService],
+  providers: [
+    PostsService,
+    CommunityMemberGuard,
+    CommunityViewerGuard,
+    PrismaService,
+  ],
 })
 export class PostsModule {}

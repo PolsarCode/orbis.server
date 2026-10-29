@@ -14,7 +14,12 @@ import { DiscordChannelModule } from '../discord-channel/discord-channel.module'
 @Module({
   imports: [VotesModule, NotificationsModule, DiscordChannelModule],
   controllers: [CommunityThreadsController, ThreadsController],
-  providers: [ThreadsService, CommunityMemberGuard, CommunityViewerGuard, PrismaService],
+  providers: [
+    ThreadsService,
+    CommunityMemberGuard,
+    CommunityViewerGuard,
+    PrismaService,
+  ],
   exports: [ThreadsService],
 })
 export class ThreadsModule {}

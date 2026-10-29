@@ -33,7 +33,7 @@ export class FriendsController {
     return this.friendsService.search(req.user.userId, q);
   }
 
-  @RateLimit(20, HOUR)
+  @RateLimit(20, HOUR, 5)
   @Post()
   @HttpCode(204)
   add(@Req() req, @Body() addFriendDto: AddFriendDto): Promise<void> {

@@ -458,7 +458,10 @@ export class MessagesService {
     }
     const target = await this.prisma.message.findFirst({
       where: { id: messageId, conversationId: id, system: false },
-      select: { id: true, reactions: { where: { userId }, select: { emoji: true } } },
+      select: {
+        id: true,
+        reactions: { where: { userId }, select: { emoji: true } },
+      },
     });
     if (!target) throw new NotFoundException('Message not found');
 

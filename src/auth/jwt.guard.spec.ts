@@ -14,9 +14,9 @@ describe('JwtAuthGuard.handleRequest', () => {
     } as unknown as Reflector);
 
   it('passes a logged-in user through', () => {
-    expect(guard(true).handleRequest(null, { userId: 5 }, null, context)).toEqual(
-      { userId: 5 },
-    );
+    expect(
+      guard(true).handleRequest(null, { userId: 5 }, null, context),
+    ).toEqual({ userId: 5 });
   });
 
   it('lets a logged-out visitor in as a guest on guest routes', () => {
@@ -26,8 +26,8 @@ describe('JwtAuthGuard.handleRequest', () => {
   });
 
   it('rejects a logged-out visitor on other routes', () => {
-    expect(() => guard(false).handleRequest(null, false, null, context)).toThrow(
-      UnauthorizedException,
-    );
+    expect(() =>
+      guard(false).handleRequest(null, false, null, context),
+    ).toThrow(UnauthorizedException);
   });
 });

@@ -11,7 +11,12 @@ import { FriendsModule } from '../friends/friends.module';
 @Module({
   imports: [StorageModule, FriendsModule],
   controllers: [CommunitiesController, PublicCommunitiesController],
-  providers: [CommunitiesService, CommunityMemberGuard, CommunityViewerGuard, PrismaService],
+  providers: [
+    CommunitiesService,
+    CommunityMemberGuard,
+    CommunityViewerGuard,
+    PrismaService,
+  ],
   exports: [CommunitiesService],
 })
 export class CommunitiesModule {}

@@ -14,7 +14,12 @@ import { PrismaService } from '../prisma.service';
 
 const room = (userId: number) => `user:${userId}`;
 
-export type PresenceStatus = 'online' | 'idle' | 'busy' | 'streaming' | 'offline';
+export type PresenceStatus =
+  | 'online'
+  | 'idle'
+  | 'busy'
+  | 'streaming'
+  | 'offline';
 
 @WebSocketGateway({ cors: true })
 export class PresenceGateway

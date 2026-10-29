@@ -28,7 +28,7 @@ import { RateLimit, HOUR } from '../common/throttle';
 export class InvitesController {
   constructor(private readonly invitesService: InvitesService) {}
 
-  @RateLimit(20, HOUR)
+  @RateLimit(20, HOUR, 5)
   @Post('communities/:communityId/invites')
   @UseGuards(JwtAuthGuard, CommunityMemberGuard)
   create(

@@ -18,6 +18,7 @@ import { NextStream, TwitchLiveService } from '../friends/twitch-live.service';
 import { isHeadAdmin } from '../users/head-admin';
 import { DiscordWidget, discordWidget } from './discord-widget';
 import { deleteWebhook } from '../discord-channel/discord-webhook';
+import { requireEstablishedAccount } from '../common/new-account';
 
 export type CommunityMember = {
   userId: number;
@@ -120,6 +121,7 @@ export class CommunitiesService {
     ownerId: number,
     createCommunityDto: CreateCommunityDto,
   ): Promise<CommunityModel> {
+    await requireEstablishedAccount(this.prisma, ownerId, 'create a community');
     const owned = await this.prisma.community.count({ where: { ownerId } });
     if (owned >= MAX_OWNED_COMMUNITIES) {
       throw new ForbiddenException(

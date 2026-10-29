@@ -28,11 +28,7 @@ import {
 } from '../threads/threads.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { NotificationsService } from '../notifications/notifications.service';
-import {
-  canViewProfile,
-  friendsOf,
-  requireWallAccess,
-} from './wall-access';
+import { canViewProfile, friendsOf, requireWallAccess } from './wall-access';
 import { LikesService } from '../likes/likes.service';
 import { getMedia } from '../library/library-api';
 import { reportedBy, visibleTo } from '../moderation/visibility';
@@ -42,6 +38,7 @@ import { loadSteamLinks, SteamLink } from '../steam/steam-links';
 import { DiscordChannelService } from '../discord-channel/discord-channel.service';
 import { managedCommunities } from '../communities/managed-communities';
 import { discussionCleanup } from '../comments/discussion-cleanup';
+import { containsLink, requireEstablishedAccount } from '../common/new-account';
 
 const postInclude = {
   author,
@@ -250,6 +247,9 @@ export class PostsService {
 
   private async withMentions(body: CreatePostDto, authorId: number) {
     const { content, linkUrl } = postBody(body);
+    if (containsLink(content, linkUrl)) {
+      await requireEstablishedAccount(this.prisma, authorId, 'post links');
+    }
     const { html, mentioned } = await resolveMentions(
       this.prisma,
       content,

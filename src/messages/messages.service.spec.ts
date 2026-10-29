@@ -510,7 +510,10 @@ describe('MessagesService', () => {
           data: { text: 'Ramen at 7', editedAt: expect.any(Date) },
         }),
       );
-      expect(message).toMatchObject({ text: 'Ramen at 7', editedAt: date.toISOString() });
+      expect(message).toMatchObject({
+        text: 'Ramen at 7',
+        editedAt: date.toISOString(),
+      });
       expect(presence.notify).toHaveBeenCalledWith([1, 2], 'message:updated', {
         conversationId: 5,
         message,

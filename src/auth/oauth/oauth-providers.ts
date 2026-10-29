@@ -21,7 +21,11 @@ type ProviderConfig = {
   profile: (accessToken: string, clientId: string) => Promise<OAuthProfile>;
 };
 
-export type DiscordServer = { id: string; name: string; iconUrl: string | null };
+export type DiscordServer = {
+  id: string;
+  name: string;
+  iconUrl: string | null;
+};
 
 const MANAGE_SERVER = BigInt(0x20);
 const ADMINISTRATOR = BigInt(0x8);

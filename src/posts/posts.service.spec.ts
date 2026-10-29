@@ -342,6 +342,13 @@ describe('Creating posts with a link card', () => {
     {
       post: { create },
       membership: { findMany: jest.fn().mockResolvedValue([]) },
+      user: {
+        findUnique: jest.fn().mockResolvedValue({
+          createdAt: new Date('2026-01-01'),
+          isAdmin: false,
+          email: 'reader@anime.test',
+        }),
+      },
     } as unknown as PrismaService,
     {} as ThreadsService,
     {} as NotificationsService,

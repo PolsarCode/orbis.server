@@ -33,10 +33,7 @@ describe('rankPublicUsers', () => {
   });
 
   it('treats users who appear offline as offline', () => {
-    const ranked = rankPublicUsers(
-      [user(1, 5, true), user(2, 1)],
-      () => true,
-    );
+    const ranked = rankPublicUsers([user(1, 5, true), user(2, 1)], () => true);
 
     expect(ranked).toMatchObject([
       { userId: 2, online: true },
