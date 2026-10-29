@@ -12,6 +12,7 @@ import {
 } from '@nestjs/throttler';
 import { PrismaService } from '../prisma.service';
 import { accountTimeLeft } from './new-account';
+import { clientIp } from './client-ip';
 
 export const MINUTE = 60_000;
 export const HOUR = 60 * MINUTE;
@@ -98,7 +99,6 @@ export class AppThrottlerGuard extends ThrottlerGuard {
     const user = userOf(req.headers?.authorization);
     if (user !== null) return `user:${user}`;
 
-    const flyClientIp = req.headers?.['fly-client-ip'];
-    return `ip:${typeof flyClientIp === 'string' && flyClientIp ? flyClientIp : req.ip}`;
+    return `ip:${clientIp(req)}`;
   }
 }

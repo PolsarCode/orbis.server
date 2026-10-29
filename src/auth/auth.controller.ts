@@ -3,10 +3,12 @@ import { AuthService } from './auth.service';
 import { EmailConfirmationService } from './email-confirmation.service';
 import { JwtAuthGuard } from './jwt.guard';
 import { AllowUnconfirmed } from './confirmed-email.guard';
-import { CreateUserDto } from '../users/dto/create-user.dto';
+import { SignupDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
 import { ConfirmEmailDto } from './dto/confirm-email.dto';
 import { HOUR, MINUTE, RateLimit } from '../common/throttle';
+import { clientIp } from '../common/client-ip';
+import { verifyTurnstile } from './turnstile';
 
 @Controller('auth')
 @AllowUnconfirmed()
@@ -18,13 +20,16 @@ export class AuthController {
 
   @RateLimit(3, HOUR)
   @Post('signup')
-  signup(@Body() body: CreateUserDto) {
-    return this.authService.signup(body);
+  async signup(@Body() body: SignupDto, @Req() req) {
+    const { turnstileToken, ...details } = body;
+    await verifyTurnstile(turnstileToken, clientIp(req));
+    return this.authService.signup(details);
   }
 
   @RateLimit(10, MINUTE)
   @Post('login')
-  login(@Body() body: LoginDto) {
+  async login(@Body() body: LoginDto, @Req() req) {
+    await verifyTurnstile(body.turnstileToken, clientIp(req));
     return this.authService.login(body.identifier, body.password);
   }
 
