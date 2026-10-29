@@ -36,6 +36,8 @@ model User {
   suspendedAt          DateTime?
   suspendedUntil       DateTime?
   suspensionReason     String?
+  suggestionSlots      Int                  @default(10)
+  suggestionSlotsAt    DateTime?
   tourCompletedAt      DateTime?
   checklistDismissedAt DateTime?
   completedTours       String[]             @default([])

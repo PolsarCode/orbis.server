@@ -474,6 +474,8 @@ export const UserScalarFieldEnum = {
   suspendedAt: 'suspendedAt',
   suspendedUntil: 'suspendedUntil',
   suspensionReason: 'suspensionReason',
+  suggestionSlots: 'suggestionSlots',
+  suggestionSlotsAt: 'suggestionSlotsAt',
   tourCompletedAt: 'tourCompletedAt',
   checklistDismissedAt: 'checklistDismissedAt',
   completedTours: 'completedTours',

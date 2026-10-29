@@ -28,10 +28,12 @@ export type AggregateUser = {
 
 export type UserAvgAggregateOutputType = {
   id: number | null
+  suggestionSlots: number | null
 }
 
 export type UserSumAggregateOutputType = {
   id: number | null
+  suggestionSlots: number | null
 }
 
 export type UserMinAggregateOutputType = {
@@ -55,6 +57,8 @@ export type UserMinAggregateOutputType = {
   suspendedAt: Date | null
   suspendedUntil: Date | null
   suspensionReason: string | null
+  suggestionSlots: number | null
+  suggestionSlotsAt: Date | null
   tourCompletedAt: Date | null
   checklistDismissedAt: Date | null
   createdAt: Date | null
@@ -81,6 +85,8 @@ export type UserMaxAggregateOutputType = {
   suspendedAt: Date | null
   suspendedUntil: Date | null
   suspensionReason: string | null
+  suggestionSlots: number | null
+  suggestionSlotsAt: Date | null
   tourCompletedAt: Date | null
   checklistDismissedAt: Date | null
   createdAt: Date | null
@@ -107,6 +113,8 @@ export type UserCountAggregateOutputType = {
   suspendedAt: number
   suspendedUntil: number
   suspensionReason: number
+  suggestionSlots: number
+  suggestionSlotsAt: number
   tourCompletedAt: number
   checklistDismissedAt: number
   completedTours: number
@@ -117,10 +125,12 @@ export type UserCountAggregateOutputType = {
 
 export type UserAvgAggregateInputType = {
   id?: true
+  suggestionSlots?: true
 }
 
 export type UserSumAggregateInputType = {
   id?: true
+  suggestionSlots?: true
 }
 
 export type UserMinAggregateInputType = {
@@ -144,6 +154,8 @@ export type UserMinAggregateInputType = {
   suspendedAt?: true
   suspendedUntil?: true
   suspensionReason?: true
+  suggestionSlots?: true
+  suggestionSlotsAt?: true
   tourCompletedAt?: true
   checklistDismissedAt?: true
   createdAt?: true
@@ -170,6 +182,8 @@ export type UserMaxAggregateInputType = {
   suspendedAt?: true
   suspendedUntil?: true
   suspensionReason?: true
+  suggestionSlots?: true
+  suggestionSlotsAt?: true
   tourCompletedAt?: true
   checklistDismissedAt?: true
   createdAt?: true
@@ -196,6 +210,8 @@ export type UserCountAggregateInputType = {
   suspendedAt?: true
   suspendedUntil?: true
   suspensionReason?: true
+  suggestionSlots?: true
+  suggestionSlotsAt?: true
   tourCompletedAt?: true
   checklistDismissedAt?: true
   completedTours?: true
@@ -310,6 +326,8 @@ export type UserGroupByOutputType = {
   suspendedAt: Date | null
   suspendedUntil: Date | null
   suspensionReason: string | null
+  suggestionSlots: number
+  suggestionSlotsAt: Date | null
   tourCompletedAt: Date | null
   checklistDismissedAt: Date | null
   completedTours: string[]
@@ -360,6 +378,8 @@ export type UserWhereInput = {
   suspendedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   suspendedUntil?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   suspensionReason?: Prisma.StringNullableFilter<"User"> | string | null
+  suggestionSlots?: Prisma.IntFilter<"User"> | number
+  suggestionSlotsAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   tourCompletedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   checklistDismissedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   completedTours?: Prisma.StringNullableListFilter<"User">
@@ -414,6 +434,8 @@ export type UserOrderByWithRelationInput = {
   suspendedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   suspendedUntil?: Prisma.SortOrderInput | Prisma.SortOrder
   suspensionReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  suggestionSlots?: Prisma.SortOrder
+  suggestionSlotsAt?: Prisma.SortOrderInput | Prisma.SortOrder
   tourCompletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   checklistDismissedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   completedTours?: Prisma.SortOrder
@@ -471,6 +493,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   suspendedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   suspendedUntil?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   suspensionReason?: Prisma.StringNullableFilter<"User"> | string | null
+  suggestionSlots?: Prisma.IntFilter<"User"> | number
+  suggestionSlotsAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   tourCompletedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   checklistDismissedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   completedTours?: Prisma.StringNullableListFilter<"User">
@@ -525,6 +549,8 @@ export type UserOrderByWithAggregationInput = {
   suspendedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   suspendedUntil?: Prisma.SortOrderInput | Prisma.SortOrder
   suspensionReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  suggestionSlots?: Prisma.SortOrder
+  suggestionSlotsAt?: Prisma.SortOrderInput | Prisma.SortOrder
   tourCompletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   checklistDismissedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   completedTours?: Prisma.SortOrder
@@ -560,6 +586,8 @@ export type UserScalarWhereWithAggregatesInput = {
   suspendedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   suspendedUntil?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   suspensionReason?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  suggestionSlots?: Prisma.IntWithAggregatesFilter<"User"> | number
+  suggestionSlotsAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   tourCompletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   checklistDismissedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   completedTours?: Prisma.StringNullableListFilter<"User">
@@ -586,6 +614,8 @@ export type UserCreateInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -640,6 +670,8 @@ export type UserUncheckedCreateInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -693,6 +725,8 @@ export type UserUpdateInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -747,6 +781,8 @@ export type UserUncheckedUpdateInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -801,6 +837,8 @@ export type UserCreateManyInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -827,6 +865,8 @@ export type UserUpdateManyMutationInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -854,6 +894,8 @@ export type UserUncheckedUpdateManyInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -899,6 +941,8 @@ export type UserCountOrderByAggregateInput = {
   suspendedAt?: Prisma.SortOrder
   suspendedUntil?: Prisma.SortOrder
   suspensionReason?: Prisma.SortOrder
+  suggestionSlots?: Prisma.SortOrder
+  suggestionSlotsAt?: Prisma.SortOrder
   tourCompletedAt?: Prisma.SortOrder
   checklistDismissedAt?: Prisma.SortOrder
   completedTours?: Prisma.SortOrder
@@ -907,6 +951,7 @@ export type UserCountOrderByAggregateInput = {
 
 export type UserAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  suggestionSlots?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -930,6 +975,8 @@ export type UserMaxOrderByAggregateInput = {
   suspendedAt?: Prisma.SortOrder
   suspendedUntil?: Prisma.SortOrder
   suspensionReason?: Prisma.SortOrder
+  suggestionSlots?: Prisma.SortOrder
+  suggestionSlotsAt?: Prisma.SortOrder
   tourCompletedAt?: Prisma.SortOrder
   checklistDismissedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -956,6 +1003,8 @@ export type UserMinOrderByAggregateInput = {
   suspendedAt?: Prisma.SortOrder
   suspendedUntil?: Prisma.SortOrder
   suspensionReason?: Prisma.SortOrder
+  suggestionSlots?: Prisma.SortOrder
+  suggestionSlotsAt?: Prisma.SortOrder
   tourCompletedAt?: Prisma.SortOrder
   checklistDismissedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -963,6 +1012,7 @@ export type UserMinOrderByAggregateInput = {
 
 export type UserSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  suggestionSlots?: Prisma.SortOrder
 }
 
 export type UserCreateNestedOneWithoutOwnedCommunitiesInput = {
@@ -1394,6 +1444,8 @@ export type UserCreateWithoutOwnedCommunitiesInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -1447,6 +1499,8 @@ export type UserUncheckedCreateWithoutOwnedCommunitiesInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -1515,6 +1569,8 @@ export type UserUpdateWithoutOwnedCommunitiesInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -1568,6 +1624,8 @@ export type UserUncheckedUpdateWithoutOwnedCommunitiesInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -1620,6 +1678,8 @@ export type UserCreateWithoutMembershipsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -1673,6 +1733,8 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -1741,6 +1803,8 @@ export type UserUpdateWithoutMembershipsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -1794,6 +1858,8 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -1846,6 +1912,8 @@ export type UserCreateWithoutRailFoldersInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -1899,6 +1967,8 @@ export type UserUncheckedCreateWithoutRailFoldersInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -1967,6 +2037,8 @@ export type UserUpdateWithoutRailFoldersInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -2020,6 +2092,8 @@ export type UserUncheckedUpdateWithoutRailFoldersInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -2072,6 +2146,8 @@ export type UserCreateWithoutInvitesInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -2125,6 +2201,8 @@ export type UserUncheckedCreateWithoutInvitesInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -2193,6 +2271,8 @@ export type UserUpdateWithoutInvitesInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -2246,6 +2326,8 @@ export type UserUncheckedUpdateWithoutInvitesInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -2298,6 +2380,8 @@ export type UserCreateWithoutWallPostsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -2351,6 +2435,8 @@ export type UserUncheckedCreateWithoutWallPostsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -2408,6 +2494,8 @@ export type UserCreateWithoutPostsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -2461,6 +2549,8 @@ export type UserUncheckedCreateWithoutPostsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -2529,6 +2619,8 @@ export type UserUpdateWithoutWallPostsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -2582,6 +2674,8 @@ export type UserUncheckedUpdateWithoutWallPostsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -2645,6 +2739,8 @@ export type UserUpdateWithoutPostsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -2698,6 +2794,8 @@ export type UserUncheckedUpdateWithoutPostsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -2750,6 +2848,8 @@ export type UserCreateWithoutCommentsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -2803,6 +2903,8 @@ export type UserUncheckedCreateWithoutCommentsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -2871,6 +2973,8 @@ export type UserUpdateWithoutCommentsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -2924,6 +3028,8 @@ export type UserUncheckedUpdateWithoutCommentsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -2976,6 +3082,8 @@ export type UserCreateWithoutLikesInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -3029,6 +3137,8 @@ export type UserUncheckedCreateWithoutLikesInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -3097,6 +3207,8 @@ export type UserUpdateWithoutLikesInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -3150,6 +3262,8 @@ export type UserUncheckedUpdateWithoutLikesInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -3202,6 +3316,8 @@ export type UserCreateWithoutSentFriendshipsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -3255,6 +3371,8 @@ export type UserUncheckedCreateWithoutSentFriendshipsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -3312,6 +3430,8 @@ export type UserCreateWithoutReceivedFriendshipsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -3365,6 +3485,8 @@ export type UserUncheckedCreateWithoutReceivedFriendshipsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -3433,6 +3555,8 @@ export type UserUpdateWithoutSentFriendshipsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -3486,6 +3610,8 @@ export type UserUncheckedUpdateWithoutSentFriendshipsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -3549,6 +3675,8 @@ export type UserUpdateWithoutReceivedFriendshipsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -3602,6 +3730,8 @@ export type UserUncheckedUpdateWithoutReceivedFriendshipsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -3654,6 +3784,8 @@ export type UserCreateWithoutLibraryEntriesInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -3707,6 +3839,8 @@ export type UserUncheckedCreateWithoutLibraryEntriesInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -3775,6 +3909,8 @@ export type UserUpdateWithoutLibraryEntriesInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -3828,6 +3964,8 @@ export type UserUncheckedUpdateWithoutLibraryEntriesInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -3880,6 +4018,8 @@ export type UserCreateWithoutCreatedConversationsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -3933,6 +4073,8 @@ export type UserUncheckedCreateWithoutCreatedConversationsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -3990,6 +4132,8 @@ export type UserCreateWithoutConversationsAsAInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -4043,6 +4187,8 @@ export type UserUncheckedCreateWithoutConversationsAsAInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -4100,6 +4246,8 @@ export type UserCreateWithoutConversationsAsBInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -4153,6 +4301,8 @@ export type UserUncheckedCreateWithoutConversationsAsBInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -4221,6 +4371,8 @@ export type UserUpdateWithoutCreatedConversationsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -4274,6 +4426,8 @@ export type UserUncheckedUpdateWithoutCreatedConversationsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -4337,6 +4491,8 @@ export type UserUpdateWithoutConversationsAsAInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -4390,6 +4546,8 @@ export type UserUncheckedUpdateWithoutConversationsAsAInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -4453,6 +4611,8 @@ export type UserUpdateWithoutConversationsAsBInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -4506,6 +4666,8 @@ export type UserUncheckedUpdateWithoutConversationsAsBInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -4558,6 +4720,8 @@ export type UserCreateWithoutConversationsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -4611,6 +4775,8 @@ export type UserUncheckedCreateWithoutConversationsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -4679,6 +4845,8 @@ export type UserUpdateWithoutConversationsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -4732,6 +4900,8 @@ export type UserUncheckedUpdateWithoutConversationsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -4784,6 +4954,8 @@ export type UserCreateWithoutMessagesInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -4837,6 +5009,8 @@ export type UserUncheckedCreateWithoutMessagesInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -4905,6 +5079,8 @@ export type UserUpdateWithoutMessagesInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -4958,6 +5134,8 @@ export type UserUncheckedUpdateWithoutMessagesInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -5010,6 +5188,8 @@ export type UserCreateWithoutMessageReactionsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -5063,6 +5243,8 @@ export type UserUncheckedCreateWithoutMessageReactionsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -5131,6 +5313,8 @@ export type UserUpdateWithoutMessageReactionsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -5184,6 +5368,8 @@ export type UserUncheckedUpdateWithoutMessageReactionsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -5236,6 +5422,8 @@ export type UserCreateWithoutNotificationsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -5289,6 +5477,8 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -5346,6 +5536,8 @@ export type UserCreateWithoutCausedNotificationsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -5399,6 +5591,8 @@ export type UserUncheckedCreateWithoutCausedNotificationsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -5467,6 +5661,8 @@ export type UserUpdateWithoutNotificationsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -5520,6 +5716,8 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -5583,6 +5781,8 @@ export type UserUpdateWithoutCausedNotificationsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -5636,6 +5836,8 @@ export type UserUncheckedUpdateWithoutCausedNotificationsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -5688,6 +5890,8 @@ export type UserCreateWithoutReportsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -5741,6 +5945,8 @@ export type UserUncheckedCreateWithoutReportsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -5798,6 +6004,8 @@ export type UserCreateWithoutAssignedReportsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -5851,6 +6059,8 @@ export type UserUncheckedCreateWithoutAssignedReportsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -5919,6 +6129,8 @@ export type UserUpdateWithoutReportsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -5972,6 +6184,8 @@ export type UserUncheckedUpdateWithoutReportsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -6035,6 +6249,8 @@ export type UserUpdateWithoutAssignedReportsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -6088,6 +6304,8 @@ export type UserUncheckedUpdateWithoutAssignedReportsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -6140,6 +6358,8 @@ export type UserCreateWithoutReportCommentsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -6193,6 +6413,8 @@ export type UserUncheckedCreateWithoutReportCommentsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -6261,6 +6483,8 @@ export type UserUpdateWithoutReportCommentsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -6314,6 +6538,8 @@ export type UserUncheckedUpdateWithoutReportCommentsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -6366,6 +6592,8 @@ export type UserCreateWithoutContentReportsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -6419,6 +6647,8 @@ export type UserUncheckedCreateWithoutContentReportsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -6476,6 +6706,8 @@ export type UserCreateWithoutResolvedReportsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -6529,6 +6761,8 @@ export type UserUncheckedCreateWithoutResolvedReportsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -6597,6 +6831,8 @@ export type UserUpdateWithoutContentReportsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -6650,6 +6886,8 @@ export type UserUncheckedUpdateWithoutContentReportsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -6713,6 +6951,8 @@ export type UserUpdateWithoutResolvedReportsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -6766,6 +7006,8 @@ export type UserUncheckedUpdateWithoutResolvedReportsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -6818,6 +7060,8 @@ export type UserCreateWithoutSteamAccountInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -6871,6 +7115,8 @@ export type UserUncheckedCreateWithoutSteamAccountInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -6939,6 +7185,8 @@ export type UserUpdateWithoutSteamAccountInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -6992,6 +7240,8 @@ export type UserUncheckedUpdateWithoutSteamAccountInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -7044,6 +7294,8 @@ export type UserCreateWithoutSteamGamesInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -7097,6 +7349,8 @@ export type UserUncheckedCreateWithoutSteamGamesInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -7165,6 +7419,8 @@ export type UserUpdateWithoutSteamGamesInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -7218,6 +7474,8 @@ export type UserUncheckedUpdateWithoutSteamGamesInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -7270,6 +7528,8 @@ export type UserCreateWithoutOauthAccountsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -7323,6 +7583,8 @@ export type UserUncheckedCreateWithoutOauthAccountsInput = {
   suspendedAt?: Date | string | null
   suspendedUntil?: Date | string | null
   suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -7391,6 +7653,8 @@ export type UserUpdateWithoutOauthAccountsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -7444,6 +7708,8 @@ export type UserUncheckedUpdateWithoutOauthAccountsInput = {
   suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -7753,6 +8019,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   suspendedAt?: boolean
   suspendedUntil?: boolean
   suspensionReason?: boolean
+  suggestionSlots?: boolean
+  suggestionSlotsAt?: boolean
   tourCompletedAt?: boolean
   checklistDismissedAt?: boolean
   completedTours?: boolean
@@ -7808,6 +8076,8 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   suspendedAt?: boolean
   suspendedUntil?: boolean
   suspensionReason?: boolean
+  suggestionSlots?: boolean
+  suggestionSlotsAt?: boolean
   tourCompletedAt?: boolean
   checklistDismissedAt?: boolean
   completedTours?: boolean
@@ -7835,6 +8105,8 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   suspendedAt?: boolean
   suspendedUntil?: boolean
   suspensionReason?: boolean
+  suggestionSlots?: boolean
+  suggestionSlotsAt?: boolean
   tourCompletedAt?: boolean
   checklistDismissedAt?: boolean
   completedTours?: boolean
@@ -7862,13 +8134,15 @@ export type UserSelectScalar = {
   suspendedAt?: boolean
   suspendedUntil?: boolean
   suspensionReason?: boolean
+  suggestionSlots?: boolean
+  suggestionSlotsAt?: boolean
   tourCompletedAt?: boolean
   checklistDismissedAt?: boolean
   completedTours?: boolean
   createdAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "username" | "name" | "avatarUrl" | "coverUrl" | "backgroundUrl" | "password" | "emailVerifiedAt" | "theme" | "appearOffline" | "showNsfw" | "showChangelog" | "status" | "isPublic" | "isAdmin" | "isVerified" | "suspendedAt" | "suspendedUntil" | "suspensionReason" | "tourCompletedAt" | "checklistDismissedAt" | "completedTours" | "createdAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "username" | "name" | "avatarUrl" | "coverUrl" | "backgroundUrl" | "password" | "emailVerifiedAt" | "theme" | "appearOffline" | "showNsfw" | "showChangelog" | "status" | "isPublic" | "isAdmin" | "isVerified" | "suspendedAt" | "suspendedUntil" | "suspensionReason" | "suggestionSlots" | "suggestionSlotsAt" | "tourCompletedAt" | "checklistDismissedAt" | "completedTours" | "createdAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   ownedCommunities?: boolean | Prisma.User$ownedCommunitiesArgs<ExtArgs>
   memberships?: boolean | Prisma.User$membershipsArgs<ExtArgs>
@@ -7954,6 +8228,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     suspendedAt: Date | null
     suspendedUntil: Date | null
     suspensionReason: string | null
+    suggestionSlots: number
+    suggestionSlotsAt: Date | null
     tourCompletedAt: Date | null
     checklistDismissedAt: Date | null
     completedTours: string[]
@@ -8428,6 +8704,8 @@ export interface UserFieldRefs {
   readonly suspendedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly suspendedUntil: Prisma.FieldRef<"User", 'DateTime'>
   readonly suspensionReason: Prisma.FieldRef<"User", 'String'>
+  readonly suggestionSlots: Prisma.FieldRef<"User", 'Int'>
+  readonly suggestionSlotsAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly tourCompletedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly checklistDismissedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly completedTours: Prisma.FieldRef<"User", 'String[]'>

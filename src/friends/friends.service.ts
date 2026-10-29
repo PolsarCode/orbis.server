@@ -15,10 +15,12 @@ import { notSuspended } from '../users/suspension';
 import {
   MUTUAL_PREVIEW,
   SHARED_STATUSES,
-  SUGGESTION_LIMIT,
+  availableSlots,
   communityReason,
   mutualReason,
   rankCandidates,
+  slotFields,
+  spendSlot,
   titleReason,
 } from './suggestions';
 
@@ -181,6 +183,13 @@ export class FriendsService {
   }
 
   async suggestions(userId: number): Promise<FriendSuggestion[]> {
+    const slots = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: slotFields,
+    });
+    const limit = slots ? availableSlots(slots) : 0;
+    if (limit === 0) return [];
+
     const [friendships, memberships, library, showNsfw] = await Promise.all([
       this.prisma.friendship.findMany({
         where: { OR: [{ requesterId: userId }, { addresseeId: userId }] },
@@ -282,9 +291,7 @@ export class FriendsService {
       select: publicPerson,
     });
     const byId = new Map(candidates.map((user) => [user.id, user]));
-    const chosen = ranked
-      .filter((id) => byId.has(id))
-      .slice(0, SUGGESTION_LIMIT);
+    const chosen = ranked.filter((id) => byId.has(id)).slice(0, limit);
 
     const needsCommunity = chosen.filter((id) => !mutual.has(id));
     const previewIds = [
@@ -365,7 +372,10 @@ export class FriendsService {
     });
   }
 
-  async add(userId: number, { userId: targetId, username }: AddFriendDto) {
+  async add(
+    userId: number,
+    { userId: targetId, username, fromSuggestion }: AddFriendDto,
+  ) {
     const target = await this.prisma.user.findUnique({
       where:
         targetId !== undefined
@@ -428,7 +438,19 @@ export class FriendsService {
       ]);
     }
 
+    if (fromSuggestion) await this.spendSuggestionSlot(userId);
     this.presence.notify([userId, target.id], 'friends:changed');
+  }
+
+  private async spendSuggestionSlot(userId: number) {
+    const slots = await this.prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: slotFields,
+    });
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: spendSlot(slots),
+    });
   }
 
   async remove(userId: number, otherId: number) {

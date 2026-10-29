@@ -1,5 +1,7 @@
 import {
+  IsBoolean,
   IsInt,
+  IsOptional,
   IsString,
   Matches,
   Max,
@@ -19,4 +21,8 @@ export class AddFriendDto {
   @IsString()
   @Matches(USERNAME_PATTERN, { message: USERNAME_MESSAGE })
   username?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  fromSuggestion?: boolean;
 }

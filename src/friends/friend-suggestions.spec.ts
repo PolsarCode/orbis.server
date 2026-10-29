@@ -2,7 +2,12 @@ import { FriendsService } from './friends.service';
 import { PrismaService } from '../prisma.service';
 import { PresenceGateway } from './presence.gateway';
 import { NotificationsService } from '../notifications/notifications.service';
-import { rankCandidates, titleReason } from './suggestions';
+import {
+  availableSlots,
+  rankCandidates,
+  spendSlot,
+  titleReason,
+} from './suggestions';
 
 const person = (id: number) => ({
   id,
@@ -13,8 +18,10 @@ const person = (id: number) => ({
 });
 
 const SUSPENDED = 9;
+const HOUR = 60 * 60 * 1000;
+const fullSlots = { suggestionSlots: 10, suggestionSlotsAt: null };
 
-function prismaFor() {
+function prismaFor(slots: object = fullSlots) {
   return {
     friendship: {
       findMany: jest.fn(({ where }) =>
@@ -69,7 +76,11 @@ function prismaFor() {
       ]),
     },
     user: {
-      findUnique: jest.fn(() => ({ showNsfw: false })),
+      findUnique: jest.fn(({ select }) =>
+        select.showNsfw ? { showNsfw: false } : slots,
+      ),
+      findUniqueOrThrow: jest.fn(() => slots),
+      update: jest.fn(),
       findMany: jest.fn(({ where }) =>
         where.id.in
           .filter((id: number) => !(where.OR && id === SUSPENDED))
@@ -161,5 +172,81 @@ describe('Friend suggestions', () => {
 
     await expect(serviceWith(prisma).suggestions(1)).resolves.toEqual([]);
     expect(prisma.user.findMany).not.toHaveBeenCalled();
+  });
+
+  it('shows fewer people once suggestion slots are used up', async () => {
+    const limited = await serviceWith(
+      prismaFor({ suggestionSlots: 2, suggestionSlotsAt: new Date() }),
+    ).suggestions(1);
+    expect(limited.map(({ userId }) => userId)).toEqual([6, 7]);
+
+    const prisma = prismaFor({
+      suggestionSlots: 0,
+      suggestionSlotsAt: new Date(),
+    });
+    await expect(serviceWith(prisma).suggestions(1)).resolves.toEqual([]);
+    expect(prisma.friendship.findMany).not.toHaveBeenCalled();
+  });
+});
+
+describe('Suggestion slots', () => {
+  const start = new Date('2026-10-30T00:00:00Z');
+  const later = (hours: number) => new Date(start.getTime() + hours * HOUR);
+
+  it('starts full and gives one back every hour, up to ten', () => {
+    expect(availableSlots(fullSlots, start)).toBe(10);
+    const used = { suggestionSlots: 6, suggestionSlotsAt: start };
+    expect(availableSlots(used, later(0.5))).toBe(6);
+    expect(availableSlots(used, later(1))).toBe(7);
+    expect(availableSlots(used, later(4))).toBe(10);
+    expect(availableSlots(used, later(30))).toBe(10);
+  });
+
+  it('keeps the progress toward the next slot when one is spent', () => {
+    const first = spendSlot(fullSlots, start);
+    expect(first).toEqual({ suggestionSlots: 9, suggestionSlotsAt: start });
+    const second = spendSlot(first, start);
+    expect(second).toEqual({ suggestionSlots: 8, suggestionSlotsAt: start });
+
+    const third = spendSlot(second, later(1.5));
+    expect(third).toEqual({ suggestionSlots: 8, suggestionSlotsAt: later(1) });
+    expect(availableSlots(third, later(2))).toBe(9);
+    expect(availableSlots(third, later(3))).toBe(10);
+  });
+
+  it('restarts the clock when a slot is spent from a full set', () => {
+    const spent = spendSlot(
+      { suggestionSlots: 9, suggestionSlotsAt: start },
+      later(1.5),
+    );
+    expect(spent).toEqual({
+      suggestionSlots: 9,
+      suggestionSlotsAt: later(1.5),
+    });
+  });
+
+  it('spends a slot only for friends added from a suggestion', async () => {
+    const prisma = {
+      user: {
+        findUnique: jest.fn(() => ({ id: 6 })),
+        findUniqueOrThrow: jest.fn(() => fullSlots),
+        update: jest.fn(),
+      },
+      friendship: { findFirst: jest.fn(() => null), create: jest.fn() },
+    };
+    const service = new FriendsService(
+      prisma as unknown as PrismaService,
+      { notify: jest.fn() } as unknown as PresenceGateway,
+      { notify: jest.fn() } as unknown as NotificationsService,
+    );
+
+    await service.add(1, { userId: 6 });
+    expect(prisma.user.update).not.toHaveBeenCalled();
+
+    await service.add(1, { userId: 7, fromSuggestion: true });
+    expect(prisma.user.update).toHaveBeenCalledWith({
+      where: { id: 1 },
+      data: expect.objectContaining({ suggestionSlots: 9 }),
+    });
   });
 });
