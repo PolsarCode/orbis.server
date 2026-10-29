@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { ConfirmedEmailGuard } from './auth/confirmed-email.guard';
+import { SuspendedAccountGuard } from './auth/suspended-account.guard';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AppThrottlerGuard, throttlerOptions } from './common/throttle';
 import { UsersModule } from './users/users.module';
@@ -54,6 +55,7 @@ import { PrismaService } from './prisma.service';
     AppService,
     PrismaService,
     { provide: APP_GUARD, useClass: AppThrottlerGuard },
+    { provide: APP_GUARD, useClass: SuspendedAccountGuard },
     { provide: APP_GUARD, useClass: ConfirmedEmailGuard },
   ],
 })

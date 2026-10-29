@@ -8,6 +8,8 @@ import { UsersService } from '../users/users.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { normalizeUsername } from '../users/username';
 import { EmailConfirmationService } from './email-confirmation.service';
+import { PrismaService } from '../prisma.service';
+import { ensureNotSuspended } from '../users/suspension';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -16,6 +18,7 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private emailConfirmation: EmailConfirmationService,
+    private prisma: PrismaService,
   ) {}
 
   async signup(createUserDto: CreateUserDto) {
@@ -49,7 +52,8 @@ export class AuthService {
     return this.generateToken(user.id, user.email);
   }
 
-  generateToken(userId: number, email: string) {
+  async generateToken(userId: number, email: string) {
+    await ensureNotSuspended(this.prisma, userId);
     const payload = { sub: userId, email };
 
     return {

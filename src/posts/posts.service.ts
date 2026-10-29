@@ -34,6 +34,7 @@ import { DiscordChannelService } from '../discord-channel/discord-channel.servic
 import { managedCommunities } from '../communities/managed-communities';
 import { discussionCleanup } from '../comments/discussion-cleanup';
 import { containsLink, requireEstablishedAccount } from '../common/new-account';
+import { notSuspended } from '../users/suspension';
 
 const postInclude = {
   author,
@@ -364,6 +365,7 @@ export class PostsService {
                 isPublic: true,
                 ...nsfw,
                 user: {
+                  ...notSuspended(),
                   memberships: {
                     some: { communityId, showLibraryUpdates: true },
                   },
@@ -428,6 +430,7 @@ export class PostsService {
           isPublic: true,
           ...nsfw,
           user: {
+            ...notSuspended(),
             memberships: { some: { communityId, showLibraryUpdates: true } },
           },
         },
@@ -525,6 +528,7 @@ export class PostsService {
                 isPublic: true,
                 ...nsfw,
                 user: {
+                  ...notSuspended(),
                   memberships: {
                     some: {
                       showLibraryUpdates: true,
@@ -582,7 +586,12 @@ export class PostsService {
         ? []
         : this.prisma.libraryActivity.findMany({
             where: {
-              entry: { userId: owner.id, isPublic: true, ...nsfw },
+              entry: {
+                userId: owner.id,
+                isPublic: true,
+                ...nsfw,
+                user: notSuspended(),
+              },
               ...olderThan(cursor, RANK.activity),
             },
             orderBy: newestFirst,
@@ -640,7 +649,12 @@ export class PostsService {
     const activity = await this.prisma.libraryActivity.findFirst({
       where: {
         id: activityId,
-        entry: { userId: owner.id, isPublic: true, ...nsfw },
+        entry: {
+          userId: owner.id,
+          isPublic: true,
+          ...nsfw,
+          user: notSuspended(),
+        },
       },
       include: activityInclude,
     });

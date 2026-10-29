@@ -52,6 +52,9 @@ export type UserMinAggregateOutputType = {
   isPublic: boolean | null
   isAdmin: boolean | null
   isVerified: boolean | null
+  suspendedAt: Date | null
+  suspendedUntil: Date | null
+  suspensionReason: string | null
   tourCompletedAt: Date | null
   checklistDismissedAt: Date | null
   createdAt: Date | null
@@ -75,6 +78,9 @@ export type UserMaxAggregateOutputType = {
   isPublic: boolean | null
   isAdmin: boolean | null
   isVerified: boolean | null
+  suspendedAt: Date | null
+  suspendedUntil: Date | null
+  suspensionReason: string | null
   tourCompletedAt: Date | null
   checklistDismissedAt: Date | null
   createdAt: Date | null
@@ -98,6 +104,9 @@ export type UserCountAggregateOutputType = {
   isPublic: number
   isAdmin: number
   isVerified: number
+  suspendedAt: number
+  suspendedUntil: number
+  suspensionReason: number
   tourCompletedAt: number
   checklistDismissedAt: number
   completedTours: number
@@ -132,6 +141,9 @@ export type UserMinAggregateInputType = {
   isPublic?: true
   isAdmin?: true
   isVerified?: true
+  suspendedAt?: true
+  suspendedUntil?: true
+  suspensionReason?: true
   tourCompletedAt?: true
   checklistDismissedAt?: true
   createdAt?: true
@@ -155,6 +167,9 @@ export type UserMaxAggregateInputType = {
   isPublic?: true
   isAdmin?: true
   isVerified?: true
+  suspendedAt?: true
+  suspendedUntil?: true
+  suspensionReason?: true
   tourCompletedAt?: true
   checklistDismissedAt?: true
   createdAt?: true
@@ -178,6 +193,9 @@ export type UserCountAggregateInputType = {
   isPublic?: true
   isAdmin?: true
   isVerified?: true
+  suspendedAt?: true
+  suspendedUntil?: true
+  suspensionReason?: true
   tourCompletedAt?: true
   checklistDismissedAt?: true
   completedTours?: true
@@ -289,6 +307,9 @@ export type UserGroupByOutputType = {
   isPublic: boolean
   isAdmin: boolean
   isVerified: boolean
+  suspendedAt: Date | null
+  suspendedUntil: Date | null
+  suspensionReason: string | null
   tourCompletedAt: Date | null
   checklistDismissedAt: Date | null
   completedTours: string[]
@@ -336,6 +357,9 @@ export type UserWhereInput = {
   isPublic?: Prisma.BoolFilter<"User"> | boolean
   isAdmin?: Prisma.BoolFilter<"User"> | boolean
   isVerified?: Prisma.BoolFilter<"User"> | boolean
+  suspendedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  suspendedUntil?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  suspensionReason?: Prisma.StringNullableFilter<"User"> | string | null
   tourCompletedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   checklistDismissedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   completedTours?: Prisma.StringNullableListFilter<"User">
@@ -387,6 +411,9 @@ export type UserOrderByWithRelationInput = {
   isPublic?: Prisma.SortOrder
   isAdmin?: Prisma.SortOrder
   isVerified?: Prisma.SortOrder
+  suspendedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  suspendedUntil?: Prisma.SortOrderInput | Prisma.SortOrder
+  suspensionReason?: Prisma.SortOrderInput | Prisma.SortOrder
   tourCompletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   checklistDismissedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   completedTours?: Prisma.SortOrder
@@ -441,6 +468,9 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   isPublic?: Prisma.BoolFilter<"User"> | boolean
   isAdmin?: Prisma.BoolFilter<"User"> | boolean
   isVerified?: Prisma.BoolFilter<"User"> | boolean
+  suspendedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  suspendedUntil?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  suspensionReason?: Prisma.StringNullableFilter<"User"> | string | null
   tourCompletedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   checklistDismissedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   completedTours?: Prisma.StringNullableListFilter<"User">
@@ -492,6 +522,9 @@ export type UserOrderByWithAggregationInput = {
   isPublic?: Prisma.SortOrder
   isAdmin?: Prisma.SortOrder
   isVerified?: Prisma.SortOrder
+  suspendedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  suspendedUntil?: Prisma.SortOrderInput | Prisma.SortOrder
+  suspensionReason?: Prisma.SortOrderInput | Prisma.SortOrder
   tourCompletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   checklistDismissedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   completedTours?: Prisma.SortOrder
@@ -524,6 +557,9 @@ export type UserScalarWhereWithAggregatesInput = {
   isPublic?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   isAdmin?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   isVerified?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
+  suspendedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  suspendedUntil?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  suspensionReason?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   tourCompletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   checklistDismissedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   completedTours?: Prisma.StringNullableListFilter<"User">
@@ -547,6 +583,9 @@ export type UserCreateInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -598,6 +637,9 @@ export type UserUncheckedCreateInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -648,6 +690,9 @@ export type UserUpdateInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -699,6 +744,9 @@ export type UserUncheckedUpdateInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -750,6 +798,9 @@ export type UserCreateManyInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -773,6 +824,9 @@ export type UserUpdateManyMutationInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -797,6 +851,9 @@ export type UserUncheckedUpdateManyInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -839,6 +896,9 @@ export type UserCountOrderByAggregateInput = {
   isPublic?: Prisma.SortOrder
   isAdmin?: Prisma.SortOrder
   isVerified?: Prisma.SortOrder
+  suspendedAt?: Prisma.SortOrder
+  suspendedUntil?: Prisma.SortOrder
+  suspensionReason?: Prisma.SortOrder
   tourCompletedAt?: Prisma.SortOrder
   checklistDismissedAt?: Prisma.SortOrder
   completedTours?: Prisma.SortOrder
@@ -867,6 +927,9 @@ export type UserMaxOrderByAggregateInput = {
   isPublic?: Prisma.SortOrder
   isAdmin?: Prisma.SortOrder
   isVerified?: Prisma.SortOrder
+  suspendedAt?: Prisma.SortOrder
+  suspendedUntil?: Prisma.SortOrder
+  suspensionReason?: Prisma.SortOrder
   tourCompletedAt?: Prisma.SortOrder
   checklistDismissedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -890,6 +953,9 @@ export type UserMinOrderByAggregateInput = {
   isPublic?: Prisma.SortOrder
   isAdmin?: Prisma.SortOrder
   isVerified?: Prisma.SortOrder
+  suspendedAt?: Prisma.SortOrder
+  suspendedUntil?: Prisma.SortOrder
+  suspensionReason?: Prisma.SortOrder
   tourCompletedAt?: Prisma.SortOrder
   checklistDismissedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -1325,6 +1391,9 @@ export type UserCreateWithoutOwnedCommunitiesInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -1375,6 +1444,9 @@ export type UserUncheckedCreateWithoutOwnedCommunitiesInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -1440,6 +1512,9 @@ export type UserUpdateWithoutOwnedCommunitiesInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -1490,6 +1565,9 @@ export type UserUncheckedUpdateWithoutOwnedCommunitiesInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -1539,6 +1617,9 @@ export type UserCreateWithoutMembershipsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -1589,6 +1670,9 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -1654,6 +1738,9 @@ export type UserUpdateWithoutMembershipsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -1704,6 +1791,9 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -1753,6 +1843,9 @@ export type UserCreateWithoutRailFoldersInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -1803,6 +1896,9 @@ export type UserUncheckedCreateWithoutRailFoldersInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -1868,6 +1964,9 @@ export type UserUpdateWithoutRailFoldersInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -1918,6 +2017,9 @@ export type UserUncheckedUpdateWithoutRailFoldersInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -1967,6 +2069,9 @@ export type UserCreateWithoutInvitesInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -2017,6 +2122,9 @@ export type UserUncheckedCreateWithoutInvitesInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -2082,6 +2190,9 @@ export type UserUpdateWithoutInvitesInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -2132,6 +2243,9 @@ export type UserUncheckedUpdateWithoutInvitesInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -2181,6 +2295,9 @@ export type UserCreateWithoutWallPostsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -2231,6 +2348,9 @@ export type UserUncheckedCreateWithoutWallPostsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -2285,6 +2405,9 @@ export type UserCreateWithoutPostsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -2335,6 +2458,9 @@ export type UserUncheckedCreateWithoutPostsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -2400,6 +2526,9 @@ export type UserUpdateWithoutWallPostsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -2450,6 +2579,9 @@ export type UserUncheckedUpdateWithoutWallPostsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -2510,6 +2642,9 @@ export type UserUpdateWithoutPostsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -2560,6 +2695,9 @@ export type UserUncheckedUpdateWithoutPostsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -2609,6 +2747,9 @@ export type UserCreateWithoutCommentsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -2659,6 +2800,9 @@ export type UserUncheckedCreateWithoutCommentsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -2724,6 +2868,9 @@ export type UserUpdateWithoutCommentsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -2774,6 +2921,9 @@ export type UserUncheckedUpdateWithoutCommentsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -2823,6 +2973,9 @@ export type UserCreateWithoutLikesInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -2873,6 +3026,9 @@ export type UserUncheckedCreateWithoutLikesInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -2938,6 +3094,9 @@ export type UserUpdateWithoutLikesInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -2988,6 +3147,9 @@ export type UserUncheckedUpdateWithoutLikesInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -3037,6 +3199,9 @@ export type UserCreateWithoutSentFriendshipsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -3087,6 +3252,9 @@ export type UserUncheckedCreateWithoutSentFriendshipsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -3141,6 +3309,9 @@ export type UserCreateWithoutReceivedFriendshipsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -3191,6 +3362,9 @@ export type UserUncheckedCreateWithoutReceivedFriendshipsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -3256,6 +3430,9 @@ export type UserUpdateWithoutSentFriendshipsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -3306,6 +3483,9 @@ export type UserUncheckedUpdateWithoutSentFriendshipsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -3366,6 +3546,9 @@ export type UserUpdateWithoutReceivedFriendshipsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -3416,6 +3599,9 @@ export type UserUncheckedUpdateWithoutReceivedFriendshipsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -3465,6 +3651,9 @@ export type UserCreateWithoutLibraryEntriesInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -3515,6 +3704,9 @@ export type UserUncheckedCreateWithoutLibraryEntriesInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -3580,6 +3772,9 @@ export type UserUpdateWithoutLibraryEntriesInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -3630,6 +3825,9 @@ export type UserUncheckedUpdateWithoutLibraryEntriesInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -3679,6 +3877,9 @@ export type UserCreateWithoutCreatedConversationsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -3729,6 +3930,9 @@ export type UserUncheckedCreateWithoutCreatedConversationsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -3783,6 +3987,9 @@ export type UserCreateWithoutConversationsAsAInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -3833,6 +4040,9 @@ export type UserUncheckedCreateWithoutConversationsAsAInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -3887,6 +4097,9 @@ export type UserCreateWithoutConversationsAsBInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -3937,6 +4150,9 @@ export type UserUncheckedCreateWithoutConversationsAsBInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -4002,6 +4218,9 @@ export type UserUpdateWithoutCreatedConversationsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -4052,6 +4271,9 @@ export type UserUncheckedUpdateWithoutCreatedConversationsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -4112,6 +4334,9 @@ export type UserUpdateWithoutConversationsAsAInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -4162,6 +4387,9 @@ export type UserUncheckedUpdateWithoutConversationsAsAInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -4222,6 +4450,9 @@ export type UserUpdateWithoutConversationsAsBInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -4272,6 +4503,9 @@ export type UserUncheckedUpdateWithoutConversationsAsBInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -4321,6 +4555,9 @@ export type UserCreateWithoutConversationsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -4371,6 +4608,9 @@ export type UserUncheckedCreateWithoutConversationsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -4436,6 +4676,9 @@ export type UserUpdateWithoutConversationsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -4486,6 +4729,9 @@ export type UserUncheckedUpdateWithoutConversationsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -4535,6 +4781,9 @@ export type UserCreateWithoutMessagesInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -4585,6 +4834,9 @@ export type UserUncheckedCreateWithoutMessagesInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -4650,6 +4902,9 @@ export type UserUpdateWithoutMessagesInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -4700,6 +4955,9 @@ export type UserUncheckedUpdateWithoutMessagesInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -4749,6 +5007,9 @@ export type UserCreateWithoutMessageReactionsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -4799,6 +5060,9 @@ export type UserUncheckedCreateWithoutMessageReactionsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -4864,6 +5128,9 @@ export type UserUpdateWithoutMessageReactionsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -4914,6 +5181,9 @@ export type UserUncheckedUpdateWithoutMessageReactionsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -4963,6 +5233,9 @@ export type UserCreateWithoutNotificationsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -5013,6 +5286,9 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -5067,6 +5343,9 @@ export type UserCreateWithoutCausedNotificationsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -5117,6 +5396,9 @@ export type UserUncheckedCreateWithoutCausedNotificationsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -5182,6 +5464,9 @@ export type UserUpdateWithoutNotificationsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -5232,6 +5517,9 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -5292,6 +5580,9 @@ export type UserUpdateWithoutCausedNotificationsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -5342,6 +5633,9 @@ export type UserUncheckedUpdateWithoutCausedNotificationsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -5391,6 +5685,9 @@ export type UserCreateWithoutReportsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -5441,6 +5738,9 @@ export type UserUncheckedCreateWithoutReportsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -5495,6 +5795,9 @@ export type UserCreateWithoutAssignedReportsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -5545,6 +5848,9 @@ export type UserUncheckedCreateWithoutAssignedReportsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -5610,6 +5916,9 @@ export type UserUpdateWithoutReportsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -5660,6 +5969,9 @@ export type UserUncheckedUpdateWithoutReportsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -5720,6 +6032,9 @@ export type UserUpdateWithoutAssignedReportsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -5770,6 +6085,9 @@ export type UserUncheckedUpdateWithoutAssignedReportsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -5819,6 +6137,9 @@ export type UserCreateWithoutReportCommentsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -5869,6 +6190,9 @@ export type UserUncheckedCreateWithoutReportCommentsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -5934,6 +6258,9 @@ export type UserUpdateWithoutReportCommentsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -5984,6 +6311,9 @@ export type UserUncheckedUpdateWithoutReportCommentsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -6033,6 +6363,9 @@ export type UserCreateWithoutContentReportsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -6083,6 +6416,9 @@ export type UserUncheckedCreateWithoutContentReportsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -6137,6 +6473,9 @@ export type UserCreateWithoutResolvedReportsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -6187,6 +6526,9 @@ export type UserUncheckedCreateWithoutResolvedReportsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -6252,6 +6594,9 @@ export type UserUpdateWithoutContentReportsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -6302,6 +6647,9 @@ export type UserUncheckedUpdateWithoutContentReportsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -6362,6 +6710,9 @@ export type UserUpdateWithoutResolvedReportsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -6412,6 +6763,9 @@ export type UserUncheckedUpdateWithoutResolvedReportsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -6461,6 +6815,9 @@ export type UserCreateWithoutSteamAccountInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -6511,6 +6868,9 @@ export type UserUncheckedCreateWithoutSteamAccountInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -6576,6 +6936,9 @@ export type UserUpdateWithoutSteamAccountInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -6626,6 +6989,9 @@ export type UserUncheckedUpdateWithoutSteamAccountInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -6675,6 +7041,9 @@ export type UserCreateWithoutSteamGamesInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -6725,6 +7094,9 @@ export type UserUncheckedCreateWithoutSteamGamesInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -6790,6 +7162,9 @@ export type UserUpdateWithoutSteamGamesInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -6840,6 +7215,9 @@ export type UserUncheckedUpdateWithoutSteamGamesInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -6889,6 +7267,9 @@ export type UserCreateWithoutOauthAccountsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -6939,6 +7320,9 @@ export type UserUncheckedCreateWithoutOauthAccountsInput = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
   tourCompletedAt?: Date | string | null
   checklistDismissedAt?: Date | string | null
   completedTours?: Prisma.UserCreatecompletedToursInput | string[]
@@ -7004,6 +7388,9 @@ export type UserUpdateWithoutOauthAccountsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -7054,6 +7441,9 @@ export type UserUncheckedUpdateWithoutOauthAccountsInput = {
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
@@ -7360,6 +7750,9 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: boolean
+  suspendedUntil?: boolean
+  suspensionReason?: boolean
   tourCompletedAt?: boolean
   checklistDismissedAt?: boolean
   completedTours?: boolean
@@ -7412,6 +7805,9 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: boolean
+  suspendedUntil?: boolean
+  suspensionReason?: boolean
   tourCompletedAt?: boolean
   checklistDismissedAt?: boolean
   completedTours?: boolean
@@ -7436,6 +7832,9 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: boolean
+  suspendedUntil?: boolean
+  suspensionReason?: boolean
   tourCompletedAt?: boolean
   checklistDismissedAt?: boolean
   completedTours?: boolean
@@ -7460,13 +7859,16 @@ export type UserSelectScalar = {
   isPublic?: boolean
   isAdmin?: boolean
   isVerified?: boolean
+  suspendedAt?: boolean
+  suspendedUntil?: boolean
+  suspensionReason?: boolean
   tourCompletedAt?: boolean
   checklistDismissedAt?: boolean
   completedTours?: boolean
   createdAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "username" | "name" | "avatarUrl" | "coverUrl" | "backgroundUrl" | "password" | "emailVerifiedAt" | "theme" | "appearOffline" | "showNsfw" | "showChangelog" | "status" | "isPublic" | "isAdmin" | "isVerified" | "tourCompletedAt" | "checklistDismissedAt" | "completedTours" | "createdAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "username" | "name" | "avatarUrl" | "coverUrl" | "backgroundUrl" | "password" | "emailVerifiedAt" | "theme" | "appearOffline" | "showNsfw" | "showChangelog" | "status" | "isPublic" | "isAdmin" | "isVerified" | "suspendedAt" | "suspendedUntil" | "suspensionReason" | "tourCompletedAt" | "checklistDismissedAt" | "completedTours" | "createdAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   ownedCommunities?: boolean | Prisma.User$ownedCommunitiesArgs<ExtArgs>
   memberships?: boolean | Prisma.User$membershipsArgs<ExtArgs>
@@ -7549,6 +7951,9 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     isPublic: boolean
     isAdmin: boolean
     isVerified: boolean
+    suspendedAt: Date | null
+    suspendedUntil: Date | null
+    suspensionReason: string | null
     tourCompletedAt: Date | null
     checklistDismissedAt: Date | null
     completedTours: string[]
@@ -8020,6 +8425,9 @@ export interface UserFieldRefs {
   readonly isPublic: Prisma.FieldRef<"User", 'Boolean'>
   readonly isAdmin: Prisma.FieldRef<"User", 'Boolean'>
   readonly isVerified: Prisma.FieldRef<"User", 'Boolean'>
+  readonly suspendedAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly suspendedUntil: Prisma.FieldRef<"User", 'DateTime'>
+  readonly suspensionReason: Prisma.FieldRef<"User", 'String'>
   readonly tourCompletedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly checklistDismissedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly completedTours: Prisma.FieldRef<"User", 'String[]'>

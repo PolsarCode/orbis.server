@@ -33,6 +33,9 @@ model User {
   isPublic             Boolean              @default(true)
   isAdmin              Boolean              @default(false)
   isVerified           Boolean              @default(false)
+  suspendedAt          DateTime?
+  suspendedUntil       DateTime?
+  suspensionReason     String?
   tourCompletedAt      DateTime?
   checklistDismissedAt DateTime?
   completedTours       String[]             @default([])

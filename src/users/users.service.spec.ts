@@ -226,3 +226,150 @@ describe('Twitch on profiles', () => {
     });
   });
 });
+
+describe('Suspending accounts', () => {
+  process.env.HEAD_ADMIN = 'head@orbis.test';
+  const people: Record<string, object> = {
+    1: { id: 1, isAdmin: false, email: 'head@orbis.test' },
+    2: { id: 2, isAdmin: true, email: 'mod@orbis.test' },
+    3: { id: 3, isAdmin: false, email: 'fan@orbis.test' },
+    fan: { id: 3, isAdmin: false, email: 'fan@orbis.test' },
+    mod: { id: 2, isAdmin: true, email: 'mod@orbis.test' },
+    head: { id: 1, isAdmin: false, email: 'head@orbis.test' },
+  };
+  const prisma = {
+    user: {
+      findUnique: jest.fn(
+        ({ where }: { where: { id?: number; username?: string } }) =>
+          Promise.resolve(people[where.id ?? where.username!] ?? null),
+      ),
+      update: jest.fn(({ data }: { data: object }) =>
+        Promise.resolve({ suspensionReason: null, ...data }),
+      ),
+    },
+  };
+  const presence = { disconnectUser: jest.fn() };
+  const service = new UsersService(
+    prisma as unknown as PrismaService,
+    {} as StorageService,
+    presence as unknown as PresenceGateway,
+    {} as TwitchLiveService,
+  );
+
+  beforeEach(() => {
+    prisma.user.update.mockClear();
+    presence.disconnectUser.mockClear();
+  });
+
+  it('suspends an account for a week and signs it out everywhere', async () => {
+    const before = Date.now();
+
+    const { suspension } = await service.setSuspension(
+      2,
+      'fan',
+      '7d',
+      ' Spam ',
+    );
+
+    const until = new Date(suspension!.until!).getTime();
+    expect(until - before).toBeGreaterThanOrEqual(7 * 24 * 60 * 60 * 1000);
+    expect(until - before).toBeLessThan(7 * 24 * 60 * 60 * 1000 + 60_000);
+    expect(suspension!.reason).toBe('Spam');
+    expect(presence.disconnectUser).toHaveBeenCalledWith(3);
+  });
+
+  it('bans an account with no end date', async () => {
+    const { suspension } = await service.setSuspension(2, 'fan', 'permanent');
+
+    expect(suspension).toEqual({ until: null, reason: null });
+  });
+
+  it('lifts a suspension', async () => {
+    await expect(service.setSuspension(2, 'fan', null)).resolves.toEqual({
+      suspension: null,
+    });
+    expect(prisma.user.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: {
+          suspendedAt: null,
+          suspendedUntil: null,
+          suspensionReason: null,
+        },
+      }),
+    );
+    expect(presence.disconnectUser).not.toHaveBeenCalled();
+  });
+
+  it('only lets site admins suspend accounts', async () => {
+    await expect(service.setSuspension(3, 'mod', '1d')).rejects.toThrow(
+      'Only site admins can suspend accounts',
+    );
+  });
+
+  it('won’t suspend yourself or the head admin', async () => {
+    await expect(service.setSuspension(2, 'mod', '1d')).rejects.toThrow(
+      'You can’t suspend your own account',
+    );
+    await expect(service.setSuspension(2, 'head', '1d')).rejects.toThrow(
+      'The head admin can’t be suspended',
+    );
+  });
+
+  it('leaves suspending another admin to the head admin', async () => {
+    prisma.user.findUnique.mockImplementationOnce(() =>
+      Promise.resolve({ id: 4, isAdmin: true, email: 'other@orbis.test' }),
+    );
+    await expect(service.setSuspension(4, 'mod', '1d')).rejects.toThrow(
+      'Only the head admin can suspend another admin',
+    );
+    await expect(service.setSuspension(1, 'mod', '1d')).resolves.toMatchObject({
+      suspension: { reason: null },
+    });
+    expect(prisma.user.update).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows a suspension only to site admins', async () => {
+    prisma.user.findUnique
+      .mockImplementationOnce(() => Promise.resolve(people[3]))
+      .mockImplementationOnce(() => Promise.resolve(people[2]))
+      .mockImplementationOnce(() =>
+        Promise.resolve({
+          suspendedAt: new Date(),
+          suspendedUntil: null,
+          suspensionReason: 'Spam',
+        }),
+      );
+
+    await expect(service.suspensionFor(3, 2)).resolves.toBeNull();
+    await expect(service.suspensionFor(2, 3)).resolves.toEqual({
+      until: null,
+      reason: 'Spam',
+    });
+  });
+});
+
+describe('Public people list', () => {
+  it('leaves out suspended accounts', async () => {
+    const findMany = jest.fn().mockResolvedValue([]);
+    const service = new UsersService(
+      { user: { findMany } } as unknown as PrismaService,
+      {} as StorageService,
+      {} as PresenceGateway,
+      {} as TwitchLiveService,
+    );
+
+    await service.activePublicUsers();
+
+    expect(findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          isPublic: true,
+          OR: [
+            { suspendedAt: null },
+            { suspendedUntil: { lte: expect.any(Date) } },
+          ],
+        },
+      }),
+    );
+  });
+});

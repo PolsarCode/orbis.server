@@ -34,6 +34,7 @@ import {
   NewNotification,
   NotificationsService,
 } from '../notifications/notifications.service';
+import { notSuspended } from '../users/suspension';
 
 const MAX_COMMENTS = 1000;
 
@@ -86,7 +87,11 @@ export class CommentsService {
     }
 
     const comments = await this.prisma.comment.findMany({
-      where: { commentableType, commentableId: id },
+      where: {
+        commentableType,
+        commentableId: id,
+        OR: [{ author: notSuspended() }, { authorId: userId }],
+      },
       orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
       take: MAX_COMMENTS,
       select: commentSelect,

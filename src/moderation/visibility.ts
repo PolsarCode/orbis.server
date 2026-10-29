@@ -1,5 +1,6 @@
 import { Prisma } from '../../prisma/generated/client';
 import { PrismaService } from '../prisma.service';
+import { notSuspended } from '../users/suspension';
 
 export type ReportedIds = {
   post: number[];
@@ -29,6 +30,7 @@ export function visibleTo(viewerId: number, reported: number[]) {
   return {
     AND: [
       { OR: [{ hiddenAt: null }, { authorId: viewerId }] },
+      { OR: [{ author: notSuspended() }, { authorId: viewerId }] },
       ...(reported.length > 0 ? [{ id: { notIn: reported } }] : []),
     ],
   } satisfies Prisma.PostWhereInput & Prisma.CommentWhereInput;

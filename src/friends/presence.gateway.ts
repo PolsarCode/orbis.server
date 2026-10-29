@@ -11,6 +11,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import type { UserStatus } from '../../prisma/generated/client';
 import { PrismaService } from '../prisma.service';
+import { isSuspended, suspensionFields } from '../users/suspension';
 
 const room = (userId: number) => `user:${userId}`;
 
@@ -50,6 +51,15 @@ export class PresenceGateway
       return;
     }
 
+    const account = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: suspensionFields,
+    });
+    if (account && isSuspended(account)) {
+      client.disconnect(true);
+      return;
+    }
+
     if (!client.connected) return;
 
     client.data.userId = userId;
@@ -59,6 +69,10 @@ export class PresenceGateway
     const count = (this.connections.get(userId) ?? 0) + 1;
     this.connections.set(userId, count);
     if (count === 1 || wasIdle) await this.broadcastPresence(userId);
+  }
+
+  disconnectUser(userId: number) {
+    this.server.in(room(userId)).disconnectSockets(true);
   }
 
   async handleDisconnect(client: Socket) {

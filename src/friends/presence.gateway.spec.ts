@@ -32,6 +32,19 @@ describe('PresenceGateway', () => {
     );
   });
 
+  it('turns away a suspended account', async () => {
+    prisma.user.findUnique.mockResolvedValueOnce({
+      suspendedAt: new Date(),
+      suspendedUntil: null,
+      suspensionReason: null,
+    });
+
+    const client = await connect();
+
+    expect(client.disconnect).toHaveBeenCalledWith(true);
+    expect(gateway.statusOf(7, visible)).toBe('offline');
+  });
+
   it('is offline without a connection or when appearing offline', async () => {
     expect(gateway.statusOf(7, visible)).toBe('offline');
 

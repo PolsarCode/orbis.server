@@ -23,6 +23,7 @@ import {
 } from './users.service';
 import { UpdateOnboardingDto } from './dto/update-onboarding.dto';
 import { UpdatePreferencesDto } from './dto/update-preferences.dto';
+import { SuspendUserDto } from './dto/suspend-user.dto';
 import { JwtAuthGuard } from '../auth/jwt.guard';
 import { AllowUnconfirmed } from '../auth/confirmed-email.guard';
 import { AllowGuest } from '../auth/allow-guest';
@@ -162,6 +163,27 @@ export class UsersController {
     return this.usersService.setAdmin(req.user.userId, username, false);
   }
 
+  @Put(':username/suspension')
+  @UseGuards(JwtAuthGuard)
+  suspend(
+    @Req() req,
+    @Param('username') username: string,
+    @Body() body: SuspendUserDto,
+  ) {
+    return this.usersService.setSuspension(
+      req.user.userId,
+      username,
+      body.duration,
+      body.reason,
+    );
+  }
+
+  @Delete(':username/suspension')
+  @UseGuards(JwtAuthGuard)
+  liftSuspension(@Req() req, @Param('username') username: string) {
+    return this.usersService.setSuspension(req.user.userId, username, null);
+  }
+
   @Put(':username/verified')
   @UseGuards(JwtAuthGuard)
   verify(
@@ -200,6 +222,10 @@ export class UsersController {
     });
     return {
       ...profile,
+      suspension: await this.usersService.suspensionFor(
+        req.user.userId,
+        profile.userId,
+      ),
       online: status !== 'offline',
       status,
       friends: friends.map(({ appearOffline, status, ...friend }) => {

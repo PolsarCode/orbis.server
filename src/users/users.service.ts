@@ -19,12 +19,22 @@ import {
 } from '../../prisma/generated/client';
 import { normalizeUsername } from './username';
 import { isHeadAdmin } from './head-admin';
+import {
+  activeSuspension,
+  notSuspended,
+  SUSPENSION_DAYS,
+  suspensionFields,
+  type SuspensionDuration,
+} from './suspension';
+import { DAY } from '../common/throttle';
 import { StorageService } from '../storage/storage.service';
 import { canViewProfile } from '../posts/wall-access';
 import { PresenceGateway, PresenceStatus } from '../friends/presence.gateway';
 import { NextStream, TwitchLiveService } from '../friends/twitch-live.service';
 
 export type PublicUser = Omit<UserModel, 'password'>;
+
+export type ProfileSuspension = { until: string | null; reason: string | null };
 
 export type PublicProfile = {
   userId: number;
@@ -38,6 +48,7 @@ export type PublicProfile = {
   isVerified: boolean;
   isPublic: boolean;
   restricted: boolean;
+  suspension?: ProfileSuspension | null;
   hasClips: boolean;
   twitchLogin: string | null;
   nextStream: NextStream | null;
@@ -302,7 +313,7 @@ export class UsersService {
     );
     const recent = { where: { createdAt: { gte: since } } };
     const users = await this.prisma.user.findMany({
-      where: { isPublic: true },
+      where: { isPublic: true, ...notSuspended() },
       select: {
         id: true,
         username: true,
@@ -549,6 +560,84 @@ export class UsersService {
       data: { isAdmin },
     });
     return { isAdmin };
+  }
+
+  async suspensionFor(
+    viewerId: number,
+    userId: number,
+  ): Promise<ProfileSuspension | null> {
+    const viewer = await this.prisma.user.findUnique({
+      where: { id: viewerId },
+      select: { isAdmin: true, email: true },
+    });
+    if (!viewer || !(viewer.isAdmin || isHeadAdmin(viewer.email))) return null;
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: suspensionFields,
+    });
+    return user ? activeSuspension(user) : null;
+  }
+
+  async setSuspension(
+    adminId: number,
+    username: string,
+    duration: SuspensionDuration | null,
+    reason?: string,
+  ): Promise<{ suspension: ProfileSuspension | null }> {
+    const admin = await this.prisma.user.findUnique({
+      where: { id: adminId },
+      select: { id: true, isAdmin: true, email: true },
+    });
+    const headAdmin = Boolean(admin && isHeadAdmin(admin.email));
+    if (!admin || !(admin.isAdmin || headAdmin)) {
+      throw new ForbiddenException('Only site admins can suspend accounts');
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { username: normalizeUsername(username) },
+      select: { id: true, email: true, isAdmin: true },
+    });
+    if (!user) throw new NotFoundException('User not found');
+    if (user.id === admin.id) {
+      throw new BadRequestException('You can’t suspend your own account');
+    }
+    if (isHeadAdmin(user.email)) {
+      throw new BadRequestException('The head admin can’t be suspended');
+    }
+    if (user.isAdmin && !headAdmin) {
+      throw new ForbiddenException(
+        'Only the head admin can suspend another admin',
+      );
+    }
+
+    if (duration === null) {
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: {
+          suspendedAt: null,
+          suspendedUntil: null,
+          suspensionReason: null,
+        },
+      });
+      return { suspension: null };
+    }
+
+    const now = new Date();
+    const updated = await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        suspendedAt: now,
+        suspendedUntil:
+          duration === 'permanent'
+            ? null
+            : new Date(now.getTime() + SUSPENSION_DAYS[duration] * DAY),
+        suspensionReason: reason?.trim() || null,
+      },
+      select: suspensionFields,
+    });
+    this.presence.disconnectUser(user.id);
+    return { suspension: activeSuspension(updated, now) };
   }
 
   async setVerified(

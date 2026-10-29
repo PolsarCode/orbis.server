@@ -104,6 +104,19 @@ describe('Liking comments', () => {
           deletedAt: null,
           AND: [
             { OR: [{ hiddenAt: null }, { authorId: 1 }] },
+            {
+              OR: [
+                {
+                  author: {
+                    OR: [
+                      { suspendedAt: null },
+                      { suspendedUntil: { lte: expect.any(Date) } },
+                    ],
+                  },
+                },
+                { authorId: 1 },
+              ],
+            },
             { id: { notIn: [12] } },
           ],
         },

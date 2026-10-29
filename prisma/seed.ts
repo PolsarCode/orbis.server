@@ -1810,6 +1810,11 @@ async function main() {
         password: characterPassword,
         emailVerifiedAt: minutesAgo(days(30)),
         createdAt: minutesAgo(days(30)),
+        ...(key === 'sasuke' && {
+          suspendedAt: minutesAgo(days(1)),
+          suspendedUntil: minutesAgo(-days(6)),
+          suspensionReason: 'Left the village without telling anyone, again',
+        }),
       },
     });
     userIds[key as Character] = user.id;

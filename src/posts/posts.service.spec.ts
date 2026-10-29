@@ -249,6 +249,10 @@ describe('Feed content filters', () => {
     expect(
       prisma.libraryActivity.findMany.mock.calls[0][0].where.entry.user,
     ).toEqual({
+      OR: [
+        { suspendedAt: null },
+        { suspendedUntil: { lte: expect.any(Date) } },
+      ],
       memberships: { some: { communityId: 9, showLibraryUpdates: true } },
     });
 
@@ -256,6 +260,10 @@ describe('Feed content filters', () => {
     expect(
       prisma.libraryActivity.findMany.mock.calls[1][0].where.entry.user,
     ).toEqual({
+      OR: [
+        { suspendedAt: null },
+        { suspendedUntil: { lte: expect.any(Date) } },
+      ],
       memberships: {
         some: {
           showLibraryUpdates: true,
@@ -411,6 +419,10 @@ describe('Opening a post or library update from a link', () => {
             isPublic: true,
             isAdult: false,
             user: {
+              OR: [
+                { suspendedAt: null },
+                { suspendedUntil: { lte: expect.any(Date) } },
+              ],
               memberships: {
                 some: { communityId: 7, showLibraryUpdates: true },
               },
