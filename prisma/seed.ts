@@ -429,6 +429,10 @@ const privateProfiles: Character[] = ['levi', 'mikasa'];
 
 const verifiedProfiles: Character[] = ['luffy', 'gojo'];
 
+const suggestionDismissals: [UserKey, UserKey, number][] = [
+  ['admin', 'vegeta', 3],
+];
+
 const friendships: [UserKey, UserKey, 'accepted' | 'pending'][] = [
   ['admin', 'naruto', 'accepted'],
   ['admin', 'luffy', 'accepted'],
@@ -2011,6 +2015,14 @@ async function main() {
   });
 
   console.log('🤝 Friendships created:', friendships.length);
+
+  await prisma.suggestionDismissal.createMany({
+    data: suggestionDismissals.map(([user, dismissed, daysAgo]) => ({
+      userId: userIds[user],
+      dismissedUserId: userIds[dismissed],
+      dismissedAt: minutesAgo(days(daysAgo)),
+    })),
+  });
 
   for (const wallPost of wallPosts) {
     const post = await prisma.post.create({

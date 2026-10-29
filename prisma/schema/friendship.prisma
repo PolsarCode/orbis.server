@@ -14,3 +14,14 @@ model Friendship {
   @@id([requesterId, addresseeId])
   @@index([addresseeId])
 }
+
+model SuggestionDismissal {
+  userId          Int
+  dismissedUserId Int
+  dismissedAt     DateTime @default(now())
+  user            User     @relation("SuggestionDismissals", fields: [userId], references: [id], onDelete: Cascade)
+  dismissedUser   User     @relation("DismissedSuggestions", fields: [dismissedUserId], references: [id], onDelete: Cascade)
+
+  @@id([userId, dismissedUserId])
+  @@index([dismissedUserId])
+}

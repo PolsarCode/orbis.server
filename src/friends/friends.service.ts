@@ -17,6 +17,7 @@ import {
   SHARED_STATUSES,
   availableSlots,
   communityReason,
+  dismissedSince,
   mutualReason,
   rankCandidates,
   slotFields,
@@ -190,30 +191,39 @@ export class FriendsService {
     const limit = slots ? availableSlots(slots) : 0;
     if (limit === 0) return [];
 
-    const [friendships, memberships, library, showNsfw] = await Promise.all([
-      this.prisma.friendship.findMany({
-        where: { OR: [{ requesterId: userId }, { addresseeId: userId }] },
-        select: { requesterId: true, addresseeId: true, status: true },
-      }),
-      this.prisma.membership.findMany({
-        where: { userId },
-        select: { communityId: true },
-      }),
-      this.prisma.libraryEntry.findMany({
-        where: { userId },
-        select: { mediaId: true },
-      }),
-      showsNsfw(this.prisma, userId),
-    ]);
+    const [friendships, dismissals, memberships, library, showNsfw] =
+      await Promise.all([
+        this.prisma.friendship.findMany({
+          where: { OR: [{ requesterId: userId }, { addresseeId: userId }] },
+          select: { requesterId: true, addresseeId: true, status: true },
+        }),
+        this.prisma.suggestionDismissal.findMany({
+          where: { userId, dismissedAt: { gt: dismissedSince() } },
+          select: { dismissedUserId: true },
+        }),
+        this.prisma.membership.findMany({
+          where: { userId },
+          select: { communityId: true },
+        }),
+        this.prisma.libraryEntry.findMany({
+          where: { userId },
+          select: { mediaId: true },
+        }),
+        showsNsfw(this.prisma, userId),
+      ]);
 
     const friendIds: number[] = [];
-    const known = new Set([userId]);
+    const leftOut = new Set([
+      userId,
+      ...dismissals.map(({ dismissedUserId }) => dismissedUserId),
+    ]);
     for (const { requesterId, addresseeId, status } of friendships) {
       const other = requesterId === userId ? addresseeId : requesterId;
-      known.add(other);
+      leftOut.add(other);
       if (status === 'accepted') friendIds.push(other);
     }
-    const excluded = [...known];
+    const friendSet = new Set(friendIds);
+    const excluded = [...leftOut];
     const communityIds = memberships.map(({ communityId }) => communityId);
     const sharedTitle = {
       mediaId: { in: library.map(({ mediaId }) => mediaId) },
@@ -272,7 +282,7 @@ export class FriendsService {
 
     const mutual = new Map<number, number[]>();
     for (const { requesterId, addresseeId } of friendsOfFriends) {
-      const [friend, candidate] = known.has(requesterId)
+      const [friend, candidate] = friendSet.has(requesterId)
         ? [requesterId, addresseeId]
         : [addresseeId, requesterId];
       mutual.set(candidate, [...(mutual.get(candidate) ?? []), friend]);
@@ -440,6 +450,30 @@ export class FriendsService {
 
     if (fromSuggestion) await this.spendSuggestionSlot(userId);
     this.presence.notify([userId, target.id], 'friends:changed');
+  }
+
+  async dismissSuggestion(userId: number, targetId: number) {
+    if (targetId === userId) {
+      throw new BadRequestException('You cannot remove yourself');
+    }
+    const target =
+      targetId >= 1 && targetId <= MAX_INT
+        ? await this.prisma.user.findUnique({
+            where: { id: targetId },
+            select: { id: true },
+          })
+        : null;
+    if (!target) throw new NotFoundException('User not found');
+
+    const dismissedAt = new Date();
+    await this.prisma.suggestionDismissal.upsert({
+      where: {
+        userId_dismissedUserId: { userId, dismissedUserId: target.id },
+      },
+      create: { userId, dismissedUserId: target.id, dismissedAt },
+      update: { dismissedAt },
+    });
+    await this.spendSuggestionSlot(userId);
   }
 
   private async spendSuggestionSlot(userId: number) {

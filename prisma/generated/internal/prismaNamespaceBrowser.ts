@@ -63,6 +63,7 @@ export const ModelName = {
   Comment: 'Comment',
   Like: 'Like',
   Friendship: 'Friendship',
+  SuggestionDismissal: 'SuggestionDismissal',
   LibraryEntry: 'LibraryEntry',
   LibraryActivity: 'LibraryActivity',
   Conversation: 'Conversation',
@@ -267,6 +268,15 @@ export const FriendshipScalarFieldEnum = {
 } as const
 
 export type FriendshipScalarFieldEnum = (typeof FriendshipScalarFieldEnum)[keyof typeof FriendshipScalarFieldEnum]
+
+
+export const SuggestionDismissalScalarFieldEnum = {
+  userId: 'userId',
+  dismissedUserId: 'dismissedUserId',
+  dismissedAt: 'dismissedAt'
+} as const
+
+export type SuggestionDismissalScalarFieldEnum = (typeof SuggestionDismissalScalarFieldEnum)[keyof typeof SuggestionDismissalScalarFieldEnum]
 
 
 export const LibraryEntryScalarFieldEnum = {

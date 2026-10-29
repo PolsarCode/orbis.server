@@ -78,6 +78,11 @@ export type Like = Prisma.LikeModel
  */
 export type Friendship = Prisma.FriendshipModel
 /**
+ * Model SuggestionDismissal
+ * 
+ */
+export type SuggestionDismissal = Prisma.SuggestionDismissalModel
+/**
  * Model LibraryEntry
  * 
  */

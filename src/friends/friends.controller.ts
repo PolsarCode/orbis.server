@@ -44,6 +44,16 @@ export class FriendsController {
     return this.friendsService.suggestions(req.user.userId);
   }
 
+  @RateLimit(60, MINUTE)
+  @Delete('suggestions/:userId')
+  @HttpCode(204)
+  dismissSuggestion(
+    @Req() req,
+    @Param('userId', ParseIntPipe) userId: number,
+  ): Promise<void> {
+    return this.friendsService.dismissSuggestion(req.user.userId, userId);
+  }
+
   @RateLimit(20, HOUR, 5)
   @Post()
   @HttpCode(204)

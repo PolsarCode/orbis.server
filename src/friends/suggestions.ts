@@ -4,6 +4,11 @@ import { HOUR } from '../common/throttle';
 export const SUGGESTION_LIMIT = 10;
 export const MUTUAL_PREVIEW = 3;
 export const SHARED_STATUSES: LibraryStatus[] = ['current', 'completed'];
+export const DISMISSAL_DAYS = 30;
+
+export function dismissedSince(now = new Date()) {
+  return new Date(now.getTime() - DISMISSAL_DAYS * 24 * HOUR);
+}
 
 const WEIGHTS = { mutual: 3, community: 2, title: 1 };
 

@@ -16,55 +16,57 @@ enum AuthProvider {
 }
 
 model User {
-  id                   Int                  @id @default(autoincrement())
-  email                String               @unique
-  username             String               @unique
+  id                   Int                   @id @default(autoincrement())
+  email                String                @unique
+  username             String                @unique
   name                 String?
   avatarUrl            String?
   coverUrl             String?
   backgroundUrl        String?
   password             String?
   emailVerifiedAt      DateTime?
-  theme                Theme                @default(dark)
-  appearOffline        Boolean              @default(false)
-  showNsfw             Boolean              @default(false)
-  showChangelog        Boolean              @default(true)
-  status               UserStatus           @default(online)
-  isPublic             Boolean              @default(true)
-  isAdmin              Boolean              @default(false)
-  isVerified           Boolean              @default(false)
+  theme                Theme                 @default(dark)
+  appearOffline        Boolean               @default(false)
+  showNsfw             Boolean               @default(false)
+  showChangelog        Boolean               @default(true)
+  status               UserStatus            @default(online)
+  isPublic             Boolean               @default(true)
+  isAdmin              Boolean               @default(false)
+  isVerified           Boolean               @default(false)
   suspendedAt          DateTime?
   suspendedUntil       DateTime?
   suspensionReason     String?
-  suggestionSlots      Int                  @default(10)
+  suggestionSlots      Int                   @default(10)
   suggestionSlotsAt    DateTime?
   tourCompletedAt      DateTime?
   checklistDismissedAt DateTime?
-  completedTours       String[]             @default([])
-  createdAt            DateTime             @default(now())
+  completedTours       String[]              @default([])
+  createdAt            DateTime              @default(now())
   ownedCommunities     Community[]
   memberships          Membership[]
   posts                Post[]
-  wallPosts            Post[]               @relation("WallPosts")
-  sentFriendships      Friendship[]         @relation("FriendshipRequester")
-  receivedFriendships  Friendship[]         @relation("FriendshipAddressee")
+  wallPosts            Post[]                @relation("WallPosts")
+  sentFriendships      Friendship[]          @relation("FriendshipRequester")
+  receivedFriendships  Friendship[]          @relation("FriendshipAddressee")
+  suggestionDismissals SuggestionDismissal[] @relation("SuggestionDismissals")
+  dismissedBy          SuggestionDismissal[] @relation("DismissedSuggestions")
   comments             Comment[]
-  reports              Report[]             @relation("ReportAuthor")
-  assignedReports      Report[]             @relation("ReportAssignee")
+  reports              Report[]              @relation("ReportAuthor")
+  assignedReports      Report[]              @relation("ReportAssignee")
   reportComments       ReportComment[]
-  contentReports       ContentReport[]      @relation("ContentReporter")
-  resolvedReports      ContentReport[]      @relation("ContentReportResolver")
-  notifications        Notification[]       @relation("NotificationRecipient")
-  causedNotifications  Notification[]       @relation("NotificationActor")
+  contentReports       ContentReport[]       @relation("ContentReporter")
+  resolvedReports      ContentReport[]       @relation("ContentReportResolver")
+  notifications        Notification[]        @relation("NotificationRecipient")
+  causedNotifications  Notification[]        @relation("NotificationActor")
   libraryEntries       LibraryEntry[]
   steamAccount         SteamAccount?
   steamGames           SteamGame[]
   railFolders          RailFolder[]
   likes                Like[]
   invites              Invite[]
-  createdConversations Conversation[]       @relation("ConversationCreator")
-  conversationsAsA     Conversation[]       @relation("ConversationUserA")
-  conversationsAsB     Conversation[]       @relation("ConversationUserB")
+  createdConversations Conversation[]        @relation("ConversationCreator")
+  conversationsAsA     Conversation[]        @relation("ConversationUserA")
+  conversationsAsB     Conversation[]        @relation("ConversationUserB")
   conversations        ConversationMember[]
   messages             Message[]
   oauthAccounts        OAuthAccount[]

@@ -396,6 +396,7 @@ export const ModelName = {
   Comment: 'Comment',
   Like: 'Like',
   Friendship: 'Friendship',
+  SuggestionDismissal: 'SuggestionDismissal',
   LibraryEntry: 'LibraryEntry',
   LibraryActivity: 'LibraryActivity',
   Conversation: 'Conversation',
@@ -426,7 +427,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "community" | "membership" | "railFolder" | "role" | "membershipRole" | "invite" | "discordChannel" | "discordMessage" | "post" | "comment" | "like" | "friendship" | "libraryEntry" | "libraryActivity" | "conversation" | "conversationMember" | "message" | "messageReaction" | "notification" | "report" | "reportComment" | "contentReport" | "setting" | "steamAccount" | "steamGame" | "user" | "oAuthAccount"
+    modelProps: "community" | "membership" | "railFolder" | "role" | "membershipRole" | "invite" | "discordChannel" | "discordMessage" | "post" | "comment" | "like" | "friendship" | "suggestionDismissal" | "libraryEntry" | "libraryActivity" | "conversation" | "conversationMember" | "message" | "messageReaction" | "notification" | "report" | "reportComment" | "contentReport" | "setting" | "steamAccount" | "steamGame" | "user" | "oAuthAccount"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1315,6 +1316,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.FriendshipCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.FriendshipCountAggregateOutputType> | number
+        }
+      }
+    }
+    SuggestionDismissal: {
+      payload: Prisma.$SuggestionDismissalPayload<ExtArgs>
+      fields: Prisma.SuggestionDismissalFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SuggestionDismissalFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SuggestionDismissalPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SuggestionDismissalFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SuggestionDismissalPayload>
+        }
+        findFirst: {
+          args: Prisma.SuggestionDismissalFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SuggestionDismissalPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SuggestionDismissalFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SuggestionDismissalPayload>
+        }
+        findMany: {
+          args: Prisma.SuggestionDismissalFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SuggestionDismissalPayload>[]
+        }
+        create: {
+          args: Prisma.SuggestionDismissalCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SuggestionDismissalPayload>
+        }
+        createMany: {
+          args: Prisma.SuggestionDismissalCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SuggestionDismissalCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SuggestionDismissalPayload>[]
+        }
+        delete: {
+          args: Prisma.SuggestionDismissalDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SuggestionDismissalPayload>
+        }
+        update: {
+          args: Prisma.SuggestionDismissalUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SuggestionDismissalPayload>
+        }
+        deleteMany: {
+          args: Prisma.SuggestionDismissalDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SuggestionDismissalUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SuggestionDismissalUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SuggestionDismissalPayload>[]
+        }
+        upsert: {
+          args: Prisma.SuggestionDismissalUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SuggestionDismissalPayload>
+        }
+        aggregate: {
+          args: Prisma.SuggestionDismissalAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSuggestionDismissal>
+        }
+        groupBy: {
+          args: Prisma.SuggestionDismissalGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SuggestionDismissalGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SuggestionDismissalCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SuggestionDismissalCountAggregateOutputType> | number
         }
       }
     }
@@ -2640,6 +2715,15 @@ export const FriendshipScalarFieldEnum = {
 export type FriendshipScalarFieldEnum = (typeof FriendshipScalarFieldEnum)[keyof typeof FriendshipScalarFieldEnum]
 
 
+export const SuggestionDismissalScalarFieldEnum = {
+  userId: 'userId',
+  dismissedUserId: 'dismissedUserId',
+  dismissedAt: 'dismissedAt'
+} as const
+
+export type SuggestionDismissalScalarFieldEnum = (typeof SuggestionDismissalScalarFieldEnum)[keyof typeof SuggestionDismissalScalarFieldEnum]
+
+
 export const LibraryEntryScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -3307,6 +3391,7 @@ export type GlobalOmitConfig = {
   comment?: Prisma.CommentOmit
   like?: Prisma.LikeOmit
   friendship?: Prisma.FriendshipOmit
+  suggestionDismissal?: Prisma.SuggestionDismissalOmit
   libraryEntry?: Prisma.LibraryEntryOmit
   libraryActivity?: Prisma.LibraryActivityOmit
   conversation?: Prisma.ConversationOmit

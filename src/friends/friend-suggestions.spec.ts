@@ -1,3 +1,4 @@
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { FriendsService } from './friends.service';
 import { PrismaService } from '../prisma.service';
 import { PresenceGateway } from './presence.gateway';
@@ -23,6 +24,9 @@ const fullSlots = { suggestionSlots: 10, suggestionSlotsAt: null };
 
 function prismaFor(slots: object = fullSlots) {
   return {
+    suggestionDismissal: {
+      findMany: jest.fn((): { dismissedUserId: number }[] => []),
+    },
     friendship: {
       findMany: jest.fn(({ where }) =>
         where.status === 'accepted'
@@ -174,6 +178,27 @@ describe('Friend suggestions', () => {
     expect(prisma.user.findMany).not.toHaveBeenCalled();
   });
 
+  it('leaves out people removed in the last month', async () => {
+    const prisma = prismaFor();
+    prisma.suggestionDismissal.findMany.mockReturnValue([
+      { dismissedUserId: 8 },
+    ]);
+    await serviceWith(prisma).suggestions(1);
+
+    const [[query]] = prisma.suggestionDismissal.findMany.mock
+      .calls as unknown as [[{ where: { dismissedAt: { gt: Date } } }]];
+    const since = query.where.dismissedAt.gt;
+    const days = (Date.now() - since.getTime()) / (24 * HOUR);
+    expect(Math.round(days)).toBe(30);
+    expect(prisma.membership.groupBy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          userId: { notIn: expect.arrayContaining([1, 2, 3, 4, 5, 8]) },
+        }),
+      }),
+    );
+  });
+
   it('shows fewer people once suggestion slots are used up', async () => {
     const limited = await serviceWith(
       prismaFor({ suggestionSlots: 2, suggestionSlotsAt: new Date() }),
@@ -248,5 +273,52 @@ describe('Suggestion slots', () => {
       where: { id: 1 },
       data: expect.objectContaining({ suggestionSlots: 9 }),
     });
+  });
+});
+
+describe('Removing a suggestion', () => {
+  function setup(target: object | null = { id: 6 }) {
+    const prisma = {
+      user: {
+        findUnique: jest.fn(() => target),
+        findUniqueOrThrow: jest.fn(() => fullSlots),
+        update: jest.fn(),
+      },
+      suggestionDismissal: { upsert: jest.fn() },
+    };
+    const service = new FriendsService(
+      prisma as unknown as PrismaService,
+      {} as PresenceGateway,
+      {} as NotificationsService,
+    );
+    return { prisma, service };
+  }
+
+  it('remembers when they were removed and uses up a slot', async () => {
+    const { prisma, service } = setup();
+
+    await service.dismissSuggestion(1, 6);
+
+    expect(prisma.suggestionDismissal.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { userId_dismissedUserId: { userId: 1, dismissedUserId: 6 } },
+        update: { dismissedAt: expect.any(Date) },
+      }),
+    );
+    expect(prisma.user.update).toHaveBeenCalledWith({
+      where: { id: 1 },
+      data: expect.objectContaining({ suggestionSlots: 9 }),
+    });
+  });
+
+  it('refuses yourself and people who don’t exist', async () => {
+    const { service } = setup(null);
+
+    await expect(service.dismissSuggestion(1, 1)).rejects.toBeInstanceOf(
+      BadRequestException,
+    );
+    await expect(service.dismissSuggestion(1, 99)).rejects.toBeInstanceOf(
+      NotFoundException,
+    );
   });
 });
