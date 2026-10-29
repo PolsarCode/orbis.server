@@ -8,7 +8,7 @@ import {
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { randomInt } from 'node:crypto';
+import { createHash, randomInt } from 'node:crypto';
 import { AuthProvider, Prisma } from '../../../prisma/generated/client';
 import { webUrl } from '../../common/web-url';
 import { CommunitiesService } from '../../communities/communities.service';
@@ -55,12 +55,16 @@ export type OAuthConnections = {
 
 type StateClaims = {
   provider: AuthProvider;
-  nonce: string;
+  nonceHash: string;
   uid: number | null;
   client: 'web' | 'mobile';
   communityId?: number | null;
   channel?: boolean;
 };
+
+function hashNonce(nonce: string) {
+  return createHash('sha256').update(nonce).digest('hex');
+}
 
 type SignupClaims = {
   provider: AuthProvider;
@@ -163,7 +167,7 @@ export class OAuthService {
 
     const claims: StateClaims = {
       provider,
-      nonce,
+      nonceHash: hashNonce(nonce),
       uid,
       communityId,
       client,
@@ -343,7 +347,6 @@ export class OAuthService {
           emailVerifiedAt: new Date(),
           username: normalized,
           name: displayName,
-          avatarUrl: useProviderAvatar ? avatarUrl : null,
           oauthAccounts: {
             create: {
               provider,
@@ -515,7 +518,7 @@ export class OAuthService {
     } catch {
       throw new BadRequestException(EXPIRED);
     }
-    if (claims.provider !== provider || claims.nonce !== nonce) {
+    if (claims.provider !== provider || claims.nonceHash !== hashNonce(nonce)) {
       throw new BadRequestException(EXPIRED);
     }
     return claims;

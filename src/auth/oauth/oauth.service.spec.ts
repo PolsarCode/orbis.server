@@ -5,6 +5,7 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { createHash } from 'node:crypto';
 import { Prisma } from '../../../prisma/generated/client';
 import { PrismaService } from '../../prisma.service';
 import { CommunitiesService } from '../../communities/communities.service';
@@ -93,8 +94,10 @@ describe('OAuthService', () => {
       secret: 'test-secret:oauth-state',
     });
 
-    expect(mobileState).toMatchObject({ client: 'mobile', nonce: NONCE });
-    expect(webState).toMatchObject({ client: 'web', nonce: NONCE });
+    const nonceHash = createHash('sha256').update(NONCE).digest('hex');
+    expect(mobileState).toMatchObject({ client: 'mobile', nonceHash });
+    expect(webState).toMatchObject({ client: 'web', nonceHash });
+    expect(JSON.stringify(mobileState)).not.toContain(NONCE);
   });
 
   function uniqueViolation() {
@@ -222,8 +225,6 @@ describe('OAuthService', () => {
           emailVerifiedAt: expect.any(Date),
           username: 'hokage_naruto',
           name: 'Naruto',
-          avatarUrl:
-            'https://cdn.discordapp.com/avatars/42/avatar-hash.png?size=512',
           oauthAccounts: {
             create: {
               provider: 'discord',
@@ -245,11 +246,11 @@ describe('OAuthService', () => {
 
     await service.finishSignup(token, 'Hokage_Naruto', false);
 
-    expect(prisma.user.create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.objectContaining({ avatarUrl: null }),
-      }),
+    expect(prisma.user.create.mock.calls.at(-1)[0].data).not.toHaveProperty(
+      'avatarUrl',
     );
+    expect(storage.uploadImage).not.toHaveBeenCalled();
+    expect(prisma.user.updateMany).not.toHaveBeenCalled();
   });
 
   it('refuses a username someone already has', async () => {
@@ -718,6 +719,9 @@ describe('OAuthService', () => {
         'avatars',
         384,
       );
+      expect(prisma.user.create.mock.calls.at(-1)[0].data).not.toHaveProperty(
+        'avatarUrl',
+      );
       expect(prisma.user.updateMany).toHaveBeenCalledWith({
         where: { id: 9, avatarUrl: null },
         data: { avatarUrl: STORED },
@@ -737,6 +741,9 @@ describe('OAuthService', () => {
       });
       expect(storage.uploadImage).not.toHaveBeenCalled();
       expect(prisma.user.updateMany).not.toHaveBeenCalled();
+      expect(prisma.user.create.mock.calls.at(-1)[0].data).not.toHaveProperty(
+        'avatarUrl',
+      );
     });
 
     it('skips Discord’s default picture', async () => {
