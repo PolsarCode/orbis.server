@@ -10,6 +10,11 @@ import { normalizeUsername } from '../users/username';
 import { EmailConfirmationService } from './email-confirmation.service';
 import { PrismaService } from '../prisma.service';
 import { ensureNotSuspended } from '../users/suspension';
+import {
+  TICKET_LIFETIME,
+  TWO_FACTOR_PURPOSE,
+  ticketSecret,
+} from './two-factor/ticket';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -48,6 +53,16 @@ export class AuthService {
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) throw new UnauthorizedException();
+
+    if (user.twoFactorEnabledAt) {
+      await ensureNotSuspended(this.prisma, user.id);
+      return {
+        two_factor_ticket: this.jwtService.sign(
+          { sub: user.id, purpose: TWO_FACTOR_PURPOSE },
+          { secret: ticketSecret(), expiresIn: TICKET_LIFETIME },
+        ),
+      };
+    }
 
     return this.generateToken(user.id, user.email);
   }

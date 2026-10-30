@@ -24,6 +24,10 @@ model User {
   coverUrl             String?
   backgroundUrl        String?
   password             String?
+  twoFactorSecret      String?
+  twoFactorEnabledAt   DateTime?
+  twoFactorCodes       String[]              @default([])
+  twoFactorLastStep    Int?
   emailVerifiedAt      DateTime?
   theme                Theme                 @default(dark)
   appearOffline        Boolean               @default(false)

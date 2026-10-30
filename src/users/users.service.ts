@@ -49,6 +49,7 @@ export type PublicProfile = {
   isPublic: boolean;
   restricted: boolean;
   suspension?: ProfileSuspension | null;
+  twoFactorEnabled?: boolean | null;
   hasClips: boolean;
   twitchLogin: string | null;
   nextStream: NextStream | null;
@@ -110,6 +111,7 @@ export type Onboarding = {
     steam: boolean;
     connections: boolean;
     folders: boolean;
+    twoFactor: boolean;
   };
 };
 
@@ -132,6 +134,8 @@ export type Profile = Pick<
 > & {
   userId: number;
   isHeadAdmin: boolean;
+  hasPassword: boolean;
+  twoFactorEnabled: boolean;
 };
 
 export type PublicUserSummary = {
@@ -142,11 +146,13 @@ export type PublicUserSummary = {
   coverUrl: string | null;
   isVerified: boolean;
   online: boolean;
+  status: PresenceStatus;
   activity: number;
 };
 
-export type ActiveUser = Omit<PublicUserSummary, 'online'> & {
+export type ActiveUser = Omit<PublicUserSummary, 'online' | 'status'> & {
   appearOffline: boolean;
+  status: UserStatus;
 };
 
 export const PUBLIC_USER_LIMIT = 12;
@@ -155,14 +161,15 @@ const ACTIVITY_WINDOW_DAYS = 30;
 
 export function rankPublicUsers(
   users: ActiveUser[],
-  isOnline: (userId: number) => boolean,
+  statusOf: (user: ActiveUser) => PresenceStatus,
   limit = PUBLIC_USER_LIMIT,
 ): PublicUserSummary[] {
   return users
-    .map(({ appearOffline, ...user }) => ({
-      ...user,
-      online: !appearOffline && isOnline(user.userId),
-    }))
+    .map((user) => {
+      const { appearOffline, status, ...summary } = user;
+      const presence = statusOf(user);
+      return { ...summary, online: presence !== 'offline', status: presence };
+    })
     .sort(
       (a, b) =>
         Number(b.online) - Number(a.online) ||
@@ -190,10 +197,14 @@ const profile = {
   isAdmin: true,
   emailVerifiedAt: true,
   createdAt: true,
+  password: true,
+  twoFactorEnabledAt: true,
 } as const;
 
 function toProfile({
   id,
+  password,
+  twoFactorEnabledAt,
   ...user
 }: Pick<UserModel, keyof typeof profile>): Profile {
   const headAdmin = isHeadAdmin(user.email);
@@ -202,6 +213,8 @@ function toProfile({
     ...user,
     isAdmin: user.isAdmin || headAdmin,
     isHeadAdmin: headAdmin,
+    hasPassword: password !== null,
+    twoFactorEnabled: twoFactorEnabledAt !== null,
   };
 }
 
@@ -322,6 +335,7 @@ export class UsersService {
         coverUrl: true,
         isVerified: true,
         appearOffline: true,
+        status: true,
         _count: {
           select: { posts: recent, comments: recent },
         },
@@ -579,6 +593,20 @@ export class UsersService {
     return user ? activeSuspension(user) : null;
   }
 
+  async twoFactorFor(viewerId: number, userId: number) {
+    const viewer = await this.prisma.user.findUnique({
+      where: { id: viewerId },
+      select: { isAdmin: true, email: true },
+    });
+    if (!viewer || !(viewer.isAdmin || isHeadAdmin(viewer.email))) return null;
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { twoFactorEnabledAt: true },
+    });
+    return user ? user.twoFactorEnabledAt !== null : null;
+  }
+
   async setSuspension(
     adminId: number,
     username: string,
@@ -697,6 +725,7 @@ export class UsersService {
           tourCompletedAt: true,
           checklistDismissedAt: true,
           completedTours: true,
+          twoFactorEnabledAt: true,
         },
       }),
       this.prisma.membership.count({ where: { userId: id } }),
@@ -731,6 +760,7 @@ export class UsersService {
         steam: steamAccounts > 0,
         connections: oauthAccounts > 0,
         folders: folders > 0,
+        twoFactor: user.twoFactorEnabledAt !== null,
       },
     };
   }

@@ -226,6 +226,10 @@ export class UsersController {
         req.user.userId,
         profile.userId,
       ),
+      twoFactorEnabled: await this.usersService.twoFactorFor(
+        req.user.userId,
+        profile.userId,
+      ),
       online: status !== 'offline',
       status,
       friends: friends.map(({ appearOffline, status, ...friend }) => {

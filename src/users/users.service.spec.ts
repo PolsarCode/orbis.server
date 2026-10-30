@@ -69,6 +69,7 @@ describe('Onboarding', () => {
         tourCompletedAt: new Date(),
         checklistDismissedAt: null,
         completedTours: [],
+        twoFactorEnabledAt: new Date(),
       }),
     },
     membership: count(1),
@@ -95,6 +96,7 @@ describe('Onboarding', () => {
       steam: true,
       connections: false,
       folders: true,
+      twoFactor: true,
     });
     expect(prisma.steamAccount.count).toHaveBeenCalledWith({
       where: { userId: 1 },

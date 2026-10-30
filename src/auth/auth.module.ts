@@ -14,6 +14,8 @@ import { StorageModule } from '../storage/storage.module';
 import { PresenceModule } from '../friends/presence.module';
 import { CommunitiesModule } from '../communities/communities.module';
 import { DiscordChannelModule } from '../discord-channel/discord-channel.module';
+import { TwoFactorController } from './two-factor/two-factor.controller';
+import { TwoFactorService } from './two-factor/two-factor.service';
 
 @Module({
   imports: [
@@ -31,10 +33,11 @@ import { DiscordChannelModule } from '../discord-channel/discord-channel.module'
     AuthService,
     EmailConfirmationService,
     OAuthService,
+    TwoFactorService,
     JwtStrategy,
     UsersService,
     PrismaService,
   ],
-  controllers: [AuthController, OAuthController],
+  controllers: [AuthController, OAuthController, TwoFactorController],
 })
 export class AuthModule {}

@@ -65,3 +65,55 @@ describe('Logging in to a suspended account', () => {
     });
   });
 });
+
+describe('Logging in with two-factor sign-in on', () => {
+  const realJwt = process.env.JWT_SECRET;
+  const jwt = new JwtService({ secret: 'login-secret' });
+  const users = { findByEmail: jest.fn(), findByUsername: jest.fn() };
+  const prisma = {
+    user: {
+      findUnique: jest.fn().mockResolvedValue({
+        suspendedAt: null,
+        suspendedUntil: null,
+        suspensionReason: null,
+      }),
+    },
+  };
+  const service = new AuthService(
+    users as unknown as UsersService,
+    jwt,
+    {} as EmailConfirmationService,
+    prisma as unknown as PrismaService,
+  );
+
+  beforeAll(async () => {
+    process.env.JWT_SECRET = 'login-secret';
+    users.findByUsername.mockResolvedValue({
+      id: 7,
+      email: 'naruto@anime.test',
+      password: await bcrypt.hash('password', 4),
+      twoFactorEnabledAt: new Date(),
+    });
+  });
+
+  afterAll(() => {
+    if (realJwt === undefined) delete process.env.JWT_SECRET;
+    else process.env.JWT_SECRET = realJwt;
+  });
+
+  it('asks for a code instead of logging in', async () => {
+    const result = await service.login('naruto', 'password');
+
+    expect(result).not.toHaveProperty('access_token');
+    expect(result).toHaveProperty('two_factor_ticket');
+  });
+
+  it('gives a ticket that can’t be used to sign requests', async () => {
+    const { two_factor_ticket } = (await service.login(
+      'naruto',
+      'password',
+    )) as { two_factor_ticket: string };
+
+    expect(() => jwt.verify(two_factor_ticket)).toThrow();
+  });
+});

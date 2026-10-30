@@ -28,11 +28,13 @@ export type AggregateUser = {
 
 export type UserAvgAggregateOutputType = {
   id: number | null
+  twoFactorLastStep: number | null
   suggestionSlots: number | null
 }
 
 export type UserSumAggregateOutputType = {
   id: number | null
+  twoFactorLastStep: number | null
   suggestionSlots: number | null
 }
 
@@ -45,6 +47,9 @@ export type UserMinAggregateOutputType = {
   coverUrl: string | null
   backgroundUrl: string | null
   password: string | null
+  twoFactorSecret: string | null
+  twoFactorEnabledAt: Date | null
+  twoFactorLastStep: number | null
   emailVerifiedAt: Date | null
   theme: $Enums.Theme | null
   appearOffline: boolean | null
@@ -73,6 +78,9 @@ export type UserMaxAggregateOutputType = {
   coverUrl: string | null
   backgroundUrl: string | null
   password: string | null
+  twoFactorSecret: string | null
+  twoFactorEnabledAt: Date | null
+  twoFactorLastStep: number | null
   emailVerifiedAt: Date | null
   theme: $Enums.Theme | null
   appearOffline: boolean | null
@@ -101,6 +109,10 @@ export type UserCountAggregateOutputType = {
   coverUrl: number
   backgroundUrl: number
   password: number
+  twoFactorSecret: number
+  twoFactorEnabledAt: number
+  twoFactorCodes: number
+  twoFactorLastStep: number
   emailVerifiedAt: number
   theme: number
   appearOffline: number
@@ -125,11 +137,13 @@ export type UserCountAggregateOutputType = {
 
 export type UserAvgAggregateInputType = {
   id?: true
+  twoFactorLastStep?: true
   suggestionSlots?: true
 }
 
 export type UserSumAggregateInputType = {
   id?: true
+  twoFactorLastStep?: true
   suggestionSlots?: true
 }
 
@@ -142,6 +156,9 @@ export type UserMinAggregateInputType = {
   coverUrl?: true
   backgroundUrl?: true
   password?: true
+  twoFactorSecret?: true
+  twoFactorEnabledAt?: true
+  twoFactorLastStep?: true
   emailVerifiedAt?: true
   theme?: true
   appearOffline?: true
@@ -170,6 +187,9 @@ export type UserMaxAggregateInputType = {
   coverUrl?: true
   backgroundUrl?: true
   password?: true
+  twoFactorSecret?: true
+  twoFactorEnabledAt?: true
+  twoFactorLastStep?: true
   emailVerifiedAt?: true
   theme?: true
   appearOffline?: true
@@ -198,6 +218,10 @@ export type UserCountAggregateInputType = {
   coverUrl?: true
   backgroundUrl?: true
   password?: true
+  twoFactorSecret?: true
+  twoFactorEnabledAt?: true
+  twoFactorCodes?: true
+  twoFactorLastStep?: true
   emailVerifiedAt?: true
   theme?: true
   appearOffline?: true
@@ -314,6 +338,10 @@ export type UserGroupByOutputType = {
   coverUrl: string | null
   backgroundUrl: string | null
   password: string | null
+  twoFactorSecret: string | null
+  twoFactorEnabledAt: Date | null
+  twoFactorCodes: string[]
+  twoFactorLastStep: number | null
   emailVerifiedAt: Date | null
   theme: $Enums.Theme
   appearOffline: boolean
@@ -366,6 +394,10 @@ export type UserWhereInput = {
   coverUrl?: Prisma.StringNullableFilter<"User"> | string | null
   backgroundUrl?: Prisma.StringNullableFilter<"User"> | string | null
   password?: Prisma.StringNullableFilter<"User"> | string | null
+  twoFactorSecret?: Prisma.StringNullableFilter<"User"> | string | null
+  twoFactorEnabledAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  twoFactorCodes?: Prisma.StringNullableListFilter<"User">
+  twoFactorLastStep?: Prisma.IntNullableFilter<"User"> | number | null
   emailVerifiedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   theme?: Prisma.EnumThemeFilter<"User"> | $Enums.Theme
   appearOffline?: Prisma.BoolFilter<"User"> | boolean
@@ -424,6 +456,10 @@ export type UserOrderByWithRelationInput = {
   coverUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   backgroundUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   password?: Prisma.SortOrderInput | Prisma.SortOrder
+  twoFactorSecret?: Prisma.SortOrderInput | Prisma.SortOrder
+  twoFactorEnabledAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  twoFactorCodes?: Prisma.SortOrder
+  twoFactorLastStep?: Prisma.SortOrderInput | Prisma.SortOrder
   emailVerifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   theme?: Prisma.SortOrder
   appearOffline?: Prisma.SortOrder
@@ -485,6 +521,10 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   coverUrl?: Prisma.StringNullableFilter<"User"> | string | null
   backgroundUrl?: Prisma.StringNullableFilter<"User"> | string | null
   password?: Prisma.StringNullableFilter<"User"> | string | null
+  twoFactorSecret?: Prisma.StringNullableFilter<"User"> | string | null
+  twoFactorEnabledAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  twoFactorCodes?: Prisma.StringNullableListFilter<"User">
+  twoFactorLastStep?: Prisma.IntNullableFilter<"User"> | number | null
   emailVerifiedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   theme?: Prisma.EnumThemeFilter<"User"> | $Enums.Theme
   appearOffline?: Prisma.BoolFilter<"User"> | boolean
@@ -543,6 +583,10 @@ export type UserOrderByWithAggregationInput = {
   coverUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   backgroundUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   password?: Prisma.SortOrderInput | Prisma.SortOrder
+  twoFactorSecret?: Prisma.SortOrderInput | Prisma.SortOrder
+  twoFactorEnabledAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  twoFactorCodes?: Prisma.SortOrder
+  twoFactorLastStep?: Prisma.SortOrderInput | Prisma.SortOrder
   emailVerifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   theme?: Prisma.SortOrder
   appearOffline?: Prisma.SortOrder
@@ -580,6 +624,10 @@ export type UserScalarWhereWithAggregatesInput = {
   coverUrl?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   backgroundUrl?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   password?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  twoFactorSecret?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  twoFactorEnabledAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  twoFactorCodes?: Prisma.StringNullableListFilter<"User">
+  twoFactorLastStep?: Prisma.IntNullableWithAggregatesFilter<"User"> | number | null
   emailVerifiedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   theme?: Prisma.EnumThemeWithAggregatesFilter<"User"> | $Enums.Theme
   appearOffline?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
@@ -608,6 +656,10 @@ export type UserCreateInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -666,6 +718,10 @@ export type UserUncheckedCreateInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -723,6 +779,10 @@ export type UserUpdateInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -781,6 +841,10 @@ export type UserUncheckedUpdateInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -839,6 +903,10 @@ export type UserCreateManyInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -867,6 +935,10 @@ export type UserUpdateManyMutationInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -896,6 +968,10 @@ export type UserUncheckedUpdateManyInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -943,6 +1019,10 @@ export type UserCountOrderByAggregateInput = {
   coverUrl?: Prisma.SortOrder
   backgroundUrl?: Prisma.SortOrder
   password?: Prisma.SortOrder
+  twoFactorSecret?: Prisma.SortOrder
+  twoFactorEnabledAt?: Prisma.SortOrder
+  twoFactorCodes?: Prisma.SortOrder
+  twoFactorLastStep?: Prisma.SortOrder
   emailVerifiedAt?: Prisma.SortOrder
   theme?: Prisma.SortOrder
   appearOffline?: Prisma.SortOrder
@@ -965,6 +1045,7 @@ export type UserCountOrderByAggregateInput = {
 
 export type UserAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  twoFactorLastStep?: Prisma.SortOrder
   suggestionSlots?: Prisma.SortOrder
 }
 
@@ -977,6 +1058,9 @@ export type UserMaxOrderByAggregateInput = {
   coverUrl?: Prisma.SortOrder
   backgroundUrl?: Prisma.SortOrder
   password?: Prisma.SortOrder
+  twoFactorSecret?: Prisma.SortOrder
+  twoFactorEnabledAt?: Prisma.SortOrder
+  twoFactorLastStep?: Prisma.SortOrder
   emailVerifiedAt?: Prisma.SortOrder
   theme?: Prisma.SortOrder
   appearOffline?: Prisma.SortOrder
@@ -1005,6 +1089,9 @@ export type UserMinOrderByAggregateInput = {
   coverUrl?: Prisma.SortOrder
   backgroundUrl?: Prisma.SortOrder
   password?: Prisma.SortOrder
+  twoFactorSecret?: Prisma.SortOrder
+  twoFactorEnabledAt?: Prisma.SortOrder
+  twoFactorLastStep?: Prisma.SortOrder
   emailVerifiedAt?: Prisma.SortOrder
   theme?: Prisma.SortOrder
   appearOffline?: Prisma.SortOrder
@@ -1026,6 +1113,7 @@ export type UserMinOrderByAggregateInput = {
 
 export type UserSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  twoFactorLastStep?: Prisma.SortOrder
   suggestionSlots?: Prisma.SortOrder
 }
 
@@ -1435,8 +1523,17 @@ export type UserUpdateOneRequiredWithoutSteamGamesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSteamGamesInput, Prisma.UserUpdateWithoutSteamGamesInput>, Prisma.UserUncheckedUpdateWithoutSteamGamesInput>
 }
 
+export type UserCreatetwoFactorCodesInput = {
+  set: string[]
+}
+
 export type UserCreatecompletedToursInput = {
   set: string[]
+}
+
+export type UserUpdatetwoFactorCodesInput = {
+  set?: string[]
+  push?: string | string[]
 }
 
 export type EnumThemeFieldUpdateOperationsInput = {
@@ -1474,6 +1571,10 @@ export type UserCreateWithoutOwnedCommunitiesInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -1531,6 +1632,10 @@ export type UserUncheckedCreateWithoutOwnedCommunitiesInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -1603,6 +1708,10 @@ export type UserUpdateWithoutOwnedCommunitiesInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1660,6 +1769,10 @@ export type UserUncheckedUpdateWithoutOwnedCommunitiesInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1716,6 +1829,10 @@ export type UserCreateWithoutMembershipsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -1773,6 +1890,10 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -1845,6 +1966,10 @@ export type UserUpdateWithoutMembershipsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1902,6 +2027,10 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1958,6 +2087,10 @@ export type UserCreateWithoutRailFoldersInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -2015,6 +2148,10 @@ export type UserUncheckedCreateWithoutRailFoldersInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -2087,6 +2224,10 @@ export type UserUpdateWithoutRailFoldersInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2144,6 +2285,10 @@ export type UserUncheckedUpdateWithoutRailFoldersInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2200,6 +2345,10 @@ export type UserCreateWithoutInvitesInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -2257,6 +2406,10 @@ export type UserUncheckedCreateWithoutInvitesInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -2329,6 +2482,10 @@ export type UserUpdateWithoutInvitesInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2386,6 +2543,10 @@ export type UserUncheckedUpdateWithoutInvitesInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2442,6 +2603,10 @@ export type UserCreateWithoutWallPostsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -2499,6 +2664,10 @@ export type UserUncheckedCreateWithoutWallPostsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -2560,6 +2729,10 @@ export type UserCreateWithoutPostsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -2617,6 +2790,10 @@ export type UserUncheckedCreateWithoutPostsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -2689,6 +2866,10 @@ export type UserUpdateWithoutWallPostsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2746,6 +2927,10 @@ export type UserUncheckedUpdateWithoutWallPostsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2813,6 +2998,10 @@ export type UserUpdateWithoutPostsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2870,6 +3059,10 @@ export type UserUncheckedUpdateWithoutPostsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2926,6 +3119,10 @@ export type UserCreateWithoutCommentsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -2983,6 +3180,10 @@ export type UserUncheckedCreateWithoutCommentsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -3055,6 +3256,10 @@ export type UserUpdateWithoutCommentsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3112,6 +3317,10 @@ export type UserUncheckedUpdateWithoutCommentsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3168,6 +3377,10 @@ export type UserCreateWithoutLikesInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -3225,6 +3438,10 @@ export type UserUncheckedCreateWithoutLikesInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -3297,6 +3514,10 @@ export type UserUpdateWithoutLikesInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3354,6 +3575,10 @@ export type UserUncheckedUpdateWithoutLikesInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3410,6 +3635,10 @@ export type UserCreateWithoutSentFriendshipsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -3467,6 +3696,10 @@ export type UserUncheckedCreateWithoutSentFriendshipsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -3528,6 +3761,10 @@ export type UserCreateWithoutReceivedFriendshipsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -3585,6 +3822,10 @@ export type UserUncheckedCreateWithoutReceivedFriendshipsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -3657,6 +3898,10 @@ export type UserUpdateWithoutSentFriendshipsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3714,6 +3959,10 @@ export type UserUncheckedUpdateWithoutSentFriendshipsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3781,6 +4030,10 @@ export type UserUpdateWithoutReceivedFriendshipsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3838,6 +4091,10 @@ export type UserUncheckedUpdateWithoutReceivedFriendshipsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3894,6 +4151,10 @@ export type UserCreateWithoutSuggestionDismissalsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -3951,6 +4212,10 @@ export type UserUncheckedCreateWithoutSuggestionDismissalsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -4012,6 +4277,10 @@ export type UserCreateWithoutDismissedByInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -4069,6 +4338,10 @@ export type UserUncheckedCreateWithoutDismissedByInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -4141,6 +4414,10 @@ export type UserUpdateWithoutSuggestionDismissalsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4198,6 +4475,10 @@ export type UserUncheckedUpdateWithoutSuggestionDismissalsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4265,6 +4546,10 @@ export type UserUpdateWithoutDismissedByInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4322,6 +4607,10 @@ export type UserUncheckedUpdateWithoutDismissedByInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4378,6 +4667,10 @@ export type UserCreateWithoutLibraryEntriesInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -4435,6 +4728,10 @@ export type UserUncheckedCreateWithoutLibraryEntriesInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -4507,6 +4804,10 @@ export type UserUpdateWithoutLibraryEntriesInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4564,6 +4865,10 @@ export type UserUncheckedUpdateWithoutLibraryEntriesInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4620,6 +4925,10 @@ export type UserCreateWithoutCreatedConversationsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -4677,6 +4986,10 @@ export type UserUncheckedCreateWithoutCreatedConversationsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -4738,6 +5051,10 @@ export type UserCreateWithoutConversationsAsAInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -4795,6 +5112,10 @@ export type UserUncheckedCreateWithoutConversationsAsAInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -4856,6 +5177,10 @@ export type UserCreateWithoutConversationsAsBInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -4913,6 +5238,10 @@ export type UserUncheckedCreateWithoutConversationsAsBInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -4985,6 +5314,10 @@ export type UserUpdateWithoutCreatedConversationsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5042,6 +5375,10 @@ export type UserUncheckedUpdateWithoutCreatedConversationsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5109,6 +5446,10 @@ export type UserUpdateWithoutConversationsAsAInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5166,6 +5507,10 @@ export type UserUncheckedUpdateWithoutConversationsAsAInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5233,6 +5578,10 @@ export type UserUpdateWithoutConversationsAsBInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5290,6 +5639,10 @@ export type UserUncheckedUpdateWithoutConversationsAsBInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5346,6 +5699,10 @@ export type UserCreateWithoutConversationsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -5403,6 +5760,10 @@ export type UserUncheckedCreateWithoutConversationsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -5475,6 +5836,10 @@ export type UserUpdateWithoutConversationsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5532,6 +5897,10 @@ export type UserUncheckedUpdateWithoutConversationsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5588,6 +5957,10 @@ export type UserCreateWithoutMessagesInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -5645,6 +6018,10 @@ export type UserUncheckedCreateWithoutMessagesInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -5717,6 +6094,10 @@ export type UserUpdateWithoutMessagesInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5774,6 +6155,10 @@ export type UserUncheckedUpdateWithoutMessagesInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5830,6 +6215,10 @@ export type UserCreateWithoutMessageReactionsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -5887,6 +6276,10 @@ export type UserUncheckedCreateWithoutMessageReactionsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -5959,6 +6352,10 @@ export type UserUpdateWithoutMessageReactionsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -6016,6 +6413,10 @@ export type UserUncheckedUpdateWithoutMessageReactionsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -6072,6 +6473,10 @@ export type UserCreateWithoutNotificationsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -6129,6 +6534,10 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -6190,6 +6599,10 @@ export type UserCreateWithoutCausedNotificationsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -6247,6 +6660,10 @@ export type UserUncheckedCreateWithoutCausedNotificationsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -6319,6 +6736,10 @@ export type UserUpdateWithoutNotificationsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -6376,6 +6797,10 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -6443,6 +6868,10 @@ export type UserUpdateWithoutCausedNotificationsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -6500,6 +6929,10 @@ export type UserUncheckedUpdateWithoutCausedNotificationsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -6556,6 +6989,10 @@ export type UserCreateWithoutReportsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -6613,6 +7050,10 @@ export type UserUncheckedCreateWithoutReportsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -6674,6 +7115,10 @@ export type UserCreateWithoutAssignedReportsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -6731,6 +7176,10 @@ export type UserUncheckedCreateWithoutAssignedReportsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -6803,6 +7252,10 @@ export type UserUpdateWithoutReportsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -6860,6 +7313,10 @@ export type UserUncheckedUpdateWithoutReportsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -6927,6 +7384,10 @@ export type UserUpdateWithoutAssignedReportsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -6984,6 +7445,10 @@ export type UserUncheckedUpdateWithoutAssignedReportsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -7040,6 +7505,10 @@ export type UserCreateWithoutReportCommentsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -7097,6 +7566,10 @@ export type UserUncheckedCreateWithoutReportCommentsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -7169,6 +7642,10 @@ export type UserUpdateWithoutReportCommentsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -7226,6 +7703,10 @@ export type UserUncheckedUpdateWithoutReportCommentsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -7282,6 +7763,10 @@ export type UserCreateWithoutContentReportsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -7339,6 +7824,10 @@ export type UserUncheckedCreateWithoutContentReportsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -7400,6 +7889,10 @@ export type UserCreateWithoutResolvedReportsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -7457,6 +7950,10 @@ export type UserUncheckedCreateWithoutResolvedReportsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -7529,6 +8026,10 @@ export type UserUpdateWithoutContentReportsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -7586,6 +8087,10 @@ export type UserUncheckedUpdateWithoutContentReportsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -7653,6 +8158,10 @@ export type UserUpdateWithoutResolvedReportsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -7710,6 +8219,10 @@ export type UserUncheckedUpdateWithoutResolvedReportsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -7766,6 +8279,10 @@ export type UserCreateWithoutSteamAccountInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -7823,6 +8340,10 @@ export type UserUncheckedCreateWithoutSteamAccountInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -7895,6 +8416,10 @@ export type UserUpdateWithoutSteamAccountInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -7952,6 +8477,10 @@ export type UserUncheckedUpdateWithoutSteamAccountInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -8008,6 +8537,10 @@ export type UserCreateWithoutSteamGamesInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -8065,6 +8598,10 @@ export type UserUncheckedCreateWithoutSteamGamesInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -8137,6 +8674,10 @@ export type UserUpdateWithoutSteamGamesInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -8194,6 +8735,10 @@ export type UserUncheckedUpdateWithoutSteamGamesInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -8250,6 +8795,10 @@ export type UserCreateWithoutOauthAccountsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -8307,6 +8856,10 @@ export type UserUncheckedCreateWithoutOauthAccountsInput = {
   coverUrl?: string | null
   backgroundUrl?: string | null
   password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
   emailVerifiedAt?: Date | string | null
   theme?: $Enums.Theme
   appearOffline?: boolean
@@ -8379,6 +8932,10 @@ export type UserUpdateWithoutOauthAccountsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -8436,6 +8993,10 @@ export type UserUncheckedUpdateWithoutOauthAccountsInput = {
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
   appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -8767,6 +9328,10 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   coverUrl?: boolean
   backgroundUrl?: boolean
   password?: boolean
+  twoFactorSecret?: boolean
+  twoFactorEnabledAt?: boolean
+  twoFactorCodes?: boolean
+  twoFactorLastStep?: boolean
   emailVerifiedAt?: boolean
   theme?: boolean
   appearOffline?: boolean
@@ -8826,6 +9391,10 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   coverUrl?: boolean
   backgroundUrl?: boolean
   password?: boolean
+  twoFactorSecret?: boolean
+  twoFactorEnabledAt?: boolean
+  twoFactorCodes?: boolean
+  twoFactorLastStep?: boolean
   emailVerifiedAt?: boolean
   theme?: boolean
   appearOffline?: boolean
@@ -8855,6 +9424,10 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   coverUrl?: boolean
   backgroundUrl?: boolean
   password?: boolean
+  twoFactorSecret?: boolean
+  twoFactorEnabledAt?: boolean
+  twoFactorCodes?: boolean
+  twoFactorLastStep?: boolean
   emailVerifiedAt?: boolean
   theme?: boolean
   appearOffline?: boolean
@@ -8884,6 +9457,10 @@ export type UserSelectScalar = {
   coverUrl?: boolean
   backgroundUrl?: boolean
   password?: boolean
+  twoFactorSecret?: boolean
+  twoFactorEnabledAt?: boolean
+  twoFactorCodes?: boolean
+  twoFactorLastStep?: boolean
   emailVerifiedAt?: boolean
   theme?: boolean
   appearOffline?: boolean
@@ -8904,7 +9481,7 @@ export type UserSelectScalar = {
   createdAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "username" | "name" | "avatarUrl" | "coverUrl" | "backgroundUrl" | "password" | "emailVerifiedAt" | "theme" | "appearOffline" | "showNsfw" | "showChangelog" | "status" | "isPublic" | "isAdmin" | "isVerified" | "suspendedAt" | "suspendedUntil" | "suspensionReason" | "suggestionSlots" | "suggestionSlotsAt" | "tourCompletedAt" | "checklistDismissedAt" | "completedTours" | "createdAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "username" | "name" | "avatarUrl" | "coverUrl" | "backgroundUrl" | "password" | "twoFactorSecret" | "twoFactorEnabledAt" | "twoFactorCodes" | "twoFactorLastStep" | "emailVerifiedAt" | "theme" | "appearOffline" | "showNsfw" | "showChangelog" | "status" | "isPublic" | "isAdmin" | "isVerified" | "suspendedAt" | "suspendedUntil" | "suspensionReason" | "suggestionSlots" | "suggestionSlotsAt" | "tourCompletedAt" | "checklistDismissedAt" | "completedTours" | "createdAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   ownedCommunities?: boolean | Prisma.User$ownedCommunitiesArgs<ExtArgs>
   memberships?: boolean | Prisma.User$membershipsArgs<ExtArgs>
@@ -8982,6 +9559,10 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     coverUrl: string | null
     backgroundUrl: string | null
     password: string | null
+    twoFactorSecret: string | null
+    twoFactorEnabledAt: Date | null
+    twoFactorCodes: string[]
+    twoFactorLastStep: number | null
     emailVerifiedAt: Date | null
     theme: $Enums.Theme
     appearOffline: boolean
@@ -9460,6 +10041,10 @@ export interface UserFieldRefs {
   readonly coverUrl: Prisma.FieldRef<"User", 'String'>
   readonly backgroundUrl: Prisma.FieldRef<"User", 'String'>
   readonly password: Prisma.FieldRef<"User", 'String'>
+  readonly twoFactorSecret: Prisma.FieldRef<"User", 'String'>
+  readonly twoFactorEnabledAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly twoFactorCodes: Prisma.FieldRef<"User", 'String[]'>
+  readonly twoFactorLastStep: Prisma.FieldRef<"User", 'Int'>
   readonly emailVerifiedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly theme: Prisma.FieldRef<"User", 'Theme'>
   readonly appearOffline: Prisma.FieldRef<"User", 'Boolean'>
