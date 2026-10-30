@@ -13,6 +13,7 @@ const community = {
   iconUrl: '/images/communities/hidden-leaf-village.webp',
 };
 const author = {
+  id: 76,
   username: 'naruto',
   name: 'Naruto Uzumaki',
   nickname: null,
@@ -100,7 +101,7 @@ describe('Discord messages', () => {
     ).toBe('Orbis');
   });
 
-  it('falls back to the community icon when the author has no picture', () => {
+  it('uses an initials picture, not the community icon, when the author has none', () => {
     const message = postMessage(
       {
         id: 1,
@@ -113,7 +114,7 @@ describe('Discord messages', () => {
     );
 
     expect(message.identity.avatar_url).toBe(
-      'https://orbis.test/images/communities/hidden-leaf-village.webp',
+      'https://orbis.test/avatars/76?initial=N',
     );
   });
 

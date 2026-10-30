@@ -43,6 +43,7 @@ describe('Checking Steam games', () => {
     library as unknown as LibraryService,
   );
   const checkedBefore = new Date('2026-10-01T00:00:00Z');
+  const anHourAgo = () => new Date(Date.now() - 60 * 60 * 1000);
 
   function account(overrides: Record<string, unknown> = {}) {
     prisma.steamAccount.findUnique.mockResolvedValue({
@@ -110,7 +111,7 @@ describe('Checking Steam games', () => {
       {
         appId: '367520',
         minutes: 30,
-        lastPlayedAt: null,
+        lastPlayedAt: anHourAgo(),
       },
     ]);
 
@@ -123,6 +124,42 @@ describe('Checking Steam games', () => {
     });
   });
 
+  it('doesn’t count an old game showing up with playtime as just started', async () => {
+    account();
+    prisma.steamGame.findMany
+      .mockResolvedValueOnce([
+        { appId: '19680', minutes: 0, matchedAt: checkedBefore },
+      ])
+      .mockResolvedValueOnce([{ igdbId: '1063' }]);
+    jest.mocked(getOwnedGames).mockResolvedValue([
+      {
+        appId: '19680',
+        minutes: 640,
+        lastPlayedAt: new Date('2019-03-02T00:00:00Z'),
+      },
+    ]);
+
+    await service.sync(1);
+
+    expect(library.add).not.toHaveBeenCalled();
+  });
+
+  it('doesn’t count a game without a last-played date as just started', async () => {
+    account();
+    prisma.steamGame.findMany
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([{ igdbId: '1063' }]);
+    jest
+      .mocked(getOwnedGames)
+      .mockResolvedValue([
+        { appId: '19680', minutes: 640, lastPlayedAt: null },
+      ]);
+
+    await service.sync(1);
+
+    expect(library.add).not.toHaveBeenCalled();
+  });
+
   it('leaves the library alone when adding is turned off', async () => {
     account({ trackGames: false });
     prisma.steamGame.findMany.mockResolvedValueOnce([
@@ -132,7 +169,7 @@ describe('Checking Steam games', () => {
       {
         appId: '367520',
         minutes: 30,
-        lastPlayedAt: null,
+        lastPlayedAt: anHourAgo(),
       },
     ]);
 
@@ -153,7 +190,7 @@ describe('Checking Steam games', () => {
       {
         appId: '367520',
         minutes: 30,
-        lastPlayedAt: null,
+        lastPlayedAt: anHourAgo(),
       },
     ]);
 
@@ -177,7 +214,7 @@ describe('Checking Steam games', () => {
       {
         appId: '367520',
         minutes: 30,
-        lastPlayedAt: null,
+        lastPlayedAt: anHourAgo(),
       },
     ]);
     jest.mocked(getAchievements).mockResolvedValue({ achieved: 12, total: 63 });
@@ -219,7 +256,7 @@ describe('Checking Steam games', () => {
       {
         appId: '367520',
         minutes: 30,
-        lastPlayedAt: null,
+        lastPlayedAt: anHourAgo(),
       },
     ]);
     jest.mocked(matchSteamGames).mockRejectedValue(new Error('down'));

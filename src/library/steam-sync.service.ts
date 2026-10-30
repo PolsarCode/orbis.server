@@ -82,10 +82,15 @@ export class SteamSyncService {
         })
       ).map((game) => [game.appId, game]),
     );
-    const firstPlays = account.baselineAt
+    const baselineAt = account.baselineAt;
+    const firstPlays = baselineAt
       ? owned.filter(
           (game) =>
-            game.minutes > 0 && (known.get(game.appId)?.minutes ?? 0) === 0,
+            game.minutes > 0 &&
+            (known.get(game.appId)?.minutes ?? 0) === 0 &&
+            game.lastPlayedAt !== null &&
+            game.lastPlayedAt >= baselineAt &&
+            now.getTime() - game.lastPlayedAt.getTime() <= RECENTLY_PLAYED_MS,
         )
       : [];
     const unmatched = new Set(

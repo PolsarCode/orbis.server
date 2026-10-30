@@ -2,6 +2,7 @@ import { LibraryStatus, MediaType } from '../../prisma/generated/client';
 import { webUrl } from '../common/web-url';
 
 export type MessageAuthor = {
+  id: number;
   username: string;
   name: string | null;
   nickname?: string | null;
@@ -124,6 +125,12 @@ function footer(community: MessageCommunity) {
   };
 }
 
+function initialsAvatar(author: MessageAuthor) {
+  const label = author.nickname || author.name || author.username;
+  const initial = Array.from(label)[0]?.toUpperCase() ?? '';
+  return `${webUrl()}/avatars/${author.id}?initial=${encodeURIComponent(initial)}`;
+}
+
 function fromAuthor(
   author: MessageAuthor,
   community: MessageCommunity,
@@ -132,12 +139,10 @@ function fromAuthor(
   threadName: string,
   content?: string | null,
 ): RenderedMessage {
-  const avatar =
-    absoluteUrl(author.avatarUrl) ?? absoluteUrl(community.iconUrl);
   return {
     identity: {
       username: webhookName(author),
-      ...(avatar && { avatar_url: avatar }),
+      avatar_url: absoluteUrl(author.avatarUrl) ?? initialsAvatar(author),
     },
     body: {
       ...(content && { content }),
