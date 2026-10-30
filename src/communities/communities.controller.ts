@@ -31,6 +31,7 @@ import { SearchCommunitiesDto } from './dto/search-communities.dto';
 import { UpdateCommunityDto } from './dto/update-community.dto';
 import { UpdateLibraryUpdatesDto } from './dto/update-library-updates.dto';
 import { UpdateNicknameDto } from './dto/update-nickname.dto';
+import { CommunityRole } from './permissions';
 import { CommunityMemberGuard } from './community-member.guard';
 import { CommunityViewerGuard } from './community-viewer.guard';
 import { JwtAuthGuard } from '../auth/jwt.guard';
@@ -54,7 +55,9 @@ export class CommunitiesController {
   }
 
   @Get()
-  findMine(@Req() req): Promise<(CommunityModel & { live: boolean })[]> {
+  findMine(
+    @Req() req,
+  ): Promise<(CommunityModel & { live: boolean; role: CommunityRole })[]> {
     return this.communitiesService.findForMember(req.user.userId);
   }
 
@@ -76,6 +79,15 @@ export class CommunitiesController {
     @Param('communityId', ParseIntPipe) communityId: number,
   ): Promise<CommunityModel> {
     return this.communitiesService.join(req.user.userId, communityId);
+  }
+
+  @Post(':communityId/leave')
+  @HttpCode(204)
+  leave(
+    @Req() req,
+    @Param('communityId', ParseIntPipe) communityId: number,
+  ): Promise<void> {
+    return this.communitiesService.leave(req.user.userId, communityId);
   }
 
   @Get('layout')

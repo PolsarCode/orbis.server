@@ -101,6 +101,21 @@ export type RailItem =
       communityIds: number[];
     };
 
+export function memberRole(
+  userId: number,
+  ownerId: number,
+  roles: { role: { permissions: bigint } }[],
+): CommunityRole {
+  if (ownerId === userId) return 'owner';
+  return roles.some(({ role }) => isAdministrator(role.permissions))
+    ? 'admin'
+    : 'member';
+}
+
+const rolePermissions = {
+  select: { role: { select: { permissions: true } } },
+} as const;
+
 @Injectable()
 export class CommunitiesService {
   constructor(
@@ -282,17 +297,41 @@ export class CommunitiesService {
     return community;
   }
 
+  async leave(userId: number, communityId: number): Promise<void> {
+    const community =
+      communityId >= 1 && communityId <= MAX_INT
+        ? await this.prisma.community.findUnique({
+            where: { id: communityId },
+            select: { ownerId: true },
+          })
+        : null;
+    if (!community) throw new NotFoundException('Community not found');
+    if (community.ownerId === userId) {
+      throw new BadRequestException(
+        'You own this community, so you can’t leave it. Delete it in its settings instead',
+      );
+    }
+
+    const { count } = await this.prisma.membership.deleteMany({
+      where: { userId, communityId },
+    });
+    if (count === 0) {
+      throw new NotFoundException('You’re not a member of this community');
+    }
+  }
+
   async findForMember(
     userId: number,
-  ): Promise<(CommunityModel & { live: boolean })[]> {
+  ): Promise<(CommunityModel & { live: boolean; role: CommunityRole })[]> {
     const memberships = await this.prisma.membership.findMany({
       where: { userId },
       orderBy: [{ position: 'asc' }, { joinedAt: 'asc' }],
-      include: { community: true },
+      include: { community: true, roles: rolePermissions },
     });
 
-    return memberships.map(({ community }) => ({
+    return memberships.map(({ community, roles }) => ({
       ...community,
+      role: memberRole(userId, community.ownerId, roles),
       live:
         community.showTwitchLive && this.presence.isCommunityLive(community.id),
     }));
@@ -662,17 +701,12 @@ export class CommunitiesService {
       where: { userId_communityId: { userId, communityId } },
       select: {
         community: { select: { ownerId: true } },
-        roles: { select: { role: { select: { permissions: true } } } },
+        roles: rolePermissions,
       },
     });
 
     if (!membership) return null;
-    if (membership.community.ownerId === userId) return 'owner';
-    return membership.roles.some(({ role }) =>
-      isAdministrator(role.permissions),
-    )
-      ? 'admin'
-      : 'member';
+    return memberRole(userId, membership.community.ownerId, membership.roles);
   }
 
   private async requireRole(
