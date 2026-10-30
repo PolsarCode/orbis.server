@@ -57,7 +57,7 @@ type SeedCommunity = {
   isVerified?: boolean;
   members: [UserKey, string?][];
   admins?: UserKey[];
-  posts: [UserKey, number, string][];
+  posts: [UserKey, number, string, boolean?][];
 };
 
 type SeedComment = {
@@ -95,6 +95,7 @@ const communities: SeedCommunity[] = [
         'admin',
         days(3),
         `<p>Welcome to the <strong>Seasonal Anime Club</strong>! 🎉</p><p>Post what you're watching this season, drop recommendations, and keep spoilers out of titles. A few ground rules:</p><ul><li>Be kind</li><li>Tag spoilers clearly</li><li>Hot takes are welcome, flame wars are not</li></ul>`,
+        true,
       ],
       [
         'anya',
@@ -745,6 +746,7 @@ const wallPosts: {
   ago: number;
   content: string;
   linkUrl?: string;
+  pinned?: boolean;
   comments?: SeedComment[];
 }[] = [
   {
@@ -771,6 +773,7 @@ const wallPosts: {
     ago: 50,
     content:
       '<p>Profiles now have walls! Drop a hello here, friends only. 👋</p>',
+    pinned: true,
     comments: [
       { author: 'gojo', ago: 42, content: '<p>First. Obviously.</p>' },
     ],
@@ -1900,13 +1903,17 @@ async function main() {
       });
     }
 
-    for (const [index, [key, ago, content]] of community.posts.entries()) {
+    for (const [
+      index,
+      [key, ago, content, pinned],
+    ] of community.posts.entries()) {
       const post = await prisma.post.create({
         data: {
           communityId: created.id,
           authorId: userIds[key],
           content,
           createdAt: minutesAgo(ago),
+          pinnedAt: pinned ? minutesAgo(ago) : null,
         },
       });
       const commentCount = await createComments(
@@ -2032,6 +2039,7 @@ async function main() {
         content: wallPost.content,
         linkUrl: wallPost.linkUrl,
         createdAt: minutesAgo(wallPost.ago),
+        pinnedAt: wallPost.pinned ? minutesAgo(wallPost.ago) : null,
       },
     });
     const commentCount = await createComments(

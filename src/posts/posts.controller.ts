@@ -8,6 +8,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Put,
   Query,
   Req,
   UseGuards,
@@ -113,6 +114,26 @@ export class PostController {
     @Body() updatePostDto: CreatePostDto,
   ) {
     return this.postsService.update(req.user.userId, postId, updatePostDto);
+  }
+
+  @RateLimit(30, MINUTE)
+  @Put(':postId/pin')
+  @HttpCode(204)
+  pin(
+    @Req() req,
+    @Param('postId', ParseIntPipe) postId: number,
+  ): Promise<void> {
+    return this.postsService.setPinned(req.user.userId, postId, true);
+  }
+
+  @RateLimit(30, MINUTE)
+  @Delete(':postId/pin')
+  @HttpCode(204)
+  unpin(
+    @Req() req,
+    @Param('postId', ParseIntPipe) postId: number,
+  ): Promise<void> {
+    return this.postsService.setPinned(req.user.userId, postId, false);
   }
 
   @RateLimit(30, MINUTE)

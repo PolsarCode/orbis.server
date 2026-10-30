@@ -20,6 +20,10 @@ const post = {
   content: 'Post',
   author: person,
 };
+const isPinnedQuery = (where: object) => {
+  const text = JSON.stringify(where);
+  return text.includes('"pinnedAt":{"not":null}') && !text.includes('"NOT"');
+};
 const activity = {
   id: 3,
   createdAt: date,
@@ -55,7 +59,9 @@ describe('Feed content filters', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    prisma.post.findMany.mockResolvedValue([post]);
+    prisma.post.findMany.mockImplementation(({ where }) =>
+      Promise.resolve(isPinnedQuery(where) ? [] : [post]),
+    );
     prisma.libraryActivity.findMany.mockResolvedValue([activity]);
     prisma.contentReport.findMany.mockResolvedValue([]);
     prisma.user.findUnique.mockResolvedValue(person);
@@ -187,8 +193,14 @@ describe('Feed content filters', () => {
         }),
       ]),
     );
-    expect(where.AND[1].OR).toEqual(
-      expect.arrayContaining([expect.objectContaining({ id: { lt: 2 } })]),
+    expect(where.AND).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          OR: expect.arrayContaining([
+            expect.objectContaining({ id: { lt: 2 } }),
+          ]),
+        }),
+      ]),
     );
   });
 

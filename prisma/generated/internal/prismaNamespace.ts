@@ -2670,6 +2670,7 @@ export const PostScalarFieldEnum = {
   likeCount: 'likeCount',
   hiddenAt: 'hiddenAt',
   editedAt: 'editedAt',
+  pinnedAt: 'pinnedAt',
   createdAt: 'createdAt'
 } as const
 

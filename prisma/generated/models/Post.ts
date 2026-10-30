@@ -57,6 +57,7 @@ export type PostMinAggregateOutputType = {
   likeCount: number | null
   hiddenAt: Date | null
   editedAt: Date | null
+  pinnedAt: Date | null
   createdAt: Date | null
 }
 
@@ -73,6 +74,7 @@ export type PostMaxAggregateOutputType = {
   likeCount: number | null
   hiddenAt: Date | null
   editedAt: Date | null
+  pinnedAt: Date | null
   createdAt: Date | null
 }
 
@@ -89,6 +91,7 @@ export type PostCountAggregateOutputType = {
   likeCount: number
   hiddenAt: number
   editedAt: number
+  pinnedAt: number
   createdAt: number
   _all: number
 }
@@ -125,6 +128,7 @@ export type PostMinAggregateInputType = {
   likeCount?: true
   hiddenAt?: true
   editedAt?: true
+  pinnedAt?: true
   createdAt?: true
 }
 
@@ -141,6 +145,7 @@ export type PostMaxAggregateInputType = {
   likeCount?: true
   hiddenAt?: true
   editedAt?: true
+  pinnedAt?: true
   createdAt?: true
 }
 
@@ -157,6 +162,7 @@ export type PostCountAggregateInputType = {
   likeCount?: true
   hiddenAt?: true
   editedAt?: true
+  pinnedAt?: true
   createdAt?: true
   _all?: true
 }
@@ -260,6 +266,7 @@ export type PostGroupByOutputType = {
   likeCount: number
   hiddenAt: Date | null
   editedAt: Date | null
+  pinnedAt: Date | null
   createdAt: Date
   _count: PostCountAggregateOutputType | null
   _avg: PostAvgAggregateOutputType | null
@@ -299,6 +306,7 @@ export type PostWhereInput = {
   likeCount?: Prisma.IntFilter<"Post"> | number
   hiddenAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
   editedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
+  pinnedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Post"> | Date | string
   community?: Prisma.XOR<Prisma.CommunityNullableScalarRelationFilter, Prisma.CommunityWhereInput> | null
   wallUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
@@ -318,6 +326,7 @@ export type PostOrderByWithRelationInput = {
   likeCount?: Prisma.SortOrder
   hiddenAt?: Prisma.SortOrderInput | Prisma.SortOrder
   editedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  pinnedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   community?: Prisma.CommunityOrderByWithRelationInput
   wallUser?: Prisma.UserOrderByWithRelationInput
@@ -340,6 +349,7 @@ export type PostWhereUniqueInput = Prisma.AtLeast<{
   likeCount?: Prisma.IntFilter<"Post"> | number
   hiddenAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
   editedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
+  pinnedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Post"> | Date | string
   community?: Prisma.XOR<Prisma.CommunityNullableScalarRelationFilter, Prisma.CommunityWhereInput> | null
   wallUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
@@ -359,6 +369,7 @@ export type PostOrderByWithAggregationInput = {
   likeCount?: Prisma.SortOrder
   hiddenAt?: Prisma.SortOrderInput | Prisma.SortOrder
   editedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  pinnedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.PostCountOrderByAggregateInput
   _avg?: Prisma.PostAvgOrderByAggregateInput
@@ -383,6 +394,7 @@ export type PostScalarWhereWithAggregatesInput = {
   likeCount?: Prisma.IntWithAggregatesFilter<"Post"> | number
   hiddenAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Post"> | Date | string | null
   editedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Post"> | Date | string | null
+  pinnedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Post"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Post"> | Date | string
 }
 
@@ -395,6 +407,7 @@ export type PostCreateInput = {
   likeCount?: number
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
+  pinnedAt?: Date | string | null
   createdAt?: Date | string
   community?: Prisma.CommunityCreateNestedOneWithoutPostsInput
   wallUser?: Prisma.UserCreateNestedOneWithoutWallPostsInput
@@ -414,6 +427,7 @@ export type PostUncheckedCreateInput = {
   likeCount?: number
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
+  pinnedAt?: Date | string | null
   createdAt?: Date | string
 }
 
@@ -426,6 +440,7 @@ export type PostUpdateInput = {
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   community?: Prisma.CommunityUpdateOneWithoutPostsNestedInput
   wallUser?: Prisma.UserUpdateOneWithoutWallPostsNestedInput
@@ -445,6 +460,7 @@ export type PostUncheckedUpdateInput = {
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -461,6 +477,7 @@ export type PostCreateManyInput = {
   likeCount?: number
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
+  pinnedAt?: Date | string | null
   createdAt?: Date | string
 }
 
@@ -473,6 +490,7 @@ export type PostUpdateManyMutationInput = {
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -489,6 +507,7 @@ export type PostUncheckedUpdateManyInput = {
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -515,6 +534,7 @@ export type PostCountOrderByAggregateInput = {
   likeCount?: Prisma.SortOrder
   hiddenAt?: Prisma.SortOrder
   editedAt?: Prisma.SortOrder
+  pinnedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -540,6 +560,7 @@ export type PostMaxOrderByAggregateInput = {
   likeCount?: Prisma.SortOrder
   hiddenAt?: Prisma.SortOrder
   editedAt?: Prisma.SortOrder
+  pinnedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -556,6 +577,7 @@ export type PostMinOrderByAggregateInput = {
   likeCount?: Prisma.SortOrder
   hiddenAt?: Prisma.SortOrder
   editedAt?: Prisma.SortOrder
+  pinnedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -707,6 +729,7 @@ export type PostCreateWithoutCommunityInput = {
   likeCount?: number
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
+  pinnedAt?: Date | string | null
   createdAt?: Date | string
   wallUser?: Prisma.UserCreateNestedOneWithoutWallPostsInput
   author: Prisma.UserCreateNestedOneWithoutPostsInput
@@ -724,6 +747,7 @@ export type PostUncheckedCreateWithoutCommunityInput = {
   likeCount?: number
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
+  pinnedAt?: Date | string | null
   createdAt?: Date | string
 }
 
@@ -769,6 +793,7 @@ export type PostScalarWhereInput = {
   likeCount?: Prisma.IntFilter<"Post"> | number
   hiddenAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
   editedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
+  pinnedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Post"> | Date | string
 }
 
@@ -781,6 +806,7 @@ export type PostCreateWithoutAuthorInput = {
   likeCount?: number
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
+  pinnedAt?: Date | string | null
   createdAt?: Date | string
   community?: Prisma.CommunityCreateNestedOneWithoutPostsInput
   wallUser?: Prisma.UserCreateNestedOneWithoutWallPostsInput
@@ -798,6 +824,7 @@ export type PostUncheckedCreateWithoutAuthorInput = {
   likeCount?: number
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
+  pinnedAt?: Date | string | null
   createdAt?: Date | string
 }
 
@@ -820,6 +847,7 @@ export type PostCreateWithoutWallUserInput = {
   likeCount?: number
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
+  pinnedAt?: Date | string | null
   createdAt?: Date | string
   community?: Prisma.CommunityCreateNestedOneWithoutPostsInput
   author: Prisma.UserCreateNestedOneWithoutPostsInput
@@ -837,6 +865,7 @@ export type PostUncheckedCreateWithoutWallUserInput = {
   likeCount?: number
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
+  pinnedAt?: Date | string | null
   createdAt?: Date | string
 }
 
@@ -894,6 +923,7 @@ export type PostCreateManyCommunityInput = {
   likeCount?: number
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
+  pinnedAt?: Date | string | null
   createdAt?: Date | string
 }
 
@@ -906,6 +936,7 @@ export type PostUpdateWithoutCommunityInput = {
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   wallUser?: Prisma.UserUpdateOneWithoutWallPostsNestedInput
   author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
@@ -923,6 +954,7 @@ export type PostUncheckedUpdateWithoutCommunityInput = {
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -938,6 +970,7 @@ export type PostUncheckedUpdateManyWithoutCommunityInput = {
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -953,6 +986,7 @@ export type PostCreateManyAuthorInput = {
   likeCount?: number
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
+  pinnedAt?: Date | string | null
   createdAt?: Date | string
 }
 
@@ -968,6 +1002,7 @@ export type PostCreateManyWallUserInput = {
   likeCount?: number
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
+  pinnedAt?: Date | string | null
   createdAt?: Date | string
 }
 
@@ -980,6 +1015,7 @@ export type PostUpdateWithoutAuthorInput = {
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   community?: Prisma.CommunityUpdateOneWithoutPostsNestedInput
   wallUser?: Prisma.UserUpdateOneWithoutWallPostsNestedInput
@@ -997,6 +1033,7 @@ export type PostUncheckedUpdateWithoutAuthorInput = {
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -1012,6 +1049,7 @@ export type PostUncheckedUpdateManyWithoutAuthorInput = {
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -1024,6 +1062,7 @@ export type PostUpdateWithoutWallUserInput = {
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   community?: Prisma.CommunityUpdateOneWithoutPostsNestedInput
   author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
@@ -1041,6 +1080,7 @@ export type PostUncheckedUpdateWithoutWallUserInput = {
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -1056,6 +1096,7 @@ export type PostUncheckedUpdateManyWithoutWallUserInput = {
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -1074,6 +1115,7 @@ export type PostSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   likeCount?: boolean
   hiddenAt?: boolean
   editedAt?: boolean
+  pinnedAt?: boolean
   createdAt?: boolean
   community?: boolean | Prisma.Post$communityArgs<ExtArgs>
   wallUser?: boolean | Prisma.Post$wallUserArgs<ExtArgs>
@@ -1093,6 +1135,7 @@ export type PostSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   likeCount?: boolean
   hiddenAt?: boolean
   editedAt?: boolean
+  pinnedAt?: boolean
   createdAt?: boolean
   community?: boolean | Prisma.Post$communityArgs<ExtArgs>
   wallUser?: boolean | Prisma.Post$wallUserArgs<ExtArgs>
@@ -1112,6 +1155,7 @@ export type PostSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   likeCount?: boolean
   hiddenAt?: boolean
   editedAt?: boolean
+  pinnedAt?: boolean
   createdAt?: boolean
   community?: boolean | Prisma.Post$communityArgs<ExtArgs>
   wallUser?: boolean | Prisma.Post$wallUserArgs<ExtArgs>
@@ -1131,10 +1175,11 @@ export type PostSelectScalar = {
   likeCount?: boolean
   hiddenAt?: boolean
   editedAt?: boolean
+  pinnedAt?: boolean
   createdAt?: boolean
 }
 
-export type PostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "communityId" | "wallUserId" | "mediaType" | "mediaSourceId" | "authorId" | "content" | "linkUrl" | "commentCount" | "likeCount" | "hiddenAt" | "editedAt" | "createdAt", ExtArgs["result"]["post"]>
+export type PostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "communityId" | "wallUserId" | "mediaType" | "mediaSourceId" | "authorId" | "content" | "linkUrl" | "commentCount" | "likeCount" | "hiddenAt" | "editedAt" | "pinnedAt" | "createdAt", ExtArgs["result"]["post"]>
 export type PostInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   community?: boolean | Prisma.Post$communityArgs<ExtArgs>
   wallUser?: boolean | Prisma.Post$wallUserArgs<ExtArgs>
@@ -1171,6 +1216,7 @@ export type $PostPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     likeCount: number
     hiddenAt: Date | null
     editedAt: Date | null
+    pinnedAt: Date | null
     createdAt: Date
   }, ExtArgs["result"]["post"]>
   composites: {}
@@ -1610,6 +1656,7 @@ export interface PostFieldRefs {
   readonly likeCount: Prisma.FieldRef<"Post", 'Int'>
   readonly hiddenAt: Prisma.FieldRef<"Post", 'DateTime'>
   readonly editedAt: Prisma.FieldRef<"Post", 'DateTime'>
+  readonly pinnedAt: Prisma.FieldRef<"Post", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Post", 'DateTime'>
 }
     

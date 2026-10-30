@@ -22,6 +22,7 @@ model Post {
   likeCount     Int        @default(0)
   hiddenAt      DateTime?
   editedAt      DateTime?
+  pinnedAt      DateTime?
   createdAt     DateTime   @default(now())
   community     Community? @relation(fields: [communityId], references: [id], onDelete: Cascade)
   wallUser      User?      @relation("WallPosts", fields: [wallUserId], references: [id], onDelete: Cascade)

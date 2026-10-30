@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -35,6 +36,7 @@ import { managedCommunities } from '../communities/managed-communities';
 import { discussionCleanup } from '../comments/discussion-cleanup';
 import { containsLink, requireEstablishedAccount } from '../common/new-account';
 import { notSuspended } from '../users/suspension';
+import { pinLimit, pinLimitMessage } from './pins';
 
 const postInclude = {
   author,
@@ -69,7 +71,12 @@ type RawPost = Prisma.PostGetPayload<{
 }> & { type: 'post' };
 
 export type PostItem = RawPost &
-  Engagement & { liked: boolean; canDelete: boolean };
+  Engagement & {
+    liked: boolean;
+    canDelete: boolean;
+    pinned?: boolean;
+    canPin?: boolean;
+  };
 
 const activityInclude = {
   entry: {
@@ -344,12 +351,24 @@ export class PostsService {
     const reported = await reportedBy(this.prisma, viewerId);
     const nsfw = nsfwEntries(await showsNsfw(this.prisma, viewerId));
 
-    const [posts, activities] = await Promise.all([
+    const [pinned, posts, activities] = await Promise.all([
+      cursor || excluded.has('post')
+        ? []
+        : this.prisma.post.findMany({
+            where: {
+              communityId,
+              pinnedAt: { not: null },
+              ...visibleTo(viewerId, reported.post),
+            },
+            orderBy: { pinnedAt: 'desc' },
+            include: postInclude,
+          }),
       excluded.has('post')
         ? []
         : this.prisma.post.findMany({
             where: {
               communityId,
+              pinnedAt: null,
               ...olderThan(cursor, RANK.post),
               ...visibleTo(viewerId, reported.post),
             },
@@ -384,9 +403,19 @@ export class PostsService {
       ...activities.map(toActivity),
     ].sort(compareFeedItems);
     const page = merged.slice(0, PAGE_SIZE);
+    const items = await this.engage(viewerId, [
+      ...pinned.map((post) => ({ ...post, type: 'post' as const })),
+      ...page,
+    ]);
+    const canPin =
+      (await managedCommunities(this.prisma, viewerId, [communityId])).size > 0;
 
     return {
-      items: await this.engage(viewerId, page),
+      items: items.map((item) =>
+        item.type === 'post'
+          ? { ...item, pinned: item.pinnedAt !== null, canPin }
+          : item,
+      ),
       nextCursor: nextCursor(merged, page),
     };
   }
@@ -567,13 +596,24 @@ export class PostsService {
 
     const reported = await reportedBy(this.prisma, viewerId);
     const nsfw = nsfwEntries(await showsNsfw(this.prisma, viewerId));
-    const [posts, activities] = await Promise.all([
+    const pinnedOnWall = { wallUserId: owner.id, pinnedAt: { not: null } };
+    const [pinned, posts, activities] = await Promise.all([
+      cursor || excluded.has('post')
+        ? []
+        : this.prisma.post.findMany({
+            where: {
+              AND: [pinnedOnWall, visibleTo(viewerId, reported.post)],
+            },
+            orderBy: { pinnedAt: 'desc' },
+            include: postInclude,
+          }),
       excluded.has('post')
         ? []
         : this.prisma.post.findMany({
             where: {
               AND: [
                 profilePosts(owner.id, viewerId),
+                { NOT: pinnedOnWall },
                 olderThan(cursor, RANK.post),
                 visibleTo(viewerId, reported.post),
               ],
@@ -605,9 +645,23 @@ export class PostsService {
       ...activities.map(toActivity),
     ].sort(compareFeedItems);
     const page = merged.slice(0, PAGE_SIZE);
-    const items = await this.engage(viewerId, page);
+    const items = await this.engage(viewerId, [
+      ...pinned.map((post) => ({ ...post, type: 'post' as const })),
+      ...page,
+    ]);
 
-    return { items, nextCursor: nextCursor(merged, page) };
+    return {
+      items: items.map((item) => {
+        if (item.type !== 'post') return item;
+        const onWall = item.wallUserId === owner.id;
+        return {
+          ...item,
+          pinned: onWall && item.pinnedAt !== null,
+          canPin: onWall && viewerId === owner.id,
+        };
+      }),
+      nextCursor: nextCursor(merged, page),
+    };
   }
 
   async findOneForProfile(
@@ -923,6 +977,49 @@ export class PostsService {
 
     const [item] = await this.engage(userId, [{ ...updated, type: 'post' }]);
     return item;
+  }
+
+  async setPinned(userId: number, postId: number, pinned: boolean) {
+    const post = await this.prisma.post.findUnique({
+      where: { id: postId },
+      select: { communityId: true, wallUserId: true, pinnedAt: true },
+    });
+    if (!post) throw new NotFoundException('Post not found');
+    if (post.communityId === null && post.wallUserId === null) {
+      throw new BadRequestException(
+        'Only community and wall posts can be pinned',
+      );
+    }
+
+    const allowed =
+      post.communityId !== null
+        ? (await managedCommunities(this.prisma, userId, [post.communityId]))
+            .size > 0
+        : post.wallUserId === userId;
+    if (!allowed) {
+      throw new ForbiddenException(
+        pinned ? 'You can’t pin this post' : 'You can’t unpin this post',
+      );
+    }
+    if (pinned === (post.pinnedAt !== null)) return;
+
+    if (pinned) {
+      const limit = pinLimit(post);
+      const count = await this.prisma.post.count({
+        where: {
+          ...(post.communityId !== null
+            ? { communityId: post.communityId }
+            : { wallUserId: post.wallUserId }),
+          pinnedAt: { not: null },
+        },
+      });
+      if (count >= limit) throw new ConflictException(pinLimitMessage(limit));
+    }
+
+    await this.prisma.post.update({
+      where: { id: postId },
+      data: { pinnedAt: pinned ? new Date() : null },
+    });
   }
 
   async remove(userId: number, postId: number) {
