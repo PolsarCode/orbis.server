@@ -13,7 +13,15 @@ import {
 import { author } from '../common/author';
 import { AddLibraryEntryDto } from './dto/add-library-entry.dto';
 import { UpdateLibraryEntryDto } from './dto/update-library-entry.dto';
-import { getMedia, Media, searchMedia } from './library-api';
+import {
+  getMedia,
+  getMediaList,
+  Media,
+  MEDIA_LISTS,
+  MediaList,
+  searchMedia,
+} from './library-api';
+import { GUEST_USER_ID } from '../auth/allow-guest';
 import { nsfwEntries, showsNsfw } from '../users/nsfw';
 import { loadSteamLinks, SteamLink } from '../steam/steam-links';
 import { DiscordChannelService } from '../discord-channel/discord-channel.service';
@@ -24,6 +32,8 @@ const SPOTLIGHT_SIZE = 10;
 const SPOTLIGHT_CANDIDATES = 40;
 const SPOTLIGHT_LIFETIME_MS = 24 * 60 * 60 * 1000;
 const SPOTLIGHT_RETRY_MS = 60 * 60 * 1000;
+const LIST_LIFETIME_MS = 60 * 60 * 1000;
+const LIST_RETRY_MS = 5 * 60 * 1000;
 
 export type Spotlight = {
   type: 'anime';
@@ -84,10 +94,63 @@ const toResult = (media: Media) => ({
 
 @Injectable()
 export class LibraryService {
+  private lists = new Map<string, { items: Media[]; expiresAt: number }>();
+
   constructor(
     private prisma: PrismaService,
     private discordChannel: DiscordChannelService,
   ) {}
+
+  async mediaList(userId: number, type: MediaType, list: string) {
+    const name = MEDIA_LISTS.find((value) => value === list);
+    if (!name) throw new NotFoundException('List not found');
+
+    const items = await this.cachedList(
+      type,
+      name,
+      await showsNsfw(this.prisma, userId),
+    );
+    const saved =
+      userId === GUEST_USER_ID
+        ? []
+        : await this.prisma.libraryEntry.findMany({
+            where: { userId, mediaId: { in: items.map(({ id }) => id) } },
+            select: { id: true, mediaId: true, status: true, isPublic: true },
+          });
+    const entries = new Map(
+      saved.map(({ mediaId, ...entry }) => [mediaId, entry]),
+    );
+
+    return items.map((media) => ({
+      ...toResult(media),
+      bannerImage: media.bannerImage ?? null,
+      releaseStatus: media.status ?? null,
+      genres: media.genres ?? [],
+      details: media.details ?? {},
+      inLibrary: entries.has(media.id),
+      entry: entries.get(media.id) ?? null,
+    }));
+  }
+
+  private async cachedList(type: MediaType, list: MediaList, adult: boolean) {
+    const key = `${type}:${list}:${adult}`;
+    const now = Date.now();
+    const cached = this.lists.get(key);
+    if (cached && cached.expiresAt > now) return cached.items;
+
+    try {
+      const items = await getMediaList(type, list, adult);
+      this.lists.set(key, { items, expiresAt: now + LIST_LIFETIME_MS });
+      return items;
+    } catch (error) {
+      if (!cached) throw error;
+      this.lists.set(key, {
+        items: cached.items,
+        expiresAt: now + LIST_RETRY_MS,
+      });
+      return cached.items;
+    }
+  }
 
   async spotlight(): Promise<Spotlight | null> {
     const { items } = await this.rollSpotlights(Date.now());

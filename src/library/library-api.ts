@@ -74,6 +74,21 @@ export async function matchSteamGames(appIds: string[]) {
   return results;
 }
 
+export const MEDIA_LISTS = ['trending', 'season', 'top', 'upcoming'] as const;
+
+export type MediaList = (typeof MEDIA_LISTS)[number];
+
+export async function getMediaList(
+  type: MediaType,
+  list: MediaList,
+  adult: boolean,
+) {
+  const { items } = await request<{ items: Media[] }>(
+    `/api/lists/${type}/${list}${adult ? '?adult=true' : ''}`,
+  );
+  return items;
+}
+
 export function getMedia(type: MediaType, sourceId: string, adult: boolean) {
   return request<Media>(
     `/api/${type}/${sourceId}${adult ? '?adult=true' : ''}`,

@@ -51,6 +51,17 @@ export class LibraryController {
   }
 
   @AllowGuest()
+  @RateLimit(60, MINUTE)
+  @Get('lists/:type/:list')
+  mediaList(
+    @Req() req,
+    @Param('type', new ParseEnumPipe(MediaType)) type: MediaType,
+    @Param('list') list: string,
+  ) {
+    return this.libraryService.mediaList(req.user.userId, type, list);
+  }
+
+  @AllowGuest()
   @Get('media/:type/:sourceId')
   media(
     @Req() req,
