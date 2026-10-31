@@ -23,6 +23,7 @@ import {
 } from './library-api';
 import { GUEST_USER_ID } from '../auth/allow-guest';
 import { nsfwEntries, showsNsfw } from '../users/nsfw';
+import { notSuspended } from '../users/suspension';
 import { loadSteamLinks, SteamLink } from '../steam/steam-links';
 import { DiscordChannelService } from '../discord-channel/discord-channel.service';
 
@@ -32,6 +33,7 @@ const SPOTLIGHT_SIZE = 10;
 const SPOTLIGHT_CANDIDATES = 40;
 const SPOTLIGHT_LIFETIME_MS = 24 * 60 * 60 * 1000;
 const SPOTLIGHT_RETRY_MS = 60 * 60 * 1000;
+const PUBLIC_UPDATES = 6;
 const LIST_LIFETIME_MS = 60 * 60 * 1000;
 const LIST_RETRY_MS = 5 * 60 * 1000;
 
@@ -100,6 +102,53 @@ export class LibraryService {
     private prisma: PrismaService,
     private discordChannel: DiscordChannelService,
   ) {}
+
+  async publicUpdates() {
+    const activities = await this.prisma.libraryActivity.findMany({
+      where: {
+        entry: {
+          isPublic: true,
+          isAdult: false,
+          user: { isPublic: true, ...notSuspended() },
+        },
+      },
+      orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+      take: PUBLIC_UPDATES,
+      include: {
+        entry: {
+          select: {
+            mediaType: true,
+            sourceId: true,
+            title: true,
+            coverImage: true,
+            year: true,
+            user: author,
+          },
+        },
+      },
+    });
+
+    return activities.map(({ entry, ...activity }) => ({
+      id: activity.id,
+      createdAt: activity.createdAt,
+      status: activity.status,
+      progress:
+        activity.progressTo === null
+          ? null
+          : {
+              from: activity.progressFrom ?? activity.progressTo,
+              to: activity.progressTo,
+            },
+      author: entry.user,
+      media: {
+        type: entry.mediaType,
+        sourceId: entry.sourceId,
+        title: entry.title,
+        coverImage: entry.coverImage,
+        year: entry.year,
+      },
+    }));
+  }
 
   async mediaList(userId: number, type: MediaType, list: string) {
     const name = MEDIA_LISTS.find((value) => value === list);

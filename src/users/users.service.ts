@@ -159,6 +159,13 @@ export const PUBLIC_USER_LIMIT = 12;
 
 const ACTIVITY_WINDOW_DAYS = 30;
 
+function photoCount({
+  avatarUrl,
+  coverUrl,
+}: Pick<PublicUserSummary, 'avatarUrl' | 'coverUrl'>) {
+  return Number(Boolean(avatarUrl)) + Number(Boolean(coverUrl));
+}
+
 export function rankPublicUsers(
   users: ActiveUser[],
   statusOf: (user: ActiveUser) => PresenceStatus,
@@ -172,6 +179,7 @@ export function rankPublicUsers(
     })
     .sort(
       (a, b) =>
+        photoCount(b) - photoCount(a) ||
         Number(b.online) - Number(a.online) ||
         b.activity - a.activity ||
         a.userId - b.userId,

@@ -168,7 +168,6 @@ export class CommunitiesService {
     const communities = await this.prisma.community.findMany({
       where: { isPublic: true },
       orderBy: [{ memberships: { _count: 'desc' } }, { id: 'desc' }],
-      take: 6,
       select: {
         id: true,
         name: true,
@@ -178,10 +177,15 @@ export class CommunitiesService {
         _count: { select: { memberships: true } },
       },
     });
-    return communities.map(({ _count, ...community }) => ({
-      ...community,
-      memberCount: _count.memberships,
-    }));
+    const photos = ({ iconUrl, coverUrl }: (typeof communities)[number]) =>
+      Number(Boolean(iconUrl)) + Number(Boolean(coverUrl));
+    return communities
+      .sort((a, b) => photos(b) - photos(a))
+      .slice(0, 6)
+      .map(({ _count, ...community }) => ({
+        ...community,
+        memberCount: _count.memberships,
+      }));
   }
 
   async search(

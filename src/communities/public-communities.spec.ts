@@ -57,7 +57,6 @@ describe('Public landing communities', () => {
     expect(prisma.community.findMany).toHaveBeenLastCalledWith({
       where: { isPublic: true },
       orderBy: [{ memberships: { _count: 'desc' } }, { id: 'desc' }],
-      take: 6,
       select: {
         id: true,
         name: true,
@@ -67,6 +66,38 @@ describe('Public landing communities', () => {
         _count: { select: { memberships: true } },
       },
     });
+  });
+
+  it('puts communities with an icon and cover first, then the biggest, and keeps six', async () => {
+    const community = (
+      id: number,
+      memberships: number,
+      iconUrl: string | null = null,
+      coverUrl: string | null = null,
+    ) => ({
+      id,
+      name: `Community ${id}`,
+      iconUrl,
+      coverUrl,
+      isVerified: false,
+      _count: { memberships },
+    });
+    prisma.community.findMany.mockResolvedValue([
+      community(1, 90),
+      community(2, 80, 'icon.webp'),
+      community(3, 70),
+      community(4, 60, 'icon.webp', 'cover.webp'),
+      community(5, 50),
+      community(6, 40, null, 'cover.webp'),
+      community(7, 30),
+      community(8, 20, 'icon.webp', 'cover.webp'),
+    ]);
+    const response = await request(app.getHttpServer())
+      .get('/public/communities')
+      .expect(200);
+    expect(response.body.map(({ id }: { id: number }) => id)).toEqual([
+      4, 8, 2, 6, 1, 3,
+    ]);
   });
 
   it('returns an empty list without sample communities', async () => {

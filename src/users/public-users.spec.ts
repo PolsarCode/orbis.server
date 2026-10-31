@@ -47,6 +47,20 @@ describe('rankPublicUsers', () => {
     expect(ranked[0]).not.toHaveProperty('appearOffline');
   });
 
+  it('puts people with a profile and cover photo first', () => {
+    const ranked = rankPublicUsers(
+      [
+        user(1, 50),
+        { ...user(2, 0), avatarUrl: 'avatar.webp' },
+        { ...user(3, 0), avatarUrl: 'avatar.webp', coverUrl: 'cover.webp' },
+        { ...user(4, 10), coverUrl: 'cover.webp' },
+      ],
+      ({ userId }) => (userId === 1 ? 'online' : 'offline'),
+    );
+
+    expect(ranked.map(({ userId }) => userId)).toEqual([3, 4, 2, 1]);
+  });
+
   it('keeps only the top users', () => {
     const ranked = rankPublicUsers(
       [user(1, 1), user(2, 2), user(3, 3)],
