@@ -174,4 +174,17 @@ describe('Anime spotlight', () => {
     await library.spotlight();
     expect(prisma.libraryEntry.findMany).toHaveBeenCalledTimes(1);
   });
+
+  it('lists every spotlight for the hero slideshow', async () => {
+    const items = Array.from({ length: 10 }, (_, index) => item(`a${index}`));
+    stored({ items, retired: [], checkedAt: NOW });
+
+    const spotlights = await library.spotlights();
+
+    expect(spotlights.map(({ sourceId }) => sourceId)).toEqual(
+      items.map(({ sourceId }) => sourceId),
+    );
+    expect(spotlights[0]).not.toHaveProperty('addedAt');
+    expect(prisma.setting.upsert).not.toHaveBeenCalled();
+  });
 });

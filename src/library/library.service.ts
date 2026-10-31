@@ -97,6 +97,11 @@ export class LibraryService {
     return spotlight;
   }
 
+  async spotlights(): Promise<Spotlight[]> {
+    const { items } = await this.rollSpotlights(Date.now());
+    return items.map(({ addedAt, ...spotlight }) => spotlight);
+  }
+
   private async rollSpotlights(now: number): Promise<SpotlightList> {
     const stored = await this.readSpotlights();
     const fresh = stored.items.filter(

@@ -44,6 +44,13 @@ export class LibraryController {
   }
 
   @AllowGuest()
+  @RateLimit(60, MINUTE)
+  @Get('spotlights')
+  spotlights() {
+    return this.libraryService.spotlights();
+  }
+
+  @AllowGuest()
   @Get('media/:type/:sourceId')
   media(
     @Req() req,
