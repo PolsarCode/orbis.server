@@ -90,6 +90,7 @@ type SeedForumThread = {
 
 type SeedForumCategory = {
   section?: string;
+  adminOnly?: boolean;
   name: string;
   description: string;
   threads: SeedForumThread[];
@@ -395,6 +396,7 @@ const forums: Record<string, SeedForumCategory[]> = {
   'Seasonal Anime Club': [
     {
       section: 'Club',
+      adminOnly: true,
       name: 'Announcements',
       description: 'Club news, watch-party times and rule updates.',
       threads: [
@@ -564,6 +566,7 @@ const forums: Record<string, SeedForumCategory[]> = {
   'Hidden Leaf Village': [
     {
       section: 'Village',
+      adminOnly: true,
       name: 'Village notices',
       description:
         'Missions, festivals and anything the whole village should know.',
@@ -2457,6 +2460,7 @@ async function main() {
             : null,
           name: category.name,
           description: category.description,
+          adminOnly: category.adminOnly ?? false,
           position,
         },
       });

@@ -269,6 +269,7 @@ export const ForumSectionScalarFieldEnum = {
   id: 'id',
   communityId: 'communityId',
   name: 'name',
+  adminOnly: 'adminOnly',
   position: 'position',
   createdAt: 'createdAt'
 } as const
@@ -282,6 +283,7 @@ export const ForumCategoryScalarFieldEnum = {
   sectionId: 'sectionId',
   name: 'name',
   description: 'description',
+  adminOnly: 'adminOnly',
   position: 'position',
   createdAt: 'createdAt'
 } as const

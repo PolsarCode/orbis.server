@@ -1,6 +1,7 @@
 import {
   ArrayMaxSize,
   IsArray,
+  IsBoolean,
   IsInt,
   IsOptional,
   IsString,
@@ -27,6 +28,10 @@ export class CreateForumCategoryDto {
   @Min(1)
   @Max(2147483647)
   sectionId?: number | null;
+
+  @IsOptional()
+  @IsBoolean()
+  adminOnly?: boolean;
 }
 
 export class UpdateForumCategoryDto {
@@ -45,12 +50,31 @@ export class UpdateForumCategoryDto {
   @Min(1)
   @Max(2147483647)
   sectionId?: number | null;
+
+  @IsOptional()
+  @IsBoolean()
+  adminOnly?: boolean;
 }
 
 export class ForumSectionDto {
   @IsString()
   @MaxLength(CATEGORY_NAME_MAX)
   name: string;
+
+  @IsOptional()
+  @IsBoolean()
+  adminOnly?: boolean;
+}
+
+export class UpdateForumSectionDto {
+  @IsOptional()
+  @IsString()
+  @MaxLength(CATEGORY_NAME_MAX)
+  name?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  adminOnly?: boolean;
 }
 
 export class ReorderForumCategoriesDto {

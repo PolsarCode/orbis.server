@@ -12,6 +12,7 @@ import {
   ForumSectionDto,
   ReorderForumCategoriesDto,
   UpdateForumCategoryDto,
+  UpdateForumSectionDto,
 } from './dto/forum-category.dto';
 import { forumCleanup, isForumManager, visibleThreads } from './forum-helpers';
 
@@ -23,20 +24,22 @@ const categorySelect = {
   sectionId: true,
   name: true,
   description: true,
+  adminOnly: true,
 } as const;
 
-const sectionSelect = { id: true, name: true } as const;
+const sectionSelect = { id: true, name: true, adminOnly: true } as const;
 
 export type ForumCategoryItem = {
   id: number;
   sectionId: number | null;
   name: string;
   description: string;
+  adminOnly: boolean;
   threadCount: number;
   latest: { id: number; title: string; lastPostAt: Date } | null;
 };
 
-export type ForumSectionItem = { id: number; name: string };
+export type ForumSectionItem = { id: number; name: string; adminOnly: boolean };
 
 function cleanName(name: string, thing: 'category' | 'section') {
   const trimmed = name.trim();
@@ -126,7 +129,7 @@ export class ForumCategoriesService {
   async create(
     userId: number,
     communityId: number,
-    { name, description, sectionId }: CreateForumCategoryDto,
+    { name, description, sectionId, adminOnly }: CreateForumCategoryDto,
   ): Promise<ForumCategoryItem> {
     await this.requireManager(userId, communityId);
     if (sectionId) await this.requireSection(communityId, sectionId);
@@ -150,6 +153,7 @@ export class ForumCategoriesService {
         sectionId: sectionId ?? null,
         name: cleanName(name, 'category'),
         description: description?.trim() ?? '',
+        adminOnly: adminOnly ?? false,
         position: (last?.position ?? -1) + 1,
       },
       select: categorySelect,
@@ -161,7 +165,7 @@ export class ForumCategoriesService {
     userId: number,
     communityId: number,
     categoryId: number,
-    { name, description, sectionId }: UpdateForumCategoryDto,
+    { name, description, sectionId, adminOnly }: UpdateForumCategoryDto,
   ) {
     await this.requireManager(userId, communityId);
     await this.requireCategory(communityId, categoryId);
@@ -172,6 +176,7 @@ export class ForumCategoriesService {
         ...(name !== undefined && { name: cleanName(name, 'category') }),
         ...(description !== undefined && { description: description.trim() }),
         ...(sectionId !== undefined && { sectionId }),
+        ...(adminOnly !== undefined && { adminOnly }),
       },
       select: categorySelect,
     });
@@ -223,7 +228,7 @@ export class ForumCategoriesService {
   async createSection(
     userId: number,
     communityId: number,
-    { name }: ForumSectionDto,
+    { name, adminOnly }: ForumSectionDto,
   ): Promise<ForumSectionItem> {
     await this.requireManager(userId, communityId);
     const [count, last] = await Promise.all([
@@ -244,6 +249,7 @@ export class ForumCategoriesService {
       data: {
         communityId,
         name: cleanName(name, 'section'),
+        adminOnly: adminOnly ?? false,
         position: (last?.position ?? -1) + 1,
       },
       select: sectionSelect,
@@ -254,13 +260,16 @@ export class ForumCategoriesService {
     userId: number,
     communityId: number,
     sectionId: number,
-    { name }: ForumSectionDto,
+    { name, adminOnly }: UpdateForumSectionDto,
   ): Promise<ForumSectionItem> {
     await this.requireManager(userId, communityId);
     await this.requireSection(communityId, sectionId);
     return this.prisma.forumSection.update({
       where: { id: sectionId },
-      data: { name: cleanName(name, 'section') },
+      data: {
+        ...(name !== undefined && { name: cleanName(name, 'section') }),
+        ...(adminOnly !== undefined && { adminOnly }),
+      },
       select: sectionSelect,
     });
   }

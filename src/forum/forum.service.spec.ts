@@ -238,6 +238,54 @@ describe('Starting threads', () => {
   });
 });
 
+describe('Admin-only categories', () => {
+  it('only lets admins start threads when the category or its section is admin-only', async () => {
+    const { prisma, service } = setup();
+    prisma.forumThread.create.mockResolvedValue({ id: 9 });
+    const body = { title: 'News', content: '<p>Big news</p>' };
+
+    for (const category of [
+      { adminOnly: true, section: null },
+      { adminOnly: false, section: { adminOnly: true } },
+    ]) {
+      prisma.forumCategory.findFirst.mockResolvedValue(category);
+      await expect(service.createThread(7, 3, 5, body)).rejects.toBeInstanceOf(
+        ForbiddenException,
+      );
+    }
+    expect(prisma.forumThread.create).not.toHaveBeenCalled();
+
+    jest.mocked(isForumManager).mockResolvedValue(true);
+    await service.createThread(7, 3, 5, body);
+    expect(prisma.forumThread.create).toHaveBeenCalled();
+  });
+
+  it('tells members they can’t post there, and admins they can', async () => {
+    const { prisma, service } = setup();
+    prisma.forumCategory.findFirst.mockResolvedValue({
+      id: 5,
+      name: 'Announcements',
+      description: '',
+      adminOnly: false,
+      section: { id: 1, name: 'Club', adminOnly: true },
+    });
+
+    const member = await service.threads(7, 3, 5);
+    jest.mocked(isForumManager).mockResolvedValue(true);
+    const admin = await service.threads(7, 3, 5);
+
+    expect(member.category).toEqual({
+      id: 5,
+      name: 'Announcements',
+      description: '',
+      adminOnly: true,
+      section: { id: 1, name: 'Club' },
+    });
+    expect(member.canPost).toBe(false);
+    expect(admin.canPost).toBe(true);
+  });
+});
+
 describe('Replying', () => {
   function visibleThread(
     prisma: ReturnType<typeof setup>['prisma'],

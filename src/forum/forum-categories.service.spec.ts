@@ -78,9 +78,16 @@ describe('Forum categories', () => {
         sectionId: null,
         name: 'Theories',
         description: 'Wild ideas',
+        adminOnly: false,
         position: 5,
       },
-      select: { id: true, sectionId: true, name: true, description: true },
+      select: {
+        id: true,
+        sectionId: true,
+        name: true,
+        description: true,
+        adminOnly: true,
+      },
     });
     expect(category).toMatchObject({ threadCount: 0, latest: null });
   });
@@ -212,5 +219,33 @@ describe('Forum sections', () => {
     });
     expect(prisma.forumCategory.delete).not.toHaveBeenCalled();
     expect(prisma.like.deleteMany).not.toHaveBeenCalled();
+  });
+});
+
+describe('Admin-only posting', () => {
+  it('lets admins make a category or section admin-only', async () => {
+    const { prisma, service } = setup();
+    prisma.forumCategory.findFirst.mockResolvedValue({ id: 5 });
+    prisma.forumSection.findFirst.mockResolvedValue({ id: 4 });
+
+    await service.update(7, 3, 5, { adminOnly: true });
+    await service.updateSection(7, 3, 4, { adminOnly: true });
+
+    expect(prisma.forumCategory.update).toHaveBeenCalledWith(
+      expect.objectContaining({ data: { adminOnly: true } }),
+    );
+    expect(prisma.forumSection.update).toHaveBeenCalledWith(
+      expect.objectContaining({ data: { adminOnly: true } }),
+    );
+  });
+
+  it('won’t let members change who can post', async () => {
+    const { prisma, service } = setup();
+    jest.mocked(isForumManager).mockResolvedValue(false);
+
+    await expect(
+      service.update(7, 3, 5, { adminOnly: false }),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+    expect(prisma.forumCategory.update).not.toHaveBeenCalled();
   });
 });

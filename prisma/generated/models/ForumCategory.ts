@@ -46,6 +46,7 @@ export type ForumCategoryMinAggregateOutputType = {
   sectionId: number | null
   name: string | null
   description: string | null
+  adminOnly: boolean | null
   position: number | null
   createdAt: Date | null
 }
@@ -56,6 +57,7 @@ export type ForumCategoryMaxAggregateOutputType = {
   sectionId: number | null
   name: string | null
   description: string | null
+  adminOnly: boolean | null
   position: number | null
   createdAt: Date | null
 }
@@ -66,6 +68,7 @@ export type ForumCategoryCountAggregateOutputType = {
   sectionId: number
   name: number
   description: number
+  adminOnly: number
   position: number
   createdAt: number
   _all: number
@@ -92,6 +95,7 @@ export type ForumCategoryMinAggregateInputType = {
   sectionId?: true
   name?: true
   description?: true
+  adminOnly?: true
   position?: true
   createdAt?: true
 }
@@ -102,6 +106,7 @@ export type ForumCategoryMaxAggregateInputType = {
   sectionId?: true
   name?: true
   description?: true
+  adminOnly?: true
   position?: true
   createdAt?: true
 }
@@ -112,6 +117,7 @@ export type ForumCategoryCountAggregateInputType = {
   sectionId?: true
   name?: true
   description?: true
+  adminOnly?: true
   position?: true
   createdAt?: true
   _all?: true
@@ -209,6 +215,7 @@ export type ForumCategoryGroupByOutputType = {
   sectionId: number | null
   name: string
   description: string
+  adminOnly: boolean
   position: number
   createdAt: Date
   _count: ForumCategoryCountAggregateOutputType | null
@@ -242,6 +249,7 @@ export type ForumCategoryWhereInput = {
   sectionId?: Prisma.IntNullableFilter<"ForumCategory"> | number | null
   name?: Prisma.StringFilter<"ForumCategory"> | string
   description?: Prisma.StringFilter<"ForumCategory"> | string
+  adminOnly?: Prisma.BoolFilter<"ForumCategory"> | boolean
   position?: Prisma.IntFilter<"ForumCategory"> | number
   createdAt?: Prisma.DateTimeFilter<"ForumCategory"> | Date | string
   community?: Prisma.XOR<Prisma.CommunityScalarRelationFilter, Prisma.CommunityWhereInput>
@@ -255,6 +263,7 @@ export type ForumCategoryOrderByWithRelationInput = {
   sectionId?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  adminOnly?: Prisma.SortOrder
   position?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   community?: Prisma.CommunityOrderByWithRelationInput
@@ -271,6 +280,7 @@ export type ForumCategoryWhereUniqueInput = Prisma.AtLeast<{
   sectionId?: Prisma.IntNullableFilter<"ForumCategory"> | number | null
   name?: Prisma.StringFilter<"ForumCategory"> | string
   description?: Prisma.StringFilter<"ForumCategory"> | string
+  adminOnly?: Prisma.BoolFilter<"ForumCategory"> | boolean
   position?: Prisma.IntFilter<"ForumCategory"> | number
   createdAt?: Prisma.DateTimeFilter<"ForumCategory"> | Date | string
   community?: Prisma.XOR<Prisma.CommunityScalarRelationFilter, Prisma.CommunityWhereInput>
@@ -284,6 +294,7 @@ export type ForumCategoryOrderByWithAggregationInput = {
   sectionId?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  adminOnly?: Prisma.SortOrder
   position?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.ForumCategoryCountOrderByAggregateInput
@@ -302,6 +313,7 @@ export type ForumCategoryScalarWhereWithAggregatesInput = {
   sectionId?: Prisma.IntNullableWithAggregatesFilter<"ForumCategory"> | number | null
   name?: Prisma.StringWithAggregatesFilter<"ForumCategory"> | string
   description?: Prisma.StringWithAggregatesFilter<"ForumCategory"> | string
+  adminOnly?: Prisma.BoolWithAggregatesFilter<"ForumCategory"> | boolean
   position?: Prisma.IntWithAggregatesFilter<"ForumCategory"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ForumCategory"> | Date | string
 }
@@ -309,6 +321,7 @@ export type ForumCategoryScalarWhereWithAggregatesInput = {
 export type ForumCategoryCreateInput = {
   name: string
   description?: string
+  adminOnly?: boolean
   position?: number
   createdAt?: Date | string
   community: Prisma.CommunityCreateNestedOneWithoutForumCategoriesInput
@@ -322,6 +335,7 @@ export type ForumCategoryUncheckedCreateInput = {
   sectionId?: number | null
   name: string
   description?: string
+  adminOnly?: boolean
   position?: number
   createdAt?: Date | string
   threads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCategoryInput
@@ -330,6 +344,7 @@ export type ForumCategoryUncheckedCreateInput = {
 export type ForumCategoryUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  adminOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   community?: Prisma.CommunityUpdateOneRequiredWithoutForumCategoriesNestedInput
@@ -343,6 +358,7 @@ export type ForumCategoryUncheckedUpdateInput = {
   sectionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  adminOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   threads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCategoryNestedInput
@@ -354,6 +370,7 @@ export type ForumCategoryCreateManyInput = {
   sectionId?: number | null
   name: string
   description?: string
+  adminOnly?: boolean
   position?: number
   createdAt?: Date | string
 }
@@ -361,6 +378,7 @@ export type ForumCategoryCreateManyInput = {
 export type ForumCategoryUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  adminOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -371,6 +389,7 @@ export type ForumCategoryUncheckedUpdateManyInput = {
   sectionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  adminOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -391,6 +410,7 @@ export type ForumCategoryCountOrderByAggregateInput = {
   sectionId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  adminOnly?: Prisma.SortOrder
   position?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -408,6 +428,7 @@ export type ForumCategoryMaxOrderByAggregateInput = {
   sectionId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  adminOnly?: Prisma.SortOrder
   position?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -418,6 +439,7 @@ export type ForumCategoryMinOrderByAggregateInput = {
   sectionId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  adminOnly?: Prisma.SortOrder
   position?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -535,6 +557,7 @@ export type ForumCategoryUpdateOneRequiredWithoutThreadsNestedInput = {
 export type ForumCategoryCreateWithoutCommunityInput = {
   name: string
   description?: string
+  adminOnly?: boolean
   position?: number
   createdAt?: Date | string
   section?: Prisma.ForumSectionCreateNestedOneWithoutCategoriesInput
@@ -546,6 +569,7 @@ export type ForumCategoryUncheckedCreateWithoutCommunityInput = {
   sectionId?: number | null
   name: string
   description?: string
+  adminOnly?: boolean
   position?: number
   createdAt?: Date | string
   threads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCategoryInput
@@ -586,6 +610,7 @@ export type ForumCategoryScalarWhereInput = {
   sectionId?: Prisma.IntNullableFilter<"ForumCategory"> | number | null
   name?: Prisma.StringFilter<"ForumCategory"> | string
   description?: Prisma.StringFilter<"ForumCategory"> | string
+  adminOnly?: Prisma.BoolFilter<"ForumCategory"> | boolean
   position?: Prisma.IntFilter<"ForumCategory"> | number
   createdAt?: Prisma.DateTimeFilter<"ForumCategory"> | Date | string
 }
@@ -593,6 +618,7 @@ export type ForumCategoryScalarWhereInput = {
 export type ForumCategoryCreateWithoutSectionInput = {
   name: string
   description?: string
+  adminOnly?: boolean
   position?: number
   createdAt?: Date | string
   community: Prisma.CommunityCreateNestedOneWithoutForumCategoriesInput
@@ -604,6 +630,7 @@ export type ForumCategoryUncheckedCreateWithoutSectionInput = {
   communityId: number
   name: string
   description?: string
+  adminOnly?: boolean
   position?: number
   createdAt?: Date | string
   threads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCategoryInput
@@ -638,6 +665,7 @@ export type ForumCategoryUpdateManyWithWhereWithoutSectionInput = {
 export type ForumCategoryCreateWithoutThreadsInput = {
   name: string
   description?: string
+  adminOnly?: boolean
   position?: number
   createdAt?: Date | string
   community: Prisma.CommunityCreateNestedOneWithoutForumCategoriesInput
@@ -650,6 +678,7 @@ export type ForumCategoryUncheckedCreateWithoutThreadsInput = {
   sectionId?: number | null
   name: string
   description?: string
+  adminOnly?: boolean
   position?: number
   createdAt?: Date | string
 }
@@ -673,6 +702,7 @@ export type ForumCategoryUpdateToOneWithWhereWithoutThreadsInput = {
 export type ForumCategoryUpdateWithoutThreadsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  adminOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   community?: Prisma.CommunityUpdateOneRequiredWithoutForumCategoriesNestedInput
@@ -685,6 +715,7 @@ export type ForumCategoryUncheckedUpdateWithoutThreadsInput = {
   sectionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  adminOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -694,6 +725,7 @@ export type ForumCategoryCreateManyCommunityInput = {
   sectionId?: number | null
   name: string
   description?: string
+  adminOnly?: boolean
   position?: number
   createdAt?: Date | string
 }
@@ -701,6 +733,7 @@ export type ForumCategoryCreateManyCommunityInput = {
 export type ForumCategoryUpdateWithoutCommunityInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  adminOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   section?: Prisma.ForumSectionUpdateOneWithoutCategoriesNestedInput
@@ -712,6 +745,7 @@ export type ForumCategoryUncheckedUpdateWithoutCommunityInput = {
   sectionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  adminOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   threads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCategoryNestedInput
@@ -722,6 +756,7 @@ export type ForumCategoryUncheckedUpdateManyWithoutCommunityInput = {
   sectionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  adminOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -731,6 +766,7 @@ export type ForumCategoryCreateManySectionInput = {
   communityId: number
   name: string
   description?: string
+  adminOnly?: boolean
   position?: number
   createdAt?: Date | string
 }
@@ -738,6 +774,7 @@ export type ForumCategoryCreateManySectionInput = {
 export type ForumCategoryUpdateWithoutSectionInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  adminOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   community?: Prisma.CommunityUpdateOneRequiredWithoutForumCategoriesNestedInput
@@ -749,6 +786,7 @@ export type ForumCategoryUncheckedUpdateWithoutSectionInput = {
   communityId?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  adminOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   threads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCategoryNestedInput
@@ -759,6 +797,7 @@ export type ForumCategoryUncheckedUpdateManyWithoutSectionInput = {
   communityId?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  adminOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -800,6 +839,7 @@ export type ForumCategorySelect<ExtArgs extends runtime.Types.Extensions.Interna
   sectionId?: boolean
   name?: boolean
   description?: boolean
+  adminOnly?: boolean
   position?: boolean
   createdAt?: boolean
   community?: boolean | Prisma.CommunityDefaultArgs<ExtArgs>
@@ -814,6 +854,7 @@ export type ForumCategorySelectCreateManyAndReturn<ExtArgs extends runtime.Types
   sectionId?: boolean
   name?: boolean
   description?: boolean
+  adminOnly?: boolean
   position?: boolean
   createdAt?: boolean
   community?: boolean | Prisma.CommunityDefaultArgs<ExtArgs>
@@ -826,6 +867,7 @@ export type ForumCategorySelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   sectionId?: boolean
   name?: boolean
   description?: boolean
+  adminOnly?: boolean
   position?: boolean
   createdAt?: boolean
   community?: boolean | Prisma.CommunityDefaultArgs<ExtArgs>
@@ -838,11 +880,12 @@ export type ForumCategorySelectScalar = {
   sectionId?: boolean
   name?: boolean
   description?: boolean
+  adminOnly?: boolean
   position?: boolean
   createdAt?: boolean
 }
 
-export type ForumCategoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "communityId" | "sectionId" | "name" | "description" | "position" | "createdAt", ExtArgs["result"]["forumCategory"]>
+export type ForumCategoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "communityId" | "sectionId" | "name" | "description" | "adminOnly" | "position" | "createdAt", ExtArgs["result"]["forumCategory"]>
 export type ForumCategoryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   community?: boolean | Prisma.CommunityDefaultArgs<ExtArgs>
   section?: boolean | Prisma.ForumCategory$sectionArgs<ExtArgs>
@@ -871,6 +914,7 @@ export type $ForumCategoryPayload<ExtArgs extends runtime.Types.Extensions.Inter
     sectionId: number | null
     name: string
     description: string
+    adminOnly: boolean
     position: number
     createdAt: Date
   }, ExtArgs["result"]["forumCategory"]>
@@ -1304,6 +1348,7 @@ export interface ForumCategoryFieldRefs {
   readonly sectionId: Prisma.FieldRef<"ForumCategory", 'Int'>
   readonly name: Prisma.FieldRef<"ForumCategory", 'String'>
   readonly description: Prisma.FieldRef<"ForumCategory", 'String'>
+  readonly adminOnly: Prisma.FieldRef<"ForumCategory", 'Boolean'>
   readonly position: Prisma.FieldRef<"ForumCategory", 'Int'>
   readonly createdAt: Prisma.FieldRef<"ForumCategory", 'DateTime'>
 }

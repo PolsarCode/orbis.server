@@ -248,16 +248,23 @@ export class ForumService {
     categoryId: number,
     rawPage?: number,
   ) {
-    const category = await this.prisma.forumCategory.findFirst({
+    const found = await this.prisma.forumCategory.findFirst({
       where: { id: categoryId, communityId },
       select: {
         id: true,
         name: true,
         description: true,
-        section: { select: { id: true, name: true } },
+        adminOnly: true,
+        section: { select: { id: true, name: true, adminOnly: true } },
       },
     });
-    if (!category) throw new NotFoundException('Category not found');
+    if (!found) throw new NotFoundException('Category not found');
+    const { section, ...rest } = found;
+    const category = {
+      ...rest,
+      section: section && { id: section.id, name: section.name },
+      adminOnly: rest.adminOnly || section?.adminOnly === true,
+    };
 
     const page = pageNumber(rawPage);
     const reported = await reportedBy(this.prisma, viewerId);
@@ -298,7 +305,7 @@ export class ForumService {
       page,
       pageSize: FORUM_PAGE_SIZE,
       total,
-      canPost: member,
+      canPost: member && (!category.adminOnly || manager),
       canManage: manager,
     };
   }
@@ -388,9 +395,17 @@ export class ForumService {
   ) {
     const category = await this.prisma.forumCategory.findFirst({
       where: { id: categoryId, communityId },
-      select: { id: true },
+      select: { adminOnly: true, section: { select: { adminOnly: true } } },
     });
     if (!category) throw new NotFoundException('Category not found');
+    if (
+      (category.adminOnly || category.section?.adminOnly) &&
+      !(await isForumManager(this.prisma, userId, communityId))
+    ) {
+      throw new ForbiddenException(
+        'Only admins can start threads in this category',
+      );
+    }
 
     const cleanTitle = threadTitle(title);
     const { html, mentioned } = await this.withMentions(content, userId);

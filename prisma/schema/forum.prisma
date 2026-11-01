@@ -2,6 +2,7 @@ model ForumSection {
   id          Int             @id @default(autoincrement())
   communityId Int
   name        String
+  adminOnly   Boolean         @default(false)
   position    Int             @default(0)
   createdAt   DateTime        @default(now())
   community   Community       @relation(fields: [communityId], references: [id], onDelete: Cascade)
@@ -16,6 +17,7 @@ model ForumCategory {
   sectionId   Int?
   name        String
   description String        @default("")
+  adminOnly   Boolean       @default(false)
   position    Int           @default(0)
   createdAt   DateTime      @default(now())
   community   Community     @relation(fields: [communityId], references: [id], onDelete: Cascade)

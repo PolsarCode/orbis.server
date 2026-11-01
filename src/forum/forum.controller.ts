@@ -24,6 +24,7 @@ import {
   CreateForumCategoryDto,
   ForumSectionDto,
   ReorderForumCategoriesDto,
+  UpdateForumSectionDto,
   UpdateForumCategoryDto,
 } from './dto/forum-category.dto';
 import {
@@ -80,7 +81,7 @@ export class ForumController {
     @Req() req,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Param('sectionId', ParseIntPipe) sectionId: number,
-    @Body() body: ForumSectionDto,
+    @Body() body: UpdateForumSectionDto,
   ) {
     return this.categories.updateSection(
       req.user.userId,
