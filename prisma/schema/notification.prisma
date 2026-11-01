@@ -8,6 +8,8 @@ enum NotificationType {
   report_comment
   wall_post
   mention
+  forum_reply
+  forum_quote
 }
 
 model Notification {

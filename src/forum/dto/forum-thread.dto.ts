@@ -1,0 +1,52 @@
+import {
+  IsInt,
+  IsOptional,
+  IsString,
+  Max,
+  MaxLength,
+  Min,
+} from 'class-validator';
+
+export const THREAD_TITLE_MAX = 120;
+export const FORUM_POST_MAX = 20000;
+
+export class CreateForumThreadDto {
+  @IsString()
+  @MaxLength(THREAD_TITLE_MAX)
+  title: string;
+
+  @IsString()
+  @MaxLength(FORUM_POST_MAX)
+  content: string;
+}
+
+export class UpdateForumThreadDto {
+  @IsOptional()
+  @IsString()
+  @MaxLength(THREAD_TITLE_MAX)
+  title?: string;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(2147483647)
+  categoryId?: number;
+}
+
+export class CreateForumPostDto {
+  @IsString()
+  @MaxLength(FORUM_POST_MAX)
+  content: string;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(2147483647)
+  quoteId?: number;
+}
+
+export class UpdateForumPostDto {
+  @IsString()
+  @MaxLength(FORUM_POST_MAX)
+  content: string;
+}

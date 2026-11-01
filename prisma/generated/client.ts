@@ -93,6 +93,26 @@ export type Comment = Prisma.CommentModel
  */
 export type Like = Prisma.LikeModel
 /**
+ * Model ForumSection
+ * 
+ */
+export type ForumSection = Prisma.ForumSectionModel
+/**
+ * Model ForumCategory
+ * 
+ */
+export type ForumCategory = Prisma.ForumCategoryModel
+/**
+ * Model ForumThread
+ * 
+ */
+export type ForumThread = Prisma.ForumThreadModel
+/**
+ * Model ForumPost
+ * 
+ */
+export type ForumPost = Prisma.ForumPostModel
+/**
  * Model Friendship
  * 
  */

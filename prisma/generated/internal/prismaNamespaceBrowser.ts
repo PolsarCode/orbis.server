@@ -62,6 +62,10 @@ export const ModelName = {
   Post: 'Post',
   Comment: 'Comment',
   Like: 'Like',
+  ForumSection: 'ForumSection',
+  ForumCategory: 'ForumCategory',
+  ForumThread: 'ForumThread',
+  ForumPost: 'ForumPost',
   Friendship: 'Friendship',
   SuggestionDismissal: 'SuggestionDismissal',
   LibraryEntry: 'LibraryEntry',
@@ -259,6 +263,63 @@ export const LikeScalarFieldEnum = {
 } as const
 
 export type LikeScalarFieldEnum = (typeof LikeScalarFieldEnum)[keyof typeof LikeScalarFieldEnum]
+
+
+export const ForumSectionScalarFieldEnum = {
+  id: 'id',
+  communityId: 'communityId',
+  name: 'name',
+  position: 'position',
+  createdAt: 'createdAt'
+} as const
+
+export type ForumSectionScalarFieldEnum = (typeof ForumSectionScalarFieldEnum)[keyof typeof ForumSectionScalarFieldEnum]
+
+
+export const ForumCategoryScalarFieldEnum = {
+  id: 'id',
+  communityId: 'communityId',
+  sectionId: 'sectionId',
+  name: 'name',
+  description: 'description',
+  position: 'position',
+  createdAt: 'createdAt'
+} as const
+
+export type ForumCategoryScalarFieldEnum = (typeof ForumCategoryScalarFieldEnum)[keyof typeof ForumCategoryScalarFieldEnum]
+
+
+export const ForumThreadScalarFieldEnum = {
+  id: 'id',
+  communityId: 'communityId',
+  categoryId: 'categoryId',
+  authorId: 'authorId',
+  title: 'title',
+  replyCount: 'replyCount',
+  lastPostAt: 'lastPostAt',
+  pinnedAt: 'pinnedAt',
+  lockedAt: 'lockedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type ForumThreadScalarFieldEnum = (typeof ForumThreadScalarFieldEnum)[keyof typeof ForumThreadScalarFieldEnum]
+
+
+export const ForumPostScalarFieldEnum = {
+  id: 'id',
+  threadId: 'threadId',
+  communityId: 'communityId',
+  authorId: 'authorId',
+  opening: 'opening',
+  content: 'content',
+  quoteId: 'quoteId',
+  likeCount: 'likeCount',
+  hiddenAt: 'hiddenAt',
+  editedAt: 'editedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type ForumPostScalarFieldEnum = (typeof ForumPostScalarFieldEnum)[keyof typeof ForumPostScalarFieldEnum]
 
 
 export const FriendshipScalarFieldEnum = {

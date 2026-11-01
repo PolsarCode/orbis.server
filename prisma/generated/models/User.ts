@@ -425,6 +425,8 @@ export type UserWhereInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalListRelationFilter
   dismissedBy?: Prisma.SuggestionDismissalListRelationFilter
   comments?: Prisma.CommentListRelationFilter
+  forumThreads?: Prisma.ForumThreadListRelationFilter
+  forumPosts?: Prisma.ForumPostListRelationFilter
   reports?: Prisma.ReportListRelationFilter
   assignedReports?: Prisma.ReportListRelationFilter
   reportComments?: Prisma.ReportCommentListRelationFilter
@@ -487,6 +489,8 @@ export type UserOrderByWithRelationInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalOrderByRelationAggregateInput
   dismissedBy?: Prisma.SuggestionDismissalOrderByRelationAggregateInput
   comments?: Prisma.CommentOrderByRelationAggregateInput
+  forumThreads?: Prisma.ForumThreadOrderByRelationAggregateInput
+  forumPosts?: Prisma.ForumPostOrderByRelationAggregateInput
   reports?: Prisma.ReportOrderByRelationAggregateInput
   assignedReports?: Prisma.ReportOrderByRelationAggregateInput
   reportComments?: Prisma.ReportCommentOrderByRelationAggregateInput
@@ -552,6 +556,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   suggestionDismissals?: Prisma.SuggestionDismissalListRelationFilter
   dismissedBy?: Prisma.SuggestionDismissalListRelationFilter
   comments?: Prisma.CommentListRelationFilter
+  forumThreads?: Prisma.ForumThreadListRelationFilter
+  forumPosts?: Prisma.ForumPostListRelationFilter
   reports?: Prisma.ReportListRelationFilter
   assignedReports?: Prisma.ReportListRelationFilter
   reportComments?: Prisma.ReportCommentListRelationFilter
@@ -687,6 +693,8 @@ export type UserCreateInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -749,6 +757,8 @@ export type UserUncheckedCreateInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -810,6 +820,8 @@ export type UserUpdateInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -872,6 +884,8 @@ export type UserUncheckedUpdateInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -1229,6 +1243,34 @@ export type UserUpdateOneRequiredWithoutLikesNestedInput = {
   upsert?: Prisma.UserUpsertWithoutLikesInput
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutLikesInput, Prisma.UserUpdateWithoutLikesInput>, Prisma.UserUncheckedUpdateWithoutLikesInput>
+}
+
+export type UserCreateNestedOneWithoutForumThreadsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutForumThreadsInput, Prisma.UserUncheckedCreateWithoutForumThreadsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutForumThreadsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutForumThreadsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutForumThreadsInput, Prisma.UserUncheckedCreateWithoutForumThreadsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutForumThreadsInput
+  upsert?: Prisma.UserUpsertWithoutForumThreadsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutForumThreadsInput, Prisma.UserUpdateWithoutForumThreadsInput>, Prisma.UserUncheckedUpdateWithoutForumThreadsInput>
+}
+
+export type UserCreateNestedOneWithoutForumPostsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutForumPostsInput, Prisma.UserUncheckedCreateWithoutForumPostsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutForumPostsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutForumPostsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutForumPostsInput, Prisma.UserUncheckedCreateWithoutForumPostsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutForumPostsInput
+  upsert?: Prisma.UserUpsertWithoutForumPostsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutForumPostsInput, Prisma.UserUpdateWithoutForumPostsInput>, Prisma.UserUncheckedUpdateWithoutForumPostsInput>
 }
 
 export type UserCreateNestedOneWithoutSentFriendshipsInput = {
@@ -1601,6 +1643,8 @@ export type UserCreateWithoutOwnedCommunitiesInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -1662,6 +1706,8 @@ export type UserUncheckedCreateWithoutOwnedCommunitiesInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -1738,6 +1784,8 @@ export type UserUpdateWithoutOwnedCommunitiesInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -1799,6 +1847,8 @@ export type UserUncheckedUpdateWithoutOwnedCommunitiesInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -1859,6 +1909,8 @@ export type UserCreateWithoutMembershipsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -1920,6 +1972,8 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -1996,6 +2050,8 @@ export type UserUpdateWithoutMembershipsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -2057,6 +2113,8 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -2118,6 +2176,8 @@ export type UserCreateWithoutRailFoldersInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -2179,6 +2239,8 @@ export type UserUncheckedCreateWithoutRailFoldersInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -2255,6 +2317,8 @@ export type UserUpdateWithoutRailFoldersInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -2316,6 +2380,8 @@ export type UserUncheckedUpdateWithoutRailFoldersInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -2376,6 +2442,8 @@ export type UserCreateWithoutInvitesInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -2437,6 +2505,8 @@ export type UserUncheckedCreateWithoutInvitesInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -2513,6 +2583,8 @@ export type UserUpdateWithoutInvitesInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -2574,6 +2646,8 @@ export type UserUncheckedUpdateWithoutInvitesInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -2633,6 +2707,8 @@ export type UserCreateWithoutWallPostsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -2694,6 +2770,8 @@ export type UserUncheckedCreateWithoutWallPostsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -2759,6 +2837,8 @@ export type UserCreateWithoutPostsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -2820,6 +2900,8 @@ export type UserUncheckedCreateWithoutPostsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -2896,6 +2978,8 @@ export type UserUpdateWithoutWallPostsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -2957,6 +3041,8 @@ export type UserUncheckedUpdateWithoutWallPostsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -3028,6 +3114,8 @@ export type UserUpdateWithoutPostsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -3089,6 +3177,8 @@ export type UserUncheckedUpdateWithoutPostsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -3149,6 +3239,8 @@ export type UserCreateWithoutCommentsInput = {
   receivedFriendships?: Prisma.FriendshipCreateNestedManyWithoutAddresseeInput
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -3210,6 +3302,8 @@ export type UserUncheckedCreateWithoutCommentsInput = {
   receivedFriendships?: Prisma.FriendshipUncheckedCreateNestedManyWithoutAddresseeInput
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -3286,6 +3380,8 @@ export type UserUpdateWithoutCommentsInput = {
   receivedFriendships?: Prisma.FriendshipUpdateManyWithoutAddresseeNestedInput
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -3347,6 +3443,8 @@ export type UserUncheckedUpdateWithoutCommentsInput = {
   receivedFriendships?: Prisma.FriendshipUncheckedUpdateManyWithoutAddresseeNestedInput
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -3408,6 +3506,8 @@ export type UserCreateWithoutLikesInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -3469,6 +3569,8 @@ export type UserUncheckedCreateWithoutLikesInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -3545,6 +3647,8 @@ export type UserUpdateWithoutLikesInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -3606,6 +3710,8 @@ export type UserUncheckedUpdateWithoutLikesInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -3617,6 +3723,538 @@ export type UserUncheckedUpdateWithoutLikesInput = {
   steamAccount?: Prisma.SteamAccountUncheckedUpdateOneWithoutUserNestedInput
   steamGames?: Prisma.SteamGameUncheckedUpdateManyWithoutUserNestedInput
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
+  invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
+  createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
+  conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
+  conversationsAsB?: Prisma.ConversationUncheckedUpdateManyWithoutUserBNestedInput
+  conversations?: Prisma.ConversationMemberUncheckedUpdateManyWithoutUserNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  oauthAccounts?: Prisma.OAuthAccountUncheckedUpdateManyWithoutUserNestedInput
+  messageReactions?: Prisma.MessageReactionUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutForumThreadsInput = {
+  email: string
+  username: string
+  name?: string | null
+  avatarUrl?: string | null
+  coverUrl?: string | null
+  backgroundUrl?: string | null
+  password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
+  emailVerifiedAt?: Date | string | null
+  theme?: $Enums.Theme
+  appearOffline?: boolean
+  showNsfw?: boolean
+  showChangelog?: boolean
+  status?: $Enums.UserStatus
+  isPublic?: boolean
+  isAdmin?: boolean
+  isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
+  tourCompletedAt?: Date | string | null
+  checklistDismissedAt?: Date | string | null
+  completedTours?: Prisma.UserCreatecompletedToursInput | string[]
+  createdAt?: Date | string
+  ownedCommunities?: Prisma.CommunityCreateNestedManyWithoutOwnerInput
+  memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
+  posts?: Prisma.PostCreateNestedManyWithoutAuthorInput
+  wallPosts?: Prisma.PostCreateNestedManyWithoutWallUserInput
+  sentFriendships?: Prisma.FriendshipCreateNestedManyWithoutRequesterInput
+  receivedFriendships?: Prisma.FriendshipCreateNestedManyWithoutAddresseeInput
+  suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
+  dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
+  comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
+  reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
+  assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
+  reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
+  contentReports?: Prisma.ContentReportCreateNestedManyWithoutReporterInput
+  resolvedReports?: Prisma.ContentReportCreateNestedManyWithoutResolvedByInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  causedNotifications?: Prisma.NotificationCreateNestedManyWithoutActorInput
+  libraryEntries?: Prisma.LibraryEntryCreateNestedManyWithoutUserInput
+  steamAccount?: Prisma.SteamAccountCreateNestedOneWithoutUserInput
+  steamGames?: Prisma.SteamGameCreateNestedManyWithoutUserInput
+  railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
+  likes?: Prisma.LikeCreateNestedManyWithoutUserInput
+  invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
+  createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
+  conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
+  conversationsAsB?: Prisma.ConversationCreateNestedManyWithoutUserBInput
+  conversations?: Prisma.ConversationMemberCreateNestedManyWithoutUserInput
+  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  oauthAccounts?: Prisma.OAuthAccountCreateNestedManyWithoutUserInput
+  messageReactions?: Prisma.MessageReactionCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutForumThreadsInput = {
+  id?: number
+  email: string
+  username: string
+  name?: string | null
+  avatarUrl?: string | null
+  coverUrl?: string | null
+  backgroundUrl?: string | null
+  password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
+  emailVerifiedAt?: Date | string | null
+  theme?: $Enums.Theme
+  appearOffline?: boolean
+  showNsfw?: boolean
+  showChangelog?: boolean
+  status?: $Enums.UserStatus
+  isPublic?: boolean
+  isAdmin?: boolean
+  isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
+  tourCompletedAt?: Date | string | null
+  checklistDismissedAt?: Date | string | null
+  completedTours?: Prisma.UserCreatecompletedToursInput | string[]
+  createdAt?: Date | string
+  ownedCommunities?: Prisma.CommunityUncheckedCreateNestedManyWithoutOwnerInput
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput
+  wallPosts?: Prisma.PostUncheckedCreateNestedManyWithoutWallUserInput
+  sentFriendships?: Prisma.FriendshipUncheckedCreateNestedManyWithoutRequesterInput
+  receivedFriendships?: Prisma.FriendshipUncheckedCreateNestedManyWithoutAddresseeInput
+  suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
+  dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
+  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
+  assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
+  reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
+  contentReports?: Prisma.ContentReportUncheckedCreateNestedManyWithoutReporterInput
+  resolvedReports?: Prisma.ContentReportUncheckedCreateNestedManyWithoutResolvedByInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  causedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput
+  libraryEntries?: Prisma.LibraryEntryUncheckedCreateNestedManyWithoutUserInput
+  steamAccount?: Prisma.SteamAccountUncheckedCreateNestedOneWithoutUserInput
+  steamGames?: Prisma.SteamGameUncheckedCreateNestedManyWithoutUserInput
+  railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
+  invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
+  createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
+  conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
+  conversationsAsB?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserBInput
+  conversations?: Prisma.ConversationMemberUncheckedCreateNestedManyWithoutUserInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  oauthAccounts?: Prisma.OAuthAccountUncheckedCreateNestedManyWithoutUserInput
+  messageReactions?: Prisma.MessageReactionUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutForumThreadsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutForumThreadsInput, Prisma.UserUncheckedCreateWithoutForumThreadsInput>
+}
+
+export type UserUpsertWithoutForumThreadsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutForumThreadsInput, Prisma.UserUncheckedUpdateWithoutForumThreadsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutForumThreadsInput, Prisma.UserUncheckedCreateWithoutForumThreadsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutForumThreadsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutForumThreadsInput, Prisma.UserUncheckedUpdateWithoutForumThreadsInput>
+}
+
+export type UserUpdateWithoutForumThreadsInput = {
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
+  appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showNsfw?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showChangelog?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ownedCommunities?: Prisma.CommunityUpdateManyWithoutOwnerNestedInput
+  memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
+  posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput
+  wallPosts?: Prisma.PostUpdateManyWithoutWallUserNestedInput
+  sentFriendships?: Prisma.FriendshipUpdateManyWithoutRequesterNestedInput
+  receivedFriendships?: Prisma.FriendshipUpdateManyWithoutAddresseeNestedInput
+  suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
+  dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
+  reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
+  assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
+  reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
+  contentReports?: Prisma.ContentReportUpdateManyWithoutReporterNestedInput
+  resolvedReports?: Prisma.ContentReportUpdateManyWithoutResolvedByNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  causedNotifications?: Prisma.NotificationUpdateManyWithoutActorNestedInput
+  libraryEntries?: Prisma.LibraryEntryUpdateManyWithoutUserNestedInput
+  steamAccount?: Prisma.SteamAccountUpdateOneWithoutUserNestedInput
+  steamGames?: Prisma.SteamGameUpdateManyWithoutUserNestedInput
+  railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
+  invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
+  createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
+  conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
+  conversationsAsB?: Prisma.ConversationUpdateManyWithoutUserBNestedInput
+  conversations?: Prisma.ConversationMemberUpdateManyWithoutUserNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  oauthAccounts?: Prisma.OAuthAccountUpdateManyWithoutUserNestedInput
+  messageReactions?: Prisma.MessageReactionUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutForumThreadsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
+  appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showNsfw?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showChangelog?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ownedCommunities?: Prisma.CommunityUncheckedUpdateManyWithoutOwnerNestedInput
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
+  posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput
+  wallPosts?: Prisma.PostUncheckedUpdateManyWithoutWallUserNestedInput
+  sentFriendships?: Prisma.FriendshipUncheckedUpdateManyWithoutRequesterNestedInput
+  receivedFriendships?: Prisma.FriendshipUncheckedUpdateManyWithoutAddresseeNestedInput
+  suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
+  dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
+  reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
+  assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
+  reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
+  contentReports?: Prisma.ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+  resolvedReports?: Prisma.ContentReportUncheckedUpdateManyWithoutResolvedByNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  causedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput
+  libraryEntries?: Prisma.LibraryEntryUncheckedUpdateManyWithoutUserNestedInput
+  steamAccount?: Prisma.SteamAccountUncheckedUpdateOneWithoutUserNestedInput
+  steamGames?: Prisma.SteamGameUncheckedUpdateManyWithoutUserNestedInput
+  railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
+  invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
+  createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
+  conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
+  conversationsAsB?: Prisma.ConversationUncheckedUpdateManyWithoutUserBNestedInput
+  conversations?: Prisma.ConversationMemberUncheckedUpdateManyWithoutUserNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  oauthAccounts?: Prisma.OAuthAccountUncheckedUpdateManyWithoutUserNestedInput
+  messageReactions?: Prisma.MessageReactionUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutForumPostsInput = {
+  email: string
+  username: string
+  name?: string | null
+  avatarUrl?: string | null
+  coverUrl?: string | null
+  backgroundUrl?: string | null
+  password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
+  emailVerifiedAt?: Date | string | null
+  theme?: $Enums.Theme
+  appearOffline?: boolean
+  showNsfw?: boolean
+  showChangelog?: boolean
+  status?: $Enums.UserStatus
+  isPublic?: boolean
+  isAdmin?: boolean
+  isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
+  tourCompletedAt?: Date | string | null
+  checklistDismissedAt?: Date | string | null
+  completedTours?: Prisma.UserCreatecompletedToursInput | string[]
+  createdAt?: Date | string
+  ownedCommunities?: Prisma.CommunityCreateNestedManyWithoutOwnerInput
+  memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
+  posts?: Prisma.PostCreateNestedManyWithoutAuthorInput
+  wallPosts?: Prisma.PostCreateNestedManyWithoutWallUserInput
+  sentFriendships?: Prisma.FriendshipCreateNestedManyWithoutRequesterInput
+  receivedFriendships?: Prisma.FriendshipCreateNestedManyWithoutAddresseeInput
+  suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
+  dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
+  comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
+  assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
+  reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
+  contentReports?: Prisma.ContentReportCreateNestedManyWithoutReporterInput
+  resolvedReports?: Prisma.ContentReportCreateNestedManyWithoutResolvedByInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  causedNotifications?: Prisma.NotificationCreateNestedManyWithoutActorInput
+  libraryEntries?: Prisma.LibraryEntryCreateNestedManyWithoutUserInput
+  steamAccount?: Prisma.SteamAccountCreateNestedOneWithoutUserInput
+  steamGames?: Prisma.SteamGameCreateNestedManyWithoutUserInput
+  railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
+  likes?: Prisma.LikeCreateNestedManyWithoutUserInput
+  invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
+  createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
+  conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
+  conversationsAsB?: Prisma.ConversationCreateNestedManyWithoutUserBInput
+  conversations?: Prisma.ConversationMemberCreateNestedManyWithoutUserInput
+  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  oauthAccounts?: Prisma.OAuthAccountCreateNestedManyWithoutUserInput
+  messageReactions?: Prisma.MessageReactionCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutForumPostsInput = {
+  id?: number
+  email: string
+  username: string
+  name?: string | null
+  avatarUrl?: string | null
+  coverUrl?: string | null
+  backgroundUrl?: string | null
+  password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
+  emailVerifiedAt?: Date | string | null
+  theme?: $Enums.Theme
+  appearOffline?: boolean
+  showNsfw?: boolean
+  showChangelog?: boolean
+  status?: $Enums.UserStatus
+  isPublic?: boolean
+  isAdmin?: boolean
+  isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
+  tourCompletedAt?: Date | string | null
+  checklistDismissedAt?: Date | string | null
+  completedTours?: Prisma.UserCreatecompletedToursInput | string[]
+  createdAt?: Date | string
+  ownedCommunities?: Prisma.CommunityUncheckedCreateNestedManyWithoutOwnerInput
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput
+  wallPosts?: Prisma.PostUncheckedCreateNestedManyWithoutWallUserInput
+  sentFriendships?: Prisma.FriendshipUncheckedCreateNestedManyWithoutRequesterInput
+  receivedFriendships?: Prisma.FriendshipUncheckedCreateNestedManyWithoutAddresseeInput
+  suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
+  dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
+  assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
+  reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
+  contentReports?: Prisma.ContentReportUncheckedCreateNestedManyWithoutReporterInput
+  resolvedReports?: Prisma.ContentReportUncheckedCreateNestedManyWithoutResolvedByInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  causedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput
+  libraryEntries?: Prisma.LibraryEntryUncheckedCreateNestedManyWithoutUserInput
+  steamAccount?: Prisma.SteamAccountUncheckedCreateNestedOneWithoutUserInput
+  steamGames?: Prisma.SteamGameUncheckedCreateNestedManyWithoutUserInput
+  railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
+  invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
+  createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
+  conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
+  conversationsAsB?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserBInput
+  conversations?: Prisma.ConversationMemberUncheckedCreateNestedManyWithoutUserInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  oauthAccounts?: Prisma.OAuthAccountUncheckedCreateNestedManyWithoutUserInput
+  messageReactions?: Prisma.MessageReactionUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutForumPostsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutForumPostsInput, Prisma.UserUncheckedCreateWithoutForumPostsInput>
+}
+
+export type UserUpsertWithoutForumPostsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutForumPostsInput, Prisma.UserUncheckedUpdateWithoutForumPostsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutForumPostsInput, Prisma.UserUncheckedCreateWithoutForumPostsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutForumPostsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutForumPostsInput, Prisma.UserUncheckedUpdateWithoutForumPostsInput>
+}
+
+export type UserUpdateWithoutForumPostsInput = {
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
+  appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showNsfw?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showChangelog?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ownedCommunities?: Prisma.CommunityUpdateManyWithoutOwnerNestedInput
+  memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
+  posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput
+  wallPosts?: Prisma.PostUpdateManyWithoutWallUserNestedInput
+  sentFriendships?: Prisma.FriendshipUpdateManyWithoutRequesterNestedInput
+  receivedFriendships?: Prisma.FriendshipUpdateManyWithoutAddresseeNestedInput
+  suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
+  dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
+  assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
+  reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
+  contentReports?: Prisma.ContentReportUpdateManyWithoutReporterNestedInput
+  resolvedReports?: Prisma.ContentReportUpdateManyWithoutResolvedByNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  causedNotifications?: Prisma.NotificationUpdateManyWithoutActorNestedInput
+  libraryEntries?: Prisma.LibraryEntryUpdateManyWithoutUserNestedInput
+  steamAccount?: Prisma.SteamAccountUpdateOneWithoutUserNestedInput
+  steamGames?: Prisma.SteamGameUpdateManyWithoutUserNestedInput
+  railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
+  invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
+  createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
+  conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
+  conversationsAsB?: Prisma.ConversationUpdateManyWithoutUserBNestedInput
+  conversations?: Prisma.ConversationMemberUpdateManyWithoutUserNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  oauthAccounts?: Prisma.OAuthAccountUpdateManyWithoutUserNestedInput
+  messageReactions?: Prisma.MessageReactionUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutForumPostsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
+  appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showNsfw?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showChangelog?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ownedCommunities?: Prisma.CommunityUncheckedUpdateManyWithoutOwnerNestedInput
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
+  posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput
+  wallPosts?: Prisma.PostUncheckedUpdateManyWithoutWallUserNestedInput
+  sentFriendships?: Prisma.FriendshipUncheckedUpdateManyWithoutRequesterNestedInput
+  receivedFriendships?: Prisma.FriendshipUncheckedUpdateManyWithoutAddresseeNestedInput
+  suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
+  dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
+  assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
+  reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
+  contentReports?: Prisma.ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+  resolvedReports?: Prisma.ContentReportUncheckedUpdateManyWithoutResolvedByNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  causedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput
+  libraryEntries?: Prisma.LibraryEntryUncheckedUpdateManyWithoutUserNestedInput
+  steamAccount?: Prisma.SteamAccountUncheckedUpdateOneWithoutUserNestedInput
+  steamGames?: Prisma.SteamGameUncheckedUpdateManyWithoutUserNestedInput
+  railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -3665,6 +4303,8 @@ export type UserCreateWithoutSentFriendshipsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -3726,6 +4366,8 @@ export type UserUncheckedCreateWithoutSentFriendshipsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -3791,6 +4433,8 @@ export type UserCreateWithoutReceivedFriendshipsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -3852,6 +4496,8 @@ export type UserUncheckedCreateWithoutReceivedFriendshipsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -3928,6 +4574,8 @@ export type UserUpdateWithoutSentFriendshipsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -3989,6 +4637,8 @@ export type UserUncheckedUpdateWithoutSentFriendshipsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -4060,6 +4710,8 @@ export type UserUpdateWithoutReceivedFriendshipsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -4121,6 +4773,8 @@ export type UserUncheckedUpdateWithoutReceivedFriendshipsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -4181,6 +4835,8 @@ export type UserCreateWithoutSuggestionDismissalsInput = {
   receivedFriendships?: Prisma.FriendshipCreateNestedManyWithoutAddresseeInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -4242,6 +4898,8 @@ export type UserUncheckedCreateWithoutSuggestionDismissalsInput = {
   receivedFriendships?: Prisma.FriendshipUncheckedCreateNestedManyWithoutAddresseeInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -4307,6 +4965,8 @@ export type UserCreateWithoutDismissedByInput = {
   receivedFriendships?: Prisma.FriendshipCreateNestedManyWithoutAddresseeInput
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -4368,6 +5028,8 @@ export type UserUncheckedCreateWithoutDismissedByInput = {
   receivedFriendships?: Prisma.FriendshipUncheckedCreateNestedManyWithoutAddresseeInput
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -4444,6 +5106,8 @@ export type UserUpdateWithoutSuggestionDismissalsInput = {
   receivedFriendships?: Prisma.FriendshipUpdateManyWithoutAddresseeNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -4505,6 +5169,8 @@ export type UserUncheckedUpdateWithoutSuggestionDismissalsInput = {
   receivedFriendships?: Prisma.FriendshipUncheckedUpdateManyWithoutAddresseeNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -4576,6 +5242,8 @@ export type UserUpdateWithoutDismissedByInput = {
   receivedFriendships?: Prisma.FriendshipUpdateManyWithoutAddresseeNestedInput
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -4637,6 +5305,8 @@ export type UserUncheckedUpdateWithoutDismissedByInput = {
   receivedFriendships?: Prisma.FriendshipUncheckedUpdateManyWithoutAddresseeNestedInput
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -4698,6 +5368,8 @@ export type UserCreateWithoutLibraryEntriesInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -4759,6 +5431,8 @@ export type UserUncheckedCreateWithoutLibraryEntriesInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -4835,6 +5509,8 @@ export type UserUpdateWithoutLibraryEntriesInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -4896,6 +5572,8 @@ export type UserUncheckedUpdateWithoutLibraryEntriesInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -4956,6 +5634,8 @@ export type UserCreateWithoutCreatedConversationsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -5017,6 +5697,8 @@ export type UserUncheckedCreateWithoutCreatedConversationsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -5082,6 +5764,8 @@ export type UserCreateWithoutConversationsAsAInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -5143,6 +5827,8 @@ export type UserUncheckedCreateWithoutConversationsAsAInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -5208,6 +5894,8 @@ export type UserCreateWithoutConversationsAsBInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -5269,6 +5957,8 @@ export type UserUncheckedCreateWithoutConversationsAsBInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -5345,6 +6035,8 @@ export type UserUpdateWithoutCreatedConversationsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -5406,6 +6098,8 @@ export type UserUncheckedUpdateWithoutCreatedConversationsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -5477,6 +6171,8 @@ export type UserUpdateWithoutConversationsAsAInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -5538,6 +6234,8 @@ export type UserUncheckedUpdateWithoutConversationsAsAInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -5609,6 +6307,8 @@ export type UserUpdateWithoutConversationsAsBInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -5670,6 +6370,8 @@ export type UserUncheckedUpdateWithoutConversationsAsBInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -5730,6 +6432,8 @@ export type UserCreateWithoutConversationsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -5791,6 +6495,8 @@ export type UserUncheckedCreateWithoutConversationsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -5867,6 +6573,8 @@ export type UserUpdateWithoutConversationsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -5928,6 +6636,8 @@ export type UserUncheckedUpdateWithoutConversationsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -5988,6 +6698,8 @@ export type UserCreateWithoutMessagesInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -6049,6 +6761,8 @@ export type UserUncheckedCreateWithoutMessagesInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -6125,6 +6839,8 @@ export type UserUpdateWithoutMessagesInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -6186,6 +6902,8 @@ export type UserUncheckedUpdateWithoutMessagesInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -6246,6 +6964,8 @@ export type UserCreateWithoutMessageReactionsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -6307,6 +7027,8 @@ export type UserUncheckedCreateWithoutMessageReactionsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -6383,6 +7105,8 @@ export type UserUpdateWithoutMessageReactionsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -6444,6 +7168,8 @@ export type UserUncheckedUpdateWithoutMessageReactionsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -6504,6 +7230,8 @@ export type UserCreateWithoutNotificationsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -6565,6 +7293,8 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -6630,6 +7360,8 @@ export type UserCreateWithoutCausedNotificationsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -6691,6 +7423,8 @@ export type UserUncheckedCreateWithoutCausedNotificationsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -6767,6 +7501,8 @@ export type UserUpdateWithoutNotificationsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -6828,6 +7564,8 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -6899,6 +7637,8 @@ export type UserUpdateWithoutCausedNotificationsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -6960,6 +7700,8 @@ export type UserUncheckedUpdateWithoutCausedNotificationsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -7020,6 +7762,8 @@ export type UserCreateWithoutReportsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
   contentReports?: Prisma.ContentReportCreateNestedManyWithoutReporterInput
@@ -7081,6 +7825,8 @@ export type UserUncheckedCreateWithoutReportsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
   contentReports?: Prisma.ContentReportUncheckedCreateNestedManyWithoutReporterInput
@@ -7146,6 +7892,8 @@ export type UserCreateWithoutAssignedReportsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
   contentReports?: Prisma.ContentReportCreateNestedManyWithoutReporterInput
@@ -7207,6 +7955,8 @@ export type UserUncheckedCreateWithoutAssignedReportsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
   contentReports?: Prisma.ContentReportUncheckedCreateNestedManyWithoutReporterInput
@@ -7283,6 +8033,8 @@ export type UserUpdateWithoutReportsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
   contentReports?: Prisma.ContentReportUpdateManyWithoutReporterNestedInput
@@ -7344,6 +8096,8 @@ export type UserUncheckedUpdateWithoutReportsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
   contentReports?: Prisma.ContentReportUncheckedUpdateManyWithoutReporterNestedInput
@@ -7415,6 +8169,8 @@ export type UserUpdateWithoutAssignedReportsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
   contentReports?: Prisma.ContentReportUpdateManyWithoutReporterNestedInput
@@ -7476,6 +8232,8 @@ export type UserUncheckedUpdateWithoutAssignedReportsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
   contentReports?: Prisma.ContentReportUncheckedUpdateManyWithoutReporterNestedInput
@@ -7536,6 +8294,8 @@ export type UserCreateWithoutReportCommentsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   contentReports?: Prisma.ContentReportCreateNestedManyWithoutReporterInput
@@ -7597,6 +8357,8 @@ export type UserUncheckedCreateWithoutReportCommentsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   contentReports?: Prisma.ContentReportUncheckedCreateNestedManyWithoutReporterInput
@@ -7673,6 +8435,8 @@ export type UserUpdateWithoutReportCommentsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   contentReports?: Prisma.ContentReportUpdateManyWithoutReporterNestedInput
@@ -7734,6 +8498,8 @@ export type UserUncheckedUpdateWithoutReportCommentsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   contentReports?: Prisma.ContentReportUncheckedUpdateManyWithoutReporterNestedInput
@@ -7794,6 +8560,8 @@ export type UserCreateWithoutContentReportsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -7855,6 +8623,8 @@ export type UserUncheckedCreateWithoutContentReportsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -7920,6 +8690,8 @@ export type UserCreateWithoutResolvedReportsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -7981,6 +8753,8 @@ export type UserUncheckedCreateWithoutResolvedReportsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -8057,6 +8831,8 @@ export type UserUpdateWithoutContentReportsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -8118,6 +8894,8 @@ export type UserUncheckedUpdateWithoutContentReportsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -8189,6 +8967,8 @@ export type UserUpdateWithoutResolvedReportsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -8250,6 +9030,8 @@ export type UserUncheckedUpdateWithoutResolvedReportsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -8310,6 +9092,8 @@ export type UserCreateWithoutSteamAccountInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -8371,6 +9155,8 @@ export type UserUncheckedCreateWithoutSteamAccountInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -8447,6 +9233,8 @@ export type UserUpdateWithoutSteamAccountInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -8508,6 +9296,8 @@ export type UserUncheckedUpdateWithoutSteamAccountInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -8568,6 +9358,8 @@ export type UserCreateWithoutSteamGamesInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -8629,6 +9421,8 @@ export type UserUncheckedCreateWithoutSteamGamesInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -8705,6 +9499,8 @@ export type UserUpdateWithoutSteamGamesInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -8766,6 +9562,8 @@ export type UserUncheckedUpdateWithoutSteamGamesInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -8826,6 +9624,8 @@ export type UserCreateWithoutOauthAccountsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -8887,6 +9687,8 @@ export type UserUncheckedCreateWithoutOauthAccountsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -8963,6 +9765,8 @@ export type UserUpdateWithoutOauthAccountsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -9024,6 +9828,8 @@ export type UserUncheckedUpdateWithoutOauthAccountsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -9060,6 +9866,8 @@ export type UserCountOutputType = {
   suggestionDismissals: number
   dismissedBy: number
   comments: number
+  forumThreads: number
+  forumPosts: number
   reports: number
   assignedReports: number
   reportComments: number
@@ -9091,6 +9899,8 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   suggestionDismissals?: boolean | UserCountOutputTypeCountSuggestionDismissalsArgs
   dismissedBy?: boolean | UserCountOutputTypeCountDismissedByArgs
   comments?: boolean | UserCountOutputTypeCountCommentsArgs
+  forumThreads?: boolean | UserCountOutputTypeCountForumThreadsArgs
+  forumPosts?: boolean | UserCountOutputTypeCountForumPostsArgs
   reports?: boolean | UserCountOutputTypeCountReportsArgs
   assignedReports?: boolean | UserCountOutputTypeCountAssignedReportsArgs
   reportComments?: boolean | UserCountOutputTypeCountReportCommentsArgs
@@ -9183,6 +9993,20 @@ export type UserCountOutputTypeCountDismissedByArgs<ExtArgs extends runtime.Type
  */
 export type UserCountOutputTypeCountCommentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.CommentWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountForumThreadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ForumThreadWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountForumPostsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ForumPostWhereInput
 }
 
 /**
@@ -9359,6 +10183,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   suggestionDismissals?: boolean | Prisma.User$suggestionDismissalsArgs<ExtArgs>
   dismissedBy?: boolean | Prisma.User$dismissedByArgs<ExtArgs>
   comments?: boolean | Prisma.User$commentsArgs<ExtArgs>
+  forumThreads?: boolean | Prisma.User$forumThreadsArgs<ExtArgs>
+  forumPosts?: boolean | Prisma.User$forumPostsArgs<ExtArgs>
   reports?: boolean | Prisma.User$reportsArgs<ExtArgs>
   assignedReports?: boolean | Prisma.User$assignedReportsArgs<ExtArgs>
   reportComments?: boolean | Prisma.User$reportCommentsArgs<ExtArgs>
@@ -9492,6 +10318,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   suggestionDismissals?: boolean | Prisma.User$suggestionDismissalsArgs<ExtArgs>
   dismissedBy?: boolean | Prisma.User$dismissedByArgs<ExtArgs>
   comments?: boolean | Prisma.User$commentsArgs<ExtArgs>
+  forumThreads?: boolean | Prisma.User$forumThreadsArgs<ExtArgs>
+  forumPosts?: boolean | Prisma.User$forumPostsArgs<ExtArgs>
   reports?: boolean | Prisma.User$reportsArgs<ExtArgs>
   assignedReports?: boolean | Prisma.User$assignedReportsArgs<ExtArgs>
   reportComments?: boolean | Prisma.User$reportCommentsArgs<ExtArgs>
@@ -9529,6 +10357,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     suggestionDismissals: Prisma.$SuggestionDismissalPayload<ExtArgs>[]
     dismissedBy: Prisma.$SuggestionDismissalPayload<ExtArgs>[]
     comments: Prisma.$CommentPayload<ExtArgs>[]
+    forumThreads: Prisma.$ForumThreadPayload<ExtArgs>[]
+    forumPosts: Prisma.$ForumPostPayload<ExtArgs>[]
     reports: Prisma.$ReportPayload<ExtArgs>[]
     assignedReports: Prisma.$ReportPayload<ExtArgs>[]
     reportComments: Prisma.$ReportCommentPayload<ExtArgs>[]
@@ -9984,6 +10814,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   suggestionDismissals<T extends Prisma.User$suggestionDismissalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$suggestionDismissalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SuggestionDismissalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   dismissedBy<T extends Prisma.User$dismissedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$dismissedByArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SuggestionDismissalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   comments<T extends Prisma.User$commentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  forumThreads<T extends Prisma.User$forumThreadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$forumThreadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ForumThreadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  forumPosts<T extends Prisma.User$forumPostsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$forumPostsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ForumPostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reports<T extends Prisma.User$reportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   assignedReports<T extends Prisma.User$assignedReportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$assignedReportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reportComments<T extends Prisma.User$reportCommentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reportCommentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportCommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -10664,6 +11496,54 @@ export type User$commentsArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.CommentScalarFieldEnum | Prisma.CommentScalarFieldEnum[]
+}
+
+/**
+ * User.forumThreads
+ */
+export type User$forumThreadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ForumThread
+   */
+  select?: Prisma.ForumThreadSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ForumThread
+   */
+  omit?: Prisma.ForumThreadOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ForumThreadInclude<ExtArgs> | null
+  where?: Prisma.ForumThreadWhereInput
+  orderBy?: Prisma.ForumThreadOrderByWithRelationInput | Prisma.ForumThreadOrderByWithRelationInput[]
+  cursor?: Prisma.ForumThreadWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ForumThreadScalarFieldEnum | Prisma.ForumThreadScalarFieldEnum[]
+}
+
+/**
+ * User.forumPosts
+ */
+export type User$forumPostsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ForumPost
+   */
+  select?: Prisma.ForumPostSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ForumPost
+   */
+  omit?: Prisma.ForumPostOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ForumPostInclude<ExtArgs> | null
+  where?: Prisma.ForumPostWhereInput
+  orderBy?: Prisma.ForumPostOrderByWithRelationInput | Prisma.ForumPostOrderByWithRelationInput[]
+  cursor?: Prisma.ForumPostWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ForumPostScalarFieldEnum | Prisma.ForumPostScalarFieldEnum[]
 }
 
 /**

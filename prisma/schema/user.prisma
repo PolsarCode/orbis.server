@@ -55,6 +55,8 @@ model User {
   suggestionDismissals SuggestionDismissal[] @relation("SuggestionDismissals")
   dismissedBy          SuggestionDismissal[] @relation("DismissedSuggestions")
   comments             Comment[]
+  forumThreads         ForumThread[]
+  forumPosts           ForumPost[]
   reports              Report[]              @relation("ReportAuthor")
   assignedReports      Report[]              @relation("ReportAssignee")
   reportComments       ReportComment[]

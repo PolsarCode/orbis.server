@@ -11,6 +11,7 @@ describe('Deleting a community', () => {
     discordChannel: { findUnique: jest.fn() },
     post: { findMany: jest.fn() },
     comment: { findMany: jest.fn(), deleteMany: jest.fn() },
+    forumPost: { findMany: jest.fn() },
     like: { deleteMany: jest.fn() },
     contentReport: { deleteMany: jest.fn() },
     notification: { deleteMany: jest.fn() },
@@ -37,6 +38,7 @@ describe('Deleting a community', () => {
     prisma.discordChannel.findUnique.mockResolvedValue(null);
     prisma.post.findMany.mockResolvedValue([{ id: 10 }, { id: 11 }]);
     prisma.comment.findMany.mockResolvedValue([{ id: 20 }]);
+    prisma.forumPost.findMany.mockResolvedValue([{ id: 30 }]);
     prisma.community.delete.mockResolvedValue({
       id: 3,
       iconUrl: null,
@@ -57,12 +59,16 @@ describe('Deleting a community', () => {
     expect(prisma.like.deleteMany).toHaveBeenCalledWith({
       where: { likeableType: 'comment', likeableId: { in: [20] } },
     });
+    expect(prisma.like.deleteMany).toHaveBeenCalledWith({
+      where: { likeableType: 'forum_post', likeableId: { in: [30] } },
+    });
     expect(prisma.contentReport.deleteMany).toHaveBeenCalledWith({
       where: {
         OR: [
           { targetType: 'community', targetId: 3 },
           { targetType: 'post', targetId: { in: [10, 11] } },
           { targetType: 'comment', targetId: { in: [20] } },
+          { targetType: 'forum_post', targetId: { in: [30] } },
         ],
       },
     });

@@ -5,6 +5,7 @@ import { notSuspended } from '../users/suspension';
 export type ReportedIds = {
   post: number[];
   comment: number[];
+  forum_post: number[];
 };
 
 export async function reportedBy(
@@ -15,11 +16,11 @@ export async function reportedBy(
     where: {
       reporterId: viewerId,
       resolvedAt: null,
-      targetType: { in: ['post', 'comment'] },
+      targetType: { in: ['post', 'comment', 'forum_post'] },
     },
     select: { targetType: true, targetId: true },
   });
-  const ids: ReportedIds = { post: [], comment: [] };
+  const ids: ReportedIds = { post: [], comment: [], forum_post: [] };
   for (const { targetType, targetId } of reports) {
     if (targetType in ids) ids[targetType as keyof ReportedIds].push(targetId);
   }
@@ -33,5 +34,7 @@ export function visibleTo(viewerId: number, reported: number[]) {
       { OR: [{ author: notSuspended() }, { authorId: viewerId }] },
       ...(reported.length > 0 ? [{ id: { notIn: reported } }] : []),
     ],
-  } satisfies Prisma.PostWhereInput & Prisma.CommentWhereInput;
+  } satisfies Prisma.PostWhereInput &
+    Prisma.CommentWhereInput &
+    Prisma.ForumPostWhereInput;
 }

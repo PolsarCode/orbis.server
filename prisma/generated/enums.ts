@@ -20,7 +20,8 @@ export type CommentableType = (typeof CommentableType)[keyof typeof CommentableT
 export const LikeableType = {
   post: 'post',
   activity: 'activity',
-  comment: 'comment'
+  comment: 'comment',
+  forum_post: 'forum_post'
 } as const
 
 export type LikeableType = (typeof LikeableType)[keyof typeof LikeableType]
@@ -71,7 +72,9 @@ export const NotificationType = {
   report_assigned: 'report_assigned',
   report_comment: 'report_comment',
   wall_post: 'wall_post',
-  mention: 'mention'
+  mention: 'mention',
+  forum_reply: 'forum_reply',
+  forum_quote: 'forum_quote'
 } as const
 
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]
@@ -99,7 +102,8 @@ export const ContentReportTarget = {
   post: 'post',
   comment: 'comment',
   user: 'user',
-  community: 'community'
+  community: 'community',
+  forum_post: 'forum_post'
 } as const
 
 export type ContentReportTarget = (typeof ContentReportTarget)[keyof typeof ContentReportTarget]

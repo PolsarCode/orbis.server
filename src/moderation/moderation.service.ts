@@ -16,6 +16,7 @@ import {
 } from '../../prisma/generated/client';
 import { CreateContentReportDto } from './dto/create-content-report.dto';
 import { ResolveContentReportDto } from './dto/resolve-content-report.dto';
+import { forumPostLink } from '../forum/forum-helpers';
 
 type Person = {
   id: number;
@@ -63,9 +64,9 @@ export function hideThreshold(members: number | null) {
   return Math.min(25, Math.max(3, Math.ceil(members / 50)));
 }
 
-type Hideable = 'post' | 'comment';
+type Hideable = 'post' | 'comment' | 'forum_post';
 const hideable = (type: ContentReportTarget): type is Hideable =>
-  type === 'post' || type === 'comment';
+  type === 'post' || type === 'comment' || type === 'forum_post';
 
 function excerpt(html: string, length = 200) {
   const text = html
@@ -163,6 +164,29 @@ export class ModerationService {
       };
     }
 
+    if (type === 'forum_post') {
+      const post = await this.prisma.forumPost.findUnique({
+        where: { id },
+        select: {
+          content: true,
+          opening: true,
+          communityId: true,
+          threadId: true,
+          thread: { select: { title: true } },
+          author,
+        },
+      });
+      if (!post) return null;
+      return {
+        title: post.opening
+          ? `Forum thread: ${post.thread.title}`
+          : `Reply in “${post.thread.title}”`,
+        excerpt: excerpt(post.content),
+        author: post.author,
+        link: forumPostLink(post.communityId, post.threadId, id),
+      };
+    }
+
     if (type === 'user') {
       const user = await this.prisma.user.findUnique({
         where: { id },
@@ -209,7 +233,9 @@ export class ModerationService {
     const row =
       type === 'post'
         ? await this.prisma.post.findUnique(select)
-        : await this.prisma.comment.findUnique(select);
+        : type === 'forum_post'
+          ? await this.prisma.forumPost.findUnique(select)
+          : await this.prisma.comment.findUnique(select);
     return row?.authorId ?? null;
   }
 
@@ -266,7 +292,7 @@ export class ModerationService {
 
     this.reports.shareActivity(userId, (actor) => ({
       path: '/reports?tab=reported',
-      title: `🚩 ${actor} reported a ${type}: ${reasonLabels[reason]}`,
+      title: `🚩 ${actor} reported a ${type.replace('_', ' ')}: ${reasonLabels[reason]}`,
       description: note ?? undefined,
       color: ACTIVITY_COLOR.flag,
     }));
@@ -343,6 +369,10 @@ export class ModerationService {
       await this.prisma.comment.updateMany(args);
       return;
     }
+    if (type === 'forum_post') {
+      await this.prisma.forumPost.updateMany(args);
+      return;
+    }
     const { count } = await this.prisma.post.updateMany(args);
     if (count > 0) {
       void this.discordChannel.hiddenChanged(type, id, hiddenAt !== null);
@@ -358,7 +388,9 @@ export class ModerationService {
     const row =
       type === 'post'
         ? await this.prisma.post.findUnique({ where: { id }, select })
-        : await this.prisma.comment.findUnique({ where: { id }, select });
+        : type === 'forum_post'
+          ? await this.prisma.forumPost.findUnique({ where: { id }, select })
+          : await this.prisma.comment.findUnique({ where: { id }, select });
     if (!row) return null;
 
     const community =

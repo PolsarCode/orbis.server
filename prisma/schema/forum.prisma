@@ -1,0 +1,72 @@
+model ForumSection {
+  id          Int             @id @default(autoincrement())
+  communityId Int
+  name        String
+  position    Int             @default(0)
+  createdAt   DateTime        @default(now())
+  community   Community       @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  categories  ForumCategory[]
+
+  @@index([communityId, position])
+}
+
+model ForumCategory {
+  id          Int           @id @default(autoincrement())
+  communityId Int
+  sectionId   Int?
+  name        String
+  description String        @default("")
+  position    Int           @default(0)
+  createdAt   DateTime      @default(now())
+  community   Community     @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  section     ForumSection? @relation(fields: [sectionId], references: [id], onDelete: SetNull)
+  threads     ForumThread[]
+
+  @@index([communityId, position])
+  @@index([sectionId])
+}
+
+model ForumThread {
+  id          Int           @id @default(autoincrement())
+  communityId Int
+  categoryId  Int
+  authorId    Int
+  title       String
+  replyCount  Int           @default(0)
+  lastPostAt  DateTime      @default(now())
+  pinnedAt    DateTime?
+  lockedAt    DateTime?
+  createdAt   DateTime      @default(now())
+  community   Community     @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  category    ForumCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  author      User          @relation(fields: [authorId], references: [id])
+  posts       ForumPost[]
+
+  @@index([categoryId, lastPostAt(sort: Desc)])
+  @@index([communityId])
+  @@index([authorId])
+}
+
+model ForumPost {
+  id          Int         @id @default(autoincrement())
+  threadId    Int
+  communityId Int
+  authorId    Int
+  opening     Boolean     @default(false)
+  content     String
+  quoteId     Int?
+  likeCount   Int         @default(0)
+  hiddenAt    DateTime?
+  editedAt    DateTime?
+  createdAt   DateTime    @default(now())
+  thread      ForumThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  community   Community   @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  author      User        @relation(fields: [authorId], references: [id])
+  quote       ForumPost?  @relation("ForumQuotes", fields: [quoteId], references: [id], onDelete: SetNull)
+  quotedBy    ForumPost[] @relation("ForumQuotes")
+
+  @@index([threadId, createdAt])
+  @@index([communityId])
+  @@index([authorId])
+  @@index([quoteId])
+}

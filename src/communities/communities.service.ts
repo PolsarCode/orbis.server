@@ -835,15 +835,25 @@ export class CommunitiesService {
         select: { id: true },
       })
     ).map(({ id }) => id);
+    const forumPostIds = (
+      await this.prisma.forumPost.findMany({
+        where: { communityId },
+        select: { id: true },
+      })
+    ).map(({ id }) => id);
     const link = `/communities/${communityId}`;
     const operations = [
       ...(await discussionCleanup(this.prisma, 'post', postIds)),
+      this.prisma.like.deleteMany({
+        where: { likeableType: 'forum_post', likeableId: { in: forumPostIds } },
+      }),
       this.prisma.contentReport.deleteMany({
         where: {
           OR: [
             { targetType: 'community', targetId: communityId },
             { targetType: 'post', targetId: { in: postIds } },
             { targetType: 'comment', targetId: { in: commentIds } },
+            { targetType: 'forum_post', targetId: { in: forumPostIds } },
           ],
         },
       }),

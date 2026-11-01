@@ -144,3 +144,56 @@ describe('Liking comments', () => {
     expect(prisma.comment.update).not.toHaveBeenCalled();
   });
 });
+
+describe('Liking forum posts', () => {
+  const prisma = {
+    forumPost: { findFirst: jest.fn(), update: jest.fn() },
+    membership: { findUnique: jest.fn() },
+    contentReport: { findMany: jest.fn() },
+    like: { findUnique: jest.fn(), create: jest.fn(), delete: jest.fn() },
+    $transaction: jest.fn((run) => run(prisma)),
+  };
+  const service = new LikesService(prisma as unknown as PrismaService);
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    prisma.contentReport.findMany.mockResolvedValue([]);
+    prisma.forumPost.findFirst.mockResolvedValue({ communityId: 3 });
+    prisma.membership.findUnique.mockResolvedValue({ userId: 1 });
+    prisma.like.findUnique.mockResolvedValue(null);
+    prisma.forumPost.update.mockResolvedValue({ likeCount: 4 });
+  });
+
+  it('likes a forum post the member can see and counts it', async () => {
+    const result = await service.setLike(1, {
+      type: 'forum_post',
+      id: 40,
+      liked: true,
+    });
+
+    expect(result).toEqual({ likeCount: 4, liked: true });
+    expect(prisma.forumPost.update).toHaveBeenCalledWith({
+      where: { id: 40 },
+      data: { likeCount: { increment: 1 } },
+      select: { likeCount: true },
+    });
+    expect(targetOf).not.toHaveBeenCalled();
+  });
+
+  it('refuses people who aren’t members of the community', async () => {
+    prisma.membership.findUnique.mockResolvedValue(null);
+
+    await expect(
+      service.setLike(1, { type: 'forum_post', id: 40, liked: true }),
+    ).rejects.toThrow('You are not a member of this community');
+    expect(prisma.like.create).not.toHaveBeenCalled();
+  });
+
+  it('treats forum posts the person can’t see as missing', async () => {
+    prisma.forumPost.findFirst.mockResolvedValue(null);
+
+    await expect(
+      service.setLike(1, { type: 'forum_post', id: 40, liked: true }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+});

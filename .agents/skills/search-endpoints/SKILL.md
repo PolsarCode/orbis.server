@@ -11,6 +11,7 @@ The web app has one search modal for the whole site (see the `search-updates` sk
 | --- | --- | --- |
 | Posts everywhere | `GET /feed/search` | `PostsService.searchFeed` |
 | A community's posts | `GET /communities/:communityId/posts/search` | `PostsService.searchCommunity` |
+| A community's forum threads | `GET /communities/:communityId/forum/search` | `ForumService.search` |
 | A profile's posts | `GET /users/:username/posts/search` | `PostsService.searchProfile` |
 | People | `GET /friends/search` | `FriendsService.search` |
 | Communities | `GET /communities/search` | `CommunitiesService.search` |

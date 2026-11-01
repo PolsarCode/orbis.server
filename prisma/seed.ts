@@ -69,6 +69,32 @@ type SeedComment = {
   replies?: SeedComment[];
 };
 
+type SeedForumReply = {
+  author: UserKey;
+  ago: number;
+  content: string;
+  quote?: number;
+  likes?: UserKey[];
+};
+
+type SeedForumThread = {
+  author: UserKey;
+  title: string;
+  ago: number;
+  content: string;
+  likes?: UserKey[];
+  pinned?: boolean;
+  locked?: boolean;
+  replies?: SeedForumReply[];
+};
+
+type SeedForumCategory = {
+  section?: string;
+  name: string;
+  description: string;
+  threads: SeedForumThread[];
+};
+
 const hours = (count: number) => count * 60;
 const days = (count: number) => count * 24 * 60;
 
@@ -351,6 +377,433 @@ const communities: SeedCommunity[] = [
     ],
   },
 ];
+
+const episodeReactions: [UserKey, string][] = [
+  ['spike', 'That last scene had no business being that good.'],
+  [
+    'nami',
+    'The animation budget clearly went into the fight in the second half.',
+  ],
+  ['itadori', 'I yelled at my screen. My neighbours probably hate me now.'],
+  ['tanjiro', 'The quiet moment before the credits was my favourite part.'],
+  ['anya', 'Anya predicted the twist. Anya is never wrong.'],
+  ['naruto', 'Believe it, next week is going to be even crazier!'],
+  ['admin', 'Reminder: keep spoilers for unreleased chapters out of here.'],
+];
+
+const forums: Record<string, SeedForumCategory[]> = {
+  'Seasonal Anime Club': [
+    {
+      section: 'Club',
+      name: 'Announcements',
+      description: 'Club news, watch-party times and rule updates.',
+      threads: [
+        {
+          author: 'admin',
+          title: 'Welcome to the club forum',
+          ago: days(6),
+          pinned: true,
+          locked: true,
+          likes: ['anya', 'spike', 'nami', 'tanjiro', 'naruto'],
+          content: `<p>This is the place for longer discussions that deserve more than a post.</p><ul><li>Start a thread in the right category</li><li>Quote people when you reply to them</li><li>Keep spoilers out of thread titles</li></ul>`,
+        },
+        {
+          author: 'admin',
+          title: 'Friday watch party: vote for the next show',
+          ago: days(1) + hours(6),
+          likes: ['nami', 'itadori'],
+          content: `<p>Our next watch party is Friday at 8pm. Reply with the show you want and I'll count votes on Thursday.</p>`,
+          replies: [
+            {
+              author: 'itadori',
+              ago: days(1) + hours(2),
+              content: `<p>Something with a big fight in the finale, please.</p>`,
+              likes: ['naruto'],
+            },
+            {
+              author: 'anya',
+              ago: days(1),
+              content: `<p>Anya votes for the spy show. Again. Forever.</p>`,
+              likes: ['spike', 'nami', 'admin'],
+            },
+            {
+              author: 'naruto',
+              ago: hours(18),
+              quote: 1,
+              content: `<p>Same! The louder the better, believe it!</p>`,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      section: 'Anime',
+      name: 'Episode discussion',
+      description:
+        'One thread per show. Spoilers are fine inside, never in titles.',
+      threads: [
+        {
+          author: 'nami',
+          title: 'Frieren: Beyond Journey’s End, episode 1',
+          ago: hours(30),
+          likes: ['tanjiro', 'anya', 'admin'],
+          content: `<p>A story that starts after the hero's journey is over. That last shot by the meteor shower got me.</p>`,
+          replies: [
+            {
+              author: 'tanjiro',
+              ago: hours(28),
+              likes: ['nami'],
+              content: `<p>Fifty years passing in a few minutes was brutal. In a good way.</p>`,
+            },
+            {
+              author: 'spike',
+              ago: hours(20),
+              quote: 0,
+              content: `<p>Slow, quiet, and confident. My kind of show.</p>`,
+            },
+            {
+              author: 'admin',
+              ago: hours(6),
+              quote: 1,
+              likes: ['tanjiro', 'nami'],
+              content: `<p>That's the hook. Every small moment matters more when you know how short it was for everyone else.</p>`,
+            },
+          ],
+        },
+        {
+          author: 'spike',
+          title: 'Weekly episode thread: Fall 2026',
+          ago: days(5),
+          pinned: true,
+          likes: ['admin', 'itadori'],
+          content: `<p>Post your reactions to this week's episodes here. Say which show you're talking about first.</p>`,
+          replies: Array.from({ length: 26 }, (_, index) => {
+            const [author, content] =
+              episodeReactions[index % episodeReactions.length];
+            return {
+              author,
+              ago: days(5) - (index + 1) * hours(4),
+              content: `<p>${content}</p>`,
+              ...(index % 5 === 0 && { likes: ['nami' as const] }),
+            };
+          }),
+        },
+        {
+          author: 'nami',
+          title: 'Which opening song is stuck in your head?',
+          ago: days(2),
+          likes: ['spike', 'itadori', 'tanjiro'],
+          content: `<p>Mine has been on repeat for three days straight. Send help.</p>`,
+          replies: [
+            {
+              author: 'itadori',
+              ago: days(2) - hours(3),
+              content: `<p>The one with the drum solo. I hum it during training.</p>`,
+            },
+            {
+              author: 'spike',
+              ago: days(1),
+              quote: 1,
+              likes: ['nami'],
+              content: `<p>Respect. It's the only one with real jazz chords.</p>`,
+            },
+            {
+              author: 'admin',
+              ago: hours(9),
+              quote: 0,
+              content: `<p>Skipping the opening is a crime and I will not be taking questions.</p>`,
+            },
+          ],
+        },
+        {
+          author: 'tanjiro',
+          title: 'The quiet episodes are the best ones',
+          ago: days(4),
+          locked: true,
+          content: `<p>Hot take: the slow episodes where everyone just eats dinner together hit harder than the fights.</p>`,
+          replies: [
+            {
+              author: 'nami',
+              ago: days(4) - hours(5),
+              likes: ['tanjiro', 'anya'],
+              content: `<p>Agreed. You can't care about the fights unless you care about the people.</p>`,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      section: 'Anime',
+      name: 'Recommendations',
+      description: 'Ask for picks or share the hidden gems you love.',
+      threads: [
+        {
+          author: 'tanjiro',
+          title: 'Comfy shows for after a long week?',
+          ago: days(3),
+          likes: ['anya', 'nami'],
+          content: `<p>Looking for something gentle. No big villains, just good food and nice people.</p>`,
+          replies: [
+            {
+              author: 'anya',
+              ago: days(3) - hours(2),
+              content: `<p>Anya recommends the one about the family that is secretly spies. Very comfy. Very normal.</p>`,
+            },
+            {
+              author: 'admin',
+              ago: hours(20),
+              quote: 0,
+              likes: ['tanjiro'],
+              content: `<p>Laid-Back Camp is exactly this. Soup, tents and friendship.</p>`,
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  'Hidden Leaf Village': [
+    {
+      section: 'Village',
+      name: 'Village notices',
+      description:
+        'Missions, festivals and anything the whole village should know.',
+      threads: [
+        {
+          author: 'naruto',
+          title: 'Ichiraku ramen meetup this weekend',
+          ago: days(2),
+          pinned: true,
+          likes: ['sakura', 'admin', 'itadori'],
+          content: `<p>Ramen is on me! Well, Kakashi-sensei said he'd pay. Probably. Saturday at noon.</p>`,
+          replies: [
+            {
+              author: 'sakura',
+              ago: days(2) - hours(1),
+              content: `<p>Kakashi-sensei is not paying. I'll bring my own wallet.</p>`,
+              likes: ['sasuke', 'admin'],
+            },
+            {
+              author: 'sasuke',
+              ago: days(1),
+              quote: 1,
+              content: `<p>Hn. I'll be there.</p>`,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      section: 'Village',
+      name: 'Training ground',
+      description: 'Jutsu tips, sparring partners and training logs.',
+      threads: [
+        {
+          author: 'sasuke',
+          title: 'Looking for a sparring partner',
+          ago: days(3),
+          likes: ['itadori'],
+          content: `<p>Taijutsu only. No shadow clones, Naruto.</p>`,
+          replies: [
+            {
+              author: 'naruto',
+              ago: days(3) - hours(1),
+              quote: 0,
+              content: `<p>That's literally half my moves!</p>`,
+              likes: ['sakura', 'itadori', 'user'],
+            },
+            {
+              author: 'itadori',
+              ago: days(2),
+              content: `<p>I'm in. Different world, same fists.</p>`,
+              likes: ['sasuke'],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  'Straw Hat Pirates': [
+    {
+      name: 'Ship business',
+      description: 'Supplies, routes and who forgot to do the dishes.',
+      threads: [
+        {
+          author: 'nami',
+          title: 'Budget for the next island',
+          ago: days(2),
+          pinned: true,
+          likes: ['zoro'],
+          content: `<p>We have exactly enough berries for food <strong>or</strong> repairs. Not both. Luffy, the meat budget is not unlimited.</p>`,
+          replies: [
+            {
+              author: 'luffy',
+              ago: days(2) - hours(2),
+              quote: 0,
+              content: `<p>What if we just eat the repairs?</p>`,
+              likes: ['goku', 'admin', 'zoro'],
+            },
+            {
+              author: 'zoro',
+              ago: days(1) + hours(3),
+              content: `<p>I'll handle the repairs if someone points me to the deck.</p>`,
+            },
+            {
+              author: 'nami',
+              ago: days(1),
+              quote: 2,
+              content: `<p>You're standing on it, Zoro.</p>`,
+              likes: ['luffy', 'admin'],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'Adventures',
+      description: 'Stories from the sea and the islands along the way.',
+      threads: [
+        {
+          author: 'luffy',
+          title: 'Best food you found on an island?',
+          ago: days(4),
+          likes: ['goku', 'nami'],
+          content: `<p>I'll start: the giant sea king steak. Ten out of ten. Would fight it again.</p>`,
+          replies: [
+            {
+              author: 'goku',
+              ago: days(3),
+              likes: ['luffy'],
+              content: `<p>Anything Chi-Chi makes, but don't tell her I posted this.</p>`,
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  'Saiyan Training Grounds': [
+    {
+      name: 'Training logs',
+      description: 'Post your sessions. Bragging is encouraged.',
+      threads: [
+        {
+          author: 'vegeta',
+          title: 'Gravity room schedule',
+          ago: days(3),
+          locked: true,
+          pinned: true,
+          content: `<p>Mornings are mine. Kakarot gets the room after lunch. This is not up for discussion.</p>`,
+          replies: [
+            {
+              author: 'goku',
+              ago: days(3) - hours(1),
+              quote: 0,
+              content: `<p>Aw, can't we just train together?</p>`,
+              likes: ['luffy'],
+            },
+          ],
+        },
+        {
+          author: 'goku',
+          title: 'Who wants to spar?',
+          ago: days(1),
+          likes: ['luffy'],
+          content: `<p>I'm looking for someone strong! Bonus points if you bring snacks.</p>`,
+          replies: [
+            {
+              author: 'luffy',
+              ago: hours(20),
+              content: `<p>I'll bring the meat!</p>`,
+              likes: ['goku'],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  'Demon Slayer Corps': [
+    {
+      name: 'Mission reports',
+      description: 'Share what you saw out there and what you learned.',
+      threads: [
+        {
+          author: 'tanjiro',
+          title: 'Breathing techniques for beginners',
+          ago: days(5),
+          pinned: true,
+          likes: ['nezuko', 'mikasa', 'admin'],
+          content: `<p>Start with full concentration breathing for a few minutes a day. It's hard at first, but it adds up.</p>`,
+          replies: [
+            {
+              author: 'mikasa',
+              ago: days(4),
+              content: `<p>Discipline and repetition. Same as any training.</p>`,
+              likes: ['tanjiro'],
+            },
+            {
+              author: 'nezuko',
+              ago: days(3),
+              quote: 1,
+              content: `<p>Mmm! 🌸</p>`,
+              likes: ['tanjiro', 'admin', 'mikasa'],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  'Jujutsu High': [
+    {
+      name: 'Classroom',
+      description: 'Homework, lectures and questions for the teachers.',
+      threads: [
+        {
+          author: 'gojo',
+          title: 'Pop quiz on Monday',
+          ago: days(2),
+          content: `<p>Don't worry, it's easy. I'm the strongest teacher, so you'll all be fine. Probably.</p>`,
+          replies: [
+            {
+              author: 'itadori',
+              ago: days(1),
+              quote: 0,
+              content: `<p>"Probably" is doing a lot of work there, sensei.</p>`,
+              likes: ['gojo'],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  'Survey Corps': [
+    {
+      name: 'Orders',
+      description: 'Expedition plans. Members only.',
+      threads: [
+        {
+          author: 'levi',
+          title: 'Cleaning duty rotation',
+          ago: days(1),
+          pinned: true,
+          content: `<p>The stables were filthy. Everyone takes a shift this week. No exceptions.</p>`,
+          replies: [
+            {
+              author: 'mikasa',
+              ago: hours(20),
+              content: `<p>Understood, Captain.</p>`,
+            },
+            {
+              author: 'admin',
+              ago: hours(5),
+              quote: 0,
+              content: `<p>I'll take Thursday.</p>`,
+              likes: ['levi'],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+};
 
 const postComments: Record<string, Record<number, SeedComment[]>> = {
   'Seasonal Anime Club': {
@@ -1353,6 +1806,50 @@ async function createNotifications() {
     });
   }
 
+  const forumPosts = await prisma.forumPost.findMany({
+    where: { opening: false },
+    select: {
+      id: true,
+      authorId: true,
+      communityId: true,
+      threadId: true,
+      createdAt: true,
+      quote: { select: { authorId: true } },
+      thread: { select: { authorId: true, title: true } },
+    },
+  });
+  for (const post of forumPosts) {
+    const base = {
+      actorId: post.authorId,
+      link: `/communities/${post.communityId}/forum/threads/${post.threadId}?post=${post.id}`,
+      createdAt: post.createdAt,
+      readAt: readAt(post.createdAt),
+    };
+    const quotedId =
+      post.quote && post.quote.authorId !== post.authorId
+        ? post.quote.authorId
+        : null;
+    if (quotedId !== null) {
+      notifications.push({
+        ...base,
+        userId: quotedId,
+        type: 'forum_quote',
+        message: `quoted you in “${post.thread.title}”`,
+      });
+    }
+    if (
+      post.thread.authorId !== post.authorId &&
+      post.thread.authorId !== quotedId
+    ) {
+      notifications.push({
+        ...base,
+        userId: post.thread.authorId,
+        type: 'forum_reply',
+        message: `replied to your thread “${post.thread.title}”`,
+      });
+    }
+  }
+
   await prisma.notification.createMany({ data: notifications });
   return notifications.length;
 }
@@ -1841,6 +2338,16 @@ async function main() {
       ...Object.values(commentsByPost).flatMap((comments) =>
         participants(comments),
       ),
+      ...(forums[community.name] ?? []).flatMap(({ threads }) =>
+        threads.flatMap((thread) => [
+          thread.author,
+          ...(thread.likes ?? []),
+          ...(thread.replies ?? []).flatMap(({ author, likes }) => [
+            author,
+            ...(likes ?? []),
+          ]),
+        ]),
+      ),
     ].find((key) => !memberKeys.has(key));
     if (outsider) {
       throw new Error(`"${community.name}": ${outsider} isn't a member`);
@@ -1926,6 +2433,83 @@ async function main() {
         where: { id: post.id },
         data: { commentCount },
       });
+    }
+
+    const sectionIds = new Map<string, number>();
+    for (const [position, category] of (
+      forums[community.name] ?? []
+    ).entries()) {
+      if (category.section && !sectionIds.has(category.section)) {
+        const section = await prisma.forumSection.create({
+          data: {
+            communityId: created.id,
+            name: category.section,
+            position: sectionIds.size,
+          },
+        });
+        sectionIds.set(category.section, section.id);
+      }
+      const createdCategory = await prisma.forumCategory.create({
+        data: {
+          communityId: created.id,
+          sectionId: category.section
+            ? (sectionIds.get(category.section) ?? null)
+            : null,
+          name: category.name,
+          description: category.description,
+          position,
+        },
+      });
+      for (const thread of category.threads) {
+        const posts: SeedForumReply[] = [
+          {
+            author: thread.author,
+            ago: thread.ago,
+            content: thread.content,
+            likes: thread.likes,
+          },
+          ...(thread.replies ?? []),
+        ];
+        const createdThread = await prisma.forumThread.create({
+          data: {
+            communityId: created.id,
+            categoryId: createdCategory.id,
+            authorId: userIds[thread.author],
+            title: thread.title,
+            replyCount: posts.length - 1,
+            lastPostAt: minutesAgo(Math.min(...posts.map(({ ago }) => ago))),
+            pinnedAt: thread.pinned ? minutesAgo(thread.ago) : null,
+            lockedAt: thread.locked ? minutesAgo(thread.ago) : null,
+            createdAt: minutesAgo(thread.ago),
+          },
+        });
+        const postIds: number[] = [];
+        for (const [index, post] of posts.entries()) {
+          const createdPost = await prisma.forumPost.create({
+            data: {
+              threadId: createdThread.id,
+              communityId: created.id,
+              authorId: userIds[post.author],
+              opening: index === 0,
+              content: post.content,
+              quoteId: post.quote === undefined ? null : postIds[post.quote],
+              likeCount: post.likes?.length ?? 0,
+              createdAt: minutesAgo(post.ago),
+            },
+          });
+          postIds.push(createdPost.id);
+          if (post.likes?.length) {
+            await prisma.like.createMany({
+              data: post.likes.map((key) => ({
+                userId: userIds[key],
+                likeableType: 'forum_post' as const,
+                likeableId: createdPost.id,
+                createdAt: minutesAgo(Math.max(0, post.ago - 30)),
+              })),
+            });
+          }
+        }
+      }
     }
 
     if (community.admins?.length) {

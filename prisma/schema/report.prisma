@@ -46,6 +46,7 @@ enum ContentReportTarget {
   comment
   user
   community
+  forum_post
 }
 
 enum ContentReportReason {

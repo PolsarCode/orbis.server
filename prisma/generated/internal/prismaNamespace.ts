@@ -395,6 +395,10 @@ export const ModelName = {
   Post: 'Post',
   Comment: 'Comment',
   Like: 'Like',
+  ForumSection: 'ForumSection',
+  ForumCategory: 'ForumCategory',
+  ForumThread: 'ForumThread',
+  ForumPost: 'ForumPost',
   Friendship: 'Friendship',
   SuggestionDismissal: 'SuggestionDismissal',
   LibraryEntry: 'LibraryEntry',
@@ -427,7 +431,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "community" | "membership" | "railFolder" | "role" | "membershipRole" | "invite" | "discordChannel" | "discordMessage" | "post" | "comment" | "like" | "friendship" | "suggestionDismissal" | "libraryEntry" | "libraryActivity" | "conversation" | "conversationMember" | "message" | "messageReaction" | "notification" | "report" | "reportComment" | "contentReport" | "setting" | "steamAccount" | "steamGame" | "user" | "oAuthAccount"
+    modelProps: "community" | "membership" | "railFolder" | "role" | "membershipRole" | "invite" | "discordChannel" | "discordMessage" | "post" | "comment" | "like" | "forumSection" | "forumCategory" | "forumThread" | "forumPost" | "friendship" | "suggestionDismissal" | "libraryEntry" | "libraryActivity" | "conversation" | "conversationMember" | "message" | "messageReaction" | "notification" | "report" | "reportComment" | "contentReport" | "setting" | "steamAccount" | "steamGame" | "user" | "oAuthAccount"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1242,6 +1246,302 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.LikeCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.LikeCountAggregateOutputType> | number
+        }
+      }
+    }
+    ForumSection: {
+      payload: Prisma.$ForumSectionPayload<ExtArgs>
+      fields: Prisma.ForumSectionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ForumSectionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumSectionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ForumSectionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumSectionPayload>
+        }
+        findFirst: {
+          args: Prisma.ForumSectionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumSectionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ForumSectionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumSectionPayload>
+        }
+        findMany: {
+          args: Prisma.ForumSectionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumSectionPayload>[]
+        }
+        create: {
+          args: Prisma.ForumSectionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumSectionPayload>
+        }
+        createMany: {
+          args: Prisma.ForumSectionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ForumSectionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumSectionPayload>[]
+        }
+        delete: {
+          args: Prisma.ForumSectionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumSectionPayload>
+        }
+        update: {
+          args: Prisma.ForumSectionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumSectionPayload>
+        }
+        deleteMany: {
+          args: Prisma.ForumSectionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ForumSectionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ForumSectionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumSectionPayload>[]
+        }
+        upsert: {
+          args: Prisma.ForumSectionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumSectionPayload>
+        }
+        aggregate: {
+          args: Prisma.ForumSectionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateForumSection>
+        }
+        groupBy: {
+          args: Prisma.ForumSectionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ForumSectionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ForumSectionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ForumSectionCountAggregateOutputType> | number
+        }
+      }
+    }
+    ForumCategory: {
+      payload: Prisma.$ForumCategoryPayload<ExtArgs>
+      fields: Prisma.ForumCategoryFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ForumCategoryFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumCategoryPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ForumCategoryFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumCategoryPayload>
+        }
+        findFirst: {
+          args: Prisma.ForumCategoryFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumCategoryPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ForumCategoryFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumCategoryPayload>
+        }
+        findMany: {
+          args: Prisma.ForumCategoryFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumCategoryPayload>[]
+        }
+        create: {
+          args: Prisma.ForumCategoryCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumCategoryPayload>
+        }
+        createMany: {
+          args: Prisma.ForumCategoryCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ForumCategoryCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumCategoryPayload>[]
+        }
+        delete: {
+          args: Prisma.ForumCategoryDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumCategoryPayload>
+        }
+        update: {
+          args: Prisma.ForumCategoryUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumCategoryPayload>
+        }
+        deleteMany: {
+          args: Prisma.ForumCategoryDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ForumCategoryUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ForumCategoryUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumCategoryPayload>[]
+        }
+        upsert: {
+          args: Prisma.ForumCategoryUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumCategoryPayload>
+        }
+        aggregate: {
+          args: Prisma.ForumCategoryAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateForumCategory>
+        }
+        groupBy: {
+          args: Prisma.ForumCategoryGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ForumCategoryGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ForumCategoryCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ForumCategoryCountAggregateOutputType> | number
+        }
+      }
+    }
+    ForumThread: {
+      payload: Prisma.$ForumThreadPayload<ExtArgs>
+      fields: Prisma.ForumThreadFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ForumThreadFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumThreadPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ForumThreadFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumThreadPayload>
+        }
+        findFirst: {
+          args: Prisma.ForumThreadFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumThreadPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ForumThreadFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumThreadPayload>
+        }
+        findMany: {
+          args: Prisma.ForumThreadFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumThreadPayload>[]
+        }
+        create: {
+          args: Prisma.ForumThreadCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumThreadPayload>
+        }
+        createMany: {
+          args: Prisma.ForumThreadCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ForumThreadCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumThreadPayload>[]
+        }
+        delete: {
+          args: Prisma.ForumThreadDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumThreadPayload>
+        }
+        update: {
+          args: Prisma.ForumThreadUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumThreadPayload>
+        }
+        deleteMany: {
+          args: Prisma.ForumThreadDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ForumThreadUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ForumThreadUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumThreadPayload>[]
+        }
+        upsert: {
+          args: Prisma.ForumThreadUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumThreadPayload>
+        }
+        aggregate: {
+          args: Prisma.ForumThreadAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateForumThread>
+        }
+        groupBy: {
+          args: Prisma.ForumThreadGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ForumThreadGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ForumThreadCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ForumThreadCountAggregateOutputType> | number
+        }
+      }
+    }
+    ForumPost: {
+      payload: Prisma.$ForumPostPayload<ExtArgs>
+      fields: Prisma.ForumPostFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ForumPostFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumPostPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ForumPostFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumPostPayload>
+        }
+        findFirst: {
+          args: Prisma.ForumPostFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumPostPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ForumPostFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumPostPayload>
+        }
+        findMany: {
+          args: Prisma.ForumPostFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumPostPayload>[]
+        }
+        create: {
+          args: Prisma.ForumPostCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumPostPayload>
+        }
+        createMany: {
+          args: Prisma.ForumPostCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ForumPostCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumPostPayload>[]
+        }
+        delete: {
+          args: Prisma.ForumPostDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumPostPayload>
+        }
+        update: {
+          args: Prisma.ForumPostUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumPostPayload>
+        }
+        deleteMany: {
+          args: Prisma.ForumPostDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ForumPostUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ForumPostUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumPostPayload>[]
+        }
+        upsert: {
+          args: Prisma.ForumPostUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ForumPostPayload>
+        }
+        aggregate: {
+          args: Prisma.ForumPostAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateForumPost>
+        }
+        groupBy: {
+          args: Prisma.ForumPostGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ForumPostGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ForumPostCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ForumPostCountAggregateOutputType> | number
         }
       }
     }
@@ -2706,6 +3006,63 @@ export const LikeScalarFieldEnum = {
 export type LikeScalarFieldEnum = (typeof LikeScalarFieldEnum)[keyof typeof LikeScalarFieldEnum]
 
 
+export const ForumSectionScalarFieldEnum = {
+  id: 'id',
+  communityId: 'communityId',
+  name: 'name',
+  position: 'position',
+  createdAt: 'createdAt'
+} as const
+
+export type ForumSectionScalarFieldEnum = (typeof ForumSectionScalarFieldEnum)[keyof typeof ForumSectionScalarFieldEnum]
+
+
+export const ForumCategoryScalarFieldEnum = {
+  id: 'id',
+  communityId: 'communityId',
+  sectionId: 'sectionId',
+  name: 'name',
+  description: 'description',
+  position: 'position',
+  createdAt: 'createdAt'
+} as const
+
+export type ForumCategoryScalarFieldEnum = (typeof ForumCategoryScalarFieldEnum)[keyof typeof ForumCategoryScalarFieldEnum]
+
+
+export const ForumThreadScalarFieldEnum = {
+  id: 'id',
+  communityId: 'communityId',
+  categoryId: 'categoryId',
+  authorId: 'authorId',
+  title: 'title',
+  replyCount: 'replyCount',
+  lastPostAt: 'lastPostAt',
+  pinnedAt: 'pinnedAt',
+  lockedAt: 'lockedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type ForumThreadScalarFieldEnum = (typeof ForumThreadScalarFieldEnum)[keyof typeof ForumThreadScalarFieldEnum]
+
+
+export const ForumPostScalarFieldEnum = {
+  id: 'id',
+  threadId: 'threadId',
+  communityId: 'communityId',
+  authorId: 'authorId',
+  opening: 'opening',
+  content: 'content',
+  quoteId: 'quoteId',
+  likeCount: 'likeCount',
+  hiddenAt: 'hiddenAt',
+  editedAt: 'editedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type ForumPostScalarFieldEnum = (typeof ForumPostScalarFieldEnum)[keyof typeof ForumPostScalarFieldEnum]
+
+
 export const FriendshipScalarFieldEnum = {
   requesterId: 'requesterId',
   addresseeId: 'addresseeId',
@@ -3395,6 +3752,10 @@ export type GlobalOmitConfig = {
   post?: Prisma.PostOmit
   comment?: Prisma.CommentOmit
   like?: Prisma.LikeOmit
+  forumSection?: Prisma.ForumSectionOmit
+  forumCategory?: Prisma.ForumCategoryOmit
+  forumThread?: Prisma.ForumThreadOmit
+  forumPost?: Prisma.ForumPostOmit
   friendship?: Prisma.FriendshipOmit
   suggestionDismissal?: Prisma.SuggestionDismissalOmit
   libraryEntry?: Prisma.LibraryEntryOmit

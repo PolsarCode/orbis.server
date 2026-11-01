@@ -7,6 +7,8 @@ import {
   targetOf,
 } from '../posts/wall-access';
 import { reportedBy, visibleTo } from '../moderation/visibility';
+import { requireMembership } from '../communities/require-membership';
+import { visibleThreads } from '../forum/forum-helpers';
 import { LikeDto } from './dto/like.dto';
 
 export type LikeResult = { likeCount: number; liked: boolean };
@@ -28,9 +30,23 @@ export class LikesService {
     return new Set(likes.map(({ likeableId }) => likeableId));
   }
 
+  private async requireForumPostAccess(userId: number, id: number) {
+    const reported = await reportedBy(this.prisma, userId);
+    const post = await this.prisma.forumPost.findFirst({
+      where: {
+        id,
+        ...visibleTo(userId, reported.forum_post),
+        thread: visibleThreads(userId, reported.forum_post),
+      },
+      select: { communityId: true },
+    });
+    if (!post) throw new NotFoundException('Not found');
+    await requireMembership(this.prisma, userId, post.communityId);
+  }
+
   private async targetFor(
     userId: number,
-    type: LikeableType,
+    type: Exclude<LikeableType, 'forum_post'>,
     id: number,
   ): Promise<EngagementTarget> {
     if (type !== 'comment') return targetOf(this.prisma, userId, type, id);
@@ -53,8 +69,12 @@ export class LikesService {
     userId: number,
     { type, id, liked }: LikeDto,
   ): Promise<LikeResult> {
-    const target = await this.targetFor(userId, type, id);
-    await requireTargetAccess(this.prisma, userId, target);
+    if (type === 'forum_post') {
+      await this.requireForumPostAccess(userId, id);
+    } else {
+      const target = await this.targetFor(userId, type, id);
+      await requireTargetAccess(this.prisma, userId, target);
+    }
 
     return this.prisma.$transaction(async (tx) => {
       const key = {
@@ -82,7 +102,9 @@ export class LikesService {
           ? await tx.post.update({ where: { id }, data, select })
           : type === 'activity'
             ? await tx.libraryActivity.update({ where: { id }, data, select })
-            : await tx.comment.update({ where: { id }, data, select });
+            : type === 'forum_post'
+              ? await tx.forumPost.update({ where: { id }, data, select })
+              : await tx.comment.update({ where: { id }, data, select });
 
       return { likeCount, liked };
     });

@@ -25,6 +25,10 @@ model Community {
   comments      Comment[]
   invites       Invite[]
   discordChannel DiscordChannel?
+  forumSections ForumSection[]
+  forumCategories ForumCategory[]
+  forumThreads  ForumThread[]
+  forumPosts    ForumPost[]
 
   @@index([ownerId])
 }

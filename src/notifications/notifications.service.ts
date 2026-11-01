@@ -12,7 +12,14 @@ import { MAX_INT } from '../communities/community-member.guard';
 const PAGE_SIZE = 20;
 
 const filters: Record<string, NotificationType[]> = {
-  comments: ['post_comment', 'comment_reply', 'wall_post', 'mention'],
+  comments: [
+    'post_comment',
+    'comment_reply',
+    'wall_post',
+    'mention',
+    'forum_reply',
+    'forum_quote',
+  ],
   friends: ['friend_request', 'friend_accepted'],
   reports: ['report_status', 'report_assigned', 'report_comment'],
 };
