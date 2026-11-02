@@ -9,9 +9,4 @@ export class AppController {
   home() {
     return this.appService.home();
   }
-
-  @Get('health')
-  health() {
-    return { status: 'ok' };
-  }
 }
