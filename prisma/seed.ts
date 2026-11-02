@@ -2383,6 +2383,15 @@ async function main() {
     });
 
     if (community.name === 'Seasonal Anime Club') {
+      await prisma.communityBan.create({
+        data: {
+          communityId: created.id,
+          userId: userIds.vegeta,
+          bannedById: userIds.admin,
+          reason: 'Kept putting spoilers in post titles',
+          createdAt: minutesAgo(days(2)),
+        },
+      });
       await prisma.community.update({
         where: { id: created.id },
         data: {

@@ -11,6 +11,7 @@ describe('Community details', () => {
   const prisma = {
     community: { findUnique: jest.fn() },
     membership: { findUnique: jest.fn(), update: jest.fn() },
+    communityBan: { findUnique: jest.fn().mockResolvedValue(null) },
   };
   const twitch = { nextStream: jest.fn() };
   const service = new CommunitiesService(
@@ -174,6 +175,7 @@ describe('Community connection switches', () => {
   const prisma = {
     community: { findUnique: jest.fn(), update: jest.fn() },
     membership: { findUnique: jest.fn() },
+    communityBan: { findUnique: jest.fn().mockResolvedValue(null) },
   };
   const presence = {
     isCommunityLive: jest.fn(() => true),

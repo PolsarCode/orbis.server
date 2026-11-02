@@ -20,6 +20,7 @@ import { DiscordWidget, discordWidget } from './discord-widget';
 import { deleteWebhook } from '../discord-channel/discord-webhook';
 import { discussionCleanup } from '../comments/discussion-cleanup';
 import { requireEstablishedAccount } from '../common/new-account';
+import { isBanned, requireNotBanned } from './bans';
 
 export type CommunityMember = {
   userId: number;
@@ -40,6 +41,7 @@ export type CommunityMember = {
 
 export type CommunityWithRole = CommunityModel & {
   role: CommunityRole | null;
+  banned?: boolean;
   memberCount?: number;
   live?: boolean;
   nextStream?: NextStream | null;
@@ -289,6 +291,7 @@ export class CommunitiesService {
     }
 
     if (!(await this.roleOf(userId, communityId))) {
+      await requireNotBanned(this.prisma, userId, communityId);
       await this.requireRoomToJoin(userId);
     }
     const position = await this.nextRailPosition(userId);
@@ -660,7 +663,7 @@ export class CommunitiesService {
   }
 
   async findOne(userId: number, id: number): Promise<CommunityWithRole | null> {
-    const [community, role, membership] = await Promise.all([
+    const [community, role, membership, banned] = await Promise.all([
       this.prisma.community.findUnique({
         where: { id },
         include: { _count: { select: { memberships: true } } },
@@ -670,6 +673,7 @@ export class CommunitiesService {
         where: { userId_communityId: { userId, communityId: id } },
         select: { showLibraryUpdates: true },
       }),
+      isBanned(this.prisma, userId, id),
     ]);
     if (!community || (!role && !community.isPublic)) return null;
 
@@ -694,6 +698,7 @@ export class CommunitiesService {
             }
           : discord,
       ...(role && { showLibraryUpdates: membership?.showLibraryUpdates }),
+      ...(banned && { banned }),
     };
   }
 

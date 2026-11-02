@@ -59,6 +59,7 @@ export const ModelName = {
   Invite: 'Invite',
   DiscordChannel: 'DiscordChannel',
   DiscordMessage: 'DiscordMessage',
+  CommunityBan: 'CommunityBan',
   Post: 'Post',
   Comment: 'Comment',
   Like: 'Like',
@@ -214,6 +215,17 @@ export const DiscordMessageScalarFieldEnum = {
 } as const
 
 export type DiscordMessageScalarFieldEnum = (typeof DiscordMessageScalarFieldEnum)[keyof typeof DiscordMessageScalarFieldEnum]
+
+
+export const CommunityBanScalarFieldEnum = {
+  communityId: 'communityId',
+  userId: 'userId',
+  bannedById: 'bannedById',
+  reason: 'reason',
+  createdAt: 'createdAt'
+} as const
+
+export type CommunityBanScalarFieldEnum = (typeof CommunityBanScalarFieldEnum)[keyof typeof CommunityBanScalarFieldEnum]
 
 
 export const PostScalarFieldEnum = {

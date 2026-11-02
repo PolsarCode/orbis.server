@@ -392,6 +392,7 @@ export const ModelName = {
   Invite: 'Invite',
   DiscordChannel: 'DiscordChannel',
   DiscordMessage: 'DiscordMessage',
+  CommunityBan: 'CommunityBan',
   Post: 'Post',
   Comment: 'Comment',
   Like: 'Like',
@@ -431,7 +432,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "community" | "membership" | "railFolder" | "role" | "membershipRole" | "invite" | "discordChannel" | "discordMessage" | "post" | "comment" | "like" | "forumSection" | "forumCategory" | "forumThread" | "forumPost" | "friendship" | "suggestionDismissal" | "libraryEntry" | "libraryActivity" | "conversation" | "conversationMember" | "message" | "messageReaction" | "notification" | "report" | "reportComment" | "contentReport" | "setting" | "steamAccount" | "steamGame" | "user" | "oAuthAccount"
+    modelProps: "community" | "membership" | "railFolder" | "role" | "membershipRole" | "invite" | "discordChannel" | "discordMessage" | "communityBan" | "post" | "comment" | "like" | "forumSection" | "forumCategory" | "forumThread" | "forumPost" | "friendship" | "suggestionDismissal" | "libraryEntry" | "libraryActivity" | "conversation" | "conversationMember" | "message" | "messageReaction" | "notification" | "report" | "reportComment" | "contentReport" | "setting" | "steamAccount" | "steamGame" | "user" | "oAuthAccount"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1024,6 +1025,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.DiscordMessageCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.DiscordMessageCountAggregateOutputType> | number
+        }
+      }
+    }
+    CommunityBan: {
+      payload: Prisma.$CommunityBanPayload<ExtArgs>
+      fields: Prisma.CommunityBanFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CommunityBanFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityBanPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CommunityBanFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityBanPayload>
+        }
+        findFirst: {
+          args: Prisma.CommunityBanFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityBanPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CommunityBanFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityBanPayload>
+        }
+        findMany: {
+          args: Prisma.CommunityBanFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityBanPayload>[]
+        }
+        create: {
+          args: Prisma.CommunityBanCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityBanPayload>
+        }
+        createMany: {
+          args: Prisma.CommunityBanCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CommunityBanCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityBanPayload>[]
+        }
+        delete: {
+          args: Prisma.CommunityBanDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityBanPayload>
+        }
+        update: {
+          args: Prisma.CommunityBanUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityBanPayload>
+        }
+        deleteMany: {
+          args: Prisma.CommunityBanDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CommunityBanUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CommunityBanUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityBanPayload>[]
+        }
+        upsert: {
+          args: Prisma.CommunityBanUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityBanPayload>
+        }
+        aggregate: {
+          args: Prisma.CommunityBanAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCommunityBan>
+        }
+        groupBy: {
+          args: Prisma.CommunityBanGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CommunityBanGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CommunityBanCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CommunityBanCountAggregateOutputType> | number
         }
       }
     }
@@ -2957,6 +3032,17 @@ export const DiscordMessageScalarFieldEnum = {
 export type DiscordMessageScalarFieldEnum = (typeof DiscordMessageScalarFieldEnum)[keyof typeof DiscordMessageScalarFieldEnum]
 
 
+export const CommunityBanScalarFieldEnum = {
+  communityId: 'communityId',
+  userId: 'userId',
+  bannedById: 'bannedById',
+  reason: 'reason',
+  createdAt: 'createdAt'
+} as const
+
+export type CommunityBanScalarFieldEnum = (typeof CommunityBanScalarFieldEnum)[keyof typeof CommunityBanScalarFieldEnum]
+
+
 export const PostScalarFieldEnum = {
   id: 'id',
   communityId: 'communityId',
@@ -3751,6 +3837,7 @@ export type GlobalOmitConfig = {
   invite?: Prisma.InviteOmit
   discordChannel?: Prisma.DiscordChannelOmit
   discordMessage?: Prisma.DiscordMessageOmit
+  communityBan?: Prisma.CommunityBanOmit
   post?: Prisma.PostOmit
   comment?: Prisma.CommentOmit
   like?: Prisma.LikeOmit

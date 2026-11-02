@@ -58,6 +58,11 @@ export type DiscordChannel = Prisma.DiscordChannelModel
  */
 export type DiscordMessage = Prisma.DiscordMessageModel
 /**
+ * Model CommunityBan
+ * 
+ */
+export type CommunityBan = Prisma.CommunityBanModel
+/**
  * Model Post
  * 
  */

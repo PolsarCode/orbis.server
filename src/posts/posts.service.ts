@@ -37,6 +37,10 @@ import { discussionCleanup } from '../comments/discussion-cleanup';
 import { containsLink, requireEstablishedAccount } from '../common/new-account';
 import { notSuspended } from '../users/suspension';
 import { pinLimit, pinLimitMessage } from './pins';
+import {
+  AuthorModeration,
+  authorModeration,
+} from '../communities/member-moderation';
 
 const postInclude = {
   author,
@@ -76,6 +80,7 @@ export type PostItem = RawPost &
     canDelete: boolean;
     pinned?: boolean;
     canPin?: boolean;
+    moderation?: AuthorModeration | null;
   };
 
 const activityInclude = {
@@ -308,6 +313,17 @@ export class PostsService {
       viewerId,
       items.map(communityOf),
     );
+    const moderationOf = await authorModeration(
+      this.prisma,
+      viewerId,
+      items.flatMap((item) =>
+        item.type === 'post' &&
+        item.communityId !== null &&
+        managed.has(item.communityId)
+          ? [{ communityId: item.communityId, authorId: item.author.id }]
+          : [],
+      ),
+    );
 
     const steamOf = await loadSteamLinks(
       this.prisma,
@@ -336,7 +352,11 @@ export class PostsService {
         item.author.id === viewerId ||
         item.wallUserId === viewerId ||
         (item.communityId !== null && managed.has(item.communityId));
-      return { ...item, author, liked, previewComments, canDelete };
+      const moderation =
+        item.communityId === null
+          ? null
+          : moderationOf(item.communityId, item.author.id);
+      return { ...item, author, liked, previewComments, canDelete, moderation };
     });
   }
 

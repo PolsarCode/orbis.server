@@ -26,6 +26,7 @@ model Community {
   invites       Invite[]
   discordChannel DiscordChannel?
   forumSections ForumSection[]
+  bans          CommunityBan[]
   forumCategories ForumCategory[]
   forumThreads  ForumThread[]
   forumPosts    ForumPost[]
@@ -133,4 +134,19 @@ model DiscordMessage {
 
   @@unique([communityId, targetType, targetId])
   @@index([targetType, targetId])
+}
+
+model CommunityBan {
+  communityId Int
+  userId      Int
+  bannedById  Int
+  reason      String?
+  createdAt   DateTime  @default(now())
+  community   Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  user        User      @relation("CommunityBans", fields: [userId], references: [id], onDelete: Cascade)
+  bannedBy    User      @relation("CommunityBansIssued", fields: [bannedById], references: [id], onDelete: Cascade)
+
+  @@id([communityId, userId])
+  @@index([userId])
+  @@index([bannedById])
 }

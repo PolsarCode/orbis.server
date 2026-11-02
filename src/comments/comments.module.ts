@@ -9,5 +9,6 @@ import { NotificationsModule } from '../notifications/notifications.module';
   imports: [LikesModule, NotificationsModule],
   controllers: [CommentsController],
   providers: [CommentsService, PrismaService],
+  exports: [CommentsService],
 })
 export class CommentsModule {}

@@ -26,5 +26,6 @@ import { DiscordChannelModule } from '../discord-channel/discord-channel.module'
     CommunityViewerGuard,
     PrismaService,
   ],
+  exports: [PostsService],
 })
 export class PostsModule {}

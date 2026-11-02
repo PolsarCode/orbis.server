@@ -74,6 +74,8 @@ function setup() {
     },
     like: { deleteMany: jest.fn() },
     notification: { deleteMany: jest.fn() },
+    membership: { findMany: jest.fn().mockResolvedValue([]) },
+    communityBan: { findMany: jest.fn().mockResolvedValue([]) },
     $transaction: jest.fn(),
   };
   prisma.$transaction.mockImplementation((operations: unknown) =>
@@ -191,6 +193,51 @@ describe('Forum thread pages', () => {
 
     expect(member.thread).toMatchObject({ locked: true, canReply: false });
     expect(admin.thread).toMatchObject({ canReply: true, canModerate: true });
+  });
+});
+
+describe('Moderating authors from a thread', () => {
+  function post(id: number, authorId: number) {
+    return {
+      id,
+      threadId: 9,
+      opening: id === 40,
+      content: '<p>Hi</p>',
+      quoteId: null,
+      likeCount: 0,
+      hiddenAt: null,
+      editedAt: null,
+      createdAt: new Date(),
+      author: { ...author, id: authorId },
+    };
+  }
+
+  it('offers admins remove and ban on other people’s posts, and nobody else', async () => {
+    const { prisma, service } = setup();
+    prisma.forumThread.findFirst.mockResolvedValue({
+      ...thread(9),
+      authorId: 4,
+      category: { id: 5, name: 'General', section: null },
+    });
+    prisma.forumPost.findMany.mockResolvedValue([post(40, 4), post(41, 7)]);
+    prisma.membership.findMany.mockResolvedValue([
+      { userId: 7, communityId: 3, community: { ownerId: 7 }, roles: [] },
+      { userId: 4, communityId: 3, community: { ownerId: 7 }, roles: [] },
+    ]);
+
+    const member = await service.thread(7, 3, 9);
+    expect(member.items.map(({ moderation }) => moderation)).toEqual([
+      null,
+      null,
+    ]);
+    expect(prisma.membership.findMany).not.toHaveBeenCalled();
+
+    jest.mocked(isForumManager).mockResolvedValue(true);
+    const owner = await service.thread(7, 3, 9);
+    expect(owner.items.map(({ moderation }) => moderation)).toEqual([
+      { remove: true, ban: true },
+      null,
+    ]);
   });
 });
 

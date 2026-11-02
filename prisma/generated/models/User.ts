@@ -426,6 +426,8 @@ export type UserWhereInput = {
   dismissedBy?: Prisma.SuggestionDismissalListRelationFilter
   comments?: Prisma.CommentListRelationFilter
   forumThreads?: Prisma.ForumThreadListRelationFilter
+  communityBans?: Prisma.CommunityBanListRelationFilter
+  issuedCommunityBans?: Prisma.CommunityBanListRelationFilter
   forumPosts?: Prisma.ForumPostListRelationFilter
   reports?: Prisma.ReportListRelationFilter
   assignedReports?: Prisma.ReportListRelationFilter
@@ -490,6 +492,8 @@ export type UserOrderByWithRelationInput = {
   dismissedBy?: Prisma.SuggestionDismissalOrderByRelationAggregateInput
   comments?: Prisma.CommentOrderByRelationAggregateInput
   forumThreads?: Prisma.ForumThreadOrderByRelationAggregateInput
+  communityBans?: Prisma.CommunityBanOrderByRelationAggregateInput
+  issuedCommunityBans?: Prisma.CommunityBanOrderByRelationAggregateInput
   forumPosts?: Prisma.ForumPostOrderByRelationAggregateInput
   reports?: Prisma.ReportOrderByRelationAggregateInput
   assignedReports?: Prisma.ReportOrderByRelationAggregateInput
@@ -557,6 +561,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   dismissedBy?: Prisma.SuggestionDismissalListRelationFilter
   comments?: Prisma.CommentListRelationFilter
   forumThreads?: Prisma.ForumThreadListRelationFilter
+  communityBans?: Prisma.CommunityBanListRelationFilter
+  issuedCommunityBans?: Prisma.CommunityBanListRelationFilter
   forumPosts?: Prisma.ForumPostListRelationFilter
   reports?: Prisma.ReportListRelationFilter
   assignedReports?: Prisma.ReportListRelationFilter
@@ -694,6 +700,8 @@ export type UserCreateInput = {
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
@@ -758,6 +766,8 @@ export type UserUncheckedCreateInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
@@ -821,6 +831,8 @@ export type UserUpdateInput = {
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
@@ -885,6 +897,8 @@ export type UserUncheckedUpdateInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -1185,6 +1199,34 @@ export type UserUpdateOneRequiredWithoutInvitesNestedInput = {
   upsert?: Prisma.UserUpsertWithoutInvitesInput
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutInvitesInput, Prisma.UserUpdateWithoutInvitesInput>, Prisma.UserUncheckedUpdateWithoutInvitesInput>
+}
+
+export type UserCreateNestedOneWithoutCommunityBansInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCommunityBansInput, Prisma.UserUncheckedCreateWithoutCommunityBansInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCommunityBansInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutIssuedCommunityBansInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutIssuedCommunityBansInput, Prisma.UserUncheckedCreateWithoutIssuedCommunityBansInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutIssuedCommunityBansInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutCommunityBansNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCommunityBansInput, Prisma.UserUncheckedCreateWithoutCommunityBansInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCommunityBansInput
+  upsert?: Prisma.UserUpsertWithoutCommunityBansInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCommunityBansInput, Prisma.UserUpdateWithoutCommunityBansInput>, Prisma.UserUncheckedUpdateWithoutCommunityBansInput>
+}
+
+export type UserUpdateOneRequiredWithoutIssuedCommunityBansNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutIssuedCommunityBansInput, Prisma.UserUncheckedCreateWithoutIssuedCommunityBansInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutIssuedCommunityBansInput
+  upsert?: Prisma.UserUpsertWithoutIssuedCommunityBansInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutIssuedCommunityBansInput, Prisma.UserUpdateWithoutIssuedCommunityBansInput>, Prisma.UserUncheckedUpdateWithoutIssuedCommunityBansInput>
 }
 
 export type UserCreateNestedOneWithoutWallPostsInput = {
@@ -1644,6 +1686,8 @@ export type UserCreateWithoutOwnedCommunitiesInput = {
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
@@ -1707,6 +1751,8 @@ export type UserUncheckedCreateWithoutOwnedCommunitiesInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
@@ -1785,6 +1831,8 @@ export type UserUpdateWithoutOwnedCommunitiesInput = {
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
@@ -1848,6 +1896,8 @@ export type UserUncheckedUpdateWithoutOwnedCommunitiesInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -1910,6 +1960,8 @@ export type UserCreateWithoutMembershipsInput = {
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
@@ -1973,6 +2025,8 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
@@ -2051,6 +2105,8 @@ export type UserUpdateWithoutMembershipsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
@@ -2114,6 +2170,8 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -2177,6 +2235,8 @@ export type UserCreateWithoutRailFoldersInput = {
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
@@ -2240,6 +2300,8 @@ export type UserUncheckedCreateWithoutRailFoldersInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
@@ -2318,6 +2380,8 @@ export type UserUpdateWithoutRailFoldersInput = {
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
@@ -2381,6 +2445,8 @@ export type UserUncheckedUpdateWithoutRailFoldersInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -2443,6 +2509,8 @@ export type UserCreateWithoutInvitesInput = {
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
@@ -2506,6 +2574,8 @@ export type UserUncheckedCreateWithoutInvitesInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
@@ -2584,6 +2654,8 @@ export type UserUpdateWithoutInvitesInput = {
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
@@ -2647,6 +2719,8 @@ export type UserUncheckedUpdateWithoutInvitesInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -2660,6 +2734,554 @@ export type UserUncheckedUpdateWithoutInvitesInput = {
   steamGames?: Prisma.SteamGameUncheckedUpdateManyWithoutUserNestedInput
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
+  createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
+  conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
+  conversationsAsB?: Prisma.ConversationUncheckedUpdateManyWithoutUserBNestedInput
+  conversations?: Prisma.ConversationMemberUncheckedUpdateManyWithoutUserNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  oauthAccounts?: Prisma.OAuthAccountUncheckedUpdateManyWithoutUserNestedInput
+  messageReactions?: Prisma.MessageReactionUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutCommunityBansInput = {
+  email: string
+  username: string
+  name?: string | null
+  avatarUrl?: string | null
+  coverUrl?: string | null
+  backgroundUrl?: string | null
+  password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
+  emailVerifiedAt?: Date | string | null
+  theme?: $Enums.Theme
+  appearOffline?: boolean
+  showNsfw?: boolean
+  showChangelog?: boolean
+  status?: $Enums.UserStatus
+  isPublic?: boolean
+  isAdmin?: boolean
+  isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
+  tourCompletedAt?: Date | string | null
+  checklistDismissedAt?: Date | string | null
+  completedTours?: Prisma.UserCreatecompletedToursInput | string[]
+  createdAt?: Date | string
+  ownedCommunities?: Prisma.CommunityCreateNestedManyWithoutOwnerInput
+  memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
+  posts?: Prisma.PostCreateNestedManyWithoutAuthorInput
+  wallPosts?: Prisma.PostCreateNestedManyWithoutWallUserInput
+  sentFriendships?: Prisma.FriendshipCreateNestedManyWithoutRequesterInput
+  receivedFriendships?: Prisma.FriendshipCreateNestedManyWithoutAddresseeInput
+  suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
+  dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
+  comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
+  reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
+  assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
+  reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
+  contentReports?: Prisma.ContentReportCreateNestedManyWithoutReporterInput
+  resolvedReports?: Prisma.ContentReportCreateNestedManyWithoutResolvedByInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  causedNotifications?: Prisma.NotificationCreateNestedManyWithoutActorInput
+  libraryEntries?: Prisma.LibraryEntryCreateNestedManyWithoutUserInput
+  steamAccount?: Prisma.SteamAccountCreateNestedOneWithoutUserInput
+  steamGames?: Prisma.SteamGameCreateNestedManyWithoutUserInput
+  railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
+  likes?: Prisma.LikeCreateNestedManyWithoutUserInput
+  invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
+  createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
+  conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
+  conversationsAsB?: Prisma.ConversationCreateNestedManyWithoutUserBInput
+  conversations?: Prisma.ConversationMemberCreateNestedManyWithoutUserInput
+  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  oauthAccounts?: Prisma.OAuthAccountCreateNestedManyWithoutUserInput
+  messageReactions?: Prisma.MessageReactionCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutCommunityBansInput = {
+  id?: number
+  email: string
+  username: string
+  name?: string | null
+  avatarUrl?: string | null
+  coverUrl?: string | null
+  backgroundUrl?: string | null
+  password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
+  emailVerifiedAt?: Date | string | null
+  theme?: $Enums.Theme
+  appearOffline?: boolean
+  showNsfw?: boolean
+  showChangelog?: boolean
+  status?: $Enums.UserStatus
+  isPublic?: boolean
+  isAdmin?: boolean
+  isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
+  tourCompletedAt?: Date | string | null
+  checklistDismissedAt?: Date | string | null
+  completedTours?: Prisma.UserCreatecompletedToursInput | string[]
+  createdAt?: Date | string
+  ownedCommunities?: Prisma.CommunityUncheckedCreateNestedManyWithoutOwnerInput
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput
+  wallPosts?: Prisma.PostUncheckedCreateNestedManyWithoutWallUserInput
+  sentFriendships?: Prisma.FriendshipUncheckedCreateNestedManyWithoutRequesterInput
+  receivedFriendships?: Prisma.FriendshipUncheckedCreateNestedManyWithoutAddresseeInput
+  suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
+  dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
+  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
+  assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
+  reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
+  contentReports?: Prisma.ContentReportUncheckedCreateNestedManyWithoutReporterInput
+  resolvedReports?: Prisma.ContentReportUncheckedCreateNestedManyWithoutResolvedByInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  causedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput
+  libraryEntries?: Prisma.LibraryEntryUncheckedCreateNestedManyWithoutUserInput
+  steamAccount?: Prisma.SteamAccountUncheckedCreateNestedOneWithoutUserInput
+  steamGames?: Prisma.SteamGameUncheckedCreateNestedManyWithoutUserInput
+  railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
+  invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
+  createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
+  conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
+  conversationsAsB?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserBInput
+  conversations?: Prisma.ConversationMemberUncheckedCreateNestedManyWithoutUserInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  oauthAccounts?: Prisma.OAuthAccountUncheckedCreateNestedManyWithoutUserInput
+  messageReactions?: Prisma.MessageReactionUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCommunityBansInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCommunityBansInput, Prisma.UserUncheckedCreateWithoutCommunityBansInput>
+}
+
+export type UserCreateWithoutIssuedCommunityBansInput = {
+  email: string
+  username: string
+  name?: string | null
+  avatarUrl?: string | null
+  coverUrl?: string | null
+  backgroundUrl?: string | null
+  password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
+  emailVerifiedAt?: Date | string | null
+  theme?: $Enums.Theme
+  appearOffline?: boolean
+  showNsfw?: boolean
+  showChangelog?: boolean
+  status?: $Enums.UserStatus
+  isPublic?: boolean
+  isAdmin?: boolean
+  isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
+  tourCompletedAt?: Date | string | null
+  checklistDismissedAt?: Date | string | null
+  completedTours?: Prisma.UserCreatecompletedToursInput | string[]
+  createdAt?: Date | string
+  ownedCommunities?: Prisma.CommunityCreateNestedManyWithoutOwnerInput
+  memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
+  posts?: Prisma.PostCreateNestedManyWithoutAuthorInput
+  wallPosts?: Prisma.PostCreateNestedManyWithoutWallUserInput
+  sentFriendships?: Prisma.FriendshipCreateNestedManyWithoutRequesterInput
+  receivedFriendships?: Prisma.FriendshipCreateNestedManyWithoutAddresseeInput
+  suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
+  dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
+  comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
+  reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
+  assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
+  reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
+  contentReports?: Prisma.ContentReportCreateNestedManyWithoutReporterInput
+  resolvedReports?: Prisma.ContentReportCreateNestedManyWithoutResolvedByInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  causedNotifications?: Prisma.NotificationCreateNestedManyWithoutActorInput
+  libraryEntries?: Prisma.LibraryEntryCreateNestedManyWithoutUserInput
+  steamAccount?: Prisma.SteamAccountCreateNestedOneWithoutUserInput
+  steamGames?: Prisma.SteamGameCreateNestedManyWithoutUserInput
+  railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
+  likes?: Prisma.LikeCreateNestedManyWithoutUserInput
+  invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
+  createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
+  conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
+  conversationsAsB?: Prisma.ConversationCreateNestedManyWithoutUserBInput
+  conversations?: Prisma.ConversationMemberCreateNestedManyWithoutUserInput
+  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  oauthAccounts?: Prisma.OAuthAccountCreateNestedManyWithoutUserInput
+  messageReactions?: Prisma.MessageReactionCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutIssuedCommunityBansInput = {
+  id?: number
+  email: string
+  username: string
+  name?: string | null
+  avatarUrl?: string | null
+  coverUrl?: string | null
+  backgroundUrl?: string | null
+  password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
+  emailVerifiedAt?: Date | string | null
+  theme?: $Enums.Theme
+  appearOffline?: boolean
+  showNsfw?: boolean
+  showChangelog?: boolean
+  status?: $Enums.UserStatus
+  isPublic?: boolean
+  isAdmin?: boolean
+  isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
+  tourCompletedAt?: Date | string | null
+  checklistDismissedAt?: Date | string | null
+  completedTours?: Prisma.UserCreatecompletedToursInput | string[]
+  createdAt?: Date | string
+  ownedCommunities?: Prisma.CommunityUncheckedCreateNestedManyWithoutOwnerInput
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput
+  wallPosts?: Prisma.PostUncheckedCreateNestedManyWithoutWallUserInput
+  sentFriendships?: Prisma.FriendshipUncheckedCreateNestedManyWithoutRequesterInput
+  receivedFriendships?: Prisma.FriendshipUncheckedCreateNestedManyWithoutAddresseeInput
+  suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
+  dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
+  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
+  assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
+  reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
+  contentReports?: Prisma.ContentReportUncheckedCreateNestedManyWithoutReporterInput
+  resolvedReports?: Prisma.ContentReportUncheckedCreateNestedManyWithoutResolvedByInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  causedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput
+  libraryEntries?: Prisma.LibraryEntryUncheckedCreateNestedManyWithoutUserInput
+  steamAccount?: Prisma.SteamAccountUncheckedCreateNestedOneWithoutUserInput
+  steamGames?: Prisma.SteamGameUncheckedCreateNestedManyWithoutUserInput
+  railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
+  invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
+  createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
+  conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
+  conversationsAsB?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserBInput
+  conversations?: Prisma.ConversationMemberUncheckedCreateNestedManyWithoutUserInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  oauthAccounts?: Prisma.OAuthAccountUncheckedCreateNestedManyWithoutUserInput
+  messageReactions?: Prisma.MessageReactionUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutIssuedCommunityBansInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutIssuedCommunityBansInput, Prisma.UserUncheckedCreateWithoutIssuedCommunityBansInput>
+}
+
+export type UserUpsertWithoutCommunityBansInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCommunityBansInput, Prisma.UserUncheckedUpdateWithoutCommunityBansInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCommunityBansInput, Prisma.UserUncheckedCreateWithoutCommunityBansInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCommunityBansInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCommunityBansInput, Prisma.UserUncheckedUpdateWithoutCommunityBansInput>
+}
+
+export type UserUpdateWithoutCommunityBansInput = {
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
+  appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showNsfw?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showChangelog?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ownedCommunities?: Prisma.CommunityUpdateManyWithoutOwnerNestedInput
+  memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
+  posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput
+  wallPosts?: Prisma.PostUpdateManyWithoutWallUserNestedInput
+  sentFriendships?: Prisma.FriendshipUpdateManyWithoutRequesterNestedInput
+  receivedFriendships?: Prisma.FriendshipUpdateManyWithoutAddresseeNestedInput
+  suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
+  dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
+  reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
+  assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
+  reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
+  contentReports?: Prisma.ContentReportUpdateManyWithoutReporterNestedInput
+  resolvedReports?: Prisma.ContentReportUpdateManyWithoutResolvedByNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  causedNotifications?: Prisma.NotificationUpdateManyWithoutActorNestedInput
+  libraryEntries?: Prisma.LibraryEntryUpdateManyWithoutUserNestedInput
+  steamAccount?: Prisma.SteamAccountUpdateOneWithoutUserNestedInput
+  steamGames?: Prisma.SteamGameUpdateManyWithoutUserNestedInput
+  railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
+  invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
+  createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
+  conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
+  conversationsAsB?: Prisma.ConversationUpdateManyWithoutUserBNestedInput
+  conversations?: Prisma.ConversationMemberUpdateManyWithoutUserNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  oauthAccounts?: Prisma.OAuthAccountUpdateManyWithoutUserNestedInput
+  messageReactions?: Prisma.MessageReactionUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCommunityBansInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
+  appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showNsfw?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showChangelog?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ownedCommunities?: Prisma.CommunityUncheckedUpdateManyWithoutOwnerNestedInput
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
+  posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput
+  wallPosts?: Prisma.PostUncheckedUpdateManyWithoutWallUserNestedInput
+  sentFriendships?: Prisma.FriendshipUncheckedUpdateManyWithoutRequesterNestedInput
+  receivedFriendships?: Prisma.FriendshipUncheckedUpdateManyWithoutAddresseeNestedInput
+  suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
+  dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
+  reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
+  assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
+  reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
+  contentReports?: Prisma.ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+  resolvedReports?: Prisma.ContentReportUncheckedUpdateManyWithoutResolvedByNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  causedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput
+  libraryEntries?: Prisma.LibraryEntryUncheckedUpdateManyWithoutUserNestedInput
+  steamAccount?: Prisma.SteamAccountUncheckedUpdateOneWithoutUserNestedInput
+  steamGames?: Prisma.SteamGameUncheckedUpdateManyWithoutUserNestedInput
+  railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
+  invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
+  createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
+  conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
+  conversationsAsB?: Prisma.ConversationUncheckedUpdateManyWithoutUserBNestedInput
+  conversations?: Prisma.ConversationMemberUncheckedUpdateManyWithoutUserNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  oauthAccounts?: Prisma.OAuthAccountUncheckedUpdateManyWithoutUserNestedInput
+  messageReactions?: Prisma.MessageReactionUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserUpsertWithoutIssuedCommunityBansInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutIssuedCommunityBansInput, Prisma.UserUncheckedUpdateWithoutIssuedCommunityBansInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutIssuedCommunityBansInput, Prisma.UserUncheckedCreateWithoutIssuedCommunityBansInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutIssuedCommunityBansInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutIssuedCommunityBansInput, Prisma.UserUncheckedUpdateWithoutIssuedCommunityBansInput>
+}
+
+export type UserUpdateWithoutIssuedCommunityBansInput = {
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
+  appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showNsfw?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showChangelog?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ownedCommunities?: Prisma.CommunityUpdateManyWithoutOwnerNestedInput
+  memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
+  posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput
+  wallPosts?: Prisma.PostUpdateManyWithoutWallUserNestedInput
+  sentFriendships?: Prisma.FriendshipUpdateManyWithoutRequesterNestedInput
+  receivedFriendships?: Prisma.FriendshipUpdateManyWithoutAddresseeNestedInput
+  suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
+  dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
+  reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
+  assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
+  reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
+  contentReports?: Prisma.ContentReportUpdateManyWithoutReporterNestedInput
+  resolvedReports?: Prisma.ContentReportUpdateManyWithoutResolvedByNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  causedNotifications?: Prisma.NotificationUpdateManyWithoutActorNestedInput
+  libraryEntries?: Prisma.LibraryEntryUpdateManyWithoutUserNestedInput
+  steamAccount?: Prisma.SteamAccountUpdateOneWithoutUserNestedInput
+  steamGames?: Prisma.SteamGameUpdateManyWithoutUserNestedInput
+  railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
+  invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
+  createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
+  conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
+  conversationsAsB?: Prisma.ConversationUpdateManyWithoutUserBNestedInput
+  conversations?: Prisma.ConversationMemberUpdateManyWithoutUserNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  oauthAccounts?: Prisma.OAuthAccountUpdateManyWithoutUserNestedInput
+  messageReactions?: Prisma.MessageReactionUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutIssuedCommunityBansInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
+  appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showNsfw?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showChangelog?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ownedCommunities?: Prisma.CommunityUncheckedUpdateManyWithoutOwnerNestedInput
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
+  posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput
+  wallPosts?: Prisma.PostUncheckedUpdateManyWithoutWallUserNestedInput
+  sentFriendships?: Prisma.FriendshipUncheckedUpdateManyWithoutRequesterNestedInput
+  receivedFriendships?: Prisma.FriendshipUncheckedUpdateManyWithoutAddresseeNestedInput
+  suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
+  dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
+  reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
+  assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
+  reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
+  contentReports?: Prisma.ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+  resolvedReports?: Prisma.ContentReportUncheckedUpdateManyWithoutResolvedByNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  causedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput
+  libraryEntries?: Prisma.LibraryEntryUncheckedUpdateManyWithoutUserNestedInput
+  steamAccount?: Prisma.SteamAccountUncheckedUpdateOneWithoutUserNestedInput
+  steamGames?: Prisma.SteamGameUncheckedUpdateManyWithoutUserNestedInput
+  railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
+  invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
   conversationsAsB?: Prisma.ConversationUncheckedUpdateManyWithoutUserBNestedInput
@@ -2708,6 +3330,8 @@ export type UserCreateWithoutWallPostsInput = {
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
@@ -2771,6 +3395,8 @@ export type UserUncheckedCreateWithoutWallPostsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
@@ -2838,6 +3464,8 @@ export type UserCreateWithoutPostsInput = {
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
@@ -2901,6 +3529,8 @@ export type UserUncheckedCreateWithoutPostsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
@@ -2979,6 +3609,8 @@ export type UserUpdateWithoutWallPostsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
@@ -3042,6 +3674,8 @@ export type UserUncheckedUpdateWithoutWallPostsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -3115,6 +3749,8 @@ export type UserUpdateWithoutPostsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
@@ -3178,6 +3814,8 @@ export type UserUncheckedUpdateWithoutPostsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -3240,6 +3878,8 @@ export type UserCreateWithoutCommentsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
@@ -3303,6 +3943,8 @@ export type UserUncheckedCreateWithoutCommentsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
@@ -3381,6 +4023,8 @@ export type UserUpdateWithoutCommentsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
@@ -3444,6 +4088,8 @@ export type UserUncheckedUpdateWithoutCommentsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -3507,6 +4153,8 @@ export type UserCreateWithoutLikesInput = {
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
@@ -3570,6 +4218,8 @@ export type UserUncheckedCreateWithoutLikesInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
@@ -3648,6 +4298,8 @@ export type UserUpdateWithoutLikesInput = {
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
@@ -3711,6 +4363,8 @@ export type UserUncheckedUpdateWithoutLikesInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -3772,6 +4426,8 @@ export type UserCreateWithoutForumThreadsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
@@ -3835,6 +4491,8 @@ export type UserUncheckedCreateWithoutForumThreadsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
@@ -3913,6 +4571,8 @@ export type UserUpdateWithoutForumThreadsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
@@ -3976,6 +4636,8 @@ export type UserUncheckedUpdateWithoutForumThreadsInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -4039,6 +4701,8 @@ export type UserCreateWithoutForumPostsInput = {
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -4102,6 +4766,8 @@ export type UserUncheckedCreateWithoutForumPostsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -4180,6 +4846,8 @@ export type UserUpdateWithoutForumPostsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -4243,6 +4911,8 @@ export type UserUncheckedUpdateWithoutForumPostsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -4304,6 +4974,8 @@ export type UserCreateWithoutSentFriendshipsInput = {
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
@@ -4367,6 +5039,8 @@ export type UserUncheckedCreateWithoutSentFriendshipsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
@@ -4434,6 +5108,8 @@ export type UserCreateWithoutReceivedFriendshipsInput = {
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
@@ -4497,6 +5173,8 @@ export type UserUncheckedCreateWithoutReceivedFriendshipsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
@@ -4575,6 +5253,8 @@ export type UserUpdateWithoutSentFriendshipsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
@@ -4638,6 +5318,8 @@ export type UserUncheckedUpdateWithoutSentFriendshipsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -4711,6 +5393,8 @@ export type UserUpdateWithoutReceivedFriendshipsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
@@ -4774,6 +5458,8 @@ export type UserUncheckedUpdateWithoutReceivedFriendshipsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -4836,6 +5522,8 @@ export type UserCreateWithoutSuggestionDismissalsInput = {
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
@@ -4899,6 +5587,8 @@ export type UserUncheckedCreateWithoutSuggestionDismissalsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
@@ -4966,6 +5656,8 @@ export type UserCreateWithoutDismissedByInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
@@ -5029,6 +5721,8 @@ export type UserUncheckedCreateWithoutDismissedByInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
@@ -5107,6 +5801,8 @@ export type UserUpdateWithoutSuggestionDismissalsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
@@ -5170,6 +5866,8 @@ export type UserUncheckedUpdateWithoutSuggestionDismissalsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -5243,6 +5941,8 @@ export type UserUpdateWithoutDismissedByInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
@@ -5306,6 +6006,8 @@ export type UserUncheckedUpdateWithoutDismissedByInput = {
   suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -5369,6 +6071,8 @@ export type UserCreateWithoutLibraryEntriesInput = {
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
@@ -5432,6 +6136,8 @@ export type UserUncheckedCreateWithoutLibraryEntriesInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
@@ -5510,6 +6216,8 @@ export type UserUpdateWithoutLibraryEntriesInput = {
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
@@ -5573,6 +6281,8 @@ export type UserUncheckedUpdateWithoutLibraryEntriesInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -5635,6 +6345,8 @@ export type UserCreateWithoutCreatedConversationsInput = {
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
@@ -5698,6 +6410,8 @@ export type UserUncheckedCreateWithoutCreatedConversationsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
@@ -5765,6 +6479,8 @@ export type UserCreateWithoutConversationsAsAInput = {
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
@@ -5828,6 +6544,8 @@ export type UserUncheckedCreateWithoutConversationsAsAInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
@@ -5895,6 +6613,8 @@ export type UserCreateWithoutConversationsAsBInput = {
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
@@ -5958,6 +6678,8 @@ export type UserUncheckedCreateWithoutConversationsAsBInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
@@ -6036,6 +6758,8 @@ export type UserUpdateWithoutCreatedConversationsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
@@ -6099,6 +6823,8 @@ export type UserUncheckedUpdateWithoutCreatedConversationsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -6172,6 +6898,8 @@ export type UserUpdateWithoutConversationsAsAInput = {
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
@@ -6235,6 +6963,8 @@ export type UserUncheckedUpdateWithoutConversationsAsAInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -6308,6 +7038,8 @@ export type UserUpdateWithoutConversationsAsBInput = {
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
@@ -6371,6 +7103,8 @@ export type UserUncheckedUpdateWithoutConversationsAsBInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -6433,6 +7167,8 @@ export type UserCreateWithoutConversationsInput = {
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
@@ -6496,6 +7232,8 @@ export type UserUncheckedCreateWithoutConversationsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
@@ -6574,6 +7312,8 @@ export type UserUpdateWithoutConversationsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
@@ -6637,6 +7377,8 @@ export type UserUncheckedUpdateWithoutConversationsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -6699,6 +7441,8 @@ export type UserCreateWithoutMessagesInput = {
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
@@ -6762,6 +7506,8 @@ export type UserUncheckedCreateWithoutMessagesInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
@@ -6840,6 +7586,8 @@ export type UserUpdateWithoutMessagesInput = {
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
@@ -6903,6 +7651,8 @@ export type UserUncheckedUpdateWithoutMessagesInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -6965,6 +7715,8 @@ export type UserCreateWithoutMessageReactionsInput = {
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
@@ -7028,6 +7780,8 @@ export type UserUncheckedCreateWithoutMessageReactionsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
@@ -7106,6 +7860,8 @@ export type UserUpdateWithoutMessageReactionsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
@@ -7169,6 +7925,8 @@ export type UserUncheckedUpdateWithoutMessageReactionsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -7231,6 +7989,8 @@ export type UserCreateWithoutNotificationsInput = {
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
@@ -7294,6 +8054,8 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
@@ -7361,6 +8123,8 @@ export type UserCreateWithoutCausedNotificationsInput = {
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
@@ -7424,6 +8188,8 @@ export type UserUncheckedCreateWithoutCausedNotificationsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
@@ -7502,6 +8268,8 @@ export type UserUpdateWithoutNotificationsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
@@ -7565,6 +8333,8 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -7638,6 +8408,8 @@ export type UserUpdateWithoutCausedNotificationsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
@@ -7701,6 +8473,8 @@ export type UserUncheckedUpdateWithoutCausedNotificationsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -7763,6 +8537,8 @@ export type UserCreateWithoutReportsInput = {
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -7826,6 +8602,8 @@ export type UserUncheckedCreateWithoutReportsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -7893,6 +8671,8 @@ export type UserCreateWithoutAssignedReportsInput = {
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
@@ -7956,6 +8736,8 @@ export type UserUncheckedCreateWithoutAssignedReportsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -8034,6 +8816,8 @@ export type UserUpdateWithoutReportsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -8097,6 +8881,8 @@ export type UserUncheckedUpdateWithoutReportsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -8170,6 +8956,8 @@ export type UserUpdateWithoutAssignedReportsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
@@ -8233,6 +9021,8 @@ export type UserUncheckedUpdateWithoutAssignedReportsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -8295,6 +9085,8 @@ export type UserCreateWithoutReportCommentsInput = {
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
@@ -8358,6 +9150,8 @@ export type UserUncheckedCreateWithoutReportCommentsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
@@ -8436,6 +9230,8 @@ export type UserUpdateWithoutReportCommentsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
@@ -8499,6 +9295,8 @@ export type UserUncheckedUpdateWithoutReportCommentsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -8561,6 +9359,8 @@ export type UserCreateWithoutContentReportsInput = {
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
@@ -8624,6 +9424,8 @@ export type UserUncheckedCreateWithoutContentReportsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
@@ -8691,6 +9493,8 @@ export type UserCreateWithoutResolvedReportsInput = {
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
@@ -8754,6 +9558,8 @@ export type UserUncheckedCreateWithoutResolvedReportsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
@@ -8832,6 +9638,8 @@ export type UserUpdateWithoutContentReportsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
@@ -8895,6 +9703,8 @@ export type UserUncheckedUpdateWithoutContentReportsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -8968,6 +9778,8 @@ export type UserUpdateWithoutResolvedReportsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
@@ -9031,6 +9843,8 @@ export type UserUncheckedUpdateWithoutResolvedReportsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -9093,6 +9907,8 @@ export type UserCreateWithoutSteamAccountInput = {
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
@@ -9156,6 +9972,8 @@ export type UserUncheckedCreateWithoutSteamAccountInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
@@ -9234,6 +10052,8 @@ export type UserUpdateWithoutSteamAccountInput = {
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
@@ -9297,6 +10117,8 @@ export type UserUncheckedUpdateWithoutSteamAccountInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -9359,6 +10181,8 @@ export type UserCreateWithoutSteamGamesInput = {
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
@@ -9422,6 +10246,8 @@ export type UserUncheckedCreateWithoutSteamGamesInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
@@ -9500,6 +10326,8 @@ export type UserUpdateWithoutSteamGamesInput = {
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
@@ -9563,6 +10391,8 @@ export type UserUncheckedUpdateWithoutSteamGamesInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -9625,6 +10455,8 @@ export type UserCreateWithoutOauthAccountsInput = {
   dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
@@ -9688,6 +10520,8 @@ export type UserUncheckedCreateWithoutOauthAccountsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
   assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
@@ -9766,6 +10600,8 @@ export type UserUpdateWithoutOauthAccountsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
@@ -9829,6 +10665,8 @@ export type UserUncheckedUpdateWithoutOauthAccountsInput = {
   dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
   assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -9867,6 +10705,8 @@ export type UserCountOutputType = {
   dismissedBy: number
   comments: number
   forumThreads: number
+  communityBans: number
+  issuedCommunityBans: number
   forumPosts: number
   reports: number
   assignedReports: number
@@ -9900,6 +10740,8 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   dismissedBy?: boolean | UserCountOutputTypeCountDismissedByArgs
   comments?: boolean | UserCountOutputTypeCountCommentsArgs
   forumThreads?: boolean | UserCountOutputTypeCountForumThreadsArgs
+  communityBans?: boolean | UserCountOutputTypeCountCommunityBansArgs
+  issuedCommunityBans?: boolean | UserCountOutputTypeCountIssuedCommunityBansArgs
   forumPosts?: boolean | UserCountOutputTypeCountForumPostsArgs
   reports?: boolean | UserCountOutputTypeCountReportsArgs
   assignedReports?: boolean | UserCountOutputTypeCountAssignedReportsArgs
@@ -10000,6 +10842,20 @@ export type UserCountOutputTypeCountCommentsArgs<ExtArgs extends runtime.Types.E
  */
 export type UserCountOutputTypeCountForumThreadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ForumThreadWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCommunityBansArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CommunityBanWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountIssuedCommunityBansArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CommunityBanWhereInput
 }
 
 /**
@@ -10184,6 +11040,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   dismissedBy?: boolean | Prisma.User$dismissedByArgs<ExtArgs>
   comments?: boolean | Prisma.User$commentsArgs<ExtArgs>
   forumThreads?: boolean | Prisma.User$forumThreadsArgs<ExtArgs>
+  communityBans?: boolean | Prisma.User$communityBansArgs<ExtArgs>
+  issuedCommunityBans?: boolean | Prisma.User$issuedCommunityBansArgs<ExtArgs>
   forumPosts?: boolean | Prisma.User$forumPostsArgs<ExtArgs>
   reports?: boolean | Prisma.User$reportsArgs<ExtArgs>
   assignedReports?: boolean | Prisma.User$assignedReportsArgs<ExtArgs>
@@ -10319,6 +11177,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   dismissedBy?: boolean | Prisma.User$dismissedByArgs<ExtArgs>
   comments?: boolean | Prisma.User$commentsArgs<ExtArgs>
   forumThreads?: boolean | Prisma.User$forumThreadsArgs<ExtArgs>
+  communityBans?: boolean | Prisma.User$communityBansArgs<ExtArgs>
+  issuedCommunityBans?: boolean | Prisma.User$issuedCommunityBansArgs<ExtArgs>
   forumPosts?: boolean | Prisma.User$forumPostsArgs<ExtArgs>
   reports?: boolean | Prisma.User$reportsArgs<ExtArgs>
   assignedReports?: boolean | Prisma.User$assignedReportsArgs<ExtArgs>
@@ -10358,6 +11218,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     dismissedBy: Prisma.$SuggestionDismissalPayload<ExtArgs>[]
     comments: Prisma.$CommentPayload<ExtArgs>[]
     forumThreads: Prisma.$ForumThreadPayload<ExtArgs>[]
+    communityBans: Prisma.$CommunityBanPayload<ExtArgs>[]
+    issuedCommunityBans: Prisma.$CommunityBanPayload<ExtArgs>[]
     forumPosts: Prisma.$ForumPostPayload<ExtArgs>[]
     reports: Prisma.$ReportPayload<ExtArgs>[]
     assignedReports: Prisma.$ReportPayload<ExtArgs>[]
@@ -10815,6 +11677,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   dismissedBy<T extends Prisma.User$dismissedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$dismissedByArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SuggestionDismissalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   comments<T extends Prisma.User$commentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   forumThreads<T extends Prisma.User$forumThreadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$forumThreadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ForumThreadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  communityBans<T extends Prisma.User$communityBansArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$communityBansArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommunityBanPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  issuedCommunityBans<T extends Prisma.User$issuedCommunityBansArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$issuedCommunityBansArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommunityBanPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   forumPosts<T extends Prisma.User$forumPostsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$forumPostsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ForumPostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reports<T extends Prisma.User$reportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   assignedReports<T extends Prisma.User$assignedReportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$assignedReportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -11520,6 +12384,54 @@ export type User$forumThreadsArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.ForumThreadScalarFieldEnum | Prisma.ForumThreadScalarFieldEnum[]
+}
+
+/**
+ * User.communityBans
+ */
+export type User$communityBansArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CommunityBan
+   */
+  select?: Prisma.CommunityBanSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CommunityBan
+   */
+  omit?: Prisma.CommunityBanOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CommunityBanInclude<ExtArgs> | null
+  where?: Prisma.CommunityBanWhereInput
+  orderBy?: Prisma.CommunityBanOrderByWithRelationInput | Prisma.CommunityBanOrderByWithRelationInput[]
+  cursor?: Prisma.CommunityBanWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CommunityBanScalarFieldEnum | Prisma.CommunityBanScalarFieldEnum[]
+}
+
+/**
+ * User.issuedCommunityBans
+ */
+export type User$issuedCommunityBansArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CommunityBan
+   */
+  select?: Prisma.CommunityBanSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CommunityBan
+   */
+  omit?: Prisma.CommunityBanOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CommunityBanInclude<ExtArgs> | null
+  where?: Prisma.CommunityBanWhereInput
+  orderBy?: Prisma.CommunityBanOrderByWithRelationInput | Prisma.CommunityBanOrderByWithRelationInput[]
+  cursor?: Prisma.CommunityBanWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CommunityBanScalarFieldEnum | Prisma.CommunityBanScalarFieldEnum[]
 }
 
 /**

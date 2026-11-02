@@ -18,5 +18,6 @@ import { LikesModule } from '../likes/likes.module';
     CommunityViewerGuard,
     PrismaService,
   ],
+  exports: [ForumService],
 })
 export class ForumModule {}

@@ -14,6 +14,7 @@ import {
   Community as CommunityModel,
   Prisma,
 } from '../../prisma/generated/client';
+import { requireNotBanned } from '../communities/bans';
 
 const CODE_ALPHABET =
   'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -250,6 +251,7 @@ export class InvitesService {
 
     const { community } = invite;
     if (await this.communities.roleOf(userId, community.id)) return community;
+    await requireNotBanned(this.prisma, userId, community.id);
     await this.communities.requireRoomToJoin(userId);
 
     const position = await this.communities.nextRailPosition(userId);

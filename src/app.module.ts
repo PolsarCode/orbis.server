@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { CommunitiesModule } from './communities/communities.module';
 import { PostsModule } from './posts/posts.module';
 import { ForumModule } from './forum/forum.module';
+import { CommunityMembersModule } from './community-members/community-members.module';
 import { FriendsModule } from './friends/friends.module';
 import { CommentsModule } from './comments/comments.module';
 import { LikesModule } from './likes/likes.module';
@@ -36,6 +37,7 @@ import { PrismaService } from './prisma.service';
     CommunitiesModule,
     PostsModule,
     ForumModule,
+    CommunityMembersModule,
     FriendsModule,
     CommentsModule,
     LikesModule,

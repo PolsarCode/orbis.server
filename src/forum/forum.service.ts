@@ -37,6 +37,7 @@ import {
   threadLink,
   visibleThreads,
 } from './forum-helpers';
+import { authorModeration } from '../communities/member-moderation';
 
 const SEARCH_LIMIT = 8;
 const MAX_PAGE = 100000;
@@ -208,13 +209,22 @@ export class ForumService {
             select: quoteSelect,
           }),
     ]);
-    const withNickname = await loadNicknames(
-      this.prisma,
-      [...posts, ...quotes].map(({ author }) => ({
-        communityId,
-        userId: author.id,
-      })),
-    );
+    const [withNickname, moderationOf] = await Promise.all([
+      loadNicknames(
+        this.prisma,
+        [...posts, ...quotes].map(({ author }) => ({
+          communityId,
+          userId: author.id,
+        })),
+      ),
+      authorModeration(
+        this.prisma,
+        viewerId,
+        manager
+          ? posts.map(({ author }) => ({ communityId, authorId: author.id }))
+          : [],
+      ),
+    ]);
     const quoteById = new Map(
       quotes.map((quote) => [
         quote.id,
@@ -239,6 +249,7 @@ export class ForumService {
             }),
       canEdit: post.author.id === viewerId,
       canDelete: post.author.id === viewerId || manager,
+      moderation: moderationOf(communityId, post.author.id),
     }));
   }
 
