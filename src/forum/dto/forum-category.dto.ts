@@ -37,6 +37,10 @@ export class CreateForumCategoryDto {
   adminOnly?: boolean;
 
   @IsOptional()
+  @IsBoolean()
+  postToFeed?: boolean;
+
+  @IsOptional()
   @IsString()
   @MaxLength(CATEGORY_ICON_MAX)
   @Matches(CATEGORY_ICON_NAME)
@@ -67,6 +71,10 @@ export class UpdateForumCategoryDto {
   @IsOptional()
   @IsBoolean()
   adminOnly?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  postToFeed?: boolean;
 
   @IsOptional()
   @IsString()

@@ -6,6 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
+import { PostsService } from '../posts/posts.service';
 import { reportedBy } from '../moderation/visibility';
 import {
   CreateForumCategoryDto,
@@ -27,6 +28,7 @@ const categorySelect = {
   icon: true,
   color: true,
   adminOnly: true,
+  postToFeed: true,
 } as const;
 
 const sectionSelect = { id: true, name: true, adminOnly: true } as const;
@@ -39,6 +41,7 @@ export type ForumCategoryItem = {
   icon: string | null;
   color: string | null;
   adminOnly: boolean;
+  postToFeed: boolean;
   threadCount: number;
   latest: { id: number; title: string; lastPostAt: Date } | null;
 };
@@ -62,7 +65,10 @@ function sameIds(ids: number[], existing: { id: number }[]) {
 
 @Injectable()
 export class ForumCategoriesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private posts: PostsService,
+  ) {}
 
   private async requireManager(userId: number, communityId: number) {
     if (!(await isForumManager(this.prisma, userId, communityId))) {
@@ -138,6 +144,7 @@ export class ForumCategoriesService {
       description,
       sectionId,
       adminOnly,
+      postToFeed,
       icon,
       color,
     }: CreateForumCategoryDto,
@@ -167,6 +174,7 @@ export class ForumCategoriesService {
         icon: icon ?? null,
         color: color ?? null,
         adminOnly: adminOnly ?? false,
+        postToFeed: postToFeed ?? false,
         position: (last?.position ?? -1) + 1,
       },
       select: categorySelect,
@@ -183,6 +191,7 @@ export class ForumCategoriesService {
       description,
       sectionId,
       adminOnly,
+      postToFeed,
       icon,
       color,
     }: UpdateForumCategoryDto,
@@ -197,6 +206,7 @@ export class ForumCategoriesService {
         ...(description !== undefined && { description: description.trim() }),
         ...(sectionId !== undefined && { sectionId }),
         ...(adminOnly !== undefined && { adminOnly }),
+        ...(postToFeed !== undefined && { postToFeed }),
         ...(icon !== undefined && { icon }),
         ...(color !== undefined && { color }),
       },
@@ -236,6 +246,7 @@ export class ForumCategoriesService {
       select: { id: true, posts: { select: { id: true } } },
     });
 
+    await this.posts.removeThreadPosts(threads.map(({ id }) => id));
     await this.prisma.$transaction([
       ...forumCleanup(
         this.prisma,

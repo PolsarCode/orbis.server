@@ -8,8 +8,10 @@ import { validate } from 'class-validator';
 import { ForumCategoriesService } from './forum-categories.service';
 import { UpdateForumCategoryDto } from './dto/forum-category.dto';
 import { PrismaService } from '../prisma.service';
+import { PostsService } from '../posts/posts.service';
 import { isForumManager } from './forum-helpers';
 
+jest.mock('../common/rich-text', () => ({ sanitizeRichText: jest.fn() }));
 jest.mock('./forum-helpers', () => ({
   ...jest.requireActual('./forum-helpers'),
   isForumManager: jest.fn(),
@@ -39,10 +41,12 @@ function setup() {
     },
     $transaction: jest.fn((operations: unknown[]) => Promise.all(operations)),
   };
+  const posts = { removeThreadPosts: jest.fn() };
   const service = new ForumCategoriesService(
     prisma as unknown as PrismaService,
+    posts as unknown as PostsService,
   );
-  return { prisma, service };
+  return { prisma, posts, service };
 }
 
 beforeEach(() => {
@@ -84,6 +88,7 @@ describe('Forum categories', () => {
         icon: null,
         color: null,
         adminOnly: false,
+        postToFeed: false,
         position: 5,
       },
       select: {
@@ -94,6 +99,7 @@ describe('Forum categories', () => {
         icon: true,
         color: true,
         adminOnly: true,
+        postToFeed: true,
       },
     });
     expect(category).toMatchObject({ threadCount: 0, latest: null });
@@ -144,14 +150,16 @@ describe('Forum categories', () => {
     });
   });
 
-  it('deletes a category with its threads’ likes, reports and notifications', async () => {
-    const { prisma, service } = setup();
+  it('deletes a category with its threads’ likes, reports, notifications and feed posts', async () => {
+    const { prisma, posts, service } = setup();
     prisma.forumCategory.findFirst.mockResolvedValue({ id: 5 });
     prisma.forumThread.findMany.mockResolvedValue([
       { id: 9, posts: [{ id: 40 }, { id: 41 }] },
     ]);
 
     await service.remove(7, 3, 5);
+
+    expect(posts.removeThreadPosts).toHaveBeenCalledWith([9]);
 
     expect(prisma.forumCategory.delete).toHaveBeenCalledWith({
       where: { id: 5 },
@@ -280,6 +288,17 @@ describe('Admin-only posting', () => {
     }
     await expect(problems({ color: 'blue' })).resolves.toEqual(['color']);
     await expect(problems({ color: '#5b8de' })).resolves.toEqual(['color']);
+  });
+
+  it('lets admins send a category’s new threads to the community feed', async () => {
+    const { prisma, service } = setup();
+    prisma.forumCategory.findFirst.mockResolvedValue({ id: 5 });
+
+    await service.update(7, 3, 5, { postToFeed: true });
+
+    expect(prisma.forumCategory.update).toHaveBeenCalledWith(
+      expect.objectContaining({ data: { postToFeed: true } }),
+    );
   });
 
   it('won’t let members change who can post', async () => {

@@ -73,6 +73,7 @@ type SeedForumReply = {
   author: UserKey;
   ago: number;
   content: string;
+  linkUrl?: string;
   quote?: number;
   likes?: UserKey[];
 };
@@ -82,6 +83,7 @@ type SeedForumThread = {
   title: string;
   ago: number;
   content: string;
+  linkUrl?: string;
   likes?: UserKey[];
   pinned?: boolean;
   locked?: boolean;
@@ -95,6 +97,7 @@ type SeedForumCategory = {
   description: string;
   icon?: string;
   color?: string;
+  postToFeed?: boolean;
   threads: SeedForumThread[];
 };
 
@@ -400,6 +403,7 @@ const forums: Record<string, SeedForumCategory[]> = {
       section: 'Club',
       adminOnly: true,
       name: 'Announcements',
+      postToFeed: true,
       icon: 'megaphone',
       color: '#f08a4b',
       description: 'Club news, watch-party times and rule updates.',
@@ -502,6 +506,7 @@ const forums: Record<string, SeedForumCategory[]> = {
           ago: days(2),
           likes: ['spike', 'itadori', 'tanjiro'],
           content: `<p>Mine has been on repeat for three days straight. Send help.</p>`,
+          linkUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
           replies: [
             {
               author: 'itadori',
@@ -575,6 +580,7 @@ const forums: Record<string, SeedForumCategory[]> = {
       section: 'Village',
       adminOnly: true,
       name: 'Village notices',
+      postToFeed: true,
       icon: 'scroll',
       color: '#4caf7a',
       description:
@@ -587,6 +593,7 @@ const forums: Record<string, SeedForumCategory[]> = {
           pinned: true,
           likes: ['sakura', 'admin', 'itadori'],
           content: `<p>Ramen is on me! Well, Kakashi-sensei said he'd pay. Probably. Saturday at noon.</p>`,
+          linkUrl: 'https://en.wikipedia.org/wiki/Naruto',
           replies: [
             {
               author: 'sakura',
@@ -2493,6 +2500,7 @@ async function main() {
           icon: category.icon ?? null,
           color: category.color ?? null,
           adminOnly: category.adminOnly ?? false,
+          postToFeed: category.postToFeed ?? false,
           position,
         },
       });
@@ -2502,6 +2510,7 @@ async function main() {
             author: thread.author,
             ago: thread.ago,
             content: thread.content,
+            linkUrl: thread.linkUrl,
             likes: thread.likes,
           },
           ...(thread.replies ?? []),
@@ -2519,6 +2528,18 @@ async function main() {
             createdAt: minutesAgo(thread.ago),
           },
         });
+        if (category.postToFeed) {
+          await prisma.post.create({
+            data: {
+              communityId: created.id,
+              authorId: userIds[thread.author],
+              content: thread.content,
+              linkUrl: thread.linkUrl ?? null,
+              forumThreadId: createdThread.id,
+              createdAt: minutesAgo(thread.ago),
+            },
+          });
+        }
         const postIds: number[] = [];
         for (const [index, post] of posts.entries()) {
           const createdPost = await prisma.forumPost.create({
@@ -2528,6 +2549,7 @@ async function main() {
               authorId: userIds[post.author],
               opening: index === 0,
               content: post.content,
+              linkUrl: post.linkUrl ?? null,
               quoteId: post.quote === undefined ? null : postIds[post.quote],
               likeCount: post.likes?.length ?? 0,
               createdAt: minutesAgo(post.ago),

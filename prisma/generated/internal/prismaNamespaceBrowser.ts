@@ -242,6 +242,7 @@ export const PostScalarFieldEnum = {
   hiddenAt: 'hiddenAt',
   editedAt: 'editedAt',
   pinnedAt: 'pinnedAt',
+  forumThreadId: 'forumThreadId',
   createdAt: 'createdAt'
 } as const
 
@@ -298,6 +299,7 @@ export const ForumCategoryScalarFieldEnum = {
   icon: 'icon',
   color: 'color',
   adminOnly: 'adminOnly',
+  postToFeed: 'postToFeed',
   position: 'position',
   createdAt: 'createdAt'
 } as const
@@ -328,6 +330,7 @@ export const ForumPostScalarFieldEnum = {
   authorId: 'authorId',
   opening: 'opening',
   content: 'content',
+  linkUrl: 'linkUrl',
   quoteId: 'quoteId',
   likeCount: 'likeCount',
   hiddenAt: 'hiddenAt',

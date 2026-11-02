@@ -64,6 +64,15 @@ describe('Editing and deleting posts', () => {
     });
   });
 
+  it('sends edits to a shared forum thread back to the thread', async () => {
+    prisma.post.findUnique.mockResolvedValue({ ...saved, forumThreadId: 9 });
+
+    await expect(
+      service.update(1, 3, { content: '<p>Changed</p>' }),
+    ).rejects.toThrow('Edit this in the forum thread instead');
+    expect(prisma.post.update).not.toHaveBeenCalled();
+  });
+
   it('lets the author edit, keeps old mentions, and only notifies new ones', async () => {
     prisma.post.findUnique.mockResolvedValue(saved);
     prisma.user.findMany.mockResolvedValue([

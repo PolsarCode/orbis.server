@@ -73,6 +73,27 @@ describe('Discord messages', () => {
     ]);
   });
 
+  it('titles a shared forum thread and links to the thread', () => {
+    const message = postMessage(
+      {
+        id: 12,
+        content: '<p>Training starts at dawn.</p>',
+        linkUrl: null,
+        createdAt,
+        author,
+        forumThread: { id: 30, title: 'Chunin exams *schedule*' },
+      },
+      community,
+    );
+
+    expect(message.body.embeds[0]).toMatchObject({
+      title: 'Chunin exams \\*schedule\\*',
+      description: 'Training starts at dawn.',
+      url: 'https://orbis.test/communities/7/forum/threads/30',
+    });
+    expect(message.threadName).toBe('Chunin exams *schedule*');
+  });
+
   it('shortens long posts and keeps the link button', () => {
     const message = postMessage(
       {

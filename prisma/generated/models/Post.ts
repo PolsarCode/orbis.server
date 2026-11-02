@@ -33,6 +33,7 @@ export type PostAvgAggregateOutputType = {
   authorId: number | null
   commentCount: number | null
   likeCount: number | null
+  forumThreadId: number | null
 }
 
 export type PostSumAggregateOutputType = {
@@ -42,6 +43,7 @@ export type PostSumAggregateOutputType = {
   authorId: number | null
   commentCount: number | null
   likeCount: number | null
+  forumThreadId: number | null
 }
 
 export type PostMinAggregateOutputType = {
@@ -58,6 +60,7 @@ export type PostMinAggregateOutputType = {
   hiddenAt: Date | null
   editedAt: Date | null
   pinnedAt: Date | null
+  forumThreadId: number | null
   createdAt: Date | null
 }
 
@@ -75,6 +78,7 @@ export type PostMaxAggregateOutputType = {
   hiddenAt: Date | null
   editedAt: Date | null
   pinnedAt: Date | null
+  forumThreadId: number | null
   createdAt: Date | null
 }
 
@@ -92,6 +96,7 @@ export type PostCountAggregateOutputType = {
   hiddenAt: number
   editedAt: number
   pinnedAt: number
+  forumThreadId: number
   createdAt: number
   _all: number
 }
@@ -104,6 +109,7 @@ export type PostAvgAggregateInputType = {
   authorId?: true
   commentCount?: true
   likeCount?: true
+  forumThreadId?: true
 }
 
 export type PostSumAggregateInputType = {
@@ -113,6 +119,7 @@ export type PostSumAggregateInputType = {
   authorId?: true
   commentCount?: true
   likeCount?: true
+  forumThreadId?: true
 }
 
 export type PostMinAggregateInputType = {
@@ -129,6 +136,7 @@ export type PostMinAggregateInputType = {
   hiddenAt?: true
   editedAt?: true
   pinnedAt?: true
+  forumThreadId?: true
   createdAt?: true
 }
 
@@ -146,6 +154,7 @@ export type PostMaxAggregateInputType = {
   hiddenAt?: true
   editedAt?: true
   pinnedAt?: true
+  forumThreadId?: true
   createdAt?: true
 }
 
@@ -163,6 +172,7 @@ export type PostCountAggregateInputType = {
   hiddenAt?: true
   editedAt?: true
   pinnedAt?: true
+  forumThreadId?: true
   createdAt?: true
   _all?: true
 }
@@ -267,6 +277,7 @@ export type PostGroupByOutputType = {
   hiddenAt: Date | null
   editedAt: Date | null
   pinnedAt: Date | null
+  forumThreadId: number | null
   createdAt: Date
   _count: PostCountAggregateOutputType | null
   _avg: PostAvgAggregateOutputType | null
@@ -307,10 +318,12 @@ export type PostWhereInput = {
   hiddenAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
   editedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
   pinnedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
+  forumThreadId?: Prisma.IntNullableFilter<"Post"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Post"> | Date | string
   community?: Prisma.XOR<Prisma.CommunityNullableScalarRelationFilter, Prisma.CommunityWhereInput> | null
   wallUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  forumThread?: Prisma.XOR<Prisma.ForumThreadNullableScalarRelationFilter, Prisma.ForumThreadWhereInput> | null
 }
 
 export type PostOrderByWithRelationInput = {
@@ -327,14 +340,17 @@ export type PostOrderByWithRelationInput = {
   hiddenAt?: Prisma.SortOrderInput | Prisma.SortOrder
   editedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   pinnedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  forumThreadId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   community?: Prisma.CommunityOrderByWithRelationInput
   wallUser?: Prisma.UserOrderByWithRelationInput
   author?: Prisma.UserOrderByWithRelationInput
+  forumThread?: Prisma.ForumThreadOrderByWithRelationInput
 }
 
 export type PostWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  forumThreadId?: number
   AND?: Prisma.PostWhereInput | Prisma.PostWhereInput[]
   OR?: Prisma.PostWhereInput[]
   NOT?: Prisma.PostWhereInput | Prisma.PostWhereInput[]
@@ -354,7 +370,8 @@ export type PostWhereUniqueInput = Prisma.AtLeast<{
   community?: Prisma.XOR<Prisma.CommunityNullableScalarRelationFilter, Prisma.CommunityWhereInput> | null
   wallUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-}, "id">
+  forumThread?: Prisma.XOR<Prisma.ForumThreadNullableScalarRelationFilter, Prisma.ForumThreadWhereInput> | null
+}, "id" | "forumThreadId">
 
 export type PostOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -370,6 +387,7 @@ export type PostOrderByWithAggregationInput = {
   hiddenAt?: Prisma.SortOrderInput | Prisma.SortOrder
   editedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   pinnedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  forumThreadId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.PostCountOrderByAggregateInput
   _avg?: Prisma.PostAvgOrderByAggregateInput
@@ -395,6 +413,7 @@ export type PostScalarWhereWithAggregatesInput = {
   hiddenAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Post"> | Date | string | null
   editedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Post"> | Date | string | null
   pinnedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Post"> | Date | string | null
+  forumThreadId?: Prisma.IntNullableWithAggregatesFilter<"Post"> | number | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Post"> | Date | string
 }
 
@@ -412,6 +431,7 @@ export type PostCreateInput = {
   community?: Prisma.CommunityCreateNestedOneWithoutPostsInput
   wallUser?: Prisma.UserCreateNestedOneWithoutWallPostsInput
   author: Prisma.UserCreateNestedOneWithoutPostsInput
+  forumThread?: Prisma.ForumThreadCreateNestedOneWithoutFeedPostInput
 }
 
 export type PostUncheckedCreateInput = {
@@ -428,6 +448,7 @@ export type PostUncheckedCreateInput = {
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
   pinnedAt?: Date | string | null
+  forumThreadId?: number | null
   createdAt?: Date | string
 }
 
@@ -445,6 +466,7 @@ export type PostUpdateInput = {
   community?: Prisma.CommunityUpdateOneWithoutPostsNestedInput
   wallUser?: Prisma.UserUpdateOneWithoutWallPostsNestedInput
   author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
+  forumThread?: Prisma.ForumThreadUpdateOneWithoutFeedPostNestedInput
 }
 
 export type PostUncheckedUpdateInput = {
@@ -461,6 +483,7 @@ export type PostUncheckedUpdateInput = {
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  forumThreadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -478,6 +501,7 @@ export type PostCreateManyInput = {
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
   pinnedAt?: Date | string | null
+  forumThreadId?: number | null
   createdAt?: Date | string
 }
 
@@ -508,6 +532,7 @@ export type PostUncheckedUpdateManyInput = {
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  forumThreadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -535,6 +560,7 @@ export type PostCountOrderByAggregateInput = {
   hiddenAt?: Prisma.SortOrder
   editedAt?: Prisma.SortOrder
   pinnedAt?: Prisma.SortOrder
+  forumThreadId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -545,6 +571,7 @@ export type PostAvgOrderByAggregateInput = {
   authorId?: Prisma.SortOrder
   commentCount?: Prisma.SortOrder
   likeCount?: Prisma.SortOrder
+  forumThreadId?: Prisma.SortOrder
 }
 
 export type PostMaxOrderByAggregateInput = {
@@ -561,6 +588,7 @@ export type PostMaxOrderByAggregateInput = {
   hiddenAt?: Prisma.SortOrder
   editedAt?: Prisma.SortOrder
   pinnedAt?: Prisma.SortOrder
+  forumThreadId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -578,6 +606,7 @@ export type PostMinOrderByAggregateInput = {
   hiddenAt?: Prisma.SortOrder
   editedAt?: Prisma.SortOrder
   pinnedAt?: Prisma.SortOrder
+  forumThreadId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -588,6 +617,12 @@ export type PostSumOrderByAggregateInput = {
   authorId?: Prisma.SortOrder
   commentCount?: Prisma.SortOrder
   likeCount?: Prisma.SortOrder
+  forumThreadId?: Prisma.SortOrder
+}
+
+export type PostNullableScalarRelationFilter = {
+  is?: Prisma.PostWhereInput | null
+  isNot?: Prisma.PostWhereInput | null
 }
 
 export type PostCreateNestedManyWithoutCommunityInput = {
@@ -634,6 +669,38 @@ export type PostUncheckedUpdateManyWithoutCommunityNestedInput = {
 
 export type NullableEnumMediaTypeFieldUpdateOperationsInput = {
   set?: $Enums.MediaType | null
+}
+
+export type PostCreateNestedOneWithoutForumThreadInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutForumThreadInput, Prisma.PostUncheckedCreateWithoutForumThreadInput>
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutForumThreadInput
+  connect?: Prisma.PostWhereUniqueInput
+}
+
+export type PostUncheckedCreateNestedOneWithoutForumThreadInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutForumThreadInput, Prisma.PostUncheckedCreateWithoutForumThreadInput>
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutForumThreadInput
+  connect?: Prisma.PostWhereUniqueInput
+}
+
+export type PostUpdateOneWithoutForumThreadNestedInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutForumThreadInput, Prisma.PostUncheckedCreateWithoutForumThreadInput>
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutForumThreadInput
+  upsert?: Prisma.PostUpsertWithoutForumThreadInput
+  disconnect?: Prisma.PostWhereInput | boolean
+  delete?: Prisma.PostWhereInput | boolean
+  connect?: Prisma.PostWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PostUpdateToOneWithWhereWithoutForumThreadInput, Prisma.PostUpdateWithoutForumThreadInput>, Prisma.PostUncheckedUpdateWithoutForumThreadInput>
+}
+
+export type PostUncheckedUpdateOneWithoutForumThreadNestedInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutForumThreadInput, Prisma.PostUncheckedCreateWithoutForumThreadInput>
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutForumThreadInput
+  upsert?: Prisma.PostUpsertWithoutForumThreadInput
+  disconnect?: Prisma.PostWhereInput | boolean
+  delete?: Prisma.PostWhereInput | boolean
+  connect?: Prisma.PostWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PostUpdateToOneWithWhereWithoutForumThreadInput, Prisma.PostUpdateWithoutForumThreadInput>, Prisma.PostUncheckedUpdateWithoutForumThreadInput>
 }
 
 export type PostCreateNestedManyWithoutAuthorInput = {
@@ -733,6 +800,7 @@ export type PostCreateWithoutCommunityInput = {
   createdAt?: Date | string
   wallUser?: Prisma.UserCreateNestedOneWithoutWallPostsInput
   author: Prisma.UserCreateNestedOneWithoutPostsInput
+  forumThread?: Prisma.ForumThreadCreateNestedOneWithoutFeedPostInput
 }
 
 export type PostUncheckedCreateWithoutCommunityInput = {
@@ -748,6 +816,7 @@ export type PostUncheckedCreateWithoutCommunityInput = {
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
   pinnedAt?: Date | string | null
+  forumThreadId?: number | null
   createdAt?: Date | string
 }
 
@@ -794,7 +863,90 @@ export type PostScalarWhereInput = {
   hiddenAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
   editedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
   pinnedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
+  forumThreadId?: Prisma.IntNullableFilter<"Post"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Post"> | Date | string
+}
+
+export type PostCreateWithoutForumThreadInput = {
+  mediaType?: $Enums.MediaType | null
+  mediaSourceId?: string | null
+  content: string
+  linkUrl?: string | null
+  commentCount?: number
+  likeCount?: number
+  hiddenAt?: Date | string | null
+  editedAt?: Date | string | null
+  pinnedAt?: Date | string | null
+  createdAt?: Date | string
+  community?: Prisma.CommunityCreateNestedOneWithoutPostsInput
+  wallUser?: Prisma.UserCreateNestedOneWithoutWallPostsInput
+  author: Prisma.UserCreateNestedOneWithoutPostsInput
+}
+
+export type PostUncheckedCreateWithoutForumThreadInput = {
+  id?: number
+  communityId?: number | null
+  wallUserId?: number | null
+  mediaType?: $Enums.MediaType | null
+  mediaSourceId?: string | null
+  authorId: number
+  content: string
+  linkUrl?: string | null
+  commentCount?: number
+  likeCount?: number
+  hiddenAt?: Date | string | null
+  editedAt?: Date | string | null
+  pinnedAt?: Date | string | null
+  createdAt?: Date | string
+}
+
+export type PostCreateOrConnectWithoutForumThreadInput = {
+  where: Prisma.PostWhereUniqueInput
+  create: Prisma.XOR<Prisma.PostCreateWithoutForumThreadInput, Prisma.PostUncheckedCreateWithoutForumThreadInput>
+}
+
+export type PostUpsertWithoutForumThreadInput = {
+  update: Prisma.XOR<Prisma.PostUpdateWithoutForumThreadInput, Prisma.PostUncheckedUpdateWithoutForumThreadInput>
+  create: Prisma.XOR<Prisma.PostCreateWithoutForumThreadInput, Prisma.PostUncheckedCreateWithoutForumThreadInput>
+  where?: Prisma.PostWhereInput
+}
+
+export type PostUpdateToOneWithWhereWithoutForumThreadInput = {
+  where?: Prisma.PostWhereInput
+  data: Prisma.XOR<Prisma.PostUpdateWithoutForumThreadInput, Prisma.PostUncheckedUpdateWithoutForumThreadInput>
+}
+
+export type PostUpdateWithoutForumThreadInput = {
+  mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
+  mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  commentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  likeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  community?: Prisma.CommunityUpdateOneWithoutPostsNestedInput
+  wallUser?: Prisma.UserUpdateOneWithoutWallPostsNestedInput
+  author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
+}
+
+export type PostUncheckedUpdateWithoutForumThreadInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  communityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  wallUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
+  mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authorId?: Prisma.IntFieldUpdateOperationsInput | number
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  commentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  likeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PostCreateWithoutAuthorInput = {
@@ -810,6 +962,7 @@ export type PostCreateWithoutAuthorInput = {
   createdAt?: Date | string
   community?: Prisma.CommunityCreateNestedOneWithoutPostsInput
   wallUser?: Prisma.UserCreateNestedOneWithoutWallPostsInput
+  forumThread?: Prisma.ForumThreadCreateNestedOneWithoutFeedPostInput
 }
 
 export type PostUncheckedCreateWithoutAuthorInput = {
@@ -825,6 +978,7 @@ export type PostUncheckedCreateWithoutAuthorInput = {
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
   pinnedAt?: Date | string | null
+  forumThreadId?: number | null
   createdAt?: Date | string
 }
 
@@ -851,6 +1005,7 @@ export type PostCreateWithoutWallUserInput = {
   createdAt?: Date | string
   community?: Prisma.CommunityCreateNestedOneWithoutPostsInput
   author: Prisma.UserCreateNestedOneWithoutPostsInput
+  forumThread?: Prisma.ForumThreadCreateNestedOneWithoutFeedPostInput
 }
 
 export type PostUncheckedCreateWithoutWallUserInput = {
@@ -866,6 +1021,7 @@ export type PostUncheckedCreateWithoutWallUserInput = {
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
   pinnedAt?: Date | string | null
+  forumThreadId?: number | null
   createdAt?: Date | string
 }
 
@@ -924,6 +1080,7 @@ export type PostCreateManyCommunityInput = {
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
   pinnedAt?: Date | string | null
+  forumThreadId?: number | null
   createdAt?: Date | string
 }
 
@@ -940,6 +1097,7 @@ export type PostUpdateWithoutCommunityInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   wallUser?: Prisma.UserUpdateOneWithoutWallPostsNestedInput
   author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
+  forumThread?: Prisma.ForumThreadUpdateOneWithoutFeedPostNestedInput
 }
 
 export type PostUncheckedUpdateWithoutCommunityInput = {
@@ -955,6 +1113,7 @@ export type PostUncheckedUpdateWithoutCommunityInput = {
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  forumThreadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -971,6 +1130,7 @@ export type PostUncheckedUpdateManyWithoutCommunityInput = {
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  forumThreadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -987,6 +1147,7 @@ export type PostCreateManyAuthorInput = {
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
   pinnedAt?: Date | string | null
+  forumThreadId?: number | null
   createdAt?: Date | string
 }
 
@@ -1003,6 +1164,7 @@ export type PostCreateManyWallUserInput = {
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
   pinnedAt?: Date | string | null
+  forumThreadId?: number | null
   createdAt?: Date | string
 }
 
@@ -1019,6 +1181,7 @@ export type PostUpdateWithoutAuthorInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   community?: Prisma.CommunityUpdateOneWithoutPostsNestedInput
   wallUser?: Prisma.UserUpdateOneWithoutWallPostsNestedInput
+  forumThread?: Prisma.ForumThreadUpdateOneWithoutFeedPostNestedInput
 }
 
 export type PostUncheckedUpdateWithoutAuthorInput = {
@@ -1034,6 +1197,7 @@ export type PostUncheckedUpdateWithoutAuthorInput = {
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  forumThreadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -1050,6 +1214,7 @@ export type PostUncheckedUpdateManyWithoutAuthorInput = {
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  forumThreadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -1066,6 +1231,7 @@ export type PostUpdateWithoutWallUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   community?: Prisma.CommunityUpdateOneWithoutPostsNestedInput
   author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
+  forumThread?: Prisma.ForumThreadUpdateOneWithoutFeedPostNestedInput
 }
 
 export type PostUncheckedUpdateWithoutWallUserInput = {
@@ -1081,6 +1247,7 @@ export type PostUncheckedUpdateWithoutWallUserInput = {
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  forumThreadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -1097,6 +1264,7 @@ export type PostUncheckedUpdateManyWithoutWallUserInput = {
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  forumThreadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -1116,10 +1284,12 @@ export type PostSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   hiddenAt?: boolean
   editedAt?: boolean
   pinnedAt?: boolean
+  forumThreadId?: boolean
   createdAt?: boolean
   community?: boolean | Prisma.Post$communityArgs<ExtArgs>
   wallUser?: boolean | Prisma.Post$wallUserArgs<ExtArgs>
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  forumThread?: boolean | Prisma.Post$forumThreadArgs<ExtArgs>
 }, ExtArgs["result"]["post"]>
 
 export type PostSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1136,10 +1306,12 @@ export type PostSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   hiddenAt?: boolean
   editedAt?: boolean
   pinnedAt?: boolean
+  forumThreadId?: boolean
   createdAt?: boolean
   community?: boolean | Prisma.Post$communityArgs<ExtArgs>
   wallUser?: boolean | Prisma.Post$wallUserArgs<ExtArgs>
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  forumThread?: boolean | Prisma.Post$forumThreadArgs<ExtArgs>
 }, ExtArgs["result"]["post"]>
 
 export type PostSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1156,10 +1328,12 @@ export type PostSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   hiddenAt?: boolean
   editedAt?: boolean
   pinnedAt?: boolean
+  forumThreadId?: boolean
   createdAt?: boolean
   community?: boolean | Prisma.Post$communityArgs<ExtArgs>
   wallUser?: boolean | Prisma.Post$wallUserArgs<ExtArgs>
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  forumThread?: boolean | Prisma.Post$forumThreadArgs<ExtArgs>
 }, ExtArgs["result"]["post"]>
 
 export type PostSelectScalar = {
@@ -1176,24 +1350,28 @@ export type PostSelectScalar = {
   hiddenAt?: boolean
   editedAt?: boolean
   pinnedAt?: boolean
+  forumThreadId?: boolean
   createdAt?: boolean
 }
 
-export type PostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "communityId" | "wallUserId" | "mediaType" | "mediaSourceId" | "authorId" | "content" | "linkUrl" | "commentCount" | "likeCount" | "hiddenAt" | "editedAt" | "pinnedAt" | "createdAt", ExtArgs["result"]["post"]>
+export type PostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "communityId" | "wallUserId" | "mediaType" | "mediaSourceId" | "authorId" | "content" | "linkUrl" | "commentCount" | "likeCount" | "hiddenAt" | "editedAt" | "pinnedAt" | "forumThreadId" | "createdAt", ExtArgs["result"]["post"]>
 export type PostInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   community?: boolean | Prisma.Post$communityArgs<ExtArgs>
   wallUser?: boolean | Prisma.Post$wallUserArgs<ExtArgs>
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  forumThread?: boolean | Prisma.Post$forumThreadArgs<ExtArgs>
 }
 export type PostIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   community?: boolean | Prisma.Post$communityArgs<ExtArgs>
   wallUser?: boolean | Prisma.Post$wallUserArgs<ExtArgs>
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  forumThread?: boolean | Prisma.Post$forumThreadArgs<ExtArgs>
 }
 export type PostIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   community?: boolean | Prisma.Post$communityArgs<ExtArgs>
   wallUser?: boolean | Prisma.Post$wallUserArgs<ExtArgs>
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  forumThread?: boolean | Prisma.Post$forumThreadArgs<ExtArgs>
 }
 
 export type $PostPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1202,6 +1380,7 @@ export type $PostPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     community: Prisma.$CommunityPayload<ExtArgs> | null
     wallUser: Prisma.$UserPayload<ExtArgs> | null
     author: Prisma.$UserPayload<ExtArgs>
+    forumThread: Prisma.$ForumThreadPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1217,6 +1396,7 @@ export type $PostPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     hiddenAt: Date | null
     editedAt: Date | null
     pinnedAt: Date | null
+    forumThreadId: number | null
     createdAt: Date
   }, ExtArgs["result"]["post"]>
   composites: {}
@@ -1615,6 +1795,7 @@ export interface Prisma__PostClient<T, Null = never, ExtArgs extends runtime.Typ
   community<T extends Prisma.Post$communityArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Post$communityArgs<ExtArgs>>): Prisma.Prisma__CommunityClient<runtime.Types.Result.GetResult<Prisma.$CommunityPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   wallUser<T extends Prisma.Post$wallUserArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Post$wallUserArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   author<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  forumThread<T extends Prisma.Post$forumThreadArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Post$forumThreadArgs<ExtArgs>>): Prisma.Prisma__ForumThreadClient<runtime.Types.Result.GetResult<Prisma.$ForumThreadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1657,6 +1838,7 @@ export interface PostFieldRefs {
   readonly hiddenAt: Prisma.FieldRef<"Post", 'DateTime'>
   readonly editedAt: Prisma.FieldRef<"Post", 'DateTime'>
   readonly pinnedAt: Prisma.FieldRef<"Post", 'DateTime'>
+  readonly forumThreadId: Prisma.FieldRef<"Post", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Post", 'DateTime'>
 }
     
@@ -2089,6 +2271,25 @@ export type Post$wallUserArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    */
   include?: Prisma.UserInclude<ExtArgs> | null
   where?: Prisma.UserWhereInput
+}
+
+/**
+ * Post.forumThread
+ */
+export type Post$forumThreadArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ForumThread
+   */
+  select?: Prisma.ForumThreadSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ForumThread
+   */
+  omit?: Prisma.ForumThreadOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ForumThreadInclude<ExtArgs> | null
+  where?: Prisma.ForumThreadWhereInput
 }
 
 /**

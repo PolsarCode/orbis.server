@@ -7,8 +7,10 @@ import { ForumService } from './forum.service';
 import { PrismaService } from '../prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { LikesService } from '../likes/likes.service';
+import { PostsService } from '../posts/posts.service';
 import { isForumManager, isMember } from './forum-helpers';
 import { notifyMentions } from '../common/mentions';
+import { requireEstablishedAccount } from '../common/new-account';
 
 jest.mock('./forum-helpers', () => ({
   ...jest.requireActual('./forum-helpers'),
@@ -26,6 +28,10 @@ jest.mock('../common/rich-text', () => ({
     html,
     empty: !html.replace(/<[^>]+>/g, '').trim(),
   }),
+}));
+jest.mock('../common/new-account', () => ({
+  ...jest.requireActual('../common/new-account'),
+  requireEstablishedAccount: jest.fn(),
 }));
 jest.mock('../common/mentions', () => ({
   ...jest.requireActual('../common/mentions'),
@@ -85,12 +91,18 @@ function setup() {
   );
   const notifications = { notify: jest.fn() };
   const likes = { likedBy: jest.fn().mockResolvedValue(new Set()) };
+  const posts = {
+    shareThread: jest.fn(),
+    threadChanged: jest.fn(),
+    removeThreadPosts: jest.fn(),
+  };
   const service = new ForumService(
     prisma as unknown as PrismaService,
     notifications as unknown as NotificationsService,
     likes as unknown as LikesService,
+    posts as unknown as PostsService,
   );
-  return { prisma, notifications, service };
+  return { prisma, notifications, posts, service };
 }
 
 beforeEach(() => {
@@ -264,10 +276,36 @@ describe('Starting threads', () => {
             authorId: 7,
             opening: true,
             content: '<p>Discuss</p>',
+            linkUrl: null,
           },
         },
       },
       select: { id: true },
+    });
+  });
+
+  it('also posts new threads to the community feed when the category is set to', async () => {
+    const { prisma, posts, service } = setup();
+    prisma.forumThread.create.mockResolvedValue({ id: 9 });
+
+    prisma.forumCategory.findFirst.mockResolvedValue({ postToFeed: false });
+    await service.createThread(7, 3, 5, {
+      title: 'Quiet',
+      content: '<p>Hi</p>',
+    });
+    expect(posts.shareThread).not.toHaveBeenCalled();
+
+    prisma.forumCategory.findFirst.mockResolvedValue({ postToFeed: true });
+    await service.createThread(7, 3, 5, {
+      title: 'Watch party',
+      content: '<p>Friday</p>',
+    });
+    expect(posts.shareThread).toHaveBeenCalledWith({
+      id: 9,
+      communityId: 3,
+      authorId: 7,
+      content: '<p>Friday</p>',
+      linkUrl: null,
     });
   });
 
@@ -282,6 +320,37 @@ describe('Starting threads', () => {
       service.createThread(7, 3, 5, { title: 'Hi', content: '<p></p>' }),
     ).rejects.toBeInstanceOf(BadRequestException);
     expect(prisma.forumThread.create).not.toHaveBeenCalled();
+  });
+
+  it('can start with just a link, which it saves with the opening post and its feed post', async () => {
+    const { prisma, posts, service } = setup();
+    prisma.forumCategory.findFirst.mockResolvedValue({ postToFeed: true });
+    prisma.forumThread.create.mockResolvedValue({ id: 9 });
+    const linkUrl = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+
+    await service.createThread(7, 3, 5, {
+      title: 'Opening song',
+      content: '<p></p>',
+      linkUrl,
+    });
+
+    expect(requireEstablishedAccount).toHaveBeenCalledWith(
+      prisma,
+      7,
+      'post links',
+    );
+    expect(prisma.forumThread.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          posts: {
+            create: expect.objectContaining({ content: '', linkUrl }),
+          },
+        }),
+      }),
+    );
+    expect(posts.shareThread).toHaveBeenCalledWith(
+      expect.objectContaining({ content: '', linkUrl }),
+    );
   });
 });
 
@@ -345,6 +414,23 @@ describe('Replying', () => {
     });
     prisma.forumPost.create.mockResolvedValue({ id: 41 });
   }
+
+  it('saves a link with a reply', async () => {
+    const { prisma, service } = setup();
+    visibleThread(prisma);
+    const linkUrl = 'https://myanimelist.net/anime/52991';
+
+    await service.reply(7, 3, 9, { content: '<p>Rated it here</p>', linkUrl });
+
+    expect(prisma.forumPost.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          content: '<p>Rated it here</p>',
+          linkUrl,
+        }),
+      }),
+    );
+  });
 
   it('refuses replies to locked threads from people who aren’t admins', async () => {
     const { prisma, service } = setup();
@@ -427,6 +513,44 @@ describe('Editing and deleting', () => {
     expect(prisma.forumPost.update).not.toHaveBeenCalled();
   });
 
+  it('keeps the feed post in step when the opening post or title changes', async () => {
+    const { prisma, posts, service } = setup();
+    prisma.forumPost.update.mockResolvedValue({
+      id: 40,
+      opening: true,
+      content: '<p>New</p>',
+      author,
+    });
+
+    prisma.forumPost.findFirst.mockResolvedValue({
+      authorId: 7,
+      content: '<p>Old</p>',
+      threadId: 9,
+      opening: false,
+    });
+    await service.updatePost(7, 3, 41, { content: '<p>Reply</p>' });
+    expect(posts.threadChanged).not.toHaveBeenCalled();
+
+    prisma.forumPost.findFirst.mockResolvedValue({
+      authorId: 7,
+      content: '<p>Old</p>',
+      threadId: 9,
+      opening: true,
+    });
+    await service.updatePost(7, 3, 40, { content: '<p>New</p>' });
+    expect(posts.threadChanged).toHaveBeenCalledWith(9, {
+      content: '<p>New</p>',
+      linkUrl: null,
+    });
+
+    prisma.forumThread.findFirst.mockResolvedValue({
+      authorId: 7,
+      categoryId: 5,
+    });
+    await service.updateThread(7, 3, 9, { title: 'Renamed' });
+    expect(posts.threadChanged).toHaveBeenLastCalledWith(9);
+  });
+
   it('only lets admins move threads, and only within the community', async () => {
     const { prisma, service } = setup();
     prisma.forumThread.findFirst.mockResolvedValue({
@@ -447,7 +571,7 @@ describe('Editing and deleting', () => {
   });
 
   it('deletes the whole thread with its opening post, cleaning up likes, reports and notifications', async () => {
-    const { prisma, service } = setup();
+    const { prisma, posts, service } = setup();
     prisma.forumPost.findFirst.mockResolvedValue({
       authorId: 7,
       threadId: 9,
@@ -460,6 +584,7 @@ describe('Editing and deleting', () => {
 
     await service.removePost(7, 3, 40);
 
+    expect(posts.removeThreadPosts).toHaveBeenCalledWith([9]);
     expect(prisma.forumThread.delete).toHaveBeenCalledWith({
       where: { id: 9 },
     });

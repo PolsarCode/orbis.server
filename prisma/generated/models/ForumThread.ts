@@ -276,6 +276,7 @@ export type ForumThreadWhereInput = {
   category?: Prisma.XOR<Prisma.ForumCategoryScalarRelationFilter, Prisma.ForumCategoryWhereInput>
   author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   posts?: Prisma.ForumPostListRelationFilter
+  feedPost?: Prisma.XOR<Prisma.PostNullableScalarRelationFilter, Prisma.PostWhereInput> | null
 }
 
 export type ForumThreadOrderByWithRelationInput = {
@@ -293,6 +294,7 @@ export type ForumThreadOrderByWithRelationInput = {
   category?: Prisma.ForumCategoryOrderByWithRelationInput
   author?: Prisma.UserOrderByWithRelationInput
   posts?: Prisma.ForumPostOrderByRelationAggregateInput
+  feedPost?: Prisma.PostOrderByWithRelationInput
 }
 
 export type ForumThreadWhereUniqueInput = Prisma.AtLeast<{
@@ -313,6 +315,7 @@ export type ForumThreadWhereUniqueInput = Prisma.AtLeast<{
   category?: Prisma.XOR<Prisma.ForumCategoryScalarRelationFilter, Prisma.ForumCategoryWhereInput>
   author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   posts?: Prisma.ForumPostListRelationFilter
+  feedPost?: Prisma.XOR<Prisma.PostNullableScalarRelationFilter, Prisma.PostWhereInput> | null
 }, "id">
 
 export type ForumThreadOrderByWithAggregationInput = {
@@ -360,6 +363,7 @@ export type ForumThreadCreateInput = {
   category: Prisma.ForumCategoryCreateNestedOneWithoutThreadsInput
   author: Prisma.UserCreateNestedOneWithoutForumThreadsInput
   posts?: Prisma.ForumPostCreateNestedManyWithoutThreadInput
+  feedPost?: Prisma.PostCreateNestedOneWithoutForumThreadInput
 }
 
 export type ForumThreadUncheckedCreateInput = {
@@ -374,6 +378,7 @@ export type ForumThreadUncheckedCreateInput = {
   lockedAt?: Date | string | null
   createdAt?: Date | string
   posts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutThreadInput
+  feedPost?: Prisma.PostUncheckedCreateNestedOneWithoutForumThreadInput
 }
 
 export type ForumThreadUpdateInput = {
@@ -387,6 +392,7 @@ export type ForumThreadUpdateInput = {
   category?: Prisma.ForumCategoryUpdateOneRequiredWithoutThreadsNestedInput
   author?: Prisma.UserUpdateOneRequiredWithoutForumThreadsNestedInput
   posts?: Prisma.ForumPostUpdateManyWithoutThreadNestedInput
+  feedPost?: Prisma.PostUpdateOneWithoutForumThreadNestedInput
 }
 
 export type ForumThreadUncheckedUpdateInput = {
@@ -401,6 +407,7 @@ export type ForumThreadUncheckedUpdateInput = {
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   posts?: Prisma.ForumPostUncheckedUpdateManyWithoutThreadNestedInput
+  feedPost?: Prisma.PostUncheckedUpdateOneWithoutForumThreadNestedInput
 }
 
 export type ForumThreadCreateManyInput = {
@@ -446,6 +453,11 @@ export type ForumThreadListRelationFilter = {
 
 export type ForumThreadOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type ForumThreadNullableScalarRelationFilter = {
+  is?: Prisma.ForumThreadWhereInput | null
+  isNot?: Prisma.ForumThreadWhereInput | null
 }
 
 export type ForumThreadCountOrderByAggregateInput = {
@@ -548,6 +560,22 @@ export type ForumThreadUncheckedUpdateManyWithoutCommunityNestedInput = {
   update?: Prisma.ForumThreadUpdateWithWhereUniqueWithoutCommunityInput | Prisma.ForumThreadUpdateWithWhereUniqueWithoutCommunityInput[]
   updateMany?: Prisma.ForumThreadUpdateManyWithWhereWithoutCommunityInput | Prisma.ForumThreadUpdateManyWithWhereWithoutCommunityInput[]
   deleteMany?: Prisma.ForumThreadScalarWhereInput | Prisma.ForumThreadScalarWhereInput[]
+}
+
+export type ForumThreadCreateNestedOneWithoutFeedPostInput = {
+  create?: Prisma.XOR<Prisma.ForumThreadCreateWithoutFeedPostInput, Prisma.ForumThreadUncheckedCreateWithoutFeedPostInput>
+  connectOrCreate?: Prisma.ForumThreadCreateOrConnectWithoutFeedPostInput
+  connect?: Prisma.ForumThreadWhereUniqueInput
+}
+
+export type ForumThreadUpdateOneWithoutFeedPostNestedInput = {
+  create?: Prisma.XOR<Prisma.ForumThreadCreateWithoutFeedPostInput, Prisma.ForumThreadUncheckedCreateWithoutFeedPostInput>
+  connectOrCreate?: Prisma.ForumThreadCreateOrConnectWithoutFeedPostInput
+  upsert?: Prisma.ForumThreadUpsertWithoutFeedPostInput
+  disconnect?: Prisma.ForumThreadWhereInput | boolean
+  delete?: Prisma.ForumThreadWhereInput | boolean
+  connect?: Prisma.ForumThreadWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ForumThreadUpdateToOneWithWhereWithoutFeedPostInput, Prisma.ForumThreadUpdateWithoutFeedPostInput>, Prisma.ForumThreadUncheckedUpdateWithoutFeedPostInput>
 }
 
 export type ForumThreadCreateNestedManyWithoutCategoryInput = {
@@ -658,6 +686,7 @@ export type ForumThreadCreateWithoutCommunityInput = {
   category: Prisma.ForumCategoryCreateNestedOneWithoutThreadsInput
   author: Prisma.UserCreateNestedOneWithoutForumThreadsInput
   posts?: Prisma.ForumPostCreateNestedManyWithoutThreadInput
+  feedPost?: Prisma.PostCreateNestedOneWithoutForumThreadInput
 }
 
 export type ForumThreadUncheckedCreateWithoutCommunityInput = {
@@ -671,6 +700,7 @@ export type ForumThreadUncheckedCreateWithoutCommunityInput = {
   lockedAt?: Date | string | null
   createdAt?: Date | string
   posts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutThreadInput
+  feedPost?: Prisma.PostUncheckedCreateNestedOneWithoutForumThreadInput
 }
 
 export type ForumThreadCreateOrConnectWithoutCommunityInput = {
@@ -715,6 +745,76 @@ export type ForumThreadScalarWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"ForumThread"> | Date | string
 }
 
+export type ForumThreadCreateWithoutFeedPostInput = {
+  title: string
+  replyCount?: number
+  lastPostAt?: Date | string
+  pinnedAt?: Date | string | null
+  lockedAt?: Date | string | null
+  createdAt?: Date | string
+  community: Prisma.CommunityCreateNestedOneWithoutForumThreadsInput
+  category: Prisma.ForumCategoryCreateNestedOneWithoutThreadsInput
+  author: Prisma.UserCreateNestedOneWithoutForumThreadsInput
+  posts?: Prisma.ForumPostCreateNestedManyWithoutThreadInput
+}
+
+export type ForumThreadUncheckedCreateWithoutFeedPostInput = {
+  id?: number
+  communityId: number
+  categoryId: number
+  authorId: number
+  title: string
+  replyCount?: number
+  lastPostAt?: Date | string
+  pinnedAt?: Date | string | null
+  lockedAt?: Date | string | null
+  createdAt?: Date | string
+  posts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutThreadInput
+}
+
+export type ForumThreadCreateOrConnectWithoutFeedPostInput = {
+  where: Prisma.ForumThreadWhereUniqueInput
+  create: Prisma.XOR<Prisma.ForumThreadCreateWithoutFeedPostInput, Prisma.ForumThreadUncheckedCreateWithoutFeedPostInput>
+}
+
+export type ForumThreadUpsertWithoutFeedPostInput = {
+  update: Prisma.XOR<Prisma.ForumThreadUpdateWithoutFeedPostInput, Prisma.ForumThreadUncheckedUpdateWithoutFeedPostInput>
+  create: Prisma.XOR<Prisma.ForumThreadCreateWithoutFeedPostInput, Prisma.ForumThreadUncheckedCreateWithoutFeedPostInput>
+  where?: Prisma.ForumThreadWhereInput
+}
+
+export type ForumThreadUpdateToOneWithWhereWithoutFeedPostInput = {
+  where?: Prisma.ForumThreadWhereInput
+  data: Prisma.XOR<Prisma.ForumThreadUpdateWithoutFeedPostInput, Prisma.ForumThreadUncheckedUpdateWithoutFeedPostInput>
+}
+
+export type ForumThreadUpdateWithoutFeedPostInput = {
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  replyCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPostAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  community?: Prisma.CommunityUpdateOneRequiredWithoutForumThreadsNestedInput
+  category?: Prisma.ForumCategoryUpdateOneRequiredWithoutThreadsNestedInput
+  author?: Prisma.UserUpdateOneRequiredWithoutForumThreadsNestedInput
+  posts?: Prisma.ForumPostUpdateManyWithoutThreadNestedInput
+}
+
+export type ForumThreadUncheckedUpdateWithoutFeedPostInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  communityId?: Prisma.IntFieldUpdateOperationsInput | number
+  categoryId?: Prisma.IntFieldUpdateOperationsInput | number
+  authorId?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  replyCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPostAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  posts?: Prisma.ForumPostUncheckedUpdateManyWithoutThreadNestedInput
+}
+
 export type ForumThreadCreateWithoutCategoryInput = {
   title: string
   replyCount?: number
@@ -725,6 +825,7 @@ export type ForumThreadCreateWithoutCategoryInput = {
   community: Prisma.CommunityCreateNestedOneWithoutForumThreadsInput
   author: Prisma.UserCreateNestedOneWithoutForumThreadsInput
   posts?: Prisma.ForumPostCreateNestedManyWithoutThreadInput
+  feedPost?: Prisma.PostCreateNestedOneWithoutForumThreadInput
 }
 
 export type ForumThreadUncheckedCreateWithoutCategoryInput = {
@@ -738,6 +839,7 @@ export type ForumThreadUncheckedCreateWithoutCategoryInput = {
   lockedAt?: Date | string | null
   createdAt?: Date | string
   posts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutThreadInput
+  feedPost?: Prisma.PostUncheckedCreateNestedOneWithoutForumThreadInput
 }
 
 export type ForumThreadCreateOrConnectWithoutCategoryInput = {
@@ -776,6 +878,7 @@ export type ForumThreadCreateWithoutPostsInput = {
   community: Prisma.CommunityCreateNestedOneWithoutForumThreadsInput
   category: Prisma.ForumCategoryCreateNestedOneWithoutThreadsInput
   author: Prisma.UserCreateNestedOneWithoutForumThreadsInput
+  feedPost?: Prisma.PostCreateNestedOneWithoutForumThreadInput
 }
 
 export type ForumThreadUncheckedCreateWithoutPostsInput = {
@@ -789,6 +892,7 @@ export type ForumThreadUncheckedCreateWithoutPostsInput = {
   pinnedAt?: Date | string | null
   lockedAt?: Date | string | null
   createdAt?: Date | string
+  feedPost?: Prisma.PostUncheckedCreateNestedOneWithoutForumThreadInput
 }
 
 export type ForumThreadCreateOrConnectWithoutPostsInput = {
@@ -817,6 +921,7 @@ export type ForumThreadUpdateWithoutPostsInput = {
   community?: Prisma.CommunityUpdateOneRequiredWithoutForumThreadsNestedInput
   category?: Prisma.ForumCategoryUpdateOneRequiredWithoutThreadsNestedInput
   author?: Prisma.UserUpdateOneRequiredWithoutForumThreadsNestedInput
+  feedPost?: Prisma.PostUpdateOneWithoutForumThreadNestedInput
 }
 
 export type ForumThreadUncheckedUpdateWithoutPostsInput = {
@@ -830,6 +935,7 @@ export type ForumThreadUncheckedUpdateWithoutPostsInput = {
   pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  feedPost?: Prisma.PostUncheckedUpdateOneWithoutForumThreadNestedInput
 }
 
 export type ForumThreadCreateWithoutAuthorInput = {
@@ -842,6 +948,7 @@ export type ForumThreadCreateWithoutAuthorInput = {
   community: Prisma.CommunityCreateNestedOneWithoutForumThreadsInput
   category: Prisma.ForumCategoryCreateNestedOneWithoutThreadsInput
   posts?: Prisma.ForumPostCreateNestedManyWithoutThreadInput
+  feedPost?: Prisma.PostCreateNestedOneWithoutForumThreadInput
 }
 
 export type ForumThreadUncheckedCreateWithoutAuthorInput = {
@@ -855,6 +962,7 @@ export type ForumThreadUncheckedCreateWithoutAuthorInput = {
   lockedAt?: Date | string | null
   createdAt?: Date | string
   posts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutThreadInput
+  feedPost?: Prisma.PostUncheckedCreateNestedOneWithoutForumThreadInput
 }
 
 export type ForumThreadCreateOrConnectWithoutAuthorInput = {
@@ -905,6 +1013,7 @@ export type ForumThreadUpdateWithoutCommunityInput = {
   category?: Prisma.ForumCategoryUpdateOneRequiredWithoutThreadsNestedInput
   author?: Prisma.UserUpdateOneRequiredWithoutForumThreadsNestedInput
   posts?: Prisma.ForumPostUpdateManyWithoutThreadNestedInput
+  feedPost?: Prisma.PostUpdateOneWithoutForumThreadNestedInput
 }
 
 export type ForumThreadUncheckedUpdateWithoutCommunityInput = {
@@ -918,6 +1027,7 @@ export type ForumThreadUncheckedUpdateWithoutCommunityInput = {
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   posts?: Prisma.ForumPostUncheckedUpdateManyWithoutThreadNestedInput
+  feedPost?: Prisma.PostUncheckedUpdateOneWithoutForumThreadNestedInput
 }
 
 export type ForumThreadUncheckedUpdateManyWithoutCommunityInput = {
@@ -954,6 +1064,7 @@ export type ForumThreadUpdateWithoutCategoryInput = {
   community?: Prisma.CommunityUpdateOneRequiredWithoutForumThreadsNestedInput
   author?: Prisma.UserUpdateOneRequiredWithoutForumThreadsNestedInput
   posts?: Prisma.ForumPostUpdateManyWithoutThreadNestedInput
+  feedPost?: Prisma.PostUpdateOneWithoutForumThreadNestedInput
 }
 
 export type ForumThreadUncheckedUpdateWithoutCategoryInput = {
@@ -967,6 +1078,7 @@ export type ForumThreadUncheckedUpdateWithoutCategoryInput = {
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   posts?: Prisma.ForumPostUncheckedUpdateManyWithoutThreadNestedInput
+  feedPost?: Prisma.PostUncheckedUpdateOneWithoutForumThreadNestedInput
 }
 
 export type ForumThreadUncheckedUpdateManyWithoutCategoryInput = {
@@ -1003,6 +1115,7 @@ export type ForumThreadUpdateWithoutAuthorInput = {
   community?: Prisma.CommunityUpdateOneRequiredWithoutForumThreadsNestedInput
   category?: Prisma.ForumCategoryUpdateOneRequiredWithoutThreadsNestedInput
   posts?: Prisma.ForumPostUpdateManyWithoutThreadNestedInput
+  feedPost?: Prisma.PostUpdateOneWithoutForumThreadNestedInput
 }
 
 export type ForumThreadUncheckedUpdateWithoutAuthorInput = {
@@ -1016,6 +1129,7 @@ export type ForumThreadUncheckedUpdateWithoutAuthorInput = {
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   posts?: Prisma.ForumPostUncheckedUpdateManyWithoutThreadNestedInput
+  feedPost?: Prisma.PostUncheckedUpdateOneWithoutForumThreadNestedInput
 }
 
 export type ForumThreadUncheckedUpdateManyWithoutAuthorInput = {
@@ -1076,6 +1190,7 @@ export type ForumThreadSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   category?: boolean | Prisma.ForumCategoryDefaultArgs<ExtArgs>
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   posts?: boolean | Prisma.ForumThread$postsArgs<ExtArgs>
+  feedPost?: boolean | Prisma.ForumThread$feedPostArgs<ExtArgs>
   _count?: boolean | Prisma.ForumThreadCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["forumThread"]>
 
@@ -1130,6 +1245,7 @@ export type ForumThreadInclude<ExtArgs extends runtime.Types.Extensions.Internal
   category?: boolean | Prisma.ForumCategoryDefaultArgs<ExtArgs>
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   posts?: boolean | Prisma.ForumThread$postsArgs<ExtArgs>
+  feedPost?: boolean | Prisma.ForumThread$feedPostArgs<ExtArgs>
   _count?: boolean | Prisma.ForumThreadCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ForumThreadIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1150,6 +1266,7 @@ export type $ForumThreadPayload<ExtArgs extends runtime.Types.Extensions.Interna
     category: Prisma.$ForumCategoryPayload<ExtArgs>
     author: Prisma.$UserPayload<ExtArgs>
     posts: Prisma.$ForumPostPayload<ExtArgs>[]
+    feedPost: Prisma.$PostPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1560,6 +1677,7 @@ export interface Prisma__ForumThreadClient<T, Null = never, ExtArgs extends runt
   category<T extends Prisma.ForumCategoryDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ForumCategoryDefaultArgs<ExtArgs>>): Prisma.Prisma__ForumCategoryClient<runtime.Types.Result.GetResult<Prisma.$ForumCategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   author<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   posts<T extends Prisma.ForumThread$postsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ForumThread$postsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ForumPostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  feedPost<T extends Prisma.ForumThread$feedPostArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ForumThread$feedPostArgs<ExtArgs>>): Prisma.Prisma__PostClient<runtime.Types.Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2016,6 +2134,25 @@ export type ForumThread$postsArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.ForumPostScalarFieldEnum | Prisma.ForumPostScalarFieldEnum[]
+}
+
+/**
+ * ForumThread.feedPost
+ */
+export type ForumThread$feedPostArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Post
+   */
+  select?: Prisma.PostSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Post
+   */
+  omit?: Prisma.PostOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PostInclude<ExtArgs> | null
+  where?: Prisma.PostWhereInput
 }
 
 /**

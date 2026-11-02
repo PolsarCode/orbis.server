@@ -171,19 +171,24 @@ export function postMessage(
     linkUrl: string | null;
     createdAt: Date;
     author: MessageAuthor;
+    forumThread?: { id: number; title: string } | null;
   },
   community: MessageCommunity,
 ) {
   const text = plainText(post.content);
+  const thread = post.forumThread;
   return fromAuthor(
     post.author,
     community,
-    postLink(community.id, post.id),
+    thread
+      ? `${webUrl()}/communities/${community.id}/forum/threads/${thread.id}`
+      : postLink(community.id, post.id),
     {
+      ...(thread && { title: escapeMarkdown(thread.title) }),
       ...(text && { description: escapeMarkdown(excerpt(text)) }),
       timestamp: post.createdAt.toISOString(),
     },
-    firstLine(text) || `Post by ${webhookName(post.author)}`,
+    thread?.title || firstLine(text) || `Post by ${webhookName(post.author)}`,
     post.linkUrl,
   );
 }

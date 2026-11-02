@@ -11,7 +11,7 @@ enum LikeableType {
 }
 
 model Post {
-  id            Int        @id @default(autoincrement())
+  id            Int          @id @default(autoincrement())
   communityId   Int?
   wallUserId    Int?
   mediaType     MediaType?
@@ -19,15 +19,17 @@ model Post {
   authorId      Int
   content       String
   linkUrl       String?
-  commentCount  Int        @default(0)
-  likeCount     Int        @default(0)
+  commentCount  Int          @default(0)
+  likeCount     Int          @default(0)
   hiddenAt      DateTime?
   editedAt      DateTime?
   pinnedAt      DateTime?
-  createdAt     DateTime   @default(now())
-  community     Community? @relation(fields: [communityId], references: [id], onDelete: Cascade)
-  wallUser      User?      @relation("WallPosts", fields: [wallUserId], references: [id], onDelete: Cascade)
-  author        User       @relation(fields: [authorId], references: [id])
+  forumThreadId Int?         @unique
+  createdAt     DateTime     @default(now())
+  community     Community?   @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  wallUser      User?        @relation("WallPosts", fields: [wallUserId], references: [id], onDelete: Cascade)
+  author        User         @relation(fields: [authorId], references: [id])
+  forumThread   ForumThread? @relation(fields: [forumThreadId], references: [id], onDelete: Cascade)
 
   @@index([communityId, createdAt(sort: Desc)])
   @@index([wallUserId, createdAt(sort: Desc)])

@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { Prisma } from '../../prisma/generated/client';
 import { PrismaService } from '../prisma.service';
+import { PostsService } from '../posts/posts.service';
 import {
   NewNotification,
   NotificationsService,
@@ -59,6 +60,7 @@ const postSelect = {
   threadId: true,
   opening: true,
   content: true,
+  linkUrl: true,
   quoteId: true,
   likeCount: true,
   hiddenAt: true,
@@ -70,6 +72,7 @@ const postSelect = {
 const quoteSelect = {
   id: true,
   content: true,
+  linkUrl: true,
   createdAt: true,
   author,
 } as const;
@@ -86,10 +89,12 @@ function threadTitle(title: string) {
   return trimmed;
 }
 
-function forumBody(content: string) {
+function forumBody(content: string, linkUrl?: string) {
   const { html, empty } = sanitizeRichText(content);
-  if (empty) throw new BadRequestException('Write something before posting');
-  return html;
+  if (empty && !linkUrl) {
+    throw new BadRequestException('Write something before posting');
+  }
+  return empty ? '' : html;
 }
 
 function pageNumber(page?: number) {
@@ -102,11 +107,16 @@ export class ForumService {
     private prisma: PrismaService,
     private notifications: NotificationsService,
     private likes: LikesService,
+    private posts: PostsService,
   ) {}
 
-  private async withMentions(content: string, authorId: number) {
-    const html = forumBody(content);
-    if (containsLink(html)) {
+  private async withMentions(
+    content: string,
+    authorId: number,
+    linkUrl?: string,
+  ) {
+    const html = forumBody(content, linkUrl);
+    if (containsLink(html, linkUrl)) {
       await requireEstablishedAccount(this.prisma, authorId, 'post links');
     }
     return resolveMentions(this.prisma, html, authorId);
@@ -266,6 +276,7 @@ export class ForumService {
         name: true,
         description: true,
         adminOnly: true,
+        postToFeed: true,
         section: { select: { id: true, name: true, adminOnly: true } },
       },
     });
@@ -402,11 +413,15 @@ export class ForumService {
     userId: number,
     communityId: number,
     categoryId: number,
-    { title, content }: CreateForumThreadDto,
+    { title, content, linkUrl }: CreateForumThreadDto,
   ) {
     const category = await this.prisma.forumCategory.findFirst({
       where: { id: categoryId, communityId },
-      select: { adminOnly: true, section: { select: { adminOnly: true } } },
+      select: {
+        adminOnly: true,
+        postToFeed: true,
+        section: { select: { adminOnly: true } },
+      },
     });
     if (!category) throw new NotFoundException('Category not found');
     if (
@@ -419,7 +434,11 @@ export class ForumService {
     }
 
     const cleanTitle = threadTitle(title);
-    const { html, mentioned } = await this.withMentions(content, userId);
+    const { html, mentioned } = await this.withMentions(
+      content,
+      userId,
+      linkUrl,
+    );
     const thread = await this.prisma.forumThread.create({
       data: {
         communityId,
@@ -432,11 +451,21 @@ export class ForumService {
             authorId: userId,
             opening: true,
             content: html,
+            linkUrl: linkUrl ?? null,
           },
         },
       },
       select: { id: true },
     });
+    if (category.postToFeed) {
+      await this.posts.shareThread({
+        id: thread.id,
+        communityId,
+        authorId: userId,
+        content: html,
+        linkUrl: linkUrl ?? null,
+      });
+    }
 
     await notifyMentions(this.prisma, this.notifications, {
       mentioned,
@@ -452,7 +481,7 @@ export class ForumService {
     userId: number,
     communityId: number,
     threadId: number,
-    { content, quoteId }: CreateForumPostDto,
+    { content, quoteId, linkUrl }: CreateForumPostDto,
   ) {
     const reported = await reportedBy(this.prisma, userId);
     const thread = await this.visibleThread(
@@ -483,7 +512,11 @@ export class ForumService {
       throw new BadRequestException('That post can’t be quoted');
     }
 
-    const { html, mentioned } = await this.withMentions(content, userId);
+    const { html, mentioned } = await this.withMentions(
+      content,
+      userId,
+      linkUrl,
+    );
     const now = new Date();
     const [post] = await this.prisma.$transaction([
       this.prisma.forumPost.create({
@@ -492,6 +525,7 @@ export class ForumService {
           communityId,
           authorId: userId,
           content: html,
+          linkUrl: linkUrl ?? null,
           quoteId: quote?.id ?? null,
           createdAt: now,
         },
@@ -565,7 +599,7 @@ export class ForumService {
       if (!category) throw new NotFoundException('Category not found');
     }
 
-    return this.prisma.forumThread.update({
+    const updated = await this.prisma.forumThread.update({
       where: { id: threadId },
       data: {
         ...(title !== undefined && { title: threadTitle(title) }),
@@ -573,6 +607,8 @@ export class ForumService {
       },
       select: { id: true, title: true, categoryId: true },
     });
+    if (title !== undefined) await this.posts.threadChanged(threadId);
+    return updated;
   }
 
   async setFlag(
@@ -606,11 +642,11 @@ export class ForumService {
     userId: number,
     communityId: number,
     postId: number,
-    { content }: UpdateForumPostDto,
+    { content, linkUrl }: UpdateForumPostDto,
   ) {
     const post = await this.prisma.forumPost.findFirst({
       where: { id: postId, communityId },
-      select: { authorId: true, content: true, threadId: true },
+      select: { authorId: true, content: true, threadId: true, opening: true },
     });
     if (!post) throw new NotFoundException('Post not found');
     if (post.authorId !== userId) {
@@ -620,12 +656,19 @@ export class ForumService {
     const { html, mentioned } = await this.withMentions(
       unlinkMentions(content),
       userId,
+      linkUrl,
     );
     const updated = await this.prisma.forumPost.update({
       where: { id: postId },
-      data: { content: html, editedAt: new Date() },
+      data: { content: html, linkUrl: linkUrl ?? null, editedAt: new Date() },
       select: postSelect,
     });
+    if (post.opening) {
+      await this.posts.threadChanged(post.threadId, {
+        content: html,
+        linkUrl: linkUrl ?? null,
+      });
+    }
 
     const previously = linkedMentions(post.content);
     await notifyMentions(this.prisma, this.notifications, {
@@ -665,6 +708,7 @@ export class ForumService {
       throw new ForbiddenException('You can’t delete this thread');
     }
 
+    await this.posts.removeThreadPosts([threadId]);
     await this.prisma.$transaction([
       ...forumCleanup(
         this.prisma,

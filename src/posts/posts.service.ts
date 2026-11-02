@@ -46,6 +46,7 @@ const postInclude = {
   author,
   community: communitySummary,
   wallUser: author,
+  forumThread: { select: { id: true, title: true, replyCount: true } },
 } as const;
 
 const previewSelect = {
@@ -961,12 +962,16 @@ export class PostsService {
         wallUserId: true,
         mediaType: true,
         mediaSourceId: true,
+        forumThreadId: true,
         wallUser: { select: { username: true } },
       },
     });
     if (!post) throw new NotFoundException('Post not found');
     if (post.authorId !== userId) {
       throw new ForbiddenException('You can only edit your own posts');
+    }
+    if (post.forumThreadId) {
+      throw new BadRequestException('Edit this in the forum thread instead');
     }
 
     const { data, mentioned } = await this.withMentions(
@@ -1040,6 +1045,59 @@ export class PostsService {
       where: { id: postId },
       data: { pinnedAt: pinned ? new Date() : null },
     });
+  }
+
+  async shareThread(thread: {
+    id: number;
+    communityId: number;
+    authorId: number;
+    content: string;
+    linkUrl: string | null;
+  }) {
+    const post = await this.prisma.post.create({
+      data: {
+        communityId: thread.communityId,
+        authorId: thread.authorId,
+        content: thread.content,
+        linkUrl: thread.linkUrl,
+        forumThreadId: thread.id,
+      },
+      select: { id: true },
+    });
+    void this.discordChannel.postCreated(post.id);
+  }
+
+  async threadChanged(
+    threadId: number,
+    opening?: { content: string; linkUrl: string | null },
+  ) {
+    const post = await this.prisma.post.findUnique({
+      where: { forumThreadId: threadId },
+      select: { id: true },
+    });
+    if (!post) return;
+    if (opening) {
+      await this.prisma.post.update({
+        where: { id: post.id },
+        data: { ...opening, editedAt: new Date() },
+      });
+    }
+    void this.discordChannel.contentEdited('post', post.id);
+  }
+
+  async removeThreadPosts(threadIds: number[]) {
+    if (threadIds.length === 0) return;
+    const posts = await this.prisma.post.findMany({
+      where: { forumThreadId: { in: threadIds } },
+      select: { id: true },
+    });
+    const ids = posts.map(({ id }) => id);
+    if (ids.length === 0) return;
+    await this.prisma.$transaction([
+      ...(await discussionCleanup(this.prisma, 'post', ids)),
+      this.prisma.post.deleteMany({ where: { id: { in: ids } } }),
+    ]);
+    for (const id of ids) void this.discordChannel.contentDeleted('post', id);
   }
 
   async remove(userId: number, postId: number) {

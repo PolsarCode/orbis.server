@@ -2,6 +2,7 @@ import {
   IsInt,
   IsOptional,
   IsString,
+  IsUrl,
   Max,
   MaxLength,
   Min,
@@ -18,6 +19,11 @@ export class CreateForumThreadDto {
   @IsString()
   @MaxLength(FORUM_POST_MAX)
   content: string;
+
+  @IsOptional()
+  @MaxLength(2048)
+  @IsUrl({ protocols: ['http', 'https'], require_protocol: true })
+  linkUrl?: string;
 }
 
 export class UpdateForumThreadDto {
@@ -43,10 +49,20 @@ export class CreateForumPostDto {
   @Min(1)
   @Max(2147483647)
   quoteId?: number;
+
+  @IsOptional()
+  @MaxLength(2048)
+  @IsUrl({ protocols: ['http', 'https'], require_protocol: true })
+  linkUrl?: string;
 }
 
 export class UpdateForumPostDto {
   @IsString()
   @MaxLength(FORUM_POST_MAX)
   content: string;
+
+  @IsOptional()
+  @MaxLength(2048)
+  @IsUrl({ protocols: ['http', 'https'], require_protocol: true })
+  linkUrl?: string;
 }

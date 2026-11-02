@@ -408,6 +408,7 @@ export class DiscordChannelService implements OnModuleDestroy {
         hiddenAt: true,
         createdAt: true,
         author,
+        forumThread: { select: { id: true, title: true } },
         community: { select: { discordChannel: { select: channelSelect } } },
       },
     });

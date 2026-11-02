@@ -20,6 +20,7 @@ model ForumCategory {
   icon        String?
   color       String?
   adminOnly   Boolean       @default(false)
+  postToFeed  Boolean       @default(false)
   position    Int           @default(0)
   createdAt   DateTime      @default(now())
   community   Community     @relation(fields: [communityId], references: [id], onDelete: Cascade)
@@ -45,6 +46,7 @@ model ForumThread {
   category    ForumCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   author      User          @relation(fields: [authorId], references: [id])
   posts       ForumPost[]
+  feedPost    Post?
 
   @@index([categoryId, lastPostAt(sort: Desc)])
   @@index([communityId])
@@ -58,6 +60,7 @@ model ForumPost {
   authorId    Int
   opening     Boolean     @default(false)
   content     String
+  linkUrl     String?
   quoteId     Int?
   likeCount   Int         @default(0)
   hiddenAt    DateTime?
