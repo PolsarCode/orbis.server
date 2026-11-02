@@ -93,6 +93,8 @@ type SeedForumCategory = {
   adminOnly?: boolean;
   name: string;
   description: string;
+  icon?: string;
+  color?: string;
   threads: SeedForumThread[];
 };
 
@@ -398,6 +400,8 @@ const forums: Record<string, SeedForumCategory[]> = {
       section: 'Club',
       adminOnly: true,
       name: 'Announcements',
+      icon: 'megaphone',
+      color: '#f08a4b',
       description: 'Club news, watch-party times and rule updates.',
       threads: [
         {
@@ -441,6 +445,8 @@ const forums: Record<string, SeedForumCategory[]> = {
     {
       section: 'Anime',
       name: 'Episode discussion',
+      icon: 'tv',
+      color: '#5b8def',
       description:
         'One thread per show. Spoilers are fine inside, never in titles.',
       threads: [
@@ -537,6 +543,7 @@ const forums: Record<string, SeedForumCategory[]> = {
     {
       section: 'Anime',
       name: 'Recommendations',
+      icon: 'star',
       description: 'Ask for picks or share the hidden gems you love.',
       threads: [
         {
@@ -568,6 +575,8 @@ const forums: Record<string, SeedForumCategory[]> = {
       section: 'Village',
       adminOnly: true,
       name: 'Village notices',
+      icon: 'scroll',
+      color: '#4caf7a',
       description:
         'Missions, festivals and anything the whole village should know.',
       threads: [
@@ -628,6 +637,8 @@ const forums: Record<string, SeedForumCategory[]> = {
   'Straw Hat Pirates': [
     {
       name: 'Ship business',
+      icon: 'users',
+      color: '#9a7cf0',
       description: 'Supplies, routes and who forgot to do the dishes.',
       threads: [
         {
@@ -663,6 +674,8 @@ const forums: Record<string, SeedForumCategory[]> = {
     },
     {
       name: 'Adventures',
+      icon: 'sparkles',
+      color: '#e57bb5',
       description: 'Stories from the sea and the islands along the way.',
       threads: [
         {
@@ -686,6 +699,8 @@ const forums: Record<string, SeedForumCategory[]> = {
   'Saiyan Training Grounds': [
     {
       name: 'Training logs',
+      icon: 'trophy',
+      color: '#e3b341',
       description: 'Post your sessions. Bragging is encouraged.',
       threads: [
         {
@@ -726,6 +741,8 @@ const forums: Record<string, SeedForumCategory[]> = {
   'Demon Slayer Corps': [
     {
       name: 'Mission reports',
+      icon: 'newspaper',
+      color: '#e5534b',
       description: 'Share what you saw out there and what you learned.',
       threads: [
         {
@@ -757,6 +774,8 @@ const forums: Record<string, SeedForumCategory[]> = {
   'Jujutsu High': [
     {
       name: 'Classroom',
+      icon: 'book',
+      color: '#9a7cf0',
       description: 'Homework, lectures and questions for the teachers.',
       threads: [
         {
@@ -780,6 +799,8 @@ const forums: Record<string, SeedForumCategory[]> = {
   'Survey Corps': [
     {
       name: 'Orders',
+      icon: 'megaphone',
+      color: '#4caf7a',
       description: 'Expedition plans. Members only.',
       threads: [
         {
@@ -2469,6 +2490,8 @@ async function main() {
             : null,
           name: category.name,
           description: category.description,
+          icon: category.icon ?? null,
+          color: category.color ?? null,
           adminOnly: category.adminOnly ?? false,
           position,
         },

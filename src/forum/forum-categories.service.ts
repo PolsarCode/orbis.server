@@ -24,6 +24,8 @@ const categorySelect = {
   sectionId: true,
   name: true,
   description: true,
+  icon: true,
+  color: true,
   adminOnly: true,
 } as const;
 
@@ -34,6 +36,8 @@ export type ForumCategoryItem = {
   sectionId: number | null;
   name: string;
   description: string;
+  icon: string | null;
+  color: string | null;
   adminOnly: boolean;
   threadCount: number;
   latest: { id: number; title: string; lastPostAt: Date } | null;
@@ -129,7 +133,14 @@ export class ForumCategoriesService {
   async create(
     userId: number,
     communityId: number,
-    { name, description, sectionId, adminOnly }: CreateForumCategoryDto,
+    {
+      name,
+      description,
+      sectionId,
+      adminOnly,
+      icon,
+      color,
+    }: CreateForumCategoryDto,
   ): Promise<ForumCategoryItem> {
     await this.requireManager(userId, communityId);
     if (sectionId) await this.requireSection(communityId, sectionId);
@@ -153,6 +164,8 @@ export class ForumCategoriesService {
         sectionId: sectionId ?? null,
         name: cleanName(name, 'category'),
         description: description?.trim() ?? '',
+        icon: icon ?? null,
+        color: color ?? null,
         adminOnly: adminOnly ?? false,
         position: (last?.position ?? -1) + 1,
       },
@@ -165,7 +178,14 @@ export class ForumCategoriesService {
     userId: number,
     communityId: number,
     categoryId: number,
-    { name, description, sectionId, adminOnly }: UpdateForumCategoryDto,
+    {
+      name,
+      description,
+      sectionId,
+      adminOnly,
+      icon,
+      color,
+    }: UpdateForumCategoryDto,
   ) {
     await this.requireManager(userId, communityId);
     await this.requireCategory(communityId, categoryId);
@@ -177,6 +197,8 @@ export class ForumCategoriesService {
         ...(description !== undefined && { description: description.trim() }),
         ...(sectionId !== undefined && { sectionId }),
         ...(adminOnly !== undefined && { adminOnly }),
+        ...(icon !== undefined && { icon }),
+        ...(color !== undefined && { color }),
       },
       select: categorySelect,
     });

@@ -5,6 +5,7 @@ import {
   IsInt,
   IsOptional,
   IsString,
+  Matches,
   Max,
   MaxLength,
   Min,
@@ -12,6 +13,8 @@ import {
 
 export const CATEGORY_NAME_MAX = 60;
 export const CATEGORY_DESCRIPTION_MAX = 300;
+export const CATEGORY_ICON_MAX = 50;
+export const CATEGORY_ICON_NAME = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
 export class CreateForumCategoryDto {
   @IsString()
@@ -32,6 +35,16 @@ export class CreateForumCategoryDto {
   @IsOptional()
   @IsBoolean()
   adminOnly?: boolean;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(CATEGORY_ICON_MAX)
+  @Matches(CATEGORY_ICON_NAME)
+  icon?: string | null;
+
+  @IsOptional()
+  @Matches(/^#[0-9a-f]{6}$/i)
+  color?: string | null;
 }
 
 export class UpdateForumCategoryDto {
@@ -54,6 +67,16 @@ export class UpdateForumCategoryDto {
   @IsOptional()
   @IsBoolean()
   adminOnly?: boolean;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(CATEGORY_ICON_MAX)
+  @Matches(CATEGORY_ICON_NAME)
+  icon?: string | null;
+
+  @IsOptional()
+  @Matches(/^#[0-9a-f]{6}$/i)
+  color?: string | null;
 }
 
 export class ForumSectionDto {

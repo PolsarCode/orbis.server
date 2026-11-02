@@ -3,7 +3,10 @@ import {
   ConflictException,
   ForbiddenException,
 } from '@nestjs/common';
+import { plainToInstance } from 'class-transformer';
+import { validate } from 'class-validator';
 import { ForumCategoriesService } from './forum-categories.service';
+import { UpdateForumCategoryDto } from './dto/forum-category.dto';
 import { PrismaService } from '../prisma.service';
 import { isForumManager } from './forum-helpers';
 
@@ -78,6 +81,8 @@ describe('Forum categories', () => {
         sectionId: null,
         name: 'Theories',
         description: 'Wild ideas',
+        icon: null,
+        color: null,
         adminOnly: false,
         position: 5,
       },
@@ -86,6 +91,8 @@ describe('Forum categories', () => {
         sectionId: true,
         name: true,
         description: true,
+        icon: true,
+        color: true,
         adminOnly: true,
       },
     });
@@ -237,6 +244,42 @@ describe('Admin-only posting', () => {
     expect(prisma.forumSection.update).toHaveBeenCalledWith(
       expect.objectContaining({ data: { adminOnly: true } }),
     );
+  });
+
+  it('saves a category’s icon and color, and goes back to the default with null', async () => {
+    const { prisma, service } = setup();
+    prisma.forumCategory.findFirst.mockResolvedValue({ id: 5 });
+
+    await service.update(7, 3, 5, { icon: 'megaphone', color: '#5b8def' });
+    await service.update(7, 3, 5, { icon: null, color: null });
+
+    expect(prisma.forumCategory.update).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        data: { icon: 'megaphone', color: '#5b8def' },
+      }),
+    );
+    expect(prisma.forumCategory.update).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({ data: { icon: null, color: null } }),
+    );
+  });
+
+  it('only accepts icon names like gamepad-2 and colors written as #rrggbb', async () => {
+    const problems = async (body: object) =>
+      (await validate(plainToInstance(UpdateForumCategoryDto, body))).map(
+        ({ property }) => property,
+      );
+
+    await expect(
+      problems({ icon: 'gamepad-2', color: '#5B8DEF' }),
+    ).resolves.toEqual([]);
+    await expect(problems({ icon: null, color: null })).resolves.toEqual([]);
+    for (const icon of ['Rocket', 'rocket!', '-rocket', 'r'.repeat(51)]) {
+      await expect(problems({ icon })).resolves.toEqual(['icon']);
+    }
+    await expect(problems({ color: 'blue' })).resolves.toEqual(['color']);
+    await expect(problems({ color: '#5b8de' })).resolves.toEqual(['color']);
   });
 
   it('won’t let members change who can post', async () => {

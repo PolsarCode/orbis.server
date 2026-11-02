@@ -46,6 +46,8 @@ export type ForumCategoryMinAggregateOutputType = {
   sectionId: number | null
   name: string | null
   description: string | null
+  icon: string | null
+  color: string | null
   adminOnly: boolean | null
   position: number | null
   createdAt: Date | null
@@ -57,6 +59,8 @@ export type ForumCategoryMaxAggregateOutputType = {
   sectionId: number | null
   name: string | null
   description: string | null
+  icon: string | null
+  color: string | null
   adminOnly: boolean | null
   position: number | null
   createdAt: Date | null
@@ -68,6 +72,8 @@ export type ForumCategoryCountAggregateOutputType = {
   sectionId: number
   name: number
   description: number
+  icon: number
+  color: number
   adminOnly: number
   position: number
   createdAt: number
@@ -95,6 +101,8 @@ export type ForumCategoryMinAggregateInputType = {
   sectionId?: true
   name?: true
   description?: true
+  icon?: true
+  color?: true
   adminOnly?: true
   position?: true
   createdAt?: true
@@ -106,6 +114,8 @@ export type ForumCategoryMaxAggregateInputType = {
   sectionId?: true
   name?: true
   description?: true
+  icon?: true
+  color?: true
   adminOnly?: true
   position?: true
   createdAt?: true
@@ -117,6 +127,8 @@ export type ForumCategoryCountAggregateInputType = {
   sectionId?: true
   name?: true
   description?: true
+  icon?: true
+  color?: true
   adminOnly?: true
   position?: true
   createdAt?: true
@@ -215,6 +227,8 @@ export type ForumCategoryGroupByOutputType = {
   sectionId: number | null
   name: string
   description: string
+  icon: string | null
+  color: string | null
   adminOnly: boolean
   position: number
   createdAt: Date
@@ -249,6 +263,8 @@ export type ForumCategoryWhereInput = {
   sectionId?: Prisma.IntNullableFilter<"ForumCategory"> | number | null
   name?: Prisma.StringFilter<"ForumCategory"> | string
   description?: Prisma.StringFilter<"ForumCategory"> | string
+  icon?: Prisma.StringNullableFilter<"ForumCategory"> | string | null
+  color?: Prisma.StringNullableFilter<"ForumCategory"> | string | null
   adminOnly?: Prisma.BoolFilter<"ForumCategory"> | boolean
   position?: Prisma.IntFilter<"ForumCategory"> | number
   createdAt?: Prisma.DateTimeFilter<"ForumCategory"> | Date | string
@@ -263,6 +279,8 @@ export type ForumCategoryOrderByWithRelationInput = {
   sectionId?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  icon?: Prisma.SortOrderInput | Prisma.SortOrder
+  color?: Prisma.SortOrderInput | Prisma.SortOrder
   adminOnly?: Prisma.SortOrder
   position?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -280,6 +298,8 @@ export type ForumCategoryWhereUniqueInput = Prisma.AtLeast<{
   sectionId?: Prisma.IntNullableFilter<"ForumCategory"> | number | null
   name?: Prisma.StringFilter<"ForumCategory"> | string
   description?: Prisma.StringFilter<"ForumCategory"> | string
+  icon?: Prisma.StringNullableFilter<"ForumCategory"> | string | null
+  color?: Prisma.StringNullableFilter<"ForumCategory"> | string | null
   adminOnly?: Prisma.BoolFilter<"ForumCategory"> | boolean
   position?: Prisma.IntFilter<"ForumCategory"> | number
   createdAt?: Prisma.DateTimeFilter<"ForumCategory"> | Date | string
@@ -294,6 +314,8 @@ export type ForumCategoryOrderByWithAggregationInput = {
   sectionId?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  icon?: Prisma.SortOrderInput | Prisma.SortOrder
+  color?: Prisma.SortOrderInput | Prisma.SortOrder
   adminOnly?: Prisma.SortOrder
   position?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -313,6 +335,8 @@ export type ForumCategoryScalarWhereWithAggregatesInput = {
   sectionId?: Prisma.IntNullableWithAggregatesFilter<"ForumCategory"> | number | null
   name?: Prisma.StringWithAggregatesFilter<"ForumCategory"> | string
   description?: Prisma.StringWithAggregatesFilter<"ForumCategory"> | string
+  icon?: Prisma.StringNullableWithAggregatesFilter<"ForumCategory"> | string | null
+  color?: Prisma.StringNullableWithAggregatesFilter<"ForumCategory"> | string | null
   adminOnly?: Prisma.BoolWithAggregatesFilter<"ForumCategory"> | boolean
   position?: Prisma.IntWithAggregatesFilter<"ForumCategory"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ForumCategory"> | Date | string
@@ -321,6 +345,8 @@ export type ForumCategoryScalarWhereWithAggregatesInput = {
 export type ForumCategoryCreateInput = {
   name: string
   description?: string
+  icon?: string | null
+  color?: string | null
   adminOnly?: boolean
   position?: number
   createdAt?: Date | string
@@ -335,6 +361,8 @@ export type ForumCategoryUncheckedCreateInput = {
   sectionId?: number | null
   name: string
   description?: string
+  icon?: string | null
+  color?: string | null
   adminOnly?: boolean
   position?: number
   createdAt?: Date | string
@@ -344,6 +372,8 @@ export type ForumCategoryUncheckedCreateInput = {
 export type ForumCategoryUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   adminOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -358,6 +388,8 @@ export type ForumCategoryUncheckedUpdateInput = {
   sectionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   adminOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -370,6 +402,8 @@ export type ForumCategoryCreateManyInput = {
   sectionId?: number | null
   name: string
   description?: string
+  icon?: string | null
+  color?: string | null
   adminOnly?: boolean
   position?: number
   createdAt?: Date | string
@@ -378,6 +412,8 @@ export type ForumCategoryCreateManyInput = {
 export type ForumCategoryUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   adminOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -389,6 +425,8 @@ export type ForumCategoryUncheckedUpdateManyInput = {
   sectionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   adminOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -410,6 +448,8 @@ export type ForumCategoryCountOrderByAggregateInput = {
   sectionId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  icon?: Prisma.SortOrder
+  color?: Prisma.SortOrder
   adminOnly?: Prisma.SortOrder
   position?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -428,6 +468,8 @@ export type ForumCategoryMaxOrderByAggregateInput = {
   sectionId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  icon?: Prisma.SortOrder
+  color?: Prisma.SortOrder
   adminOnly?: Prisma.SortOrder
   position?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -439,6 +481,8 @@ export type ForumCategoryMinOrderByAggregateInput = {
   sectionId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  icon?: Prisma.SortOrder
+  color?: Prisma.SortOrder
   adminOnly?: Prisma.SortOrder
   position?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -557,6 +601,8 @@ export type ForumCategoryUpdateOneRequiredWithoutThreadsNestedInput = {
 export type ForumCategoryCreateWithoutCommunityInput = {
   name: string
   description?: string
+  icon?: string | null
+  color?: string | null
   adminOnly?: boolean
   position?: number
   createdAt?: Date | string
@@ -569,6 +615,8 @@ export type ForumCategoryUncheckedCreateWithoutCommunityInput = {
   sectionId?: number | null
   name: string
   description?: string
+  icon?: string | null
+  color?: string | null
   adminOnly?: boolean
   position?: number
   createdAt?: Date | string
@@ -610,6 +658,8 @@ export type ForumCategoryScalarWhereInput = {
   sectionId?: Prisma.IntNullableFilter<"ForumCategory"> | number | null
   name?: Prisma.StringFilter<"ForumCategory"> | string
   description?: Prisma.StringFilter<"ForumCategory"> | string
+  icon?: Prisma.StringNullableFilter<"ForumCategory"> | string | null
+  color?: Prisma.StringNullableFilter<"ForumCategory"> | string | null
   adminOnly?: Prisma.BoolFilter<"ForumCategory"> | boolean
   position?: Prisma.IntFilter<"ForumCategory"> | number
   createdAt?: Prisma.DateTimeFilter<"ForumCategory"> | Date | string
@@ -618,6 +668,8 @@ export type ForumCategoryScalarWhereInput = {
 export type ForumCategoryCreateWithoutSectionInput = {
   name: string
   description?: string
+  icon?: string | null
+  color?: string | null
   adminOnly?: boolean
   position?: number
   createdAt?: Date | string
@@ -630,6 +682,8 @@ export type ForumCategoryUncheckedCreateWithoutSectionInput = {
   communityId: number
   name: string
   description?: string
+  icon?: string | null
+  color?: string | null
   adminOnly?: boolean
   position?: number
   createdAt?: Date | string
@@ -665,6 +719,8 @@ export type ForumCategoryUpdateManyWithWhereWithoutSectionInput = {
 export type ForumCategoryCreateWithoutThreadsInput = {
   name: string
   description?: string
+  icon?: string | null
+  color?: string | null
   adminOnly?: boolean
   position?: number
   createdAt?: Date | string
@@ -678,6 +734,8 @@ export type ForumCategoryUncheckedCreateWithoutThreadsInput = {
   sectionId?: number | null
   name: string
   description?: string
+  icon?: string | null
+  color?: string | null
   adminOnly?: boolean
   position?: number
   createdAt?: Date | string
@@ -702,6 +760,8 @@ export type ForumCategoryUpdateToOneWithWhereWithoutThreadsInput = {
 export type ForumCategoryUpdateWithoutThreadsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   adminOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -715,6 +775,8 @@ export type ForumCategoryUncheckedUpdateWithoutThreadsInput = {
   sectionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   adminOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -725,6 +787,8 @@ export type ForumCategoryCreateManyCommunityInput = {
   sectionId?: number | null
   name: string
   description?: string
+  icon?: string | null
+  color?: string | null
   adminOnly?: boolean
   position?: number
   createdAt?: Date | string
@@ -733,6 +797,8 @@ export type ForumCategoryCreateManyCommunityInput = {
 export type ForumCategoryUpdateWithoutCommunityInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   adminOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -745,6 +811,8 @@ export type ForumCategoryUncheckedUpdateWithoutCommunityInput = {
   sectionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   adminOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -756,6 +824,8 @@ export type ForumCategoryUncheckedUpdateManyWithoutCommunityInput = {
   sectionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   adminOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -766,6 +836,8 @@ export type ForumCategoryCreateManySectionInput = {
   communityId: number
   name: string
   description?: string
+  icon?: string | null
+  color?: string | null
   adminOnly?: boolean
   position?: number
   createdAt?: Date | string
@@ -774,6 +846,8 @@ export type ForumCategoryCreateManySectionInput = {
 export type ForumCategoryUpdateWithoutSectionInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   adminOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -786,6 +860,8 @@ export type ForumCategoryUncheckedUpdateWithoutSectionInput = {
   communityId?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   adminOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -797,6 +873,8 @@ export type ForumCategoryUncheckedUpdateManyWithoutSectionInput = {
   communityId?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   adminOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -839,6 +917,8 @@ export type ForumCategorySelect<ExtArgs extends runtime.Types.Extensions.Interna
   sectionId?: boolean
   name?: boolean
   description?: boolean
+  icon?: boolean
+  color?: boolean
   adminOnly?: boolean
   position?: boolean
   createdAt?: boolean
@@ -854,6 +934,8 @@ export type ForumCategorySelectCreateManyAndReturn<ExtArgs extends runtime.Types
   sectionId?: boolean
   name?: boolean
   description?: boolean
+  icon?: boolean
+  color?: boolean
   adminOnly?: boolean
   position?: boolean
   createdAt?: boolean
@@ -867,6 +949,8 @@ export type ForumCategorySelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   sectionId?: boolean
   name?: boolean
   description?: boolean
+  icon?: boolean
+  color?: boolean
   adminOnly?: boolean
   position?: boolean
   createdAt?: boolean
@@ -880,12 +964,14 @@ export type ForumCategorySelectScalar = {
   sectionId?: boolean
   name?: boolean
   description?: boolean
+  icon?: boolean
+  color?: boolean
   adminOnly?: boolean
   position?: boolean
   createdAt?: boolean
 }
 
-export type ForumCategoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "communityId" | "sectionId" | "name" | "description" | "adminOnly" | "position" | "createdAt", ExtArgs["result"]["forumCategory"]>
+export type ForumCategoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "communityId" | "sectionId" | "name" | "description" | "icon" | "color" | "adminOnly" | "position" | "createdAt", ExtArgs["result"]["forumCategory"]>
 export type ForumCategoryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   community?: boolean | Prisma.CommunityDefaultArgs<ExtArgs>
   section?: boolean | Prisma.ForumCategory$sectionArgs<ExtArgs>
@@ -914,6 +1000,8 @@ export type $ForumCategoryPayload<ExtArgs extends runtime.Types.Extensions.Inter
     sectionId: number | null
     name: string
     description: string
+    icon: string | null
+    color: string | null
     adminOnly: boolean
     position: number
     createdAt: Date
@@ -1348,6 +1436,8 @@ export interface ForumCategoryFieldRefs {
   readonly sectionId: Prisma.FieldRef<"ForumCategory", 'Int'>
   readonly name: Prisma.FieldRef<"ForumCategory", 'String'>
   readonly description: Prisma.FieldRef<"ForumCategory", 'String'>
+  readonly icon: Prisma.FieldRef<"ForumCategory", 'String'>
+  readonly color: Prisma.FieldRef<"ForumCategory", 'String'>
   readonly adminOnly: Prisma.FieldRef<"ForumCategory", 'Boolean'>
   readonly position: Prisma.FieldRef<"ForumCategory", 'Int'>
   readonly createdAt: Prisma.FieldRef<"ForumCategory", 'DateTime'>

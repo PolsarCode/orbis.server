@@ -17,6 +17,8 @@ model ForumCategory {
   sectionId   Int?
   name        String
   description String        @default("")
+  icon        String?
+  color       String?
   adminOnly   Boolean       @default(false)
   position    Int           @default(0)
   createdAt   DateTime      @default(now())

@@ -295,6 +295,8 @@ export const ForumCategoryScalarFieldEnum = {
   sectionId: 'sectionId',
   name: 'name',
   description: 'description',
+  icon: 'icon',
+  color: 'color',
   adminOnly: 'adminOnly',
   position: 'position',
   createdAt: 'createdAt'
