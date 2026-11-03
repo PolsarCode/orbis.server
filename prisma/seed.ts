@@ -1888,7 +1888,7 @@ async function createNotifications() {
 const media = {
   frieren: [
     'anime',
-    '154587',
+    '52991',
     'Sousou no Frieren',
     'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx154587-qQTzQnEJJ3oB.jpg',
     2023,
@@ -1904,7 +1904,7 @@ const media = {
   ],
   demonSlayer: [
     'anime',
-    '101922',
+    '38000',
     'Kimetsu no Yaiba',
     'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-WBsBl0ClmgYL.jpg',
     2019,
@@ -1912,7 +1912,7 @@ const media = {
   ],
   jujutsu: [
     'anime',
-    '113415',
+    '40748',
     'Jujutsu Kaisen',
     'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx113415-LHBAeoZDIsnF.jpg',
     2020,
@@ -1920,7 +1920,7 @@ const media = {
   ],
   spyFamily: [
     'anime',
-    '140960',
+    '50265',
     'SPY×FAMILY',
     'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx140960-Kb6R5nYQfjmP.jpg',
     2022,
@@ -1944,7 +1944,7 @@ const media = {
   ],
   onePiece: [
     'manga',
-    '30013',
+    '13',
     'ONE PIECE',
     'https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx30013-BeslEMqiPhlk.jpg',
     1997,
@@ -1952,7 +1952,7 @@ const media = {
   ],
   naruto: [
     'manga',
-    '30011',
+    '11',
     'NARUTO',
     'https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/nx30011-9yUF1dXWgDOx.jpg',
     1999,
@@ -1960,7 +1960,7 @@ const media = {
   ],
   chainsaw: [
     'manga',
-    '105778',
+    '116778',
     'Chainsaw Man',
     'https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx105778-euxXZEIfDY2u.png',
     2018,
