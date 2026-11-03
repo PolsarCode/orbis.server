@@ -8,6 +8,7 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
+import { SPOILER_MAX } from '../../common/spoiler';
 import { CommentableType } from '../../../prisma/generated/client';
 
 export class CreateCommentDto {
@@ -33,4 +34,9 @@ export class CreateCommentDto {
   @MaxLength(2048)
   @IsUrl({ protocols: ['http', 'https'], require_protocol: true })
   linkUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(SPOILER_MAX)
+  spoiler?: string | null;
 }

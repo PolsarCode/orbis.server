@@ -61,6 +61,7 @@ model ForumPost {
   opening     Boolean     @default(false)
   content     String
   linkUrl     String?
+  spoiler     String?
   quoteId     Int?
   likeCount   Int         @default(0)
   hiddenAt    DateTime?

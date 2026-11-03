@@ -57,7 +57,7 @@ type SeedCommunity = {
   isVerified?: boolean;
   members: [UserKey, string?][];
   admins?: UserKey[];
-  posts: [UserKey, number, string, boolean?][];
+  posts: [UserKey, number, string, boolean?, string?][];
 };
 
 type SeedComment = {
@@ -65,6 +65,7 @@ type SeedComment = {
   ago: number;
   content: string;
   linkUrl?: string;
+  spoiler?: string;
   likes?: UserKey[];
   replies?: SeedComment[];
 };
@@ -74,6 +75,7 @@ type SeedForumReply = {
   ago: number;
   content: string;
   linkUrl?: string;
+  spoiler?: string;
   quote?: number;
   likes?: UserKey[];
 };
@@ -153,6 +155,13 @@ const communities: SeedCommunity[] = [
         'tanjiro',
         hours(2),
         `<p>What's everyone's comfort anime? Mine is anything about family. Recommendations very welcome!</p>`,
+      ],
+      [
+        'itadori',
+        hours(1),
+        `<p>The finale reveal that the mentor was the one who sealed the village was <strong>brutal</strong>. I rewatched the first episode and the hints were there all along.</p>`,
+        false,
+        'Season finale',
       ],
     ],
   },
@@ -479,6 +488,12 @@ const forums: Record<string, SeedForumCategory[]> = {
               quote: 1,
               likes: ['tanjiro', 'nami'],
               content: `<p>That's the hook. Every small moment matters more when you know how short it was for everyone else.</p>`,
+            },
+            {
+              author: 'itadori',
+              ago: hours(2),
+              spoiler: 'Episode 2 preview',
+              content: `<p>The preview shows Frieren finally visiting Himmel's statue. Bring tissues.</p>`,
             },
           ],
         },
@@ -838,6 +853,15 @@ const forums: Record<string, SeedForumCategory[]> = {
 
 const postComments: Record<string, Record<number, SeedComment[]>> = {
   'Seasonal Anime Club': {
+    6: [
+      {
+        author: 'spike',
+        ago: 40,
+        spoiler: '',
+        content: `<p>And the last scene with the empty chair? That's the real ending.</p>`,
+        likes: ['itadori'],
+      },
+    ],
     0: [
       {
         author: 'anya',
@@ -1062,6 +1086,7 @@ async function createComments(
         authorId: userIds[comment.author],
         content: comment.content,
         linkUrl: comment.linkUrl,
+        spoiler: comment.spoiler ?? null,
         likeCount: likes.length,
         createdAt,
       },
@@ -2452,13 +2477,14 @@ async function main() {
 
     for (const [
       index,
-      [key, ago, content, pinned],
+      [key, ago, content, pinned, spoiler],
     ] of community.posts.entries()) {
       const post = await prisma.post.create({
         data: {
           communityId: created.id,
           authorId: userIds[key],
           content,
+          spoiler: spoiler ?? null,
           createdAt: minutesAgo(ago),
           pinnedAt: pinned ? minutesAgo(ago) : null,
         },
@@ -2550,6 +2576,7 @@ async function main() {
               opening: index === 0,
               content: post.content,
               linkUrl: post.linkUrl ?? null,
+              spoiler: post.spoiler ?? null,
               quoteId: post.quote === undefined ? null : postIds[post.quote],
               likeCount: post.likes?.length ?? 0,
               createdAt: minutesAgo(post.ago),

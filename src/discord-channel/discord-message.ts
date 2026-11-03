@@ -169,6 +169,7 @@ export function postMessage(
     id: number;
     content: string;
     linkUrl: string | null;
+    spoiler?: string | null;
     createdAt: Date;
     author: MessageAuthor;
     forumThread?: { id: number; title: string } | null;
@@ -177,6 +178,15 @@ export function postMessage(
 ) {
   const text = plainText(post.content);
   const thread = post.forumThread;
+  const spoiler =
+    post.spoiler === null || post.spoiler === undefined
+      ? null
+      : post.spoiler
+        ? `Spoiler: ${post.spoiler}`
+        : 'Spoiler';
+  const description = spoiler
+    ? `**${escapeMarkdown(spoiler)}**${text ? `\n||${escapeMarkdown(excerpt(text))}||` : ''}`
+    : text && escapeMarkdown(excerpt(text));
   return fromAuthor(
     post.author,
     community,
@@ -185,11 +195,14 @@ export function postMessage(
       : postLink(community.id, post.id),
     {
       ...(thread && { title: escapeMarkdown(thread.title) }),
-      ...(text && { description: escapeMarkdown(excerpt(text)) }),
+      ...(description && { description }),
       timestamp: post.createdAt.toISOString(),
     },
-    thread?.title || firstLine(text) || `Post by ${webhookName(post.author)}`,
-    post.linkUrl,
+    thread?.title ||
+      spoiler ||
+      firstLine(text) ||
+      `Post by ${webhookName(post.author)}`,
+    spoiler ? null : post.linkUrl,
   );
 }
 

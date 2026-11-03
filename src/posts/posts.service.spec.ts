@@ -219,7 +219,10 @@ describe('Feed content filters', () => {
       ]),
     );
     expect(postWhere.AND[1]).toEqual({
-      content: { contains: 'Post', mode: 'insensitive' },
+      OR: [
+        { content: { contains: 'Post', mode: 'insensitive' } },
+        { spoiler: { contains: 'Post', mode: 'insensitive' } },
+      ],
     });
   });
 
@@ -248,7 +251,9 @@ describe('Feed content filters', () => {
       ([args]) => args.where.AND,
     );
     expect(searchPosts[0]).toEqual(feedPosts[0]);
-    expect(searchPosts).toContainEqual({ content: contains });
+    expect(searchPosts).toContainEqual({
+      OR: [{ content: contains }, { spoiler: contains }],
+    });
   });
 
   it('waits for at least two characters before searching everywhere', async () => {

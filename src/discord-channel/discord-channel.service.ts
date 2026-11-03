@@ -407,6 +407,7 @@ export class DiscordChannelService implements OnModuleDestroy {
         id: true,
         content: true,
         linkUrl: true,
+        spoiler: true,
         hiddenAt: true,
         createdAt: true,
         author,

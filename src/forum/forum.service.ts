@@ -23,6 +23,7 @@ import {
 } from '../common/mentions';
 import { loadNicknames } from '../communities/nicknames';
 import { reportedBy, visibleTo } from '../moderation/visibility';
+import { spoilerOf } from '../common/spoiler';
 import {
   CreateForumPostDto,
   CreateForumThreadDto,
@@ -61,6 +62,7 @@ const postSelect = {
   opening: true,
   content: true,
   linkUrl: true,
+  spoiler: true,
   quoteId: true,
   likeCount: true,
   hiddenAt: true,
@@ -73,6 +75,7 @@ const quoteSelect = {
   id: true,
   content: true,
   linkUrl: true,
+  spoiler: true,
   createdAt: true,
   author,
 } as const;
@@ -413,7 +416,7 @@ export class ForumService {
     userId: number,
     communityId: number,
     categoryId: number,
-    { title, content, linkUrl }: CreateForumThreadDto,
+    { title, content, linkUrl, spoiler }: CreateForumThreadDto,
   ) {
     const category = await this.prisma.forumCategory.findFirst({
       where: { id: categoryId, communityId },
@@ -434,6 +437,7 @@ export class ForumService {
     }
 
     const cleanTitle = threadTitle(title);
+    const note = spoilerOf(spoiler);
     const { html, mentioned } = await this.withMentions(
       content,
       userId,
@@ -452,6 +456,7 @@ export class ForumService {
             opening: true,
             content: html,
             linkUrl: linkUrl ?? null,
+            spoiler: note,
           },
         },
       },
@@ -464,6 +469,7 @@ export class ForumService {
         authorId: userId,
         content: html,
         linkUrl: linkUrl ?? null,
+        spoiler: note,
       });
     }
 
@@ -481,7 +487,7 @@ export class ForumService {
     userId: number,
     communityId: number,
     threadId: number,
-    { content, quoteId, linkUrl }: CreateForumPostDto,
+    { content, quoteId, linkUrl, spoiler }: CreateForumPostDto,
   ) {
     const reported = await reportedBy(this.prisma, userId);
     const thread = await this.visibleThread(
@@ -526,6 +532,7 @@ export class ForumService {
           authorId: userId,
           content: html,
           linkUrl: linkUrl ?? null,
+          spoiler: spoilerOf(spoiler),
           quoteId: quote?.id ?? null,
           createdAt: now,
         },
@@ -642,7 +649,7 @@ export class ForumService {
     userId: number,
     communityId: number,
     postId: number,
-    { content, linkUrl }: UpdateForumPostDto,
+    { content, linkUrl, spoiler }: UpdateForumPostDto,
   ) {
     const post = await this.prisma.forumPost.findFirst({
       where: { id: postId, communityId },
@@ -660,13 +667,19 @@ export class ForumService {
     );
     const updated = await this.prisma.forumPost.update({
       where: { id: postId },
-      data: { content: html, linkUrl: linkUrl ?? null, editedAt: new Date() },
+      data: {
+        content: html,
+        linkUrl: linkUrl ?? null,
+        spoiler: spoilerOf(spoiler),
+        editedAt: new Date(),
+      },
       select: postSelect,
     });
     if (post.opening) {
       await this.posts.threadChanged(post.threadId, {
         content: html,
         linkUrl: linkUrl ?? null,
+        spoiler: updated.spoiler,
       });
     }
 
@@ -777,7 +790,7 @@ export class ForumService {
           {
             posts: {
               some: {
-                content: contains,
+                OR: [{ content: contains }, { spoiler: contains }],
                 ...visibleTo(viewerId, reported.forum_post),
               },
             },

@@ -30,6 +30,7 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { managedCommunities } from '../communities/managed-communities';
 import { containsLink, requireEstablishedAccount } from '../common/new-account';
+import { spoilerOf } from '../common/spoiler';
 import {
   NewNotification,
   NotificationsService,
@@ -43,6 +44,7 @@ const commentSelect = {
   parentId: true,
   content: true,
   linkUrl: true,
+  spoiler: true,
   likeCount: true,
   hiddenAt: true,
   editedAt: true,
@@ -126,6 +128,7 @@ export class CommentsService {
         author: withNickname(communityId, comment.author),
         content: hidden || deleted ? '' : comment.content,
         linkUrl: hidden || deleted ? null : comment.linkUrl,
+        spoiler: hidden || deleted ? null : comment.spoiler,
         liked: liked.has(comment.id),
         hidden,
         deleted,
@@ -138,7 +141,7 @@ export class CommentsService {
 
   async create(
     userId: number,
-    { type, id, parentId, content, linkUrl }: CreateCommentDto,
+    { type, id, parentId, content, linkUrl, spoiler }: CreateCommentDto,
   ): Promise<CommentView> {
     const home = await targetOf(this.prisma, userId, type, id);
     await requireTargetAccess(this.prisma, userId, home);
@@ -179,6 +182,7 @@ export class CommentsService {
           authorId: userId,
           content: linked,
           linkUrl: linkUrl ?? null,
+          spoiler: spoilerOf(spoiler),
         },
         select: commentSelect,
       });
@@ -205,7 +209,7 @@ export class CommentsService {
   async update(
     userId: number,
     commentId: number,
-    { content, linkUrl }: UpdateCommentDto,
+    { content, linkUrl, spoiler }: UpdateCommentDto,
   ): Promise<CommentView> {
     const comment = await this.prisma.comment.findUnique({
       where: { id: commentId },
@@ -241,6 +245,7 @@ export class CommentsService {
       data: {
         content: linked,
         linkUrl: linkUrl ?? null,
+        spoiler: spoilerOf(spoiler),
         editedAt: new Date(),
       },
       select: commentSelect,
@@ -309,7 +314,12 @@ export class CommentsService {
       await this.prisma.$transaction([
         this.prisma.comment.update({
           where: { id: commentId },
-          data: { deletedAt: new Date(), content: '', linkUrl: null },
+          data: {
+            deletedAt: new Date(),
+            content: '',
+            linkUrl: null,
+            spoiler: null,
+          },
         }),
         fewer,
       ]);

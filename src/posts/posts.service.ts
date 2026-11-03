@@ -35,6 +35,7 @@ import { DiscordChannelService } from '../discord-channel/discord-channel.servic
 import { managedCommunities } from '../communities/managed-communities';
 import { discussionCleanup } from '../comments/discussion-cleanup';
 import { containsLink, requireEstablishedAccount } from '../common/new-account';
+import { spoilerOf } from '../common/spoiler';
 import { notSuspended } from '../users/suspension';
 import { pinLimit, pinLimitMessage } from './pins';
 import {
@@ -53,16 +54,21 @@ const previewSelect = {
   id: true,
   content: true,
   linkUrl: true,
+  spoiler: true,
   createdAt: true,
   author,
 } as const;
 
 const PREVIEW_COMMENTS = 3;
 
-function postBody({ content, linkUrl }: CreatePostDto) {
+function postBody({ content, linkUrl, spoiler }: CreatePostDto) {
   const { html, empty } = sanitizeRichText(content);
   if (empty && !linkUrl) throw new BadRequestException('Post cannot be empty');
-  return { content: empty ? '' : html, linkUrl: linkUrl ?? null };
+  return {
+    content: empty ? '' : html,
+    linkUrl: linkUrl ?? null,
+    spoiler: spoilerOf(spoiler),
+  };
 }
 
 export type PreviewComment = Prisma.CommentGetPayload<{
@@ -255,7 +261,7 @@ export class PostsService {
   ) {}
 
   private async withMentions(body: CreatePostDto, authorId: number) {
-    const { content, linkUrl } = postBody(body);
+    const { content, linkUrl, spoiler } = postBody(body);
     if (containsLink(content, linkUrl)) {
       await requireEstablishedAccount(this.prisma, authorId, 'post links');
     }
@@ -264,7 +270,7 @@ export class PostsService {
       content,
       authorId,
     );
-    return { data: { content: html, linkUrl }, mentioned };
+    return { data: { content: html, linkUrl, spoiler }, mentioned };
   }
 
   private async engage(
@@ -507,7 +513,7 @@ export class PostsService {
     const posts = await this.prisma.post.findMany({
       where: {
         communityId,
-        content: contains,
+        OR: [{ content: contains }, { spoiler: contains }],
         ...visibleTo(viewerId, reported.post),
       },
       orderBy: newestFirst,
@@ -531,7 +537,7 @@ export class PostsService {
       where: {
         AND: [
           homePosts(viewerId),
-          { content: contains },
+          { OR: [{ content: contains }, { spoiler: contains }] },
           visibleTo(viewerId, reported.post),
         ],
       },
@@ -755,7 +761,7 @@ export class PostsService {
       where: {
         AND: [
           profilePosts(owner.id, viewerId),
-          { content: contains },
+          { OR: [{ content: contains }, { spoiler: contains }] },
           visibleTo(viewerId, reported.post),
         ],
       },
@@ -1054,6 +1060,7 @@ export class PostsService {
     authorId: number;
     content: string;
     linkUrl: string | null;
+    spoiler: string | null;
   }) {
     const post = await this.prisma.post.create({
       data: {
@@ -1061,6 +1068,7 @@ export class PostsService {
         authorId: thread.authorId,
         content: thread.content,
         linkUrl: thread.linkUrl,
+        spoiler: thread.spoiler,
         forumThreadId: thread.id,
       },
       select: { id: true },
@@ -1070,7 +1078,11 @@ export class PostsService {
 
   async threadChanged(
     threadId: number,
-    opening?: { content: string; linkUrl: string | null },
+    opening?: {
+      content: string;
+      linkUrl: string | null;
+      spoiler: string | null;
+    },
   ) {
     const post = await this.prisma.post.findUnique({
       where: { forumThreadId: threadId },

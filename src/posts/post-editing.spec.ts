@@ -108,6 +108,33 @@ describe('Editing and deleting posts', () => {
     expect(item).toMatchObject({ id: 3, canDelete: true });
   });
 
+  it('saves a trimmed spoiler note, and clears it when it’s left out', async () => {
+    prisma.post.findUnique.mockResolvedValue(saved);
+    prisma.user.findMany.mockResolvedValue([]);
+    prisma.post.update.mockImplementation(({ data }) => ({
+      id: 3,
+      ...saved,
+      ...data,
+      commentCount: 0,
+      likeCount: 0,
+      createdAt: new Date(),
+      author: person,
+      community: null,
+    }));
+
+    const marked = await service.update(1, 3, {
+      content: '<p>The twist</p>',
+      spoiler: '  Season   finale ',
+    });
+    await service.update(1, 3, { content: '<p>No longer a spoiler</p>' });
+
+    expect(prisma.post.update.mock.calls[0][0].data.spoiler).toBe(
+      'Season finale',
+    );
+    expect(marked).toMatchObject({ spoiler: 'Season finale' });
+    expect(prisma.post.update.mock.calls[1][0].data.spoiler).toBeNull();
+  });
+
   it('won’t let someone else edit the post', async () => {
     prisma.post.findUnique.mockResolvedValue(saved);
 

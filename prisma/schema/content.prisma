@@ -19,6 +19,7 @@ model Post {
   authorId      Int
   content       String
   linkUrl       String?
+  spoiler       String?
   commentCount  Int          @default(0)
   likeCount     Int          @default(0)
   hiddenAt      DateTime?
@@ -45,6 +46,7 @@ model Comment {
   authorId        Int
   content         String
   linkUrl         String?
+  spoiler         String?
   likeCount       Int             @default(0)
   hiddenAt        DateTime?
   editedAt        DateTime?

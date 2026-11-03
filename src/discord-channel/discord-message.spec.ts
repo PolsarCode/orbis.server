@@ -73,6 +73,47 @@ describe('Discord messages', () => {
     ]);
   });
 
+  it('hides spoiler text behind Discord spoiler tags and drops the link preview', () => {
+    const message = postMessage(
+      {
+        id: 12,
+        content: '<p>The mentor sealed the village.</p>',
+        linkUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+        spoiler: 'Season finale',
+        createdAt,
+        author,
+      },
+      community,
+    );
+
+    expect(message.body.embeds[0]).toHaveProperty(
+      'description',
+      '**Spoiler: Season finale**\n||The mentor sealed the village.||',
+    );
+    expect(message.body).not.toHaveProperty('content');
+    expect(message.threadName).toBe('Spoiler: Season finale');
+  });
+
+  it('labels a spoiler without a note as just a spoiler', () => {
+    const message = postMessage(
+      {
+        id: 12,
+        content: '<p>It was all a dream.</p>',
+        linkUrl: null,
+        spoiler: '',
+        createdAt,
+        author,
+      },
+      community,
+    );
+
+    expect(message.body.embeds[0]).toHaveProperty(
+      'description',
+      '**Spoiler**\n||It was all a dream.||',
+    );
+    expect(message.threadName).toBe('Spoiler');
+  });
+
   it('titles a shared forum thread and links to the thread', () => {
     const message = postMessage(
       {

@@ -277,6 +277,7 @@ describe('Starting threads', () => {
             opening: true,
             content: '<p>Discuss</p>',
             linkUrl: null,
+            spoiler: null,
           },
         },
       },
@@ -306,7 +307,26 @@ describe('Starting threads', () => {
       authorId: 7,
       content: '<p>Friday</p>',
       linkUrl: null,
+      spoiler: null,
     });
+  });
+
+  it('marks the opening post and its feed post as spoilers', async () => {
+    const { prisma, posts, service } = setup();
+    prisma.forumCategory.findFirst.mockResolvedValue({ postToFeed: true });
+    prisma.forumThread.create.mockResolvedValue({ id: 9 });
+
+    await service.createThread(7, 3, 5, {
+      title: 'Episode 12',
+      content: '<p>They lose</p>',
+      spoiler: ' Episode 12 ',
+    });
+
+    const [{ data }] = prisma.forumThread.create.mock.calls[0];
+    expect(data.posts.create.spoiler).toBe('Episode 12');
+    expect(posts.shareThread).toHaveBeenCalledWith(
+      expect.objectContaining({ spoiler: 'Episode 12' }),
+    );
   });
 
   it('needs a title and a body', async () => {
@@ -661,7 +681,10 @@ describe('Forum search', () => {
             {
               posts: {
                 some: expect.objectContaining({
-                  content: { contains: 'arc', mode: 'insensitive' },
+                  OR: [
+                    { content: { contains: 'arc', mode: 'insensitive' } },
+                    { spoiler: { contains: 'arc', mode: 'insensitive' } },
+                  ],
                 }),
               },
             },

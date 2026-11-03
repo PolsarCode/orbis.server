@@ -92,7 +92,12 @@ describe('Editing and deleting comments', () => {
     expect(prisma.comment.delete).not.toHaveBeenCalled();
     expect(prisma.comment.update).toHaveBeenCalledWith({
       where: { id: 11 },
-      data: { deletedAt: expect.any(Date), content: '', linkUrl: null },
+      data: {
+        deletedAt: expect.any(Date),
+        content: '',
+        linkUrl: null,
+        spoiler: null,
+      },
     });
   });
 
@@ -178,6 +183,27 @@ describe('Editing and deleting comments', () => {
     await expect(
       service.update(2, 11, { content: '<p>not yours</p>' }),
     ).rejects.toThrow(ForbiddenException);
+  });
+
+  it('keeps a spoiler without a note as an empty note', async () => {
+    prisma.comment.findUnique.mockResolvedValue(comment());
+    prisma.comment.update.mockImplementation(({ data }) => ({
+      id: 11,
+      parentId: null,
+      likeCount: 0,
+      hiddenAt: null,
+      deletedAt: null,
+      createdAt: new Date(),
+      author,
+      ...data,
+    }));
+
+    const updated = await service.update(1, 11, {
+      content: '<p>the ending</p>',
+      spoiler: '',
+    });
+
+    expect(updated).toMatchObject({ spoiler: '' });
   });
 
   it('won’t edit a deleted comment', async () => {

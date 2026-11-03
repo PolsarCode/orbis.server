@@ -52,6 +52,7 @@ export type ForumPostMinAggregateOutputType = {
   opening: boolean | null
   content: string | null
   linkUrl: string | null
+  spoiler: string | null
   quoteId: number | null
   likeCount: number | null
   hiddenAt: Date | null
@@ -67,6 +68,7 @@ export type ForumPostMaxAggregateOutputType = {
   opening: boolean | null
   content: string | null
   linkUrl: string | null
+  spoiler: string | null
   quoteId: number | null
   likeCount: number | null
   hiddenAt: Date | null
@@ -82,6 +84,7 @@ export type ForumPostCountAggregateOutputType = {
   opening: number
   content: number
   linkUrl: number
+  spoiler: number
   quoteId: number
   likeCount: number
   hiddenAt: number
@@ -117,6 +120,7 @@ export type ForumPostMinAggregateInputType = {
   opening?: true
   content?: true
   linkUrl?: true
+  spoiler?: true
   quoteId?: true
   likeCount?: true
   hiddenAt?: true
@@ -132,6 +136,7 @@ export type ForumPostMaxAggregateInputType = {
   opening?: true
   content?: true
   linkUrl?: true
+  spoiler?: true
   quoteId?: true
   likeCount?: true
   hiddenAt?: true
@@ -147,6 +152,7 @@ export type ForumPostCountAggregateInputType = {
   opening?: true
   content?: true
   linkUrl?: true
+  spoiler?: true
   quoteId?: true
   likeCount?: true
   hiddenAt?: true
@@ -249,6 +255,7 @@ export type ForumPostGroupByOutputType = {
   opening: boolean
   content: string
   linkUrl: string | null
+  spoiler: string | null
   quoteId: number | null
   likeCount: number
   hiddenAt: Date | null
@@ -287,6 +294,7 @@ export type ForumPostWhereInput = {
   opening?: Prisma.BoolFilter<"ForumPost"> | boolean
   content?: Prisma.StringFilter<"ForumPost"> | string
   linkUrl?: Prisma.StringNullableFilter<"ForumPost"> | string | null
+  spoiler?: Prisma.StringNullableFilter<"ForumPost"> | string | null
   quoteId?: Prisma.IntNullableFilter<"ForumPost"> | number | null
   likeCount?: Prisma.IntFilter<"ForumPost"> | number
   hiddenAt?: Prisma.DateTimeNullableFilter<"ForumPost"> | Date | string | null
@@ -307,6 +315,7 @@ export type ForumPostOrderByWithRelationInput = {
   opening?: Prisma.SortOrder
   content?: Prisma.SortOrder
   linkUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  spoiler?: Prisma.SortOrderInput | Prisma.SortOrder
   quoteId?: Prisma.SortOrderInput | Prisma.SortOrder
   likeCount?: Prisma.SortOrder
   hiddenAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -330,6 +339,7 @@ export type ForumPostWhereUniqueInput = Prisma.AtLeast<{
   opening?: Prisma.BoolFilter<"ForumPost"> | boolean
   content?: Prisma.StringFilter<"ForumPost"> | string
   linkUrl?: Prisma.StringNullableFilter<"ForumPost"> | string | null
+  spoiler?: Prisma.StringNullableFilter<"ForumPost"> | string | null
   quoteId?: Prisma.IntNullableFilter<"ForumPost"> | number | null
   likeCount?: Prisma.IntFilter<"ForumPost"> | number
   hiddenAt?: Prisma.DateTimeNullableFilter<"ForumPost"> | Date | string | null
@@ -350,6 +360,7 @@ export type ForumPostOrderByWithAggregationInput = {
   opening?: Prisma.SortOrder
   content?: Prisma.SortOrder
   linkUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  spoiler?: Prisma.SortOrderInput | Prisma.SortOrder
   quoteId?: Prisma.SortOrderInput | Prisma.SortOrder
   likeCount?: Prisma.SortOrder
   hiddenAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -373,6 +384,7 @@ export type ForumPostScalarWhereWithAggregatesInput = {
   opening?: Prisma.BoolWithAggregatesFilter<"ForumPost"> | boolean
   content?: Prisma.StringWithAggregatesFilter<"ForumPost"> | string
   linkUrl?: Prisma.StringNullableWithAggregatesFilter<"ForumPost"> | string | null
+  spoiler?: Prisma.StringNullableWithAggregatesFilter<"ForumPost"> | string | null
   quoteId?: Prisma.IntNullableWithAggregatesFilter<"ForumPost"> | number | null
   likeCount?: Prisma.IntWithAggregatesFilter<"ForumPost"> | number
   hiddenAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ForumPost"> | Date | string | null
@@ -384,6 +396,7 @@ export type ForumPostCreateInput = {
   opening?: boolean
   content: string
   linkUrl?: string | null
+  spoiler?: string | null
   likeCount?: number
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
@@ -403,6 +416,7 @@ export type ForumPostUncheckedCreateInput = {
   opening?: boolean
   content: string
   linkUrl?: string | null
+  spoiler?: string | null
   quoteId?: number | null
   likeCount?: number
   hiddenAt?: Date | string | null
@@ -415,6 +429,7 @@ export type ForumPostUpdateInput = {
   opening?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -434,6 +449,7 @@ export type ForumPostUncheckedUpdateInput = {
   opening?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   quoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -450,6 +466,7 @@ export type ForumPostCreateManyInput = {
   opening?: boolean
   content: string
   linkUrl?: string | null
+  spoiler?: string | null
   quoteId?: number | null
   likeCount?: number
   hiddenAt?: Date | string | null
@@ -461,6 +478,7 @@ export type ForumPostUpdateManyMutationInput = {
   opening?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -475,6 +493,7 @@ export type ForumPostUncheckedUpdateManyInput = {
   opening?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   quoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -505,6 +524,7 @@ export type ForumPostCountOrderByAggregateInput = {
   opening?: Prisma.SortOrder
   content?: Prisma.SortOrder
   linkUrl?: Prisma.SortOrder
+  spoiler?: Prisma.SortOrder
   quoteId?: Prisma.SortOrder
   likeCount?: Prisma.SortOrder
   hiddenAt?: Prisma.SortOrder
@@ -529,6 +549,7 @@ export type ForumPostMaxOrderByAggregateInput = {
   opening?: Prisma.SortOrder
   content?: Prisma.SortOrder
   linkUrl?: Prisma.SortOrder
+  spoiler?: Prisma.SortOrder
   quoteId?: Prisma.SortOrder
   likeCount?: Prisma.SortOrder
   hiddenAt?: Prisma.SortOrder
@@ -544,6 +565,7 @@ export type ForumPostMinOrderByAggregateInput = {
   opening?: Prisma.SortOrder
   content?: Prisma.SortOrder
   linkUrl?: Prisma.SortOrder
+  spoiler?: Prisma.SortOrder
   quoteId?: Prisma.SortOrder
   likeCount?: Prisma.SortOrder
   hiddenAt?: Prisma.SortOrder
@@ -748,6 +770,7 @@ export type ForumPostCreateWithoutCommunityInput = {
   opening?: boolean
   content: string
   linkUrl?: string | null
+  spoiler?: string | null
   likeCount?: number
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
@@ -765,6 +788,7 @@ export type ForumPostUncheckedCreateWithoutCommunityInput = {
   opening?: boolean
   content: string
   linkUrl?: string | null
+  spoiler?: string | null
   quoteId?: number | null
   likeCount?: number
   hiddenAt?: Date | string | null
@@ -810,6 +834,7 @@ export type ForumPostScalarWhereInput = {
   opening?: Prisma.BoolFilter<"ForumPost"> | boolean
   content?: Prisma.StringFilter<"ForumPost"> | string
   linkUrl?: Prisma.StringNullableFilter<"ForumPost"> | string | null
+  spoiler?: Prisma.StringNullableFilter<"ForumPost"> | string | null
   quoteId?: Prisma.IntNullableFilter<"ForumPost"> | number | null
   likeCount?: Prisma.IntFilter<"ForumPost"> | number
   hiddenAt?: Prisma.DateTimeNullableFilter<"ForumPost"> | Date | string | null
@@ -821,6 +846,7 @@ export type ForumPostCreateWithoutThreadInput = {
   opening?: boolean
   content: string
   linkUrl?: string | null
+  spoiler?: string | null
   likeCount?: number
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
@@ -838,6 +864,7 @@ export type ForumPostUncheckedCreateWithoutThreadInput = {
   opening?: boolean
   content: string
   linkUrl?: string | null
+  spoiler?: string | null
   quoteId?: number | null
   likeCount?: number
   hiddenAt?: Date | string | null
@@ -876,6 +903,7 @@ export type ForumPostCreateWithoutQuotedByInput = {
   opening?: boolean
   content: string
   linkUrl?: string | null
+  spoiler?: string | null
   likeCount?: number
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
@@ -894,6 +922,7 @@ export type ForumPostUncheckedCreateWithoutQuotedByInput = {
   opening?: boolean
   content: string
   linkUrl?: string | null
+  spoiler?: string | null
   quoteId?: number | null
   likeCount?: number
   hiddenAt?: Date | string | null
@@ -910,6 +939,7 @@ export type ForumPostCreateWithoutQuoteInput = {
   opening?: boolean
   content: string
   linkUrl?: string | null
+  spoiler?: string | null
   likeCount?: number
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
@@ -928,6 +958,7 @@ export type ForumPostUncheckedCreateWithoutQuoteInput = {
   opening?: boolean
   content: string
   linkUrl?: string | null
+  spoiler?: string | null
   likeCount?: number
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
@@ -960,6 +991,7 @@ export type ForumPostUpdateWithoutQuotedByInput = {
   opening?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -978,6 +1010,7 @@ export type ForumPostUncheckedUpdateWithoutQuotedByInput = {
   opening?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   quoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1005,6 +1038,7 @@ export type ForumPostCreateWithoutAuthorInput = {
   opening?: boolean
   content: string
   linkUrl?: string | null
+  spoiler?: string | null
   likeCount?: number
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
@@ -1022,6 +1056,7 @@ export type ForumPostUncheckedCreateWithoutAuthorInput = {
   opening?: boolean
   content: string
   linkUrl?: string | null
+  spoiler?: string | null
   quoteId?: number | null
   likeCount?: number
   hiddenAt?: Date | string | null
@@ -1063,6 +1098,7 @@ export type ForumPostCreateManyCommunityInput = {
   opening?: boolean
   content: string
   linkUrl?: string | null
+  spoiler?: string | null
   quoteId?: number | null
   likeCount?: number
   hiddenAt?: Date | string | null
@@ -1074,6 +1110,7 @@ export type ForumPostUpdateWithoutCommunityInput = {
   opening?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1091,6 +1128,7 @@ export type ForumPostUncheckedUpdateWithoutCommunityInput = {
   opening?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   quoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1106,6 +1144,7 @@ export type ForumPostUncheckedUpdateManyWithoutCommunityInput = {
   opening?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   quoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1120,6 +1159,7 @@ export type ForumPostCreateManyThreadInput = {
   opening?: boolean
   content: string
   linkUrl?: string | null
+  spoiler?: string | null
   quoteId?: number | null
   likeCount?: number
   hiddenAt?: Date | string | null
@@ -1131,6 +1171,7 @@ export type ForumPostUpdateWithoutThreadInput = {
   opening?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1148,6 +1189,7 @@ export type ForumPostUncheckedUpdateWithoutThreadInput = {
   opening?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   quoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1163,6 +1205,7 @@ export type ForumPostUncheckedUpdateManyWithoutThreadInput = {
   opening?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   quoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1178,6 +1221,7 @@ export type ForumPostCreateManyQuoteInput = {
   opening?: boolean
   content: string
   linkUrl?: string | null
+  spoiler?: string | null
   likeCount?: number
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
@@ -1188,6 +1232,7 @@ export type ForumPostUpdateWithoutQuoteInput = {
   opening?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1206,6 +1251,7 @@ export type ForumPostUncheckedUpdateWithoutQuoteInput = {
   opening?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1221,6 +1267,7 @@ export type ForumPostUncheckedUpdateManyWithoutQuoteInput = {
   opening?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1234,6 +1281,7 @@ export type ForumPostCreateManyAuthorInput = {
   opening?: boolean
   content: string
   linkUrl?: string | null
+  spoiler?: string | null
   quoteId?: number | null
   likeCount?: number
   hiddenAt?: Date | string | null
@@ -1245,6 +1293,7 @@ export type ForumPostUpdateWithoutAuthorInput = {
   opening?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1262,6 +1311,7 @@ export type ForumPostUncheckedUpdateWithoutAuthorInput = {
   opening?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   quoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1277,6 +1327,7 @@ export type ForumPostUncheckedUpdateManyWithoutAuthorInput = {
   opening?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   quoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1323,6 +1374,7 @@ export type ForumPostSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   opening?: boolean
   content?: boolean
   linkUrl?: boolean
+  spoiler?: boolean
   quoteId?: boolean
   likeCount?: boolean
   hiddenAt?: boolean
@@ -1344,6 +1396,7 @@ export type ForumPostSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   opening?: boolean
   content?: boolean
   linkUrl?: boolean
+  spoiler?: boolean
   quoteId?: boolean
   likeCount?: boolean
   hiddenAt?: boolean
@@ -1363,6 +1416,7 @@ export type ForumPostSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   opening?: boolean
   content?: boolean
   linkUrl?: boolean
+  spoiler?: boolean
   quoteId?: boolean
   likeCount?: boolean
   hiddenAt?: boolean
@@ -1382,6 +1436,7 @@ export type ForumPostSelectScalar = {
   opening?: boolean
   content?: boolean
   linkUrl?: boolean
+  spoiler?: boolean
   quoteId?: boolean
   likeCount?: boolean
   hiddenAt?: boolean
@@ -1389,7 +1444,7 @@ export type ForumPostSelectScalar = {
   createdAt?: boolean
 }
 
-export type ForumPostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "threadId" | "communityId" | "authorId" | "opening" | "content" | "linkUrl" | "quoteId" | "likeCount" | "hiddenAt" | "editedAt" | "createdAt", ExtArgs["result"]["forumPost"]>
+export type ForumPostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "threadId" | "communityId" | "authorId" | "opening" | "content" | "linkUrl" | "spoiler" | "quoteId" | "likeCount" | "hiddenAt" | "editedAt" | "createdAt", ExtArgs["result"]["forumPost"]>
 export type ForumPostInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   thread?: boolean | Prisma.ForumThreadDefaultArgs<ExtArgs>
   community?: boolean | Prisma.CommunityDefaultArgs<ExtArgs>
@@ -1428,6 +1483,7 @@ export type $ForumPostPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     opening: boolean
     content: string
     linkUrl: string | null
+    spoiler: string | null
     quoteId: number | null
     likeCount: number
     hiddenAt: Date | null
@@ -1868,6 +1924,7 @@ export interface ForumPostFieldRefs {
   readonly opening: Prisma.FieldRef<"ForumPost", 'Boolean'>
   readonly content: Prisma.FieldRef<"ForumPost", 'String'>
   readonly linkUrl: Prisma.FieldRef<"ForumPost", 'String'>
+  readonly spoiler: Prisma.FieldRef<"ForumPost", 'String'>
   readonly quoteId: Prisma.FieldRef<"ForumPost", 'Int'>
   readonly likeCount: Prisma.FieldRef<"ForumPost", 'Int'>
   readonly hiddenAt: Prisma.FieldRef<"ForumPost", 'DateTime'>
