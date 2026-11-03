@@ -331,6 +331,23 @@ export type EnumLikeableTypeWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumLikeableTypeFilter<$PrismaModel>
 }
 
+export type EnumBookmarkableTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.BookmarkableType | Prisma.EnumBookmarkableTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.BookmarkableType[] | Prisma.ListEnumBookmarkableTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.BookmarkableType[] | Prisma.ListEnumBookmarkableTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumBookmarkableTypeFilter<$PrismaModel> | $Enums.BookmarkableType
+}
+
+export type EnumBookmarkableTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.BookmarkableType | Prisma.EnumBookmarkableTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.BookmarkableType[] | Prisma.ListEnumBookmarkableTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.BookmarkableType[] | Prisma.ListEnumBookmarkableTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumBookmarkableTypeWithAggregatesFilter<$PrismaModel> | $Enums.BookmarkableType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumBookmarkableTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumBookmarkableTypeFilter<$PrismaModel>
+}
+
 export type EnumFriendshipStatusFilter<$PrismaModel = never> = {
   equals?: $Enums.FriendshipStatus | Prisma.EnumFriendshipStatusFieldRefInput<$PrismaModel>
   in?: $Enums.FriendshipStatus[] | Prisma.ListEnumFriendshipStatusFieldRefInput<$PrismaModel>
@@ -853,6 +870,23 @@ export type NestedEnumLikeableTypeWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumLikeableTypeFilter<$PrismaModel>
   _max?: Prisma.NestedEnumLikeableTypeFilter<$PrismaModel>
+}
+
+export type NestedEnumBookmarkableTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.BookmarkableType | Prisma.EnumBookmarkableTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.BookmarkableType[] | Prisma.ListEnumBookmarkableTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.BookmarkableType[] | Prisma.ListEnumBookmarkableTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumBookmarkableTypeFilter<$PrismaModel> | $Enums.BookmarkableType
+}
+
+export type NestedEnumBookmarkableTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.BookmarkableType | Prisma.EnumBookmarkableTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.BookmarkableType[] | Prisma.ListEnumBookmarkableTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.BookmarkableType[] | Prisma.ListEnumBookmarkableTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumBookmarkableTypeWithAggregatesFilter<$PrismaModel> | $Enums.BookmarkableType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumBookmarkableTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumBookmarkableTypeFilter<$PrismaModel>
 }
 
 export type NestedEnumFriendshipStatusFilter<$PrismaModel = never> = {

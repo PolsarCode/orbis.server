@@ -3,6 +3,7 @@ import { FeedController } from './feed.controller';
 import { PostController, PostsController } from './posts.controller';
 import { UserPostsController } from './user-posts.controller';
 import { MediaPostsController } from './media-posts.controller';
+import { BookmarksController } from './bookmarks.controller';
 import { PostsService } from './posts.service';
 import { CommunityMemberGuard } from '../communities/community-member.guard';
 import { CommunityViewerGuard } from '../communities/community-viewer.guard';
@@ -19,6 +20,7 @@ import { DiscordChannelModule } from '../discord-channel/discord-channel.module'
     FeedController,
     UserPostsController,
     MediaPostsController,
+    BookmarksController,
   ],
   providers: [
     PostsService,

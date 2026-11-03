@@ -98,6 +98,11 @@ export type Comment = Prisma.CommentModel
  */
 export type Like = Prisma.LikeModel
 /**
+ * Model Bookmark
+ * 
+ */
+export type Bookmark = Prisma.BookmarkModel
+/**
  * Model ForumSection
  * 
  */

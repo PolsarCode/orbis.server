@@ -10,6 +10,10 @@ enum LikeableType {
   forum_post
 }
 
+enum BookmarkableType {
+  post
+}
+
 model Post {
   id            Int          @id @default(autoincrement())
   communityId   Int?
@@ -70,4 +74,16 @@ model Like {
 
   @@id([userId, likeableType, likeableId])
   @@index([likeableType, likeableId])
+}
+
+model Bookmark {
+  userId           Int
+  bookmarkableType BookmarkableType
+  bookmarkableId   Int
+  createdAt        DateTime         @default(now())
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, bookmarkableType, bookmarkableId])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([bookmarkableType, bookmarkableId])
 }

@@ -71,6 +71,7 @@ model User {
   steamGames           SteamGame[]
   railFolders          RailFolder[]
   likes                Like[]
+  bookmarks            Bookmark[]
   invites              Invite[]
   createdConversations Conversation[]        @relation("ConversationCreator")
   conversationsAsA     Conversation[]        @relation("ConversationUserA")

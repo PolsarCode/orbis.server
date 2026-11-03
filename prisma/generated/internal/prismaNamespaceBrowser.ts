@@ -63,6 +63,7 @@ export const ModelName = {
   Post: 'Post',
   Comment: 'Comment',
   Like: 'Like',
+  Bookmark: 'Bookmark',
   ForumSection: 'ForumSection',
   ForumCategory: 'ForumCategory',
   ForumThread: 'ForumThread',
@@ -278,6 +279,16 @@ export const LikeScalarFieldEnum = {
 } as const
 
 export type LikeScalarFieldEnum = (typeof LikeScalarFieldEnum)[keyof typeof LikeScalarFieldEnum]
+
+
+export const BookmarkScalarFieldEnum = {
+  userId: 'userId',
+  bookmarkableType: 'bookmarkableType',
+  bookmarkableId: 'bookmarkableId',
+  createdAt: 'createdAt'
+} as const
+
+export type BookmarkScalarFieldEnum = (typeof BookmarkScalarFieldEnum)[keyof typeof BookmarkScalarFieldEnum]
 
 
 export const ForumSectionScalarFieldEnum = {

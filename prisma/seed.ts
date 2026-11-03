@@ -2280,6 +2280,51 @@ async function createLikes(): Promise<number> {
   return likes.length;
 }
 
+async function createBookmarks(): Promise<number> {
+  const admin = userIds.admin;
+  const visible = {
+    authorId: { not: admin },
+    hiddenAt: null,
+    author: { suspendedAt: null },
+  };
+  const inCommunities = (isPublic: boolean) => ({
+    ...visible,
+    forumThreadId: null,
+    community: { isPublic, memberships: { some: { userId: admin } } },
+  });
+  const posts = await Promise.all(
+    [
+      inCommunities(true),
+      inCommunities(false),
+      { ...visible, wallUserId: admin },
+      { ...visible, wallUserId: userIds.luffy },
+    ].map((where) =>
+      prisma.post.findFirst({
+        where,
+        orderBy: { createdAt: 'desc' },
+        select: { id: true, createdAt: true },
+      }),
+    ),
+  );
+
+  const bookmarks = posts
+    .filter((post) => post !== null)
+    .map((post, index) => ({
+      userId: admin,
+      bookmarkableType: 'post' as const,
+      bookmarkableId: post.id,
+      createdAt: new Date(
+        Math.min(
+          Date.now() - index * 60 * 1000,
+          post.createdAt.getTime() + (index + 2) * 11 * 60 * 1000,
+        ),
+      ),
+    }));
+
+  await prisma.bookmark.createMany({ data: bookmarks });
+  return bookmarks.length;
+}
+
 const earlierStatuses: Record<LibraryStatus, LibraryStatus[]> = {
   planned: [],
   current: ['planned'],
@@ -2852,6 +2897,7 @@ async function main() {
   console.log('❤️ Likes created:', await createLikes());
 
   console.log('🚩 Content reports created:', await createContentReports());
+  console.log('🔖 Bookmarks created:', await createBookmarks());
   console.log('🔔 Notifications created:', await createNotifications());
   console.log('💬 Chats created:', await createChats());
 

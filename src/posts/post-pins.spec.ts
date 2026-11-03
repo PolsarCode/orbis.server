@@ -49,6 +49,7 @@ function setup() {
     },
     friendship: { findFirst: jest.fn().mockResolvedValue(null) },
     membership: { findMany: jest.fn().mockResolvedValue([]) },
+    bookmark: { findMany: jest.fn().mockResolvedValue([]) },
   };
   const likes = { likedBy: jest.fn().mockResolvedValue(new Set()) };
   const service = new PostsService(

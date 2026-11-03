@@ -9,6 +9,7 @@ import { normalizeUsername } from '../users/username';
 import { MAX_INT } from '../communities/community-member.guard';
 import { PrismaService } from '../prisma.service';
 import {
+  BookmarkableType,
   LibraryStatus,
   MediaType,
   Prisma,
@@ -23,6 +24,7 @@ import {
   unlinkMentions,
 } from '../common/mentions';
 import { CreatePostDto } from './dto/create-post.dto';
+import { BookmarkDto } from './dto/bookmark.dto';
 import { NotificationsService } from '../notifications/notifications.service';
 import { canViewProfile, friendsOf, requireWallAccess } from './wall-access';
 import { LikesService } from '../likes/likes.service';
@@ -84,6 +86,7 @@ type RawPost = Prisma.PostGetPayload<{
 export type PostItem = RawPost &
   Engagement & {
     liked: boolean;
+    bookmarked: boolean;
     canDelete: boolean;
     pinned?: boolean;
     canPin?: boolean;
@@ -173,6 +176,61 @@ function profilePosts(ownerId: number, viewerId: number) {
       { wallUserId: ownerId },
       { authorId: ownerId, communityId: null, mediaType: null },
       { authorId: ownerId, community: visibleCommunity(viewerId) },
+    ],
+  };
+}
+
+function viewableProfiles(viewerId: number): Prisma.UserWhereInput {
+  return { OR: [{ isPublic: true }, { id: viewerId }, friendsOf(viewerId)] };
+}
+
+export function viewablePosts(
+  viewerId: number,
+  reported: number[],
+): Prisma.PostWhereInput {
+  return {
+    AND: [
+      {
+        OR: [
+          { community: visibleCommunity(viewerId) },
+          { wallUser: viewableProfiles(viewerId) },
+          {
+            communityId: null,
+            mediaType: null,
+            author: viewableProfiles(viewerId),
+          },
+          { mediaType: { not: null } },
+        ],
+      },
+      visibleTo(viewerId, reported),
+    ],
+  };
+}
+
+type BookmarkCursor = { savedAt: Date; id: number };
+
+export type BookmarkResult = { bookmarked: boolean };
+
+const BOOKMARK_SEARCH_BATCH = 100;
+
+function parseBookmarkCursor(raw?: string): BookmarkCursor | undefined {
+  if (raw === undefined) return undefined;
+
+  const match = /^(\d{1,15})_(\d{1,10})$/.exec(raw);
+  const id = Number(match?.[2]);
+  if (!match || id < 1 || id > MAX_INT) {
+    throw new BadRequestException('Invalid cursor');
+  }
+
+  return { savedAt: new Date(Number(match[1])), id };
+}
+
+function savedBefore(cursor?: BookmarkCursor) {
+  if (!cursor) return {};
+  return {
+    OR: [
+      { createdAt: { lt: cursor.savedAt } },
+      { createdAt: cursor.savedAt, bookmarkableId: { lt: cursor.id } },
     ],
   };
 }
@@ -280,30 +338,32 @@ export class PostsService {
     const idsOf = (type: 'post' | 'activity') =>
       items.flatMap((item) => (item.type === type ? [item.id] : []));
     const reported = await reportedBy(this.prisma, viewerId);
-    const [likedPosts, likedActivities, previews] = await Promise.all([
-      this.likes.likedBy(viewerId, 'post', idsOf('post')),
-      this.likes.likedBy(viewerId, 'activity', idsOf('activity')),
-      Promise.all(
-        items.map((item) =>
-          item.commentCount === 0
-            ? []
-            : this.prisma.comment
-                .findMany({
-                  where: {
-                    commentableType: item.type,
-                    commentableId: item.id,
-                    parentId: null,
-                    deletedAt: null,
-                    ...visibleTo(viewerId, reported.comment),
-                  },
-                  orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
-                  take: PREVIEW_COMMENTS,
-                  select: previewSelect,
-                })
-                .then((comments) => comments.reverse()),
+    const [likedPosts, likedActivities, bookmarkedPosts, previews] =
+      await Promise.all([
+        this.likes.likedBy(viewerId, 'post', idsOf('post')),
+        this.likes.likedBy(viewerId, 'activity', idsOf('activity')),
+        this.bookmarkedBy(viewerId, 'post', idsOf('post')),
+        Promise.all(
+          items.map((item) =>
+            item.commentCount === 0
+              ? []
+              : this.prisma.comment
+                  .findMany({
+                    where: {
+                      commentableType: item.type,
+                      commentableId: item.id,
+                      parentId: null,
+                      deletedAt: null,
+                      ...visibleTo(viewerId, reported.comment),
+                    },
+                    orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+                    take: PREVIEW_COMMENTS,
+                    select: previewSelect,
+                  })
+                  .then((comments) => comments.reverse()),
+          ),
         ),
-      ),
-    ]);
+      ]);
 
     const communityOf = (item: (typeof items)[number]) =>
       item.type === 'activity' ? null : item.communityId;
@@ -364,8 +424,154 @@ export class PostsService {
         item.communityId === null
           ? null
           : moderationOf(item.communityId, item.author.id);
-      return { ...item, author, liked, previewComments, canDelete, moderation };
+      return {
+        ...item,
+        author,
+        liked,
+        bookmarked: bookmarkedPosts.has(item.id),
+        previewComments,
+        canDelete,
+        moderation,
+      };
     });
+  }
+
+  private async bookmarkedBy(
+    userId: number,
+    bookmarkableType: BookmarkableType,
+    ids: number[],
+  ): Promise<Set<number>> {
+    if (ids.length === 0) return new Set();
+    const bookmarks = await this.prisma.bookmark.findMany({
+      where: { userId, bookmarkableType, bookmarkableId: { in: ids } },
+      select: { bookmarkableId: true },
+    });
+    return new Set(bookmarks.map(({ bookmarkableId }) => bookmarkableId));
+  }
+
+  private async savedPosts(
+    viewerId: number,
+    {
+      filter = {},
+      limit,
+      batch = limit,
+      cursor,
+    }: {
+      filter?: Prisma.PostWhereInput;
+      limit: number;
+      batch?: number;
+      cursor?: BookmarkCursor;
+    },
+  ) {
+    const reported = await reportedBy(this.prisma, viewerId);
+    const saved: { savedAt: Date; post: RawPost }[] = [];
+    let before = cursor;
+
+    while (saved.length < limit) {
+      const rows = await this.prisma.bookmark.findMany({
+        where: {
+          userId: viewerId,
+          bookmarkableType: 'post',
+          ...savedBefore(before),
+        },
+        orderBy: [{ createdAt: 'desc' }, { bookmarkableId: 'desc' }],
+        take: batch,
+        select: { bookmarkableId: true, createdAt: true },
+      });
+      if (rows.length === 0) break;
+
+      const posts = await this.prisma.post.findMany({
+        where: {
+          AND: [
+            { id: { in: rows.map(({ bookmarkableId }) => bookmarkableId) } },
+            filter,
+            viewablePosts(viewerId, reported.post),
+          ],
+        },
+        include: postInclude,
+      });
+      const byId = new Map(
+        posts.map((post) => [post.id, { ...post, type: 'post' as const }]),
+      );
+      for (const { bookmarkableId, createdAt } of rows) {
+        const post = byId.get(bookmarkableId);
+        if (post) saved.push({ savedAt: createdAt, post });
+      }
+
+      if (rows.length < batch) break;
+      const last = rows[rows.length - 1];
+      before = { savedAt: last.createdAt, id: last.bookmarkableId };
+    }
+
+    return saved.slice(0, limit);
+  }
+
+  async findBookmarks(
+    viewerId: number,
+    rawCursor?: string,
+  ): Promise<Page<FeedItem>> {
+    const cursor = parseBookmarkCursor(rawCursor);
+    const saved = await this.savedPosts(viewerId, {
+      limit: PAGE_SIZE + 1,
+      cursor,
+    });
+    const page = saved.slice(0, PAGE_SIZE);
+    const last = page[page.length - 1];
+    const items = await this.engage(
+      viewerId,
+      page.map(({ post }) => post),
+    );
+
+    return {
+      items,
+      nextCursor:
+        saved.length > PAGE_SIZE
+          ? `${last.savedAt.getTime()}_${last.post.id}`
+          : null,
+    };
+  }
+
+  async searchBookmarks(
+    viewerId: number,
+    rawQuery: string,
+  ): Promise<FeedItem[]> {
+    const query = rawQuery.trim().slice(0, 100);
+    if (query.length < 2) return [];
+
+    const contains = { contains: query, mode: 'insensitive' as const };
+    const saved = await this.savedPosts(viewerId, {
+      filter: { OR: [{ content: contains }, { spoiler: contains }] },
+      limit: SEARCH_LIMIT,
+      batch: BOOKMARK_SEARCH_BATCH,
+    });
+
+    return this.engage(
+      viewerId,
+      saved.map(({ post }) => post),
+    );
+  }
+
+  async setBookmark(
+    userId: number,
+    { type, id, bookmarked }: BookmarkDto,
+  ): Promise<BookmarkResult> {
+    const key = { userId, bookmarkableType: type, bookmarkableId: id };
+    if (bookmarked) {
+      const reported = await reportedBy(this.prisma, userId);
+      const post = await this.prisma.post.findFirst({
+        where: { AND: [{ id }, viewablePosts(userId, reported.post)] },
+        select: { id: true },
+      });
+      if (!post) throw new NotFoundException('Post not found');
+      await this.prisma.bookmark.upsert({
+        where: { userId_bookmarkableType_bookmarkableId: key },
+        create: key,
+        update: {},
+      });
+    } else {
+      await this.prisma.bookmark.deleteMany({ where: key });
+    }
+    return { bookmarked };
   }
 
   async findForCommunity(
@@ -827,6 +1033,7 @@ export class PostsService {
       ...post,
       type: 'post',
       liked: false,
+      bookmarked: false,
       previewComments: [],
       canDelete: true,
     };
@@ -919,6 +1126,7 @@ export class PostsService {
       ...post,
       type: 'post',
       liked: false,
+      bookmarked: false,
       previewComments: [],
       canDelete: true,
     };
@@ -950,6 +1158,7 @@ export class PostsService {
       author: withNickname(communityId, post.author),
       type: 'post',
       liked: false,
+      bookmarked: false,
       previewComments: [],
       canDelete: true,
     };

@@ -18,11 +18,14 @@ describe('Editing and deleting posts', () => {
   const prisma = {
     post: {
       findUnique: jest.fn(),
+      findMany: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      deleteMany: jest.fn(),
     },
     comment: { findMany: jest.fn(), deleteMany: jest.fn() },
     like: { deleteMany: jest.fn() },
+    bookmark: { findMany: jest.fn(), deleteMany: jest.fn() },
     user: { findMany: jest.fn() },
     contentReport: { findMany: jest.fn() },
     membership: { findMany: jest.fn() },
@@ -58,6 +61,7 @@ describe('Editing and deleting posts', () => {
     prisma.contentReport.findMany.mockResolvedValue([]);
     prisma.membership.findMany.mockResolvedValue([]);
     prisma.comment.findMany.mockResolvedValue([]);
+    prisma.bookmark.findMany.mockResolvedValue([]);
     prisma.community.findUnique.mockResolvedValue({
       isPublic: true,
       memberships: [],
@@ -144,7 +148,7 @@ describe('Editing and deleting posts', () => {
     expect(prisma.post.update).not.toHaveBeenCalled();
   });
 
-  it('lets community admins delete posts, along with their comments and likes', async () => {
+  it('lets community admins delete posts, along with their comments, likes and bookmarks', async () => {
     prisma.post.findUnique.mockResolvedValue(saved);
     prisma.membership.findMany.mockResolvedValue([
       {
@@ -165,6 +169,9 @@ describe('Editing and deleting posts', () => {
     });
     expect(prisma.like.deleteMany).toHaveBeenCalledWith({
       where: { likeableType: 'post', likeableId: { in: [3] } },
+    });
+    expect(prisma.bookmark.deleteMany).toHaveBeenCalledWith({
+      where: { bookmarkableType: 'post', bookmarkableId: { in: [3] } },
     });
     expect(prisma.post.delete).toHaveBeenCalledWith({ where: { id: 3 } });
     expect(discordChannel.contentDeleted).toHaveBeenCalledWith('post', 3);
@@ -190,5 +197,30 @@ describe('Editing and deleting posts', () => {
 
     await expect(service.remove(9, 3)).rejects.toThrow(ForbiddenException);
     expect(prisma.post.delete).not.toHaveBeenCalled();
+  });
+
+  it('takes a deleted forum thread’s feed posts down with their comments, likes and bookmarks', async () => {
+    prisma.post.findMany.mockResolvedValue([{ id: 3 }, { id: 4 }]);
+
+    await service.removeThreadPosts([9, 10]);
+
+    expect(prisma.post.findMany).toHaveBeenCalledWith({
+      where: { forumThreadId: { in: [9, 10] } },
+      select: { id: true },
+    });
+    expect(prisma.comment.deleteMany).toHaveBeenCalledWith({
+      where: { commentableType: 'post', commentableId: { in: [3, 4] } },
+    });
+    expect(prisma.like.deleteMany).toHaveBeenCalledWith({
+      where: { likeableType: 'post', likeableId: { in: [3, 4] } },
+    });
+    expect(prisma.bookmark.deleteMany).toHaveBeenCalledWith({
+      where: { bookmarkableType: 'post', bookmarkableId: { in: [3, 4] } },
+    });
+    expect(prisma.post.deleteMany).toHaveBeenCalledWith({
+      where: { id: { in: [3, 4] } },
+    });
+    expect(discordChannel.contentDeleted).toHaveBeenCalledWith('post', 3);
+    expect(discordChannel.contentDeleted).toHaveBeenCalledWith('post', 4);
   });
 });

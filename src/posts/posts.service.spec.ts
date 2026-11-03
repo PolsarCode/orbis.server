@@ -48,6 +48,7 @@ describe('Feed content filters', () => {
     user: { findUnique: jest.fn() },
     friendship: { findFirst: jest.fn() },
     membership: { findMany: jest.fn() },
+    bookmark: { findMany: jest.fn() },
   };
   const likes = { likedBy: jest.fn() };
   const service = new PostsService(
@@ -67,6 +68,7 @@ describe('Feed content filters', () => {
     prisma.user.findUnique.mockResolvedValue(person);
     prisma.friendship.findFirst.mockResolvedValue(null);
     prisma.membership.findMany.mockResolvedValue([]);
+    prisma.bookmark.findMany.mockResolvedValue([]);
     likes.likedBy.mockResolvedValue(new Set());
   });
 
@@ -388,6 +390,7 @@ describe('Opening a post or library update from a link', () => {
     membership: { findMany: jest.fn().mockResolvedValue([]) },
     steamGame: { findMany: jest.fn().mockResolvedValue([]) },
     steamAccount: { findMany: jest.fn().mockResolvedValue([]) },
+    bookmark: { findMany: jest.fn().mockResolvedValue([]) },
   };
   const likes = { likedBy: jest.fn().mockResolvedValue(new Set()) };
   const service = new PostsService(

@@ -23,5 +23,12 @@ export async function discussionCleanup(
     prisma.like.deleteMany({
       where: { likeableType: type, likeableId: { in: ids } },
     }),
+    ...(type === 'post'
+      ? [
+          prisma.bookmark.deleteMany({
+            where: { bookmarkableType: type, bookmarkableId: { in: ids } },
+          }),
+        ]
+      : []),
   ];
 }

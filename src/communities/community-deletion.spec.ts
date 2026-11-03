@@ -13,6 +13,7 @@ describe('Deleting a community', () => {
     comment: { findMany: jest.fn(), deleteMany: jest.fn() },
     forumPost: { findMany: jest.fn() },
     like: { deleteMany: jest.fn() },
+    bookmark: { deleteMany: jest.fn() },
     contentReport: { deleteMany: jest.fn() },
     notification: { deleteMany: jest.fn() },
     community: { delete: jest.fn() },
@@ -47,7 +48,7 @@ describe('Deleting a community', () => {
     });
   });
 
-  it('also deletes likes, reports and notifications that pointed into it', async () => {
+  it('also deletes likes, bookmarks, reports and notifications that pointed into it', async () => {
     ownedBy(1);
 
     await service.remove(1, 3);
@@ -61,6 +62,9 @@ describe('Deleting a community', () => {
     });
     expect(prisma.like.deleteMany).toHaveBeenCalledWith({
       where: { likeableType: 'forum_post', likeableId: { in: [30] } },
+    });
+    expect(prisma.bookmark.deleteMany).toHaveBeenCalledWith({
+      where: { bookmarkableType: 'post', bookmarkableId: { in: [10, 11] } },
     });
     expect(prisma.contentReport.deleteMany).toHaveBeenCalledWith({
       where: {

@@ -27,6 +27,13 @@ export const LikeableType = {
 export type LikeableType = (typeof LikeableType)[keyof typeof LikeableType]
 
 
+export const BookmarkableType = {
+  post: 'post'
+} as const
+
+export type BookmarkableType = (typeof BookmarkableType)[keyof typeof BookmarkableType]
+
+
 export const FriendshipStatus = {
   pending: 'pending',
   accepted: 'accepted'
