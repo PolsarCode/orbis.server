@@ -49,8 +49,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "deploy": "bash ./scripts/deployment/deploy.sh",
-    "library:switch-ids": "ts-node scripts/deployment/switch-library-ids.ts"
+    "deploy": "bash ./scripts/deployment/deploy.sh"
   },
   "jest": {
     "collectCoverageFrom": [
