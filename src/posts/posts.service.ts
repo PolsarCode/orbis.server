@@ -26,7 +26,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { NotificationsService } from '../notifications/notifications.service';
 import { canViewProfile, friendsOf, requireWallAccess } from './wall-access';
 import { LikesService } from '../likes/likes.service';
-import { getMedia } from '../library/library-api';
+import { coverUrl, getMedia } from '../library/library-api';
 import { reportedBy, visibleTo } from '../moderation/visibility';
 import { loadNicknames } from '../communities/nicknames';
 import { nsfwEntries, showsNsfw } from '../users/nsfw';
@@ -91,6 +91,7 @@ const activityInclude = {
       sourceId: true,
       title: true,
       coverImage: true,
+      isAdult: true,
       year: true,
       steamAppId: true,
       user: author,
@@ -231,7 +232,7 @@ function toActivity(
       type: entry.mediaType,
       sourceId: entry.sourceId,
       title: entry.title,
-      coverImage: entry.coverImage,
+      coverImage: coverUrl(entry),
       year: entry.year,
     },
   };

@@ -111,6 +111,12 @@ describe('Anime spotlight', () => {
 
     expect(spotlight?.sourceId).toMatch(/^a\d$/);
     expect(spotlight).not.toHaveProperty('addedAt');
+    expect(spotlight?.coverImage).toBe(
+      `https://library.boseriko.com/api/anime/${spotlight?.sourceId}/cover`,
+    );
+    expect(spotlight?.bannerImage).toBe(
+      `https://library.boseriko.com/api/anime/${spotlight?.sourceId}/banner`,
+    );
     expect(prisma.libraryEntry.findMany).not.toHaveBeenCalled();
     expect(media).not.toHaveBeenCalled();
     expect(prisma.setting.upsert).not.toHaveBeenCalled();

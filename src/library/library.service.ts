@@ -14,8 +14,10 @@ import { author } from '../common/author';
 import { AddLibraryEntryDto } from './dto/add-library-entry.dto';
 import { UpdateLibraryEntryDto } from './dto/update-library-entry.dto';
 import {
+  coverUrl,
   getMedia,
   getMediaList,
+  imageUrl,
   Media,
   MEDIA_LISTS,
   MediaList,
@@ -65,6 +67,7 @@ const entrySelect = {
   progress: true,
   total: true,
   isPublic: true,
+  isAdult: true,
   steamAppId: true,
   createdAt: true,
   updatedAt: true,
@@ -72,7 +75,7 @@ const entrySelect = {
 
 type EntryRow = Prisma.LibraryEntryGetPayload<{ select: typeof entrySelect }>;
 
-export type LibraryEntryView = Omit<EntryRow, 'steamAppId'> & {
+export type LibraryEntryView = Omit<EntryRow, 'steamAppId' | 'isAdult'> & {
   steam: SteamLink | null;
 };
 
@@ -82,6 +85,16 @@ function totalOf(media: Media) {
   return media.type !== 'GAME' && typeof count === 'number' && count > 0
     ? count
     : null;
+}
+
+function withImageUrls({ addedAt, ...spotlight }: StoredSpotlight): Spotlight {
+  return {
+    ...spotlight,
+    coverImage:
+      spotlight.coverImage && imageUrl('anime', spotlight.sourceId, 'cover'),
+    bannerImage:
+      spotlight.bannerImage && imageUrl('anime', spotlight.sourceId, 'banner'),
+  };
 }
 
 const toResult = (media: Media) => ({
@@ -121,6 +134,7 @@ export class LibraryService {
             sourceId: true,
             title: true,
             coverImage: true,
+            isAdult: true,
             year: true,
             user: author,
           },
@@ -144,7 +158,7 @@ export class LibraryService {
         type: entry.mediaType,
         sourceId: entry.sourceId,
         title: entry.title,
-        coverImage: entry.coverImage,
+        coverImage: coverUrl(entry),
         year: entry.year,
       },
     }));
@@ -204,14 +218,12 @@ export class LibraryService {
   async spotlight(): Promise<Spotlight | null> {
     const { items } = await this.rollSpotlights(Date.now());
     if (items.length === 0) return null;
-    const { addedAt, ...spotlight } =
-      items[Math.floor(Math.random() * items.length)];
-    return spotlight;
+    return withImageUrls(items[Math.floor(Math.random() * items.length)]);
   }
 
   async spotlights(): Promise<Spotlight[]> {
     const { items } = await this.rollSpotlights(Date.now());
-    return items.map(({ addedAt, ...spotlight }) => spotlight);
+    return items.map(withImageUrls);
   }
 
   private async rollSpotlights(now: number): Promise<SpotlightList> {
@@ -629,8 +641,9 @@ export class LibraryService {
       this.prisma,
       entries.map((entry) => ({ userId, appId: entry.steamAppId })),
     );
-    return entries.map(({ steamAppId, ...entry }) => ({
+    return entries.map(({ steamAppId, isAdult, ...entry }) => ({
       ...entry,
+      coverImage: coverUrl({ ...entry, isAdult }),
       steam: steamOf(userId, steamAppId),
     }));
   }

@@ -32,6 +32,26 @@ const baseUrl = () =>
     '',
   );
 
+export function imageUrl(
+  type: MediaType,
+  sourceId: string,
+  image: 'cover' | 'banner',
+  adult = false,
+) {
+  return `${baseUrl()}/api/${type}/${sourceId}/${image}${adult ? '?adult=true' : ''}`;
+}
+
+export function coverUrl(entry: {
+  mediaType: MediaType;
+  sourceId: string;
+  coverImage: string | null;
+  isAdult: boolean;
+}) {
+  return entry.coverImage
+    ? imageUrl(entry.mediaType, entry.sourceId, 'cover', entry.isAdult)
+    : null;
+}
+
 async function request<T>(path: string): Promise<T> {
   let res: Response;
   try {

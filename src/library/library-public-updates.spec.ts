@@ -15,6 +15,7 @@ describe('Public library updates', () => {
     sourceId: '21',
     title: 'ONE PIECE',
     coverImage: 'one-piece.webp',
+    isAdult: false,
     year: 1999,
     user,
   };
@@ -70,7 +71,7 @@ describe('Public library updates', () => {
         type: 'anime',
         sourceId: '21',
         title: 'ONE PIECE',
-        coverImage: 'one-piece.webp',
+        coverImage: 'https://library.boseriko.com/api/anime/21/cover',
         year: 1999,
       },
     });

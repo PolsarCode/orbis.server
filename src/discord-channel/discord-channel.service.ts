@@ -9,6 +9,7 @@ import { CommentableType } from '../../prisma/generated/client';
 import { author } from '../common/author';
 import { CommunitiesService } from '../communities/communities.service';
 import { loadNicknames } from '../communities/nicknames';
+import { coverUrl } from '../library/library-api';
 import { PrismaService } from '../prisma.service';
 import {
   activityMessage,
@@ -310,6 +311,7 @@ export class DiscordChannelService implements OnModuleDestroy {
         isPublic: true,
         isAdult: true,
         mediaType: true,
+        sourceId: true,
         title: true,
         coverImage: true,
         user: author,
@@ -375,7 +377,7 @@ export class DiscordChannelService implements OnModuleDestroy {
             media: {
               type: entry.mediaType,
               title: entry.title,
-              coverImage: entry.coverImage,
+              coverImage: coverUrl(entry),
             },
           },
           channel.community,

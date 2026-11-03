@@ -5,7 +5,10 @@ import { AddLibraryEntryDto } from './dto/add-library-entry.dto';
 import { PrismaService } from '../prisma.service';
 import { DiscordChannelService } from '../discord-channel/discord-channel.service';
 
-jest.mock('./library-api', () => ({ getMedia: jest.fn() }));
+jest.mock('./library-api', () => ({
+  ...jest.requireActual('./library-api'),
+  getMedia: jest.fn(),
+}));
 
 const discordChannel = {
   entryChanged: jest.fn(),
@@ -178,6 +181,45 @@ describe('Listing the library', () => {
       expect.objectContaining({ where: { userId: 1, isAdult: false } }),
     );
   });
+
+  it('shows covers through the library’s fixed cover links', async () => {
+    findUser.mockResolvedValue({ showNsfw: true });
+    findMany.mockResolvedValueOnce([
+      {
+        id: 1,
+        mediaType: 'manga',
+        sourceId: '215524',
+        coverImage: 'https://old-storage/cover-1.webp',
+        isAdult: false,
+        steamAppId: null,
+      },
+      {
+        id: 2,
+        mediaType: 'anime',
+        sourceId: '9',
+        coverImage: 'https://old-storage/cover-2.webp',
+        isAdult: true,
+        steamAppId: null,
+      },
+      {
+        id: 3,
+        mediaType: 'game',
+        sourceId: '4',
+        coverImage: null,
+        isAdult: false,
+        steamAppId: null,
+      },
+    ]);
+
+    const entries = await service.list(1);
+
+    expect(entries.map(({ coverImage }) => coverImage)).toEqual([
+      'https://library.boseriko.com/api/manga/215524/cover',
+      'https://library.boseriko.com/api/anime/9/cover?adult=true',
+      null,
+    ]);
+    expect(entries[0]).not.toHaveProperty('isAdult');
+  });
 });
 
 describe('Adding 18+ titles', () => {
@@ -242,7 +284,8 @@ describe('Adding 18+ titles', () => {
     const entry = await service.add(1, { type: 'anime', sourceId: '1' });
 
     expect(getMedia).toHaveBeenCalledWith('anime', '1', true);
-    expect(entry).toMatchObject({ isAdult: true });
+    expect(create.mock.calls[0][0].data.isAdult).toBe(true);
+    expect(entry).not.toHaveProperty('isAdult');
   });
 
   it('keeps 18+ titles out when NSFW is off', async () => {

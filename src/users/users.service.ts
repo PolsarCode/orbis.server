@@ -8,6 +8,7 @@ import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma.service';
 import { nsfwEntries, showsNsfw } from './nsfw';
 import { loadSteamLinks, SteamLink } from '../steam/steam-links';
+import { coverUrl } from '../library/library-api';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePreferencesDto } from './dto/update-preferences.dto';
 import { UpdateOnboardingDto } from './dto/update-onboarding.dto';
@@ -489,6 +490,7 @@ export class UsersService {
           sourceId: true,
           title: true,
           coverImage: true,
+          isAdult: true,
           year: true,
           status: true,
           progress: true,
@@ -532,8 +534,9 @@ export class UsersService {
       }),
       postCount: posts,
       communityCount: memberships.length,
-      library: library.map(({ steamAppId, ...entry }) => ({
+      library: library.map(({ steamAppId, isAdult, ...entry }) => ({
         ...entry,
+        coverImage: coverUrl({ ...entry, isAdult }),
         steam: steamOf(user.id, steamAppId),
       })),
       communities: memberships
