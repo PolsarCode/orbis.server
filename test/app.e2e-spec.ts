@@ -19,6 +19,7 @@ describe('AppController (e2e)', () => {
     return request(app.getHttpServer())
       .get('/')
       .expect(200)
-      .expect('Hello World!');
+      .expect('Content-Type', /text\/html/)
+      .expect(/Click here if you’re not redirected\./);
   });
 });
