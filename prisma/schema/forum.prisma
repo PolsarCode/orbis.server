@@ -54,24 +54,25 @@ model ForumThread {
 }
 
 model ForumPost {
-  id          Int         @id @default(autoincrement())
-  threadId    Int
-  communityId Int
-  authorId    Int
-  opening     Boolean     @default(false)
-  content     String
-  linkUrl     String?
-  spoiler     String?
-  quoteId     Int?
-  likeCount   Int         @default(0)
-  hiddenAt    DateTime?
-  editedAt    DateTime?
-  createdAt   DateTime    @default(now())
-  thread      ForumThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
-  community   Community   @relation(fields: [communityId], references: [id], onDelete: Cascade)
-  author      User        @relation(fields: [authorId], references: [id])
-  quote       ForumPost?  @relation("ForumQuotes", fields: [quoteId], references: [id], onDelete: SetNull)
-  quotedBy    ForumPost[] @relation("ForumQuotes")
+  id            Int            @id @default(autoincrement())
+  threadId      Int
+  communityId   Int
+  authorId      Int
+  opening       Boolean        @default(false)
+  content       String
+  linkUrl       String?
+  spoiler       String?
+  quoteId       Int?
+  likeCount     Int            @default(0)
+  hiddenAt      DateTime?
+  editedAt      DateTime?
+  createdAt     DateTime       @default(now())
+  thread        ForumThread    @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  community     Community      @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  author        User           @relation(fields: [authorId], references: [id])
+  quote         ForumPost?     @relation("ForumQuotes", fields: [quoteId], references: [id], onDelete: SetNull)
+  quotedBy      ForumPost[]    @relation("ForumQuotes")
+  hashtagUsages HashtagUsage[]
 
   @@index([threadId, createdAt])
   @@index([communityId])

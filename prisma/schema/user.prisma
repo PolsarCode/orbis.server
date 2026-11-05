@@ -80,6 +80,8 @@ model User {
   messages             Message[]
   oauthAccounts        OAuthAccount[]
   messageReactions     MessageReaction[]
+  hashtagUsages        HashtagUsage[]
+  hashtagFollows       HashtagFollow[]
 }
 
 model OAuthAccount {

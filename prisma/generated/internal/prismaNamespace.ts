@@ -403,6 +403,9 @@ export const ModelName = {
   ForumPost: 'ForumPost',
   Friendship: 'Friendship',
   SuggestionDismissal: 'SuggestionDismissal',
+  Hashtag: 'Hashtag',
+  HashtagUsage: 'HashtagUsage',
+  HashtagFollow: 'HashtagFollow',
   LibraryEntry: 'LibraryEntry',
   LibraryActivity: 'LibraryActivity',
   Conversation: 'Conversation',
@@ -433,7 +436,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "community" | "membership" | "railFolder" | "role" | "membershipRole" | "invite" | "discordChannel" | "discordMessage" | "communityBan" | "post" | "comment" | "like" | "bookmark" | "forumSection" | "forumCategory" | "forumThread" | "forumPost" | "friendship" | "suggestionDismissal" | "libraryEntry" | "libraryActivity" | "conversation" | "conversationMember" | "message" | "messageReaction" | "notification" | "report" | "reportComment" | "contentReport" | "setting" | "steamAccount" | "steamGame" | "user" | "oAuthAccount"
+    modelProps: "community" | "membership" | "railFolder" | "role" | "membershipRole" | "invite" | "discordChannel" | "discordMessage" | "communityBan" | "post" | "comment" | "like" | "bookmark" | "forumSection" | "forumCategory" | "forumThread" | "forumPost" | "friendship" | "suggestionDismissal" | "hashtag" | "hashtagUsage" | "hashtagFollow" | "libraryEntry" | "libraryActivity" | "conversation" | "conversationMember" | "message" | "messageReaction" | "notification" | "report" | "reportComment" | "contentReport" | "setting" | "steamAccount" | "steamGame" | "user" | "oAuthAccount"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1840,6 +1843,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.SuggestionDismissalCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.SuggestionDismissalCountAggregateOutputType> | number
+        }
+      }
+    }
+    Hashtag: {
+      payload: Prisma.$HashtagPayload<ExtArgs>
+      fields: Prisma.HashtagFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.HashtagFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.HashtagFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagPayload>
+        }
+        findFirst: {
+          args: Prisma.HashtagFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.HashtagFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagPayload>
+        }
+        findMany: {
+          args: Prisma.HashtagFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagPayload>[]
+        }
+        create: {
+          args: Prisma.HashtagCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagPayload>
+        }
+        createMany: {
+          args: Prisma.HashtagCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.HashtagCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagPayload>[]
+        }
+        delete: {
+          args: Prisma.HashtagDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagPayload>
+        }
+        update: {
+          args: Prisma.HashtagUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagPayload>
+        }
+        deleteMany: {
+          args: Prisma.HashtagDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.HashtagUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.HashtagUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagPayload>[]
+        }
+        upsert: {
+          args: Prisma.HashtagUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagPayload>
+        }
+        aggregate: {
+          args: Prisma.HashtagAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateHashtag>
+        }
+        groupBy: {
+          args: Prisma.HashtagGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.HashtagGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.HashtagCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.HashtagCountAggregateOutputType> | number
+        }
+      }
+    }
+    HashtagUsage: {
+      payload: Prisma.$HashtagUsagePayload<ExtArgs>
+      fields: Prisma.HashtagUsageFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.HashtagUsageFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagUsagePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.HashtagUsageFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagUsagePayload>
+        }
+        findFirst: {
+          args: Prisma.HashtagUsageFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagUsagePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.HashtagUsageFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagUsagePayload>
+        }
+        findMany: {
+          args: Prisma.HashtagUsageFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagUsagePayload>[]
+        }
+        create: {
+          args: Prisma.HashtagUsageCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagUsagePayload>
+        }
+        createMany: {
+          args: Prisma.HashtagUsageCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.HashtagUsageCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagUsagePayload>[]
+        }
+        delete: {
+          args: Prisma.HashtagUsageDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagUsagePayload>
+        }
+        update: {
+          args: Prisma.HashtagUsageUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagUsagePayload>
+        }
+        deleteMany: {
+          args: Prisma.HashtagUsageDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.HashtagUsageUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.HashtagUsageUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagUsagePayload>[]
+        }
+        upsert: {
+          args: Prisma.HashtagUsageUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagUsagePayload>
+        }
+        aggregate: {
+          args: Prisma.HashtagUsageAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateHashtagUsage>
+        }
+        groupBy: {
+          args: Prisma.HashtagUsageGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.HashtagUsageGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.HashtagUsageCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.HashtagUsageCountAggregateOutputType> | number
+        }
+      }
+    }
+    HashtagFollow: {
+      payload: Prisma.$HashtagFollowPayload<ExtArgs>
+      fields: Prisma.HashtagFollowFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.HashtagFollowFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagFollowPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.HashtagFollowFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagFollowPayload>
+        }
+        findFirst: {
+          args: Prisma.HashtagFollowFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagFollowPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.HashtagFollowFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagFollowPayload>
+        }
+        findMany: {
+          args: Prisma.HashtagFollowFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagFollowPayload>[]
+        }
+        create: {
+          args: Prisma.HashtagFollowCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagFollowPayload>
+        }
+        createMany: {
+          args: Prisma.HashtagFollowCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.HashtagFollowCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagFollowPayload>[]
+        }
+        delete: {
+          args: Prisma.HashtagFollowDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagFollowPayload>
+        }
+        update: {
+          args: Prisma.HashtagFollowUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagFollowPayload>
+        }
+        deleteMany: {
+          args: Prisma.HashtagFollowDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.HashtagFollowUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.HashtagFollowUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagFollowPayload>[]
+        }
+        upsert: {
+          args: Prisma.HashtagFollowUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HashtagFollowPayload>
+        }
+        aggregate: {
+          args: Prisma.HashtagFollowAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateHashtagFollow>
+        }
+        groupBy: {
+          args: Prisma.HashtagFollowGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.HashtagFollowGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.HashtagFollowCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.HashtagFollowCountAggregateOutputType> | number
         }
       }
     }
@@ -3263,6 +3488,41 @@ export const SuggestionDismissalScalarFieldEnum = {
 export type SuggestionDismissalScalarFieldEnum = (typeof SuggestionDismissalScalarFieldEnum)[keyof typeof SuggestionDismissalScalarFieldEnum]
 
 
+export const HashtagScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  display: 'display',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type HashtagScalarFieldEnum = (typeof HashtagScalarFieldEnum)[keyof typeof HashtagScalarFieldEnum]
+
+
+export const HashtagUsageScalarFieldEnum = {
+  id: 'id',
+  hashtagId: 'hashtagId',
+  authorId: 'authorId',
+  postId: 'postId',
+  commentId: 'commentId',
+  forumPostId: 'forumPostId',
+  targetPostId: 'targetPostId',
+  targetActivityId: 'targetActivityId',
+  createdAt: 'createdAt'
+} as const
+
+export type HashtagUsageScalarFieldEnum = (typeof HashtagUsageScalarFieldEnum)[keyof typeof HashtagUsageScalarFieldEnum]
+
+
+export const HashtagFollowScalarFieldEnum = {
+  userId: 'userId',
+  hashtagId: 'hashtagId',
+  createdAt: 'createdAt'
+} as const
+
+export type HashtagFollowScalarFieldEnum = (typeof HashtagFollowScalarFieldEnum)[keyof typeof HashtagFollowScalarFieldEnum]
+
+
 export const LibraryEntryScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -3955,6 +4215,9 @@ export type GlobalOmitConfig = {
   forumPost?: Prisma.ForumPostOmit
   friendship?: Prisma.FriendshipOmit
   suggestionDismissal?: Prisma.SuggestionDismissalOmit
+  hashtag?: Prisma.HashtagOmit
+  hashtagUsage?: Prisma.HashtagUsageOmit
+  hashtagFollow?: Prisma.HashtagFollowOmit
   libraryEntry?: Prisma.LibraryEntryOmit
   libraryActivity?: Prisma.LibraryActivityOmit
   conversation?: Prisma.ConversationOmit

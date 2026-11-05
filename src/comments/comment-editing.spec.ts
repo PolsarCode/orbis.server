@@ -36,11 +36,17 @@ describe('Editing and deleting comments', () => {
       delete: jest.fn(),
     },
     like: { deleteMany: jest.fn() },
-    post: { updateMany: jest.fn() },
-    libraryActivity: { updateMany: jest.fn() },
+    post: { updateMany: jest.fn(), findMany: jest.fn() },
+    libraryActivity: { updateMany: jest.fn(), findMany: jest.fn() },
     user: { findMany: jest.fn().mockResolvedValue([]), findUnique: jest.fn() },
     contentReport: { findMany: jest.fn().mockResolvedValue([]) },
     membership: { findMany: jest.fn() },
+    hashtag: {
+      upsert: jest.fn(({ where }: { where: { name: string } }) =>
+        Promise.resolve({ id: where.name.length }),
+      ),
+    },
+    hashtagUsage: { createMany: jest.fn(), deleteMany: jest.fn() },
     $transaction: jest.fn((operations: unknown[]) => Promise.all(operations)),
   };
   const likes = { likedBy: jest.fn().mockResolvedValue(new Set()) };
@@ -98,6 +104,9 @@ describe('Editing and deleting comments', () => {
         linkUrl: null,
         spoiler: null,
       },
+    });
+    expect(prisma.hashtagUsage.deleteMany).toHaveBeenCalledWith({
+      where: { commentId: 11 },
     });
   });
 
@@ -214,5 +223,120 @@ describe('Editing and deleting comments', () => {
     await expect(
       service.update(1, 11, { content: '<p>back</p>' }),
     ).rejects.toThrow(NotFoundException);
+  });
+
+  it('re-reads hashtags on edit and replaces the saved uses', async () => {
+    const createdAt = new Date('2026-11-05T09:00:00Z');
+    prisma.comment.findUnique.mockResolvedValue(
+      comment({ commentableType: 'activity', commentableId: 8 }),
+    );
+    prisma.comment.update.mockImplementation(({ data }) => ({
+      id: 11,
+      parentId: null,
+      likeCount: 0,
+      hiddenAt: null,
+      deletedAt: null,
+      createdAt,
+      author,
+      ...data,
+    }));
+
+    const updated = await service.update(1, 11, {
+      content: '<p><a href="/tags/old" class="hashtag">#Old</a> and #Fern</p>',
+    });
+
+    expect(updated.content).toBe(
+      '<p><a href="/tags/old" class="hashtag">#Old</a> and ' +
+        '<a href="/tags/fern" class="hashtag">#Fern</a></p>',
+    );
+    expect(prisma.hashtagUsage.deleteMany).toHaveBeenCalledWith({
+      where: { commentId: 11 },
+    });
+    expect(prisma.hashtagUsage.createMany).toHaveBeenCalledWith({
+      data: [3, 4].map((hashtagId) => ({
+        hashtagId,
+        commentId: 11,
+        targetPostId: null,
+        targetActivityId: 8,
+        authorId: 1,
+        createdAt,
+      })),
+    });
+  });
+
+  it('loads tagged comments with what they were left on', async () => {
+    const row = (
+      id: number,
+      commentableType: string,
+      commentableId: number,
+    ) => ({
+      id,
+      parentId: null,
+      content: '<p>#Fern</p>',
+      linkUrl: null,
+      spoiler: null,
+      likeCount: 0,
+      hiddenAt: null,
+      editedAt: null,
+      deletedAt: null,
+      createdAt: new Date(),
+      author,
+      communityId: commentableType === 'post' ? 3 : null,
+      commentableType,
+      commentableId,
+    });
+    const owner = { id: 2, username: 'frieren', name: null, avatarUrl: null };
+    const community = { id: 3, name: 'Seasonal Anime Club', iconUrl: null };
+    prisma.comment.findMany.mockResolvedValue([
+      row(11, 'post', 7),
+      row(12, 'activity', 8),
+      row(13, 'post', 99),
+    ]);
+    prisma.post.findMany.mockResolvedValue([
+      {
+        id: 7,
+        mediaType: 'anime',
+        mediaSourceId: '52991',
+        author: owner,
+        community,
+        wallUser: null,
+      },
+    ]);
+    prisma.libraryActivity.findMany.mockResolvedValue([
+      { id: 8, entry: { user: owner } },
+    ]);
+
+    const found = await service.findForTags(1, [11, 12, 13]);
+
+    expect(found).toEqual([
+      {
+        comment: expect.objectContaining({
+          id: 11,
+          liked: false,
+          canDelete: true,
+        }),
+        target: {
+          type: 'post',
+          id: 7,
+          author: { ...owner, nickname: null },
+          community,
+          media: { type: 'anime', sourceId: '52991' },
+          wallUser: null,
+        },
+      },
+      {
+        comment: expect.objectContaining({ id: 12 }),
+        target: {
+          type: 'activity',
+          id: 8,
+          author: owner,
+          community: null,
+          media: null,
+          wallUser: null,
+        },
+      },
+    ]);
+    expect(found[0].comment).not.toHaveProperty('commentableType');
+    expect(found[0].comment).not.toHaveProperty('communityId');
   });
 });

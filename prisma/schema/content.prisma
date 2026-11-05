@@ -15,26 +15,28 @@ enum BookmarkableType {
 }
 
 model Post {
-  id            Int          @id @default(autoincrement())
-  communityId   Int?
-  wallUserId    Int?
-  mediaType     MediaType?
-  mediaSourceId String?
-  authorId      Int
-  content       String
-  linkUrl       String?
-  spoiler       String?
-  commentCount  Int          @default(0)
-  likeCount     Int          @default(0)
-  hiddenAt      DateTime?
-  editedAt      DateTime?
-  pinnedAt      DateTime?
-  forumThreadId Int?         @unique
-  createdAt     DateTime     @default(now())
-  community     Community?   @relation(fields: [communityId], references: [id], onDelete: Cascade)
-  wallUser      User?        @relation("WallPosts", fields: [wallUserId], references: [id], onDelete: Cascade)
-  author        User         @relation(fields: [authorId], references: [id])
-  forumThread   ForumThread? @relation(fields: [forumThreadId], references: [id], onDelete: Cascade)
+  id                   Int            @id @default(autoincrement())
+  communityId          Int?
+  wallUserId           Int?
+  mediaType            MediaType?
+  mediaSourceId        String?
+  authorId             Int
+  content              String
+  linkUrl              String?
+  spoiler              String?
+  commentCount         Int            @default(0)
+  likeCount            Int            @default(0)
+  hiddenAt             DateTime?
+  editedAt             DateTime?
+  pinnedAt             DateTime?
+  forumThreadId        Int?           @unique
+  createdAt            DateTime       @default(now())
+  community            Community?     @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  wallUser             User?          @relation("WallPosts", fields: [wallUserId], references: [id], onDelete: Cascade)
+  author               User           @relation(fields: [authorId], references: [id])
+  forumThread          ForumThread?   @relation(fields: [forumThreadId], references: [id], onDelete: Cascade)
+  hashtagUsages        HashtagUsage[] @relation("PostHashtags")
+  commentHashtagUsages HashtagUsage[] @relation("PostCommentHashtags")
 
   @@index([communityId, createdAt(sort: Desc)])
   @@index([wallUserId, createdAt(sort: Desc)])
@@ -60,6 +62,7 @@ model Comment {
   author          User            @relation(fields: [authorId], references: [id])
   parent          Comment?        @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
   replies         Comment[]       @relation("CommentReplies")
+  hashtagUsages   HashtagUsage[]
 
   @@index([commentableType, commentableId, createdAt])
   @@index([parentId])

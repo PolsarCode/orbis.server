@@ -70,6 +70,9 @@ export const ModelName = {
   ForumPost: 'ForumPost',
   Friendship: 'Friendship',
   SuggestionDismissal: 'SuggestionDismissal',
+  Hashtag: 'Hashtag',
+  HashtagUsage: 'HashtagUsage',
+  HashtagFollow: 'HashtagFollow',
   LibraryEntry: 'LibraryEntry',
   LibraryActivity: 'LibraryActivity',
   Conversation: 'Conversation',
@@ -372,6 +375,41 @@ export const SuggestionDismissalScalarFieldEnum = {
 } as const
 
 export type SuggestionDismissalScalarFieldEnum = (typeof SuggestionDismissalScalarFieldEnum)[keyof typeof SuggestionDismissalScalarFieldEnum]
+
+
+export const HashtagScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  display: 'display',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type HashtagScalarFieldEnum = (typeof HashtagScalarFieldEnum)[keyof typeof HashtagScalarFieldEnum]
+
+
+export const HashtagUsageScalarFieldEnum = {
+  id: 'id',
+  hashtagId: 'hashtagId',
+  authorId: 'authorId',
+  postId: 'postId',
+  commentId: 'commentId',
+  forumPostId: 'forumPostId',
+  targetPostId: 'targetPostId',
+  targetActivityId: 'targetActivityId',
+  createdAt: 'createdAt'
+} as const
+
+export type HashtagUsageScalarFieldEnum = (typeof HashtagUsageScalarFieldEnum)[keyof typeof HashtagUsageScalarFieldEnum]
+
+
+export const HashtagFollowScalarFieldEnum = {
+  userId: 'userId',
+  hashtagId: 'hashtagId',
+  createdAt: 'createdAt'
+} as const
+
+export type HashtagFollowScalarFieldEnum = (typeof HashtagFollowScalarFieldEnum)[keyof typeof HashtagFollowScalarFieldEnum]
 
 
 export const LibraryEntryScalarFieldEnum = {

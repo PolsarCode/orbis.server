@@ -1,0 +1,49 @@
+model Hashtag {
+  id        Int             @id @default(autoincrement())
+  name      String          @unique
+  display   String
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  usages    HashtagUsage[]
+  follows   HashtagFollow[]
+}
+
+model HashtagUsage {
+  id               Int              @id @default(autoincrement())
+  hashtagId        Int
+  authorId         Int
+  postId           Int?
+  commentId        Int?
+  forumPostId      Int?
+  targetPostId     Int?
+  targetActivityId Int?
+  createdAt        DateTime
+  hashtag          Hashtag          @relation(fields: [hashtagId], references: [id], onDelete: Cascade)
+  author           User             @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  post             Post?            @relation("PostHashtags", fields: [postId], references: [id], onDelete: Cascade)
+  comment          Comment?         @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  forumPost        ForumPost?       @relation(fields: [forumPostId], references: [id], onDelete: Cascade)
+  targetPost       Post?            @relation("PostCommentHashtags", fields: [targetPostId], references: [id], onDelete: Cascade)
+  targetActivity   LibraryActivity? @relation(fields: [targetActivityId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, hashtagId])
+  @@unique([commentId, hashtagId])
+  @@unique([forumPostId, hashtagId])
+  @@index([hashtagId, createdAt(sort: Desc), id(sort: Desc)])
+  @@index([createdAt])
+  @@index([authorId])
+  @@index([targetPostId])
+  @@index([targetActivityId])
+}
+
+model HashtagFollow {
+  userId    Int
+  hashtagId Int
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  hashtag   Hashtag  @relation(fields: [hashtagId], references: [id], onDelete: Cascade)
+
+  @@id([userId, hashtagId])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([hashtagId])
+}

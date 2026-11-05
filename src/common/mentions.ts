@@ -14,7 +14,7 @@ export type MentionPlace = {
   onlyUserId?: number;
 };
 
-function filterText(html: string, filter: (text: string) => string) {
+export function filterText(html: string, filter: (text: string) => string) {
   let ignored = 0;
   return html
     .split(/(<[^>]*>)/)

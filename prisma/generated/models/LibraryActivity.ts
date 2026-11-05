@@ -261,6 +261,7 @@ export type LibraryActivityWhereInput = {
   likeCount?: Prisma.IntFilter<"LibraryActivity"> | number
   createdAt?: Prisma.DateTimeFilter<"LibraryActivity"> | Date | string
   entry?: Prisma.XOR<Prisma.LibraryEntryScalarRelationFilter, Prisma.LibraryEntryWhereInput>
+  commentHashtagUsages?: Prisma.HashtagUsageListRelationFilter
 }
 
 export type LibraryActivityOrderByWithRelationInput = {
@@ -273,6 +274,7 @@ export type LibraryActivityOrderByWithRelationInput = {
   likeCount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   entry?: Prisma.LibraryEntryOrderByWithRelationInput
+  commentHashtagUsages?: Prisma.HashtagUsageOrderByRelationAggregateInput
 }
 
 export type LibraryActivityWhereUniqueInput = Prisma.AtLeast<{
@@ -288,6 +290,7 @@ export type LibraryActivityWhereUniqueInput = Prisma.AtLeast<{
   likeCount?: Prisma.IntFilter<"LibraryActivity"> | number
   createdAt?: Prisma.DateTimeFilter<"LibraryActivity"> | Date | string
   entry?: Prisma.XOR<Prisma.LibraryEntryScalarRelationFilter, Prisma.LibraryEntryWhereInput>
+  commentHashtagUsages?: Prisma.HashtagUsageListRelationFilter
 }, "id">
 
 export type LibraryActivityOrderByWithAggregationInput = {
@@ -328,6 +331,7 @@ export type LibraryActivityCreateInput = {
   likeCount?: number
   createdAt?: Date | string
   entry: Prisma.LibraryEntryCreateNestedOneWithoutActivitiesInput
+  commentHashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutTargetActivityInput
 }
 
 export type LibraryActivityUncheckedCreateInput = {
@@ -339,6 +343,7 @@ export type LibraryActivityUncheckedCreateInput = {
   commentCount?: number
   likeCount?: number
   createdAt?: Date | string
+  commentHashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutTargetActivityInput
 }
 
 export type LibraryActivityUpdateInput = {
@@ -349,6 +354,7 @@ export type LibraryActivityUpdateInput = {
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   entry?: Prisma.LibraryEntryUpdateOneRequiredWithoutActivitiesNestedInput
+  commentHashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutTargetActivityNestedInput
 }
 
 export type LibraryActivityUncheckedUpdateInput = {
@@ -360,6 +366,7 @@ export type LibraryActivityUncheckedUpdateInput = {
   commentCount?: Prisma.IntFieldUpdateOperationsInput | number
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  commentHashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutTargetActivityNestedInput
 }
 
 export type LibraryActivityCreateManyInput = {
@@ -391,6 +398,11 @@ export type LibraryActivityUncheckedUpdateManyInput = {
   commentCount?: Prisma.IntFieldUpdateOperationsInput | number
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type LibraryActivityNullableScalarRelationFilter = {
+  is?: Prisma.LibraryActivityWhereInput | null
+  isNot?: Prisma.LibraryActivityWhereInput | null
 }
 
 export type LibraryActivityListRelationFilter = {
@@ -454,6 +466,22 @@ export type LibraryActivitySumOrderByAggregateInput = {
   likeCount?: Prisma.SortOrder
 }
 
+export type LibraryActivityCreateNestedOneWithoutCommentHashtagUsagesInput = {
+  create?: Prisma.XOR<Prisma.LibraryActivityCreateWithoutCommentHashtagUsagesInput, Prisma.LibraryActivityUncheckedCreateWithoutCommentHashtagUsagesInput>
+  connectOrCreate?: Prisma.LibraryActivityCreateOrConnectWithoutCommentHashtagUsagesInput
+  connect?: Prisma.LibraryActivityWhereUniqueInput
+}
+
+export type LibraryActivityUpdateOneWithoutCommentHashtagUsagesNestedInput = {
+  create?: Prisma.XOR<Prisma.LibraryActivityCreateWithoutCommentHashtagUsagesInput, Prisma.LibraryActivityUncheckedCreateWithoutCommentHashtagUsagesInput>
+  connectOrCreate?: Prisma.LibraryActivityCreateOrConnectWithoutCommentHashtagUsagesInput
+  upsert?: Prisma.LibraryActivityUpsertWithoutCommentHashtagUsagesInput
+  disconnect?: Prisma.LibraryActivityWhereInput | boolean
+  delete?: Prisma.LibraryActivityWhereInput | boolean
+  connect?: Prisma.LibraryActivityWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.LibraryActivityUpdateToOneWithWhereWithoutCommentHashtagUsagesInput, Prisma.LibraryActivityUpdateWithoutCommentHashtagUsagesInput>, Prisma.LibraryActivityUncheckedUpdateWithoutCommentHashtagUsagesInput>
+}
+
 export type LibraryActivityCreateNestedManyWithoutEntryInput = {
   create?: Prisma.XOR<Prisma.LibraryActivityCreateWithoutEntryInput, Prisma.LibraryActivityUncheckedCreateWithoutEntryInput> | Prisma.LibraryActivityCreateWithoutEntryInput[] | Prisma.LibraryActivityUncheckedCreateWithoutEntryInput[]
   connectOrCreate?: Prisma.LibraryActivityCreateOrConnectWithoutEntryInput | Prisma.LibraryActivityCreateOrConnectWithoutEntryInput[]
@@ -496,6 +524,64 @@ export type LibraryActivityUncheckedUpdateManyWithoutEntryNestedInput = {
   deleteMany?: Prisma.LibraryActivityScalarWhereInput | Prisma.LibraryActivityScalarWhereInput[]
 }
 
+export type LibraryActivityCreateWithoutCommentHashtagUsagesInput = {
+  status: $Enums.LibraryStatus
+  progressFrom?: number | null
+  progressTo?: number | null
+  commentCount?: number
+  likeCount?: number
+  createdAt?: Date | string
+  entry: Prisma.LibraryEntryCreateNestedOneWithoutActivitiesInput
+}
+
+export type LibraryActivityUncheckedCreateWithoutCommentHashtagUsagesInput = {
+  id?: number
+  entryId: number
+  status: $Enums.LibraryStatus
+  progressFrom?: number | null
+  progressTo?: number | null
+  commentCount?: number
+  likeCount?: number
+  createdAt?: Date | string
+}
+
+export type LibraryActivityCreateOrConnectWithoutCommentHashtagUsagesInput = {
+  where: Prisma.LibraryActivityWhereUniqueInput
+  create: Prisma.XOR<Prisma.LibraryActivityCreateWithoutCommentHashtagUsagesInput, Prisma.LibraryActivityUncheckedCreateWithoutCommentHashtagUsagesInput>
+}
+
+export type LibraryActivityUpsertWithoutCommentHashtagUsagesInput = {
+  update: Prisma.XOR<Prisma.LibraryActivityUpdateWithoutCommentHashtagUsagesInput, Prisma.LibraryActivityUncheckedUpdateWithoutCommentHashtagUsagesInput>
+  create: Prisma.XOR<Prisma.LibraryActivityCreateWithoutCommentHashtagUsagesInput, Prisma.LibraryActivityUncheckedCreateWithoutCommentHashtagUsagesInput>
+  where?: Prisma.LibraryActivityWhereInput
+}
+
+export type LibraryActivityUpdateToOneWithWhereWithoutCommentHashtagUsagesInput = {
+  where?: Prisma.LibraryActivityWhereInput
+  data: Prisma.XOR<Prisma.LibraryActivityUpdateWithoutCommentHashtagUsagesInput, Prisma.LibraryActivityUncheckedUpdateWithoutCommentHashtagUsagesInput>
+}
+
+export type LibraryActivityUpdateWithoutCommentHashtagUsagesInput = {
+  status?: Prisma.EnumLibraryStatusFieldUpdateOperationsInput | $Enums.LibraryStatus
+  progressFrom?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  progressTo?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  commentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  likeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  entry?: Prisma.LibraryEntryUpdateOneRequiredWithoutActivitiesNestedInput
+}
+
+export type LibraryActivityUncheckedUpdateWithoutCommentHashtagUsagesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  entryId?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumLibraryStatusFieldUpdateOperationsInput | $Enums.LibraryStatus
+  progressFrom?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  progressTo?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  commentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  likeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type LibraryActivityCreateWithoutEntryInput = {
   status: $Enums.LibraryStatus
   progressFrom?: number | null
@@ -503,6 +589,7 @@ export type LibraryActivityCreateWithoutEntryInput = {
   commentCount?: number
   likeCount?: number
   createdAt?: Date | string
+  commentHashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutTargetActivityInput
 }
 
 export type LibraryActivityUncheckedCreateWithoutEntryInput = {
@@ -513,6 +600,7 @@ export type LibraryActivityUncheckedCreateWithoutEntryInput = {
   commentCount?: number
   likeCount?: number
   createdAt?: Date | string
+  commentHashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutTargetActivityInput
 }
 
 export type LibraryActivityCreateOrConnectWithoutEntryInput = {
@@ -572,6 +660,7 @@ export type LibraryActivityUpdateWithoutEntryInput = {
   commentCount?: Prisma.IntFieldUpdateOperationsInput | number
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  commentHashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutTargetActivityNestedInput
 }
 
 export type LibraryActivityUncheckedUpdateWithoutEntryInput = {
@@ -582,6 +671,7 @@ export type LibraryActivityUncheckedUpdateWithoutEntryInput = {
   commentCount?: Prisma.IntFieldUpdateOperationsInput | number
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  commentHashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutTargetActivityNestedInput
 }
 
 export type LibraryActivityUncheckedUpdateManyWithoutEntryInput = {
@@ -595,6 +685,35 @@ export type LibraryActivityUncheckedUpdateManyWithoutEntryInput = {
 }
 
 
+/**
+ * Count Type LibraryActivityCountOutputType
+ */
+
+export type LibraryActivityCountOutputType = {
+  commentHashtagUsages: number
+}
+
+export type LibraryActivityCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  commentHashtagUsages?: boolean | LibraryActivityCountOutputTypeCountCommentHashtagUsagesArgs
+}
+
+/**
+ * LibraryActivityCountOutputType without action
+ */
+export type LibraryActivityCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the LibraryActivityCountOutputType
+   */
+  select?: Prisma.LibraryActivityCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * LibraryActivityCountOutputType without action
+ */
+export type LibraryActivityCountOutputTypeCountCommentHashtagUsagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.HashtagUsageWhereInput
+}
+
 
 export type LibraryActivitySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -606,6 +725,8 @@ export type LibraryActivitySelect<ExtArgs extends runtime.Types.Extensions.Inter
   likeCount?: boolean
   createdAt?: boolean
   entry?: boolean | Prisma.LibraryEntryDefaultArgs<ExtArgs>
+  commentHashtagUsages?: boolean | Prisma.LibraryActivity$commentHashtagUsagesArgs<ExtArgs>
+  _count?: boolean | Prisma.LibraryActivityCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["libraryActivity"]>
 
 export type LibraryActivitySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -646,6 +767,8 @@ export type LibraryActivitySelectScalar = {
 export type LibraryActivityOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "entryId" | "status" | "progressFrom" | "progressTo" | "commentCount" | "likeCount" | "createdAt", ExtArgs["result"]["libraryActivity"]>
 export type LibraryActivityInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   entry?: boolean | Prisma.LibraryEntryDefaultArgs<ExtArgs>
+  commentHashtagUsages?: boolean | Prisma.LibraryActivity$commentHashtagUsagesArgs<ExtArgs>
+  _count?: boolean | Prisma.LibraryActivityCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type LibraryActivityIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   entry?: boolean | Prisma.LibraryEntryDefaultArgs<ExtArgs>
@@ -658,6 +781,7 @@ export type $LibraryActivityPayload<ExtArgs extends runtime.Types.Extensions.Int
   name: "LibraryActivity"
   objects: {
     entry: Prisma.$LibraryEntryPayload<ExtArgs>
+    commentHashtagUsages: Prisma.$HashtagUsagePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1063,6 +1187,7 @@ readonly fields: LibraryActivityFieldRefs;
 export interface Prisma__LibraryActivityClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   entry<T extends Prisma.LibraryEntryDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LibraryEntryDefaultArgs<ExtArgs>>): Prisma.Prisma__LibraryEntryClient<runtime.Types.Result.GetResult<Prisma.$LibraryEntryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  commentHashtagUsages<T extends Prisma.LibraryActivity$commentHashtagUsagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LibraryActivity$commentHashtagUsagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HashtagUsagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1493,6 +1618,30 @@ export type LibraryActivityDeleteManyArgs<ExtArgs extends runtime.Types.Extensio
    * Limit how many LibraryActivities to delete.
    */
   limit?: number
+}
+
+/**
+ * LibraryActivity.commentHashtagUsages
+ */
+export type LibraryActivity$commentHashtagUsagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the HashtagUsage
+   */
+  select?: Prisma.HashtagUsageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the HashtagUsage
+   */
+  omit?: Prisma.HashtagUsageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.HashtagUsageInclude<ExtArgs> | null
+  where?: Prisma.HashtagUsageWhereInput
+  orderBy?: Prisma.HashtagUsageOrderByWithRelationInput | Prisma.HashtagUsageOrderByWithRelationInput[]
+  cursor?: Prisma.HashtagUsageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.HashtagUsageScalarFieldEnum | Prisma.HashtagUsageScalarFieldEnum[]
 }
 
 /**

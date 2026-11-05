@@ -5,8 +5,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { CommentableType, Prisma } from '../../prisma/generated/client';
-import { author } from '../common/author';
+import {
+  CommentableType,
+  MediaType,
+  Prisma,
+} from '../../prisma/generated/client';
+import { author, communitySummary } from '../common/author';
 import { sanitizeRichText } from '../common/rich-text';
 import {
   linkedMentions,
@@ -16,6 +20,13 @@ import {
   resolveMentions,
   unlinkMentions,
 } from '../common/mentions';
+import {
+  addHashtags,
+  HashtagSource,
+  replaceHashtags,
+  resolveHashtags,
+  unlinkHashtags,
+} from '../common/hashtags';
 import { requireViewAccess } from '../communities/require-membership';
 import {
   EngagementTarget,
@@ -39,6 +50,18 @@ import { notSuspended } from '../users/suspension';
 
 const MAX_COMMENTS = 1000;
 
+function hashtagSource(
+  commentId: number,
+  type: CommentableType,
+  id: number,
+): HashtagSource {
+  return {
+    commentId,
+    targetPostId: type === 'post' ? id : null,
+    targetActivityId: type === 'activity' ? id : null,
+  };
+}
+
 const commentSelect = {
   id: true,
   parentId: true,
@@ -53,13 +76,26 @@ const commentSelect = {
   author,
 } as const;
 
-export type CommentView = Prisma.CommentGetPayload<{
-  select: typeof commentSelect;
-}> & {
+type RawComment = Prisma.CommentGetPayload<{ select: typeof commentSelect }>;
+
+export type CommentView = RawComment & {
   liked: boolean;
   hidden: 'review' | 'reported' | null;
   deleted: boolean;
   canDelete: boolean;
+};
+
+type CommentAuthor = Prisma.UserGetPayload<typeof author> & {
+  nickname?: string | null;
+};
+
+export type CommentTarget = {
+  type: CommentableType;
+  id: number;
+  author: CommentAuthor;
+  community: Prisma.CommunityGetPayload<typeof communitySummary> | null;
+  media: { type: MediaType; sourceId: string } | null;
+  wallUser: CommentAuthor | null;
 };
 
 @Injectable()
@@ -98,22 +134,128 @@ export class CommentsService {
       take: MAX_COMMENTS,
       select: commentSelect,
     });
+    return this.present(
+      userId,
+      comments.map((comment) => ({ communityId, comment })),
+    );
+  }
+
+  async findForTags(
+    userId: number,
+    ids: number[],
+  ): Promise<{ comment: CommentView; target: CommentTarget }[]> {
+    if (ids.length === 0) return [];
+    const rows = await this.prisma.comment.findMany({
+      where: { id: { in: ids } },
+      select: {
+        ...commentSelect,
+        communityId: true,
+        commentableType: true,
+        commentableId: true,
+      },
+    });
+    const targetIds = (type: CommentableType) =>
+      rows.flatMap((row) =>
+        row.commentableType === type ? [row.commentableId] : [],
+      );
+    const [views, posts, activities] = await Promise.all([
+      this.present(
+        userId,
+        rows.map(
+          ({ communityId, commentableType, commentableId, ...comment }) => ({
+            communityId,
+            comment,
+          }),
+        ),
+      ),
+      this.prisma.post.findMany({
+        where: { id: { in: targetIds('post') } },
+        select: {
+          id: true,
+          mediaType: true,
+          mediaSourceId: true,
+          author,
+          community: communitySummary,
+          wallUser: author,
+        },
+      }),
+      this.prisma.libraryActivity.findMany({
+        where: { id: { in: targetIds('activity') } },
+        select: { id: true, entry: { select: { user: author } } },
+      }),
+    ]);
+    const withNickname = await loadNicknames(
+      this.prisma,
+      posts.map((post) => ({
+        communityId: post.community?.id ?? null,
+        userId: post.author.id,
+      })),
+    );
+    const targets = {
+      post: new Map<number, CommentTarget>(
+        posts.map((post) => [
+          post.id,
+          {
+            type: 'post',
+            id: post.id,
+            author: withNickname(post.community?.id ?? null, post.author),
+            community: post.community,
+            media:
+              post.mediaType && post.mediaSourceId
+                ? { type: post.mediaType, sourceId: post.mediaSourceId }
+                : null,
+            wallUser: post.wallUser,
+          },
+        ]),
+      ),
+      activity: new Map<number, CommentTarget>(
+        activities.map((activity) => [
+          activity.id,
+          {
+            type: 'activity',
+            id: activity.id,
+            author: activity.entry.user,
+            community: null,
+            media: null,
+            wallUser: null,
+          },
+        ]),
+      ),
+    };
+
+    return rows.flatMap((row, index) => {
+      const target = targets[row.commentableType].get(row.commentableId);
+      return target ? [{ comment: views[index], target }] : [];
+    });
+  }
+
+  private async present(
+    userId: number,
+    rows: { communityId: number | null; comment: RawComment }[],
+  ): Promise<CommentView[]> {
     const [liked, reported, withNickname, managed] = await Promise.all([
       this.likes.likedBy(
         userId,
         'comment',
-        comments.map((comment) => comment.id),
+        rows.map(({ comment }) => comment.id),
       ),
       reportedBy(this.prisma, userId),
       loadNicknames(
         this.prisma,
-        comments.map((comment) => ({ communityId, userId: comment.author.id })),
+        rows.map(({ communityId, comment }) => ({
+          communityId,
+          userId: comment.author.id,
+        })),
       ),
-      managedCommunities(this.prisma, userId, [communityId]),
+      managedCommunities(
+        this.prisma,
+        userId,
+        rows.map(({ communityId }) => communityId),
+      ),
     ]);
     const reportedIds = new Set(reported.comment);
 
-    return comments.map((comment) => {
+    return rows.map(({ communityId, comment }) => {
       const own = comment.author.id === userId;
       const deleted = comment.deletedAt !== null;
       const hidden = deleted
@@ -165,11 +307,12 @@ export class CommentsService {
     if (containsLink(html, linkUrl)) {
       await requireEstablishedAccount(this.prisma, userId, 'post links');
     }
-    const { html: linked, mentioned } = await resolveMentions(
+    const { html: mentions, mentioned } = await resolveMentions(
       this.prisma,
       empty ? '' : html,
       userId,
     );
+    const { html: linked, hashtags } = resolveHashtags(mentions);
 
     const increment = { commentCount: { increment: 1 } };
     const comment = await this.prisma.$transaction(async (tx) => {
@@ -191,6 +334,12 @@ export class CommentsService {
         : tx.libraryActivity.update({ where: { id }, data: increment }));
       return created;
     });
+    await addHashtags(
+      this.prisma,
+      hashtagSource(comment.id, type, id),
+      { authorId: userId, createdAt: comment.createdAt },
+      hashtags,
+    );
 
     await this.notifyCommented(userId, home, mentioned, parentAuthorId);
     const withNickname = await loadNicknames(this.prisma, [
@@ -228,18 +377,21 @@ export class CommentsService {
       throw new ForbiddenException('You can only edit your own comments');
     }
 
-    const { html, empty } = sanitizeRichText(unlinkMentions(content));
+    const { html, empty } = sanitizeRichText(
+      unlinkHashtags(unlinkMentions(content)),
+    );
     if (empty && !linkUrl) {
       throw new BadRequestException('Comment cannot be empty');
     }
     if (containsLink(html, linkUrl)) {
       await requireEstablishedAccount(this.prisma, userId, 'post links');
     }
-    const { html: linked, mentioned } = await resolveMentions(
+    const { html: mentions, mentioned } = await resolveMentions(
       this.prisma,
       empty ? '' : html,
       userId,
     );
+    const { html: linked, hashtags } = resolveHashtags(mentions);
     const updated = await this.prisma.comment.update({
       where: { id: commentId },
       data: {
@@ -250,6 +402,12 @@ export class CommentsService {
       },
       select: commentSelect,
     });
+    await replaceHashtags(
+      this.prisma,
+      hashtagSource(commentId, comment.commentableType, comment.commentableId),
+      { authorId: userId, createdAt: updated.createdAt },
+      hashtags,
+    );
 
     const home = await targetOf(
       this.prisma,
@@ -321,6 +479,7 @@ export class CommentsService {
             spoiler: null,
           },
         }),
+        this.prisma.hashtagUsage.deleteMany({ where: { commentId } }),
         fewer,
       ]);
       return;

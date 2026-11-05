@@ -55,6 +55,11 @@ function thread(id: number, extra: object = {}) {
   };
 }
 
+const createdThread = {
+  id: 9,
+  posts: [{ id: 30, createdAt: new Date('2026-11-01T00:00:00Z') }],
+};
+
 function setup() {
   const prisma = {
     contentReport: {
@@ -82,6 +87,12 @@ function setup() {
     notification: { deleteMany: jest.fn() },
     membership: { findMany: jest.fn().mockResolvedValue([]) },
     communityBan: { findMany: jest.fn().mockResolvedValue([]) },
+    hashtag: {
+      upsert: jest.fn(({ where }: { where: { name: string } }) =>
+        Promise.resolve({ id: where.name.length }),
+      ),
+    },
+    hashtagUsage: { createMany: jest.fn(), deleteMany: jest.fn() },
     $transaction: jest.fn(),
   };
   prisma.$transaction.mockImplementation((operations: unknown) =>
@@ -257,7 +268,7 @@ describe('Starting threads', () => {
   it('saves a tidy title with the opening post', async () => {
     const { prisma, service } = setup();
     prisma.forumCategory.findFirst.mockResolvedValue({ id: 5 });
-    prisma.forumThread.create.mockResolvedValue({ id: 9 });
+    prisma.forumThread.create.mockResolvedValue(createdThread);
 
     await service.createThread(7, 3, 5, {
       title: '  Best   arc?  ',
@@ -281,13 +292,13 @@ describe('Starting threads', () => {
           },
         },
       },
-      select: { id: true },
+      select: { id: true, posts: { select: { id: true, createdAt: true } } },
     });
   });
 
   it('also posts new threads to the community feed when the category is set to', async () => {
     const { prisma, posts, service } = setup();
-    prisma.forumThread.create.mockResolvedValue({ id: 9 });
+    prisma.forumThread.create.mockResolvedValue(createdThread);
 
     prisma.forumCategory.findFirst.mockResolvedValue({ postToFeed: false });
     await service.createThread(7, 3, 5, {
@@ -301,20 +312,23 @@ describe('Starting threads', () => {
       title: 'Watch party',
       content: '<p>Friday</p>',
     });
-    expect(posts.shareThread).toHaveBeenCalledWith({
-      id: 9,
-      communityId: 3,
-      authorId: 7,
-      content: '<p>Friday</p>',
-      linkUrl: null,
-      spoiler: null,
-    });
+    expect(posts.shareThread).toHaveBeenCalledWith(
+      {
+        id: 9,
+        communityId: 3,
+        authorId: 7,
+        content: '<p>Friday</p>',
+        linkUrl: null,
+        spoiler: null,
+      },
+      [],
+    );
   });
 
   it('marks the opening post and its feed post as spoilers', async () => {
     const { prisma, posts, service } = setup();
     prisma.forumCategory.findFirst.mockResolvedValue({ postToFeed: true });
-    prisma.forumThread.create.mockResolvedValue({ id: 9 });
+    prisma.forumThread.create.mockResolvedValue(createdThread);
 
     await service.createThread(7, 3, 5, {
       title: 'Episode 12',
@@ -326,6 +340,7 @@ describe('Starting threads', () => {
     expect(data.posts.create.spoiler).toBe('Episode 12');
     expect(posts.shareThread).toHaveBeenCalledWith(
       expect.objectContaining({ spoiler: 'Episode 12' }),
+      [],
     );
   });
 
@@ -345,7 +360,7 @@ describe('Starting threads', () => {
   it('can start with just a link, which it saves with the opening post and its feed post', async () => {
     const { prisma, posts, service } = setup();
     prisma.forumCategory.findFirst.mockResolvedValue({ postToFeed: true });
-    prisma.forumThread.create.mockResolvedValue({ id: 9 });
+    prisma.forumThread.create.mockResolvedValue(createdThread);
     const linkUrl = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
 
     await service.createThread(7, 3, 5, {
@@ -370,6 +385,7 @@ describe('Starting threads', () => {
     );
     expect(posts.shareThread).toHaveBeenCalledWith(
       expect.objectContaining({ content: '', linkUrl }),
+      [],
     );
   });
 });
@@ -377,7 +393,7 @@ describe('Starting threads', () => {
 describe('Admin-only categories', () => {
   it('only lets admins start threads when the category or its section is admin-only', async () => {
     const { prisma, service } = setup();
-    prisma.forumThread.create.mockResolvedValue({ id: 9 });
+    prisma.forumThread.create.mockResolvedValue(createdThread);
     const body = { title: 'News', content: '<p>Big news</p>' };
 
     for (const category of [
@@ -558,10 +574,11 @@ describe('Editing and deleting', () => {
       opening: true,
     });
     await service.updatePost(7, 3, 40, { content: '<p>New</p>' });
-    expect(posts.threadChanged).toHaveBeenCalledWith(9, {
-      content: '<p>New</p>',
-      linkUrl: null,
-    });
+    expect(posts.threadChanged).toHaveBeenCalledWith(
+      9,
+      { content: '<p>New</p>', linkUrl: null },
+      [],
+    );
 
     prisma.forumThread.findFirst.mockResolvedValue({
       authorId: 7,
@@ -693,5 +710,141 @@ describe('Forum search', () => {
         take: 8,
       }),
     );
+  });
+});
+
+describe('Hashtags in forum posts', () => {
+  const usage = (hashtagId: number, forumPostId: number, createdAt: Date) => ({
+    hashtagId,
+    forumPostId,
+    authorId: 7,
+    createdAt,
+  });
+
+  it('links tags in a new thread, saves them for the opening post, and shares them with its feed post', async () => {
+    const { prisma, posts, service } = setup();
+    prisma.forumCategory.findFirst.mockResolvedValue({ postToFeed: true });
+    prisma.forumThread.create.mockResolvedValue(createdThread);
+
+    await service.createThread(7, 3, 5, {
+      title: 'Episode 1',
+      content: '<p>#Frieren</p>',
+    });
+
+    const linked =
+      '<p><a href="/tags/frieren" class="hashtag">#Frieren</a></p>';
+    const [{ data }] = prisma.forumThread.create.mock.calls[0];
+    expect(data.posts.create.content).toBe(linked);
+    expect(prisma.hashtagUsage.createMany).toHaveBeenCalledWith({
+      data: [usage(7, 30, createdThread.posts[0].createdAt)],
+      skipDuplicates: true,
+    });
+    expect(posts.shareThread).toHaveBeenCalledWith(
+      expect.objectContaining({ content: linked }),
+      [{ name: 'frieren', display: 'Frieren' }],
+    );
+  });
+
+  it('saves the tags of a reply', async () => {
+    const { prisma, service } = setup();
+    prisma.forumThread.findFirst.mockResolvedValue({
+      ...thread(9),
+      authorId: 7,
+      category: { id: 5, name: 'General' },
+    });
+    prisma.forumPost.create.mockResolvedValue({ id: 41 });
+
+    await service.reply(7, 3, 9, { content: '<p>#Fern too</p>' });
+
+    const [{ data }] = prisma.forumPost.create.mock.calls[0];
+    expect(data.content).toBe(
+      '<p><a href="/tags/fern" class="hashtag">#Fern</a> too</p>',
+    );
+    expect(prisma.hashtagUsage.createMany).toHaveBeenCalledWith({
+      data: [usage(4, 41, data.createdAt)],
+      skipDuplicates: true,
+    });
+  });
+
+  it('re-reads the tags on edit, replaces them, and passes them on to the feed post', async () => {
+    const { prisma, posts, service } = setup();
+    const createdAt = new Date('2026-11-01T00:00:00Z');
+    prisma.forumPost.findFirst.mockResolvedValue({
+      authorId: 7,
+      content: '<p><a href="/tags/old" class="hashtag">#Old</a></p>',
+      threadId: 9,
+      opening: true,
+    });
+    prisma.forumPost.update.mockImplementation(({ data }) => ({
+      id: 40,
+      opening: true,
+      createdAt,
+      author,
+      ...data,
+    }));
+
+    await service.updatePost(7, 3, 40, {
+      content: '<p><a href="/tags/old" class="hashtag">#Old</a> #Himmel</p>',
+    });
+
+    expect(prisma.hashtagUsage.deleteMany).toHaveBeenCalledWith({
+      where: { forumPostId: 40 },
+    });
+    expect(prisma.hashtagUsage.createMany).toHaveBeenCalledWith({
+      data: [usage(3, 40, createdAt), usage(6, 40, createdAt)],
+    });
+    expect(posts.threadChanged).toHaveBeenCalledWith(
+      9,
+      expect.objectContaining({
+        content:
+          '<p><a href="/tags/old" class="hashtag">#Old</a> ' +
+          '<a href="/tags/himmel" class="hashtag">#Himmel</a></p>',
+      }),
+      [
+        { name: 'old', display: 'Old' },
+        { name: 'himmel', display: 'Himmel' },
+      ],
+    );
+  });
+
+  it('loads tagged forum posts as thread pages show them, with their thread', async () => {
+    const { prisma, service } = setup();
+    const community = { id: 3, name: 'Seasonal Anime Club', iconUrl: null };
+    prisma.forumPost.findMany.mockResolvedValue([
+      {
+        id: 40,
+        threadId: 9,
+        opening: false,
+        content: '<p>#Frieren</p>',
+        linkUrl: null,
+        spoiler: null,
+        quoteId: null,
+        likeCount: 0,
+        hiddenAt: null,
+        editedAt: null,
+        createdAt: new Date(),
+        author,
+        communityId: 3,
+        thread: { id: 9, title: 'Episode 1', categoryId: 5, community },
+      },
+    ]);
+
+    const [found] = await service.findForTags(2, [40]);
+
+    expect(found.thread).toEqual({
+      id: 9,
+      title: 'Episode 1',
+      categoryId: 5,
+      community,
+    });
+    expect(found.forumPost).toMatchObject({
+      id: 40,
+      liked: false,
+      quote: null,
+      canEdit: true,
+      canDelete: true,
+    });
+    expect(found.forumPost).not.toHaveProperty('thread');
+    expect(found.forumPost).not.toHaveProperty('communityId');
   });
 });

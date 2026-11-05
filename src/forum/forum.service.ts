@@ -12,7 +12,7 @@ import {
   NotificationsService,
 } from '../notifications/notifications.service';
 import { LikesService } from '../likes/likes.service';
-import { author } from '../common/author';
+import { author, communitySummary } from '../common/author';
 import { sanitizeRichText } from '../common/rich-text';
 import { containsLink, requireEstablishedAccount } from '../common/new-account';
 import {
@@ -21,6 +21,12 @@ import {
   resolveMentions,
   unlinkMentions,
 } from '../common/mentions';
+import {
+  addHashtags,
+  replaceHashtags,
+  resolveHashtags,
+  unlinkHashtags,
+} from '../common/hashtags';
 import { loadNicknames } from '../communities/nicknames';
 import { reportedBy, visibleTo } from '../moderation/visibility';
 import { spoilerOf } from '../common/spoiler';
@@ -40,6 +46,7 @@ import {
   visibleThreads,
 } from './forum-helpers';
 import { authorModeration } from '../communities/member-moderation';
+import { managedCommunities } from '../communities/managed-communities';
 
 const SEARCH_LIMIT = 8;
 const MAX_PAGE = 100000;
@@ -122,7 +129,12 @@ export class ForumService {
     if (containsLink(html, linkUrl)) {
       await requireEstablishedAccount(this.prisma, authorId, 'post links');
     }
-    return resolveMentions(this.prisma, html, authorId);
+    const { html: mentions, mentioned } = await resolveMentions(
+      this.prisma,
+      html,
+      authorId,
+    );
+    return { ...resolveHashtags(mentions), mentioned };
   }
 
   private async visibleThread(
@@ -412,6 +424,55 @@ export class ForumService {
     };
   }
 
+  async findForTags(viewerId: number, ids: number[]) {
+    if (ids.length === 0) return [];
+    const [rows, reported] = await Promise.all([
+      this.prisma.forumPost.findMany({
+        where: { id: { in: ids } },
+        select: {
+          ...postSelect,
+          communityId: true,
+          thread: {
+            select: {
+              id: true,
+              title: true,
+              categoryId: true,
+              community: communitySummary,
+            },
+          },
+        },
+      }),
+      reportedBy(this.prisma, viewerId),
+    ]);
+    const communityIds = [
+      ...new Set(rows.map(({ communityId }) => communityId)),
+    ];
+    const managed = await managedCommunities(
+      this.prisma,
+      viewerId,
+      communityIds,
+    );
+    const decorated = await Promise.all(
+      communityIds.map((communityId) =>
+        this.decoratePosts(
+          viewerId,
+          communityId,
+          rows.flatMap(({ communityId: home, thread, ...post }) =>
+            home === communityId ? [post] : [],
+          ),
+          reported.forum_post,
+          managed.has(communityId),
+        ),
+      ),
+    );
+    const byId = new Map(decorated.flat().map((post) => [post.id, post]));
+
+    return rows.flatMap(({ id, thread }) => {
+      const forumPost = byId.get(id);
+      return forumPost ? [{ forumPost, thread }] : [];
+    });
+  }
+
   async createThread(
     userId: number,
     communityId: number,
@@ -438,12 +499,15 @@ export class ForumService {
 
     const cleanTitle = threadTitle(title);
     const note = spoilerOf(spoiler);
-    const { html, mentioned } = await this.withMentions(
+    const { html, mentioned, hashtags } = await this.withMentions(
       content,
       userId,
       linkUrl,
     );
-    const thread = await this.prisma.forumThread.create({
+    const {
+      posts: [opening],
+      ...thread
+    } = await this.prisma.forumThread.create({
       data: {
         communityId,
         categoryId,
@@ -460,17 +524,26 @@ export class ForumService {
           },
         },
       },
-      select: { id: true },
+      select: { id: true, posts: { select: { id: true, createdAt: true } } },
     });
+    await addHashtags(
+      this.prisma,
+      { forumPostId: opening.id },
+      { authorId: userId, createdAt: opening.createdAt },
+      hashtags,
+    );
     if (category.postToFeed) {
-      await this.posts.shareThread({
-        id: thread.id,
-        communityId,
-        authorId: userId,
-        content: html,
-        linkUrl: linkUrl ?? null,
-        spoiler: note,
-      });
+      await this.posts.shareThread(
+        {
+          id: thread.id,
+          communityId,
+          authorId: userId,
+          content: html,
+          linkUrl: linkUrl ?? null,
+          spoiler: note,
+        },
+        hashtags,
+      );
     }
 
     await notifyMentions(this.prisma, this.notifications, {
@@ -518,7 +591,7 @@ export class ForumService {
       throw new BadRequestException('That post can’t be quoted');
     }
 
-    const { html, mentioned } = await this.withMentions(
+    const { html, mentioned, hashtags } = await this.withMentions(
       content,
       userId,
       linkUrl,
@@ -543,6 +616,12 @@ export class ForumService {
         data: { replyCount: { increment: 1 }, lastPostAt: now },
       }),
     ]);
+    await addHashtags(
+      this.prisma,
+      { forumPostId: post.id },
+      { authorId: userId, createdAt: now },
+      hashtags,
+    );
 
     const link = forumPostLink(communityId, threadId, post.id);
     const notes: NewNotification[] = [];
@@ -660,8 +739,8 @@ export class ForumService {
       throw new ForbiddenException('You can only edit your own posts');
     }
 
-    const { html, mentioned } = await this.withMentions(
-      unlinkMentions(content),
+    const { html, mentioned, hashtags } = await this.withMentions(
+      unlinkHashtags(unlinkMentions(content)),
       userId,
       linkUrl,
     );
@@ -675,12 +754,22 @@ export class ForumService {
       },
       select: postSelect,
     });
+    await replaceHashtags(
+      this.prisma,
+      { forumPostId: postId },
+      { authorId: userId, createdAt: updated.createdAt },
+      hashtags,
+    );
     if (post.opening) {
-      await this.posts.threadChanged(post.threadId, {
-        content: html,
-        linkUrl: linkUrl ?? null,
-        spoiler: updated.spoiler,
-      });
+      await this.posts.threadChanged(
+        post.threadId,
+        {
+          content: html,
+          linkUrl: linkUrl ?? null,
+          spoiler: updated.spoiler,
+        },
+        hashtags,
+      );
     }
 
     const previously = linkedMentions(post.content);

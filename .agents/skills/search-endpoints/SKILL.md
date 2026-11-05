@@ -17,6 +17,7 @@ The web app has one search modal for the whole site (see the `search-updates` sk
 | People | `GET /friends/search` | `FriendsService.search` |
 | Communities | `GET /communities/search` | `CommunitiesService.search` |
 | Titles | `GET /library/search` | `LibraryService.search` |
+| Hashtags | `GET /tags/search` | `TagsService.search` |
 | Notifications | `GET /notifications?q=` | `NotificationsService.list` |
 | Tickets (site admins only) | `GET /reports/search` | `ReportsService.search` |
 

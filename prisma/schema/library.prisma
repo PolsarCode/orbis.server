@@ -36,15 +36,16 @@ model LibraryEntry {
 }
 
 model LibraryActivity {
-  id           Int           @id @default(autoincrement())
-  entryId      Int
-  status       LibraryStatus
-  progressFrom Int?
-  progressTo   Int?
-  commentCount Int           @default(0)
-  likeCount    Int           @default(0)
-  createdAt    DateTime      @default(now())
-  entry        LibraryEntry  @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  id                   Int            @id @default(autoincrement())
+  entryId              Int
+  status               LibraryStatus
+  progressFrom         Int?
+  progressTo           Int?
+  commentCount         Int            @default(0)
+  likeCount            Int            @default(0)
+  createdAt            DateTime       @default(now())
+  entry                LibraryEntry   @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  commentHashtagUsages HashtagUsage[]
 
   @@index([createdAt(sort: Desc)])
   @@index([entryId])

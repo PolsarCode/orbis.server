@@ -13,6 +13,7 @@ import { ADMINISTRATOR } from '../src/communities/permissions';
 import { ticketNumber } from '../src/reports/ticket';
 import { getReporterStatusLabel } from '../src/reports/status-labels';
 import { pair } from '../src/messages/conversation';
+import { resolveHashtags } from '../src/common/hashtags';
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 const prisma = new PrismaClient({ adapter });
@@ -149,17 +150,17 @@ const communities: SeedCommunity[] = [
       [
         'nami',
         hours(6),
-        `<p>Reminder that the club's watch-party snacks are <strong>not free</strong>. I keep a ledger. 💰</p>`,
+        `<p>Reminder that the club's watch-party snacks are <strong>not free</strong>. I keep a ledger. 💰 #WatchParty</p>`,
       ],
       [
         'tanjiro',
         hours(2),
-        `<p>What's everyone's comfort anime? Mine is anything about family. Recommendations very welcome!</p>`,
+        `<p>What's everyone's comfort anime? Mine is anything about family. Recommendations very welcome! #ComfortAnime</p>`,
       ],
       [
         'itadori',
         hours(1),
-        `<p>The finale reveal that the mentor was the one who sealed the village was <strong>brutal</strong>. I rewatched the first episode and the hints were there all along.</p>`,
+        `<p>The finale reveal that the mentor was the one who sealed the village was <strong>brutal</strong>. I rewatched the first episode and the hints were there all along. #SeasonFinale</p>`,
         false,
         'Season finale',
       ],
@@ -195,7 +196,7 @@ const communities: SeedCommunity[] = [
       [
         'naruto',
         days(1) + hours(3),
-        `<p>Training schedule for the week:</p><ul><li><strong>Mon</strong>: Shadow clone drills</li><li><strong>Wed</strong>: Rasengan practice</li><li><strong>Fri</strong>: Beat Sasuke</li></ul>`,
+        `<p>Training schedule for the week:</p><ul><li><strong>Mon</strong>: Shadow clone drills</li><li><strong>Wed</strong>: Rasengan practice</li><li><strong>Fri</strong>: Beat Sasuke</li></ul><p>#Training</p>`,
       ],
       [
         'itadori',
@@ -269,12 +270,12 @@ const communities: SeedCommunity[] = [
       [
         'goku',
         days(2) + hours(7),
-        `<p>Gravity room is open 24/7! Current setting: <code>300x</code>. Bring snacks.</p>`,
+        `<p>Gravity room is open 24/7! Current setting: <code>300x</code>. Bring snacks. #Training</p>`,
       ],
       [
         'vegeta',
         hours(15),
-        `<p>I have increased the gravity room setting. You're welcome.</p>`,
+        `<p>I have increased the gravity room setting. You're welcome. #training</p>`,
       ],
       [
         'luffy',
@@ -367,7 +368,7 @@ const communities: SeedCommunity[] = [
       [
         'levi',
         hours(9),
-        `<p>Cleaning duty rotation is posted. If I find dust on a single shelf, you're redoing the whole floor.</p>`,
+        `<p>Cleaning duty rotation is posted. If I find dust on a single shelf, you're redoing the whole floor. #Training</p>`,
       ],
     ],
   },
@@ -449,7 +450,7 @@ const forums: Record<string, SeedForumCategory[]> = {
               author: 'naruto',
               ago: hours(18),
               quote: 1,
-              content: `<p>Same! The louder the better, believe it!</p>`,
+              content: `<p>Same! The louder the better, believe it! #WatchParty</p>`,
             },
           ],
         },
@@ -468,7 +469,7 @@ const forums: Record<string, SeedForumCategory[]> = {
           title: 'Frieren: Beyond Journey’s End, episode 1',
           ago: hours(30),
           likes: ['tanjiro', 'anya', 'admin'],
-          content: `<p>A story that starts after the hero's journey is over. That last shot by the meteor shower got me.</p>`,
+          content: `<p>A story that starts after the hero's journey is over. That last shot by the meteor shower got me. #Frieren</p>`,
           replies: [
             {
               author: 'tanjiro',
@@ -480,20 +481,20 @@ const forums: Record<string, SeedForumCategory[]> = {
               author: 'spike',
               ago: hours(20),
               quote: 0,
-              content: `<p>Slow, quiet, and confident. My kind of show.</p>`,
+              content: `<p>Slow, quiet, and confident. My kind of show. #Frieren</p>`,
             },
             {
               author: 'admin',
               ago: hours(6),
               quote: 1,
               likes: ['tanjiro', 'nami'],
-              content: `<p>That's the hook. Every small moment matters more when you know how short it was for everyone else.</p>`,
+              content: `<p>That's the hook. Every small moment matters more when you know how short it was for everyone else. #Frieren</p>`,
             },
             {
               author: 'itadori',
               ago: hours(2),
               spoiler: 'Episode 2 preview',
-              content: `<p>The preview shows Frieren finally visiting Himmel's statue. Bring tissues.</p>`,
+              content: `<p>The preview shows Frieren finally visiting Himmel's statue. Bring tissues. #frieren</p>`,
             },
           ],
         },
@@ -853,12 +854,26 @@ const forums: Record<string, SeedForumCategory[]> = {
 
 const postComments: Record<string, Record<number, SeedComment[]>> = {
   'Seasonal Anime Club': {
+    5: [
+      {
+        author: 'anya',
+        ago: 80,
+        content: `<p>Anya's #ComfortAnime is any show with spies. And peanuts. 🥜</p>`,
+        likes: ['tanjiro'],
+      },
+      {
+        author: 'nami',
+        ago: 50,
+        content: `<p>#Frieren. Quiet, kind, and a little sad. Perfect #ComfortAnime.</p>`,
+        likes: ['tanjiro', 'anya'],
+      },
+    ],
     6: [
       {
         author: 'spike',
         ago: 40,
         spoiler: '',
-        content: `<p>And the last scene with the empty chair? That's the real ending.</p>`,
+        content: `<p>And the last scene with the empty chair? That's the real ending. #SeasonFinale</p>`,
         likes: ['itadori'],
       },
     ],
@@ -2325,6 +2340,99 @@ async function createBookmarks(): Promise<number> {
   return bookmarks.length;
 }
 
+const hashtagFollows: [UserKey, string, number][] = [
+  ['admin', 'training', days(2)],
+  ['admin', 'frieren', hours(5)],
+  ['tanjiro', 'comfortanime', 30],
+];
+
+async function createHashtags(): Promise<number> {
+  const [posts, comments, forumPosts] = await Promise.all([
+    prisma.post.findMany({
+      select: { id: true, authorId: true, content: true, createdAt: true },
+    }),
+    prisma.comment.findMany({
+      select: {
+        id: true,
+        authorId: true,
+        content: true,
+        createdAt: true,
+        commentableType: true,
+        commentableId: true,
+      },
+    }),
+    prisma.forumPost.findMany({
+      select: { id: true, authorId: true, content: true, createdAt: true },
+    }),
+  ]);
+  const items = [
+    ...posts.map((post) => ({
+      ...post,
+      source: { postId: post.id },
+      save: (content: string) =>
+        prisma.post.update({ where: { id: post.id }, data: { content } }),
+    })),
+    ...comments.map((comment) => ({
+      ...comment,
+      source: {
+        commentId: comment.id,
+        targetPostId:
+          comment.commentableType === 'post' ? comment.commentableId : null,
+        targetActivityId:
+          comment.commentableType === 'activity' ? comment.commentableId : null,
+      },
+      save: (content: string) =>
+        prisma.comment.update({ where: { id: comment.id }, data: { content } }),
+    })),
+    ...forumPosts.map((post) => ({
+      ...post,
+      source: { forumPostId: post.id },
+      save: (content: string) =>
+        prisma.forumPost.update({ where: { id: post.id }, data: { content } }),
+    })),
+  ].sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+
+  let count = 0;
+  for (const item of items) {
+    const { html, hashtags } = resolveHashtags(item.content);
+    if (hashtags.length === 0) continue;
+    await item.save(html);
+    for (const { name, display } of hashtags) {
+      const hashtag = await prisma.hashtag.upsert({
+        where: { name },
+        create: { name, display },
+        update: { display },
+        select: { id: true },
+      });
+      await prisma.hashtagUsage.create({
+        data: {
+          hashtagId: hashtag.id,
+          ...item.source,
+          authorId: item.authorId,
+          createdAt: item.createdAt,
+        },
+      });
+      count += 1;
+    }
+  }
+
+  for (const [user, name, ago] of hashtagFollows) {
+    const hashtag = await prisma.hashtag.findUniqueOrThrow({
+      where: { name },
+      select: { id: true },
+    });
+    await prisma.hashtagFollow.create({
+      data: {
+        userId: userIds[user],
+        hashtagId: hashtag.id,
+        createdAt: minutesAgo(ago),
+      },
+    });
+  }
+
+  return count;
+}
+
 const earlierStatuses: Record<LibraryStatus, LibraryStatus[]> = {
   planned: [],
   current: ['planned'],
@@ -2344,6 +2452,7 @@ async function main() {
   await prisma.post.deleteMany();
   await prisma.community.deleteMany();
   await prisma.user.deleteMany();
+  await prisma.hashtag.deleteMany();
 
   const characterPassword = await bcrypt.hash(CHARACTER_PASSWORD, 10);
 
@@ -2898,6 +3007,7 @@ async function main() {
 
   console.log('🚩 Content reports created:', await createContentReports());
   console.log('🔖 Bookmarks created:', await createBookmarks());
+  console.log('#️⃣ Hashtag uses created:', await createHashtags());
   console.log('🔔 Notifications created:', await createNotifications());
   console.log('💬 Chats created:', await createChats());
 

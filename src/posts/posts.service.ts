@@ -23,6 +23,13 @@ import {
   resolveMentions,
   unlinkMentions,
 } from '../common/mentions';
+import {
+  addHashtags,
+  ParsedHashtag,
+  replaceHashtags,
+  resolveHashtags,
+  unlinkHashtags,
+} from '../common/hashtags';
 import { CreatePostDto } from './dto/create-post.dto';
 import { BookmarkDto } from './dto/bookmark.dto';
 import { NotificationsService } from '../notifications/notifications.service';
@@ -44,6 +51,7 @@ import {
   AuthorModeration,
   authorModeration,
 } from '../communities/member-moderation';
+import { publicPosts } from '../tags/public-content';
 
 const postInclude = {
   author,
@@ -160,6 +168,16 @@ function homePosts(userId: number) {
       { wallUserId: userId },
       { authorId: userId, communityId: null, mediaType: null },
       { wallUser: friendsOf(userId) },
+      {
+        AND: [
+          publicPosts(),
+          {
+            hashtagUsages: {
+              some: { hashtag: { follows: { some: { userId } } } },
+            },
+          },
+        ],
+      },
     ],
   };
 }
@@ -328,7 +346,8 @@ export class PostsService {
       content,
       authorId,
     );
-    return { data: { content: html, linkUrl, spoiler }, mentioned };
+    const { html: linked, hashtags } = resolveHashtags(html);
+    return { data: { content: linked, linkUrl, spoiler }, mentioned, hashtags };
   }
 
   private async engage(
@@ -504,6 +523,19 @@ export class PostsService {
     }
 
     return saved.slice(0, limit);
+  }
+
+  async findByIds(viewerId: number, ids: number[]): Promise<PostItem[]> {
+    if (ids.length === 0) return [];
+    const posts = await this.prisma.post.findMany({
+      where: { id: { in: ids } },
+      include: postInclude,
+    });
+    const items = await this.engage(
+      viewerId,
+      posts.map((post) => ({ ...post, type: 'post' as const })),
+    );
+    return items.flatMap((item) => (item.type === 'post' ? [item] : []));
   }
 
   async findBookmarks(
@@ -1006,11 +1038,15 @@ export class PostsService {
     if (!owner) throw new NotFoundException('User not found');
     await requireWallAccess(this.prisma, authorId, owner.id);
 
-    const { data, mentioned } = await this.withMentions(body, authorId);
+    const { data, mentioned, hashtags } = await this.withMentions(
+      body,
+      authorId,
+    );
     const post = await this.prisma.post.create({
       data: { wallUserId: owner.id, authorId, ...data },
       include: postInclude,
     });
+    await addHashtags(this.prisma, { postId: post.id }, post, hashtags);
     const link = `/users/${owner.username}?post=${post.id}`;
     await this.notifications.notify([
       {
@@ -1110,11 +1146,15 @@ export class PostsService {
       await showsNsfw(this.prisma, authorId),
     );
 
-    const { data, mentioned } = await this.withMentions(body, authorId);
+    const { data, mentioned, hashtags } = await this.withMentions(
+      body,
+      authorId,
+    );
     const post = await this.prisma.post.create({
       data: { mediaType, mediaSourceId, authorId, ...data },
       include: postInclude,
     });
+    await addHashtags(this.prisma, { postId: post.id }, post, hashtags);
     await notifyMentions(this.prisma, this.notifications, {
       mentioned,
       authorId,
@@ -1137,11 +1177,15 @@ export class PostsService {
     authorId: number,
     body: CreatePostDto,
   ): Promise<PostItem> {
-    const { data, mentioned } = await this.withMentions(body, authorId);
+    const { data, mentioned, hashtags } = await this.withMentions(
+      body,
+      authorId,
+    );
     const post = await this.prisma.post.create({
       data: { communityId, authorId, ...data },
       include: postInclude,
     });
+    await addHashtags(this.prisma, { postId: post.id }, post, hashtags);
     await notifyMentions(this.prisma, this.notifications, {
       mentioned,
       authorId,
@@ -1190,8 +1234,8 @@ export class PostsService {
       throw new BadRequestException('Edit this in the forum thread instead');
     }
 
-    const { data, mentioned } = await this.withMentions(
-      { ...body, content: unlinkMentions(body.content) },
+    const { data, mentioned, hashtags } = await this.withMentions(
+      { ...body, content: unlinkHashtags(unlinkMentions(body.content)) },
       userId,
     );
     const updated = await this.prisma.post.update({
@@ -1199,6 +1243,7 @@ export class PostsService {
       data: { ...data, editedAt: new Date() },
       include: postInclude,
     });
+    await replaceHashtags(this.prisma, { postId }, updated, hashtags);
 
     const previously = linkedMentions(post.content);
     await notifyMentions(this.prisma, this.notifications, {
@@ -1263,14 +1308,17 @@ export class PostsService {
     });
   }
 
-  async shareThread(thread: {
-    id: number;
-    communityId: number;
-    authorId: number;
-    content: string;
-    linkUrl: string | null;
-    spoiler: string | null;
-  }) {
+  async shareThread(
+    thread: {
+      id: number;
+      communityId: number;
+      authorId: number;
+      content: string;
+      linkUrl: string | null;
+      spoiler: string | null;
+    },
+    hashtags: ParsedHashtag[],
+  ) {
     const post = await this.prisma.post.create({
       data: {
         communityId: thread.communityId,
@@ -1280,8 +1328,9 @@ export class PostsService {
         spoiler: thread.spoiler,
         forumThreadId: thread.id,
       },
-      select: { id: true },
+      select: { id: true, authorId: true, createdAt: true },
     });
+    await addHashtags(this.prisma, { postId: post.id }, post, hashtags);
     void this.discordChannel.postCreated(post.id);
   }
 
@@ -1292,6 +1341,7 @@ export class PostsService {
       linkUrl: string | null;
       spoiler: string | null;
     },
+    hashtags: ParsedHashtag[] = [],
   ) {
     const post = await this.prisma.post.findUnique({
       where: { forumThreadId: threadId },
@@ -1299,10 +1349,17 @@ export class PostsService {
     });
     if (!post) return;
     if (opening) {
-      await this.prisma.post.update({
+      const updated = await this.prisma.post.update({
         where: { id: post.id },
         data: { ...opening, editedAt: new Date() },
+        select: { authorId: true, createdAt: true },
       });
+      await replaceHashtags(
+        this.prisma,
+        { postId: post.id },
+        updated,
+        hashtags,
+      );
     }
     void this.discordChannel.contentEdited('post', post.id);
   }

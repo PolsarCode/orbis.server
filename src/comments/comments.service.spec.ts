@@ -34,6 +34,12 @@ describe('CommentsService.create', () => {
     post: { update: jest.fn() },
     user: { findUnique: jest.fn() },
     membership: { findMany: jest.fn().mockResolvedValue([]) },
+    hashtag: {
+      upsert: jest.fn(({ where }: { where: { name: string } }) =>
+        Promise.resolve({ id: where.name.length }),
+      ),
+    },
+    hashtagUsage: { createMany: jest.fn() },
     $transaction: jest.fn((run) => run(prisma)),
   };
   const notifications = { notify: jest.fn() };
@@ -104,5 +110,34 @@ describe('CommentsService.create', () => {
       service.create(1, { type: 'post', id: 7, content: '<p></p>' }),
     ).rejects.toBeInstanceOf(BadRequestException);
     expect(comment).not.toHaveBeenCalled();
+  });
+
+  it('links hashtags and saves a use for each, pointing at what was commented on', async () => {
+    sanitize.mockReturnValue({
+      html: '<p>#Frieren and #Fern</p>',
+      empty: false,
+    });
+
+    const created = await service.create(1, {
+      type: 'post',
+      id: 7,
+      content: '<p>#Frieren and #Fern</p>',
+    });
+
+    expect(comment.mock.calls[0][0].data.content).toBe(
+      '<p><a href="/tags/frieren" class="hashtag">#Frieren</a> and ' +
+        '<a href="/tags/fern" class="hashtag">#Fern</a></p>',
+    );
+    expect(prisma.hashtagUsage.createMany).toHaveBeenCalledWith({
+      data: [7, 4].map((hashtagId) => ({
+        hashtagId,
+        commentId: 11,
+        targetPostId: 7,
+        targetActivityId: null,
+        authorId: 1,
+        createdAt: created.createdAt,
+      })),
+      skipDuplicates: true,
+    });
   });
 });

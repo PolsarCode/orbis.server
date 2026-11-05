@@ -133,6 +133,21 @@ export type Friendship = Prisma.FriendshipModel
  */
 export type SuggestionDismissal = Prisma.SuggestionDismissalModel
 /**
+ * Model Hashtag
+ * 
+ */
+export type Hashtag = Prisma.HashtagModel
+/**
+ * Model HashtagUsage
+ * 
+ */
+export type HashtagUsage = Prisma.HashtagUsageModel
+/**
+ * Model HashtagFollow
+ * 
+ */
+export type HashtagFollow = Prisma.HashtagFollowModel
+/**
  * Model LibraryEntry
  * 
  */

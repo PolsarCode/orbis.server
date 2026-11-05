@@ -30,6 +30,8 @@ describe('Editing and deleting posts', () => {
     contentReport: { findMany: jest.fn() },
     membership: { findMany: jest.fn() },
     community: { findUnique: jest.fn() },
+    hashtag: { upsert: jest.fn().mockResolvedValue({ id: 1 }) },
+    hashtagUsage: { createMany: jest.fn(), deleteMany: jest.fn() },
     $transaction: jest.fn((operations: unknown[]) => Promise.all(operations)),
   };
   const notifications = { notify: jest.fn() };
