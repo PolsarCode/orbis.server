@@ -52,6 +52,7 @@ export type PostMinAggregateOutputType = {
   wallUserId: number | null
   mediaType: $Enums.MediaType | null
   mediaSourceId: string | null
+  isAdult: boolean | null
   authorId: number | null
   content: string | null
   linkUrl: string | null
@@ -71,6 +72,7 @@ export type PostMaxAggregateOutputType = {
   wallUserId: number | null
   mediaType: $Enums.MediaType | null
   mediaSourceId: string | null
+  isAdult: boolean | null
   authorId: number | null
   content: string | null
   linkUrl: string | null
@@ -90,6 +92,7 @@ export type PostCountAggregateOutputType = {
   wallUserId: number
   mediaType: number
   mediaSourceId: number
+  isAdult: number
   authorId: number
   content: number
   linkUrl: number
@@ -131,6 +134,7 @@ export type PostMinAggregateInputType = {
   wallUserId?: true
   mediaType?: true
   mediaSourceId?: true
+  isAdult?: true
   authorId?: true
   content?: true
   linkUrl?: true
@@ -150,6 +154,7 @@ export type PostMaxAggregateInputType = {
   wallUserId?: true
   mediaType?: true
   mediaSourceId?: true
+  isAdult?: true
   authorId?: true
   content?: true
   linkUrl?: true
@@ -169,6 +174,7 @@ export type PostCountAggregateInputType = {
   wallUserId?: true
   mediaType?: true
   mediaSourceId?: true
+  isAdult?: true
   authorId?: true
   content?: true
   linkUrl?: true
@@ -275,6 +281,7 @@ export type PostGroupByOutputType = {
   wallUserId: number | null
   mediaType: $Enums.MediaType | null
   mediaSourceId: string | null
+  isAdult: boolean
   authorId: number
   content: string
   linkUrl: string | null
@@ -317,6 +324,7 @@ export type PostWhereInput = {
   wallUserId?: Prisma.IntNullableFilter<"Post"> | number | null
   mediaType?: Prisma.EnumMediaTypeNullableFilter<"Post"> | $Enums.MediaType | null
   mediaSourceId?: Prisma.StringNullableFilter<"Post"> | string | null
+  isAdult?: Prisma.BoolFilter<"Post"> | boolean
   authorId?: Prisma.IntFilter<"Post"> | number
   content?: Prisma.StringFilter<"Post"> | string
   linkUrl?: Prisma.StringNullableFilter<"Post"> | string | null
@@ -342,6 +350,7 @@ export type PostOrderByWithRelationInput = {
   wallUserId?: Prisma.SortOrderInput | Prisma.SortOrder
   mediaType?: Prisma.SortOrderInput | Prisma.SortOrder
   mediaSourceId?: Prisma.SortOrderInput | Prisma.SortOrder
+  isAdult?: Prisma.SortOrder
   authorId?: Prisma.SortOrder
   content?: Prisma.SortOrder
   linkUrl?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -371,6 +380,7 @@ export type PostWhereUniqueInput = Prisma.AtLeast<{
   wallUserId?: Prisma.IntNullableFilter<"Post"> | number | null
   mediaType?: Prisma.EnumMediaTypeNullableFilter<"Post"> | $Enums.MediaType | null
   mediaSourceId?: Prisma.StringNullableFilter<"Post"> | string | null
+  isAdult?: Prisma.BoolFilter<"Post"> | boolean
   authorId?: Prisma.IntFilter<"Post"> | number
   content?: Prisma.StringFilter<"Post"> | string
   linkUrl?: Prisma.StringNullableFilter<"Post"> | string | null
@@ -395,6 +405,7 @@ export type PostOrderByWithAggregationInput = {
   wallUserId?: Prisma.SortOrderInput | Prisma.SortOrder
   mediaType?: Prisma.SortOrderInput | Prisma.SortOrder
   mediaSourceId?: Prisma.SortOrderInput | Prisma.SortOrder
+  isAdult?: Prisma.SortOrder
   authorId?: Prisma.SortOrder
   content?: Prisma.SortOrder
   linkUrl?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -422,6 +433,7 @@ export type PostScalarWhereWithAggregatesInput = {
   wallUserId?: Prisma.IntNullableWithAggregatesFilter<"Post"> | number | null
   mediaType?: Prisma.EnumMediaTypeNullableWithAggregatesFilter<"Post"> | $Enums.MediaType | null
   mediaSourceId?: Prisma.StringNullableWithAggregatesFilter<"Post"> | string | null
+  isAdult?: Prisma.BoolWithAggregatesFilter<"Post"> | boolean
   authorId?: Prisma.IntWithAggregatesFilter<"Post"> | number
   content?: Prisma.StringWithAggregatesFilter<"Post"> | string
   linkUrl?: Prisma.StringNullableWithAggregatesFilter<"Post"> | string | null
@@ -438,6 +450,7 @@ export type PostScalarWhereWithAggregatesInput = {
 export type PostCreateInput = {
   mediaType?: $Enums.MediaType | null
   mediaSourceId?: string | null
+  isAdult?: boolean
   content: string
   linkUrl?: string | null
   spoiler?: string | null
@@ -461,6 +474,7 @@ export type PostUncheckedCreateInput = {
   wallUserId?: number | null
   mediaType?: $Enums.MediaType | null
   mediaSourceId?: string | null
+  isAdult?: boolean
   authorId: number
   content: string
   linkUrl?: string | null
@@ -479,6 +493,7 @@ export type PostUncheckedCreateInput = {
 export type PostUpdateInput = {
   mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
   mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -502,6 +517,7 @@ export type PostUncheckedUpdateInput = {
   wallUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
   mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
   authorId?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -523,6 +539,7 @@ export type PostCreateManyInput = {
   wallUserId?: number | null
   mediaType?: $Enums.MediaType | null
   mediaSourceId?: string | null
+  isAdult?: boolean
   authorId: number
   content: string
   linkUrl?: string | null
@@ -539,6 +556,7 @@ export type PostCreateManyInput = {
 export type PostUpdateManyMutationInput = {
   mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
   mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -556,6 +574,7 @@ export type PostUncheckedUpdateManyInput = {
   wallUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
   mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
   authorId?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -585,6 +604,7 @@ export type PostCountOrderByAggregateInput = {
   wallUserId?: Prisma.SortOrder
   mediaType?: Prisma.SortOrder
   mediaSourceId?: Prisma.SortOrder
+  isAdult?: Prisma.SortOrder
   authorId?: Prisma.SortOrder
   content?: Prisma.SortOrder
   linkUrl?: Prisma.SortOrder
@@ -614,6 +634,7 @@ export type PostMaxOrderByAggregateInput = {
   wallUserId?: Prisma.SortOrder
   mediaType?: Prisma.SortOrder
   mediaSourceId?: Prisma.SortOrder
+  isAdult?: Prisma.SortOrder
   authorId?: Prisma.SortOrder
   content?: Prisma.SortOrder
   linkUrl?: Prisma.SortOrder
@@ -633,6 +654,7 @@ export type PostMinOrderByAggregateInput = {
   wallUserId?: Prisma.SortOrder
   mediaType?: Prisma.SortOrder
   mediaSourceId?: Prisma.SortOrder
+  isAdult?: Prisma.SortOrder
   authorId?: Prisma.SortOrder
   content?: Prisma.SortOrder
   linkUrl?: Prisma.SortOrder
@@ -858,6 +880,7 @@ export type PostUncheckedUpdateManyWithoutWallUserNestedInput = {
 export type PostCreateWithoutCommunityInput = {
   mediaType?: $Enums.MediaType | null
   mediaSourceId?: string | null
+  isAdult?: boolean
   content: string
   linkUrl?: string | null
   spoiler?: string | null
@@ -879,6 +902,7 @@ export type PostUncheckedCreateWithoutCommunityInput = {
   wallUserId?: number | null
   mediaType?: $Enums.MediaType | null
   mediaSourceId?: string | null
+  isAdult?: boolean
   authorId: number
   content: string
   linkUrl?: string | null
@@ -929,6 +953,7 @@ export type PostScalarWhereInput = {
   wallUserId?: Prisma.IntNullableFilter<"Post"> | number | null
   mediaType?: Prisma.EnumMediaTypeNullableFilter<"Post"> | $Enums.MediaType | null
   mediaSourceId?: Prisma.StringNullableFilter<"Post"> | string | null
+  isAdult?: Prisma.BoolFilter<"Post"> | boolean
   authorId?: Prisma.IntFilter<"Post"> | number
   content?: Prisma.StringFilter<"Post"> | string
   linkUrl?: Prisma.StringNullableFilter<"Post"> | string | null
@@ -945,6 +970,7 @@ export type PostScalarWhereInput = {
 export type PostCreateWithoutForumThreadInput = {
   mediaType?: $Enums.MediaType | null
   mediaSourceId?: string | null
+  isAdult?: boolean
   content: string
   linkUrl?: string | null
   spoiler?: string | null
@@ -967,6 +993,7 @@ export type PostUncheckedCreateWithoutForumThreadInput = {
   wallUserId?: number | null
   mediaType?: $Enums.MediaType | null
   mediaSourceId?: string | null
+  isAdult?: boolean
   authorId: number
   content: string
   linkUrl?: string | null
@@ -1000,6 +1027,7 @@ export type PostUpdateToOneWithWhereWithoutForumThreadInput = {
 export type PostUpdateWithoutForumThreadInput = {
   mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
   mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1022,6 +1050,7 @@ export type PostUncheckedUpdateWithoutForumThreadInput = {
   wallUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
   mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
   authorId?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1039,6 +1068,7 @@ export type PostUncheckedUpdateWithoutForumThreadInput = {
 export type PostCreateWithoutHashtagUsagesInput = {
   mediaType?: $Enums.MediaType | null
   mediaSourceId?: string | null
+  isAdult?: boolean
   content: string
   linkUrl?: string | null
   spoiler?: string | null
@@ -1061,6 +1091,7 @@ export type PostUncheckedCreateWithoutHashtagUsagesInput = {
   wallUserId?: number | null
   mediaType?: $Enums.MediaType | null
   mediaSourceId?: string | null
+  isAdult?: boolean
   authorId: number
   content: string
   linkUrl?: string | null
@@ -1083,6 +1114,7 @@ export type PostCreateOrConnectWithoutHashtagUsagesInput = {
 export type PostCreateWithoutCommentHashtagUsagesInput = {
   mediaType?: $Enums.MediaType | null
   mediaSourceId?: string | null
+  isAdult?: boolean
   content: string
   linkUrl?: string | null
   spoiler?: string | null
@@ -1105,6 +1137,7 @@ export type PostUncheckedCreateWithoutCommentHashtagUsagesInput = {
   wallUserId?: number | null
   mediaType?: $Enums.MediaType | null
   mediaSourceId?: string | null
+  isAdult?: boolean
   authorId: number
   content: string
   linkUrl?: string | null
@@ -1138,6 +1171,7 @@ export type PostUpdateToOneWithWhereWithoutHashtagUsagesInput = {
 export type PostUpdateWithoutHashtagUsagesInput = {
   mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
   mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1160,6 +1194,7 @@ export type PostUncheckedUpdateWithoutHashtagUsagesInput = {
   wallUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
   mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
   authorId?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1188,6 +1223,7 @@ export type PostUpdateToOneWithWhereWithoutCommentHashtagUsagesInput = {
 export type PostUpdateWithoutCommentHashtagUsagesInput = {
   mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
   mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1210,6 +1246,7 @@ export type PostUncheckedUpdateWithoutCommentHashtagUsagesInput = {
   wallUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
   mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
   authorId?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1227,6 +1264,7 @@ export type PostUncheckedUpdateWithoutCommentHashtagUsagesInput = {
 export type PostCreateWithoutAuthorInput = {
   mediaType?: $Enums.MediaType | null
   mediaSourceId?: string | null
+  isAdult?: boolean
   content: string
   linkUrl?: string | null
   spoiler?: string | null
@@ -1249,6 +1287,7 @@ export type PostUncheckedCreateWithoutAuthorInput = {
   wallUserId?: number | null
   mediaType?: $Enums.MediaType | null
   mediaSourceId?: string | null
+  isAdult?: boolean
   content: string
   linkUrl?: string | null
   spoiler?: string | null
@@ -1276,6 +1315,7 @@ export type PostCreateManyAuthorInputEnvelope = {
 export type PostCreateWithoutWallUserInput = {
   mediaType?: $Enums.MediaType | null
   mediaSourceId?: string | null
+  isAdult?: boolean
   content: string
   linkUrl?: string | null
   spoiler?: string | null
@@ -1297,6 +1337,7 @@ export type PostUncheckedCreateWithoutWallUserInput = {
   communityId?: number | null
   mediaType?: $Enums.MediaType | null
   mediaSourceId?: string | null
+  isAdult?: boolean
   authorId: number
   content: string
   linkUrl?: string | null
@@ -1359,6 +1400,7 @@ export type PostCreateManyCommunityInput = {
   wallUserId?: number | null
   mediaType?: $Enums.MediaType | null
   mediaSourceId?: string | null
+  isAdult?: boolean
   authorId: number
   content: string
   linkUrl?: string | null
@@ -1375,6 +1417,7 @@ export type PostCreateManyCommunityInput = {
 export type PostUpdateWithoutCommunityInput = {
   mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
   mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1396,6 +1439,7 @@ export type PostUncheckedUpdateWithoutCommunityInput = {
   wallUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
   mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
   authorId?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1416,6 +1460,7 @@ export type PostUncheckedUpdateManyWithoutCommunityInput = {
   wallUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
   mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
   authorId?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1435,6 +1480,7 @@ export type PostCreateManyAuthorInput = {
   wallUserId?: number | null
   mediaType?: $Enums.MediaType | null
   mediaSourceId?: string | null
+  isAdult?: boolean
   content: string
   linkUrl?: string | null
   spoiler?: string | null
@@ -1452,6 +1498,7 @@ export type PostCreateManyWallUserInput = {
   communityId?: number | null
   mediaType?: $Enums.MediaType | null
   mediaSourceId?: string | null
+  isAdult?: boolean
   authorId: number
   content: string
   linkUrl?: string | null
@@ -1468,6 +1515,7 @@ export type PostCreateManyWallUserInput = {
 export type PostUpdateWithoutAuthorInput = {
   mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
   mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1490,6 +1538,7 @@ export type PostUncheckedUpdateWithoutAuthorInput = {
   wallUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
   mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1510,6 +1559,7 @@ export type PostUncheckedUpdateManyWithoutAuthorInput = {
   wallUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
   mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1525,6 +1575,7 @@ export type PostUncheckedUpdateManyWithoutAuthorInput = {
 export type PostUpdateWithoutWallUserInput = {
   mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
   mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1546,6 +1597,7 @@ export type PostUncheckedUpdateWithoutWallUserInput = {
   communityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
   mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
   authorId?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1566,6 +1618,7 @@ export type PostUncheckedUpdateManyWithoutWallUserInput = {
   communityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
   mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
   authorId?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1625,6 +1678,7 @@ export type PostSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   wallUserId?: boolean
   mediaType?: boolean
   mediaSourceId?: boolean
+  isAdult?: boolean
   authorId?: boolean
   content?: boolean
   linkUrl?: boolean
@@ -1651,6 +1705,7 @@ export type PostSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   wallUserId?: boolean
   mediaType?: boolean
   mediaSourceId?: boolean
+  isAdult?: boolean
   authorId?: boolean
   content?: boolean
   linkUrl?: boolean
@@ -1674,6 +1729,7 @@ export type PostSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   wallUserId?: boolean
   mediaType?: boolean
   mediaSourceId?: boolean
+  isAdult?: boolean
   authorId?: boolean
   content?: boolean
   linkUrl?: boolean
@@ -1697,6 +1753,7 @@ export type PostSelectScalar = {
   wallUserId?: boolean
   mediaType?: boolean
   mediaSourceId?: boolean
+  isAdult?: boolean
   authorId?: boolean
   content?: boolean
   linkUrl?: boolean
@@ -1710,7 +1767,7 @@ export type PostSelectScalar = {
   createdAt?: boolean
 }
 
-export type PostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "communityId" | "wallUserId" | "mediaType" | "mediaSourceId" | "authorId" | "content" | "linkUrl" | "spoiler" | "commentCount" | "likeCount" | "hiddenAt" | "editedAt" | "pinnedAt" | "forumThreadId" | "createdAt", ExtArgs["result"]["post"]>
+export type PostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "communityId" | "wallUserId" | "mediaType" | "mediaSourceId" | "isAdult" | "authorId" | "content" | "linkUrl" | "spoiler" | "commentCount" | "likeCount" | "hiddenAt" | "editedAt" | "pinnedAt" | "forumThreadId" | "createdAt", ExtArgs["result"]["post"]>
 export type PostInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   community?: boolean | Prisma.Post$communityArgs<ExtArgs>
   wallUser?: boolean | Prisma.Post$wallUserArgs<ExtArgs>
@@ -1749,6 +1806,7 @@ export type $PostPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     wallUserId: number | null
     mediaType: $Enums.MediaType | null
     mediaSourceId: string | null
+    isAdult: boolean
     authorId: number
     content: string
     linkUrl: string | null
@@ -2194,6 +2252,7 @@ export interface PostFieldRefs {
   readonly wallUserId: Prisma.FieldRef<"Post", 'Int'>
   readonly mediaType: Prisma.FieldRef<"Post", 'MediaType'>
   readonly mediaSourceId: Prisma.FieldRef<"Post", 'String'>
+  readonly isAdult: Prisma.FieldRef<"Post", 'Boolean'>
   readonly authorId: Prisma.FieldRef<"Post", 'Int'>
   readonly content: Prisma.FieldRef<"Post", 'String'>
   readonly linkUrl: Prisma.FieldRef<"Post", 'String'>

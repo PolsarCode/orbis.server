@@ -125,7 +125,7 @@ export class ForumService {
     authorId: number,
     linkUrl?: string,
   ) {
-    const html = forumBody(content, linkUrl);
+    const html = forumBody(unlinkHashtags(content), linkUrl);
     if (containsLink(html, linkUrl)) {
       await requireEstablishedAccount(this.prisma, authorId, 'post links');
     }

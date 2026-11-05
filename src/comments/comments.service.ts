@@ -300,7 +300,7 @@ export class CommentsService {
       }
     }
 
-    const { html, empty } = sanitizeRichText(content);
+    const { html, empty } = sanitizeRichText(unlinkHashtags(content));
     if (empty && !linkUrl) {
       throw new BadRequestException('Comment cannot be empty');
     }

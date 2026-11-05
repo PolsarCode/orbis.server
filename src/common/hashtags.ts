@@ -10,10 +10,7 @@ const HASHTAG = new RegExp(
 );
 const TAG_NAME = new RegExp(`^${TAG_CHAR}{1,50}$`, 'u');
 const LETTER = /\p{L}/u;
-const LINKED_HASHTAG = new RegExp(
-  `<a\\b[^>]*\\bhref="\\/tags\\/[^"]*"[^>]*>(#${TAG_CHAR}{1,50})<\\/a>`,
-  'giu',
-);
+const LINKED_HASHTAG = /<a\b[^>]*\bhref="\/tags\/[^"]*"[^>]*>([\s\S]*?)<\/a>/gi;
 
 export type ParsedHashtag = { name: string; display: string };
 
@@ -43,7 +40,7 @@ export function hashtagsIn(html: string): ParsedHashtag[] {
   filterText(html, (text) => {
     for (const [, typed] of text.matchAll(HASHTAG)) {
       const name = normalize(typed);
-      if (LETTER.test(typed) && !found.has(name)) {
+      if (LETTER.test(typed) && TAG_NAME.test(name) && !found.has(name)) {
         found.set(name, typed.normalize('NFC'));
       }
     }

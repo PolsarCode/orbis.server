@@ -4,12 +4,27 @@ import { ReportedIds, visibleTo } from '../moderation/visibility';
 import { nsfwEntries } from '../users/nsfw';
 import { notSuspended } from '../users/suspension';
 
-export function publicPosts(): Prisma.PostWhereInput {
+export function publicPosts(
+  viewerId: number,
+  reported: ReportedIds,
+  showNsfw: boolean,
+): Prisma.PostWhereInput {
   return {
-    OR: [
-      { community: { isPublic: true } },
-      { wallUser: { isPublic: true } },
-      { mediaType: { not: null } },
+    AND: [
+      {
+        OR: [
+          { community: { isPublic: true } },
+          { wallUser: { isPublic: true } },
+          { mediaType: { not: null } },
+        ],
+      },
+      ...(showNsfw ? [] : [{ isAdult: false }]),
+      {
+        OR: [
+          { forumThreadId: null },
+          { forumThread: visibleThreads(viewerId, reported.forum_post) },
+        ],
+      },
     ],
   };
 }
@@ -17,8 +32,14 @@ export function publicPosts(): Prisma.PostWhereInput {
 function publicPost(
   viewerId: number,
   reported: ReportedIds,
+  showNsfw: boolean,
 ): Prisma.PostWhereInput {
-  return { AND: [publicPosts(), visibleTo(viewerId, reported.post)] };
+  return {
+    AND: [
+      publicPosts(viewerId, reported, showNsfw),
+      visibleTo(viewerId, reported.post),
+    ],
+  };
 }
 
 function publicActivity(showNsfw: boolean): Prisma.LibraryActivityWhereInput {
@@ -52,7 +73,7 @@ export function publicUsages(
 ): Prisma.HashtagUsageWhereInput {
   return {
     OR: [
-      { post: publicPost(viewerId, reported) },
+      { post: publicPost(viewerId, reported, showNsfw) },
       {
         AND: [
           {
@@ -63,7 +84,7 @@ export function publicUsages(
           },
           {
             OR: [
-              { targetPost: publicPost(viewerId, reported) },
+              { targetPost: publicPost(viewerId, reported, showNsfw) },
               { targetActivity: publicActivity(showNsfw) },
             ],
           },

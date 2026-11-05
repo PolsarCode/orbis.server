@@ -238,6 +238,7 @@ export const PostScalarFieldEnum = {
   wallUserId: 'wallUserId',
   mediaType: 'mediaType',
   mediaSourceId: 'mediaSourceId',
+  isAdult: 'isAdult',
   authorId: 'authorId',
   content: 'content',
   linkUrl: 'linkUrl',

@@ -18,6 +18,12 @@ describe('Finding hashtags', () => {
     ).toEqual(['frieren', 'anime', 'fall2026', 'quote']);
   });
 
+  it('skips tags whose lowercase form would be too long to open', () => {
+    expect(names(`<p>#${'İ'.repeat(26)} #${'İ'.repeat(25)}</p>`)).toEqual([
+      'i̇'.repeat(25),
+    ]);
+  });
+
   it('treats different casing as the same tag and keeps the first casing', () => {
     expect(hashtagsIn('<p>#Frieren and #FRIEREN and #frieren</p>')).toEqual([
       { name: 'frieren', display: 'Frieren' },
@@ -116,6 +122,14 @@ describe('Linking and unlinking hashtags', () => {
     expect(resolveHashtags(`<p>${mention} #ramen</p>`).html).toBe(
       `<p>${mention} <a href="/tags/ramen" class="hashtag">#ramen</a></p>`,
     );
+  });
+
+  it('turns a tag link back into text even when typing made the link longer', () => {
+    expect(
+      unlinkHashtags(
+        '<p><a href="/tags/frieren" class="hashtag">#Frieren <strong>is</strong> great</a></p>',
+      ),
+    ).toBe('<p>#Frieren <strong>is</strong> great</p>');
   });
 
   it('turns hashtag links back into text before an edit, keeping other links', () => {

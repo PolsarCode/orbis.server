@@ -7,6 +7,7 @@ import { PrismaService } from '../prisma.service';
 import { PostsService } from '../posts/posts.service';
 import { CommentsService } from '../comments/comments.service';
 import { ForumService } from '../forum/forum.service';
+import { visibleThreads } from '../forum/forum-helpers';
 
 jest.mock('../common/rich-text', () => ({ sanitizeRichText: jest.fn() }));
 
@@ -76,7 +77,7 @@ describe('Which content counts on tag pages', () => {
   const reported = { post: [11], comment: [22], forum_post: [33] };
   const where = publicUsages(1, reported, false) as {
     OR: [
-      { post: { AND: [object, object] } },
+      { post: { AND: [{ AND: object[] }, object] } },
       { AND: [{ comment: object }, { OR: [object, object] }] },
       { forumPost: { AND: object[] } },
     ];
@@ -103,13 +104,31 @@ describe('Which content counts on tag pages', () => {
   });
 
   it('only shows posts in public communities, on public profiles, or on title pages', () => {
-    expect(posts.post.AND[0]).toEqual({
+    expect(posts.post.AND[0].AND[0]).toEqual({
       OR: [
         { community: { isPublic: true } },
         { wallUser: { isPublic: true } },
         { mediaType: { not: null } },
       ],
     });
+  });
+
+  it('leaves out posts on 18+ titles unless the viewer has 18+ on', () => {
+    expect(posts.post.AND[0].AND).toContainEqual({ isAdult: false });
+    const shown = publicUsages(1, reported, true) as typeof where;
+    expect(shown.OR[0].post.AND[0].AND).not.toContainEqual({ isAdult: false });
+  });
+
+  it('only shows a thread’s feed copy while the thread itself is visible', () => {
+    jest.useFakeTimers({ now: new Date('2026-11-05T12:00:00Z') });
+    try {
+      const fresh = publicUsages(1, reported, false) as typeof where;
+      expect(fresh.OR[0].post.AND[0].AND).toContainEqual({
+        OR: [{ forumThreadId: null }, { forumThread: visibleThreads(1, [33]) }],
+      });
+    } finally {
+      jest.useRealTimers();
+    }
   });
 
   it('leaves out hidden posts, suspended authors and posts the viewer reported', () => {
@@ -268,9 +287,10 @@ describe('Tag pages', () => {
       name: 'frieren',
       display: 'Frieren',
       following: true,
-      people: 2,
+      people: 0,
       window: 'day',
     });
+    expect(prisma.hashtagUsage.groupBy).not.toHaveBeenCalled();
     expect(page.nextCursor).toBe(`${hoursAgo(10).getTime()}_10`);
   });
 

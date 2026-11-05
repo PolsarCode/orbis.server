@@ -4,6 +4,8 @@ import { NotificationsService } from '../notifications/notifications.service';
 import { LikesService } from '../likes/likes.service';
 import { DiscordChannelService } from '../discord-channel/discord-channel.service';
 import { publicPosts } from '../tags/public-content';
+import { visibleThreads } from '../forum/forum-helpers';
+import { getMedia } from '../library/library-api';
 
 jest.mock('../common/rich-text', () => ({
   sanitizeRichText: (html: string) => ({
@@ -114,6 +116,38 @@ describe('Hashtags in posts', () => {
     expect(prisma.hashtagUsage.createMany).not.toHaveBeenCalled();
   });
 
+  it('marks title-page posts on 18+ titles so tag pages can leave them out', async () => {
+    const { prisma, service } = setup();
+    (getMedia as jest.Mock).mockResolvedValueOnce({ isAdult: true });
+
+    await service.createOnMedia('anime', '52991', 1, {
+      content: '<p>#Fern</p>',
+    });
+    await service.createOnMedia('anime', '52991', 1, {
+      content: '<p>#Fern</p>',
+    });
+
+    expect(prisma.post.create.mock.calls[0][0].data.isAdult).toBe(true);
+    expect(prisma.post.create.mock.calls[1][0].data.isAdult).toBe(false);
+  });
+
+  it('keeps counting a tag when its link was pasted in or grew while typing', async () => {
+    const { prisma, service } = setup();
+
+    await service.create(5, 1, {
+      content:
+        '<p><a href="/tags/frieren" class="hashtag">#Frieren is great</a></p>',
+    });
+
+    expect(prisma.post.create.mock.calls[0][0].data.content).toBe(
+      '<p><a href="/tags/frieren" class="hashtag">#Frieren</a> is great</p>',
+    );
+    expect(prisma.hashtagUsage.createMany).toHaveBeenCalledWith({
+      data: [usage(7)],
+      skipDuplicates: true,
+    });
+  });
+
   it('re-reads the tags on edit and replaces the saved uses', async () => {
     const { prisma, service } = setup();
     prisma.post.findUnique.mockResolvedValue({
@@ -179,16 +213,29 @@ describe('Hashtags in posts', () => {
 });
 
 describe('Followed tags in the home feed', () => {
-  const followed = {
+  const none = { post: [], comment: [], forum_post: [] };
+  const followed = () => ({
     AND: [
-      publicPosts(),
+      publicPosts(1, none, false),
       {
         hashtagUsages: {
           some: { hashtag: { follows: { some: { userId: 1 } } } },
         },
       },
     ],
-  };
+  });
+
+  beforeEach(() => {
+    jest
+      .useFakeTimers({
+        doNotFake: ['nextTick', 'setImmediate', 'queueMicrotask'],
+      })
+      .setSystemTime(createdAt);
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
 
   it('adds public posts with a followed tag to the same query, so paging stays intact', async () => {
     const { prisma, service } = setup();
@@ -198,7 +245,7 @@ describe('Followed tags in the home feed', () => {
     expect(prisma.post.findMany).toHaveBeenCalledTimes(1);
     const { where, take } = prisma.post.findMany.mock.calls[0][0];
     expect(take).toBe(11);
-    expect(where.AND[0].OR).toContainEqual(followed);
+    expect(where.AND[0].OR).toContainEqual(followed());
     expect(where.AND[1]).toEqual({
       OR: [
         { createdAt: { lt: new Date(1730800000000) } },
@@ -208,12 +255,21 @@ describe('Followed tags in the home feed', () => {
   });
 
   it('only counts posts people outside the community or profile could see', () => {
-    expect(publicPosts()).toEqual({
-      OR: [
-        { community: { isPublic: true } },
-        { wallUser: { isPublic: true } },
-        { mediaType: { not: null } },
-      ],
+    expect(publicPosts(1, none, false).AND).toEqual([
+      {
+        OR: [
+          { community: { isPublic: true } },
+          { wallUser: { isPublic: true } },
+          { mediaType: { not: null } },
+        ],
+      },
+      { isAdult: false },
+      {
+        OR: [{ forumThreadId: null }, { forumThread: visibleThreads(1, []) }],
+      },
+    ]);
+    expect(publicPosts(1, none, true).AND).not.toContainEqual({
+      isAdult: false,
     });
   });
 
@@ -223,6 +279,6 @@ describe('Followed tags in the home feed', () => {
     await service.searchFeed(1, 'frieren');
 
     const { where } = prisma.post.findMany.mock.calls[0][0];
-    expect(where.AND[0].OR).toContainEqual(followed);
+    expect(where.AND[0].OR).toContainEqual(followed());
   });
 });

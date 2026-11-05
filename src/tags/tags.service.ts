@@ -204,13 +204,13 @@ export class TagsService {
       }),
       this.publicWhere(viewerId),
     ]);
-    const current = await this.currentWindow(where);
+    const current = cursor ? null : await this.currentWindow(where);
     const tag = {
       name,
       display: name,
       following: (hashtag?.follows.length ?? 0) > 0,
       people: 0,
-      window: current.window,
+      window: current?.window ?? ('day' as TagWindow),
     };
     if (!hashtag) return { tag, items: [], nextCursor: null };
 
@@ -228,7 +228,7 @@ export class TagsService {
           forumPostId: true,
         },
       }),
-      current.people ?? this.peopleByTag(scoped, current.since),
+      current && (current.people ?? this.peopleByTag(scoped, current.since)),
     ]);
     const page = usages.slice(0, PAGE_SIZE);
     const items = await this.items(viewerId, page);
@@ -238,7 +238,7 @@ export class TagsService {
       tag: {
         ...tag,
         display: cursor || usages.length > 0 ? hashtag.display : name,
-        people: people.get(hashtag.id) ?? 0,
+        people: people?.get(hashtag.id) ?? 0,
       },
       items,
       nextCursor:

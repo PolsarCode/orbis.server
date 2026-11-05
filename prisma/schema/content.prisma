@@ -20,6 +20,7 @@ model Post {
   wallUserId           Int?
   mediaType            MediaType?
   mediaSourceId        String?
+  isAdult              Boolean        @default(false)
   authorId             Int
   content              String
   linkUrl              String?

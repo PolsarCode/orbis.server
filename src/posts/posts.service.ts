@@ -36,7 +36,7 @@ import { NotificationsService } from '../notifications/notifications.service';
 import { canViewProfile, friendsOf, requireWallAccess } from './wall-access';
 import { LikesService } from '../likes/likes.service';
 import { coverUrl, getMedia } from '../library/library-api';
-import { reportedBy, visibleTo } from '../moderation/visibility';
+import { ReportedIds, reportedBy, visibleTo } from '../moderation/visibility';
 import { loadNicknames } from '../communities/nicknames';
 import { nsfwEntries, showsNsfw } from '../users/nsfw';
 import { loadSteamLinks, SteamLink } from '../steam/steam-links';
@@ -161,7 +161,7 @@ function inMyCommunities(userId: number) {
   return { community: { memberships: { some: { userId } } } };
 }
 
-function homePosts(userId: number) {
+function homePosts(userId: number, reported: ReportedIds, showNsfw: boolean) {
   return {
     OR: [
       inMyCommunities(userId),
@@ -170,7 +170,7 @@ function homePosts(userId: number) {
       { wallUser: friendsOf(userId) },
       {
         AND: [
-          publicPosts(),
+          publicPosts(userId, reported, showNsfw),
           {
             hashtagUsages: {
               some: { hashtag: { follows: { some: { userId } } } },
@@ -337,7 +337,8 @@ export class PostsService {
   ) {}
 
   private async withMentions(body: CreatePostDto, authorId: number) {
-    const { content, linkUrl, spoiler } = postBody(body);
+    const { content: written, linkUrl, spoiler } = postBody(body);
+    const content = unlinkHashtags(written);
     if (containsLink(content, linkUrl)) {
       await requireEstablishedAccount(this.prisma, authorId, 'post links');
     }
@@ -769,12 +770,15 @@ export class PostsService {
     const query = rawQuery.trim().slice(0, 100);
     if (query.length < 2) return [];
 
-    const reported = await reportedBy(this.prisma, viewerId);
+    const [reported, showNsfw] = await Promise.all([
+      reportedBy(this.prisma, viewerId),
+      showsNsfw(this.prisma, viewerId),
+    ]);
     const contains = { contains: query, mode: 'insensitive' as const };
     const posts = await this.prisma.post.findMany({
       where: {
         AND: [
-          homePosts(viewerId),
+          homePosts(viewerId, reported, showNsfw),
           { OR: [{ content: contains }, { spoiler: contains }] },
           visibleTo(viewerId, reported.post),
         ],
@@ -798,7 +802,8 @@ export class PostsService {
     const cursor = parseFeedCursor(rawCursor);
     const excluded = excludedTypes(exclude);
     const reported = await reportedBy(this.prisma, userId);
-    const nsfw = nsfwEntries(await showsNsfw(this.prisma, userId));
+    const showNsfw = await showsNsfw(this.prisma, userId);
+    const nsfw = nsfwEntries(showNsfw);
 
     const [posts, activities] = await Promise.all([
       excluded.has('post')
@@ -806,7 +811,7 @@ export class PostsService {
         : this.prisma.post.findMany({
             where: {
               AND: [
-                homePosts(userId),
+                homePosts(userId, reported, showNsfw),
                 olderThan(cursor, RANK.post),
                 visibleTo(userId, reported.post),
               ],
@@ -1140,7 +1145,7 @@ export class PostsService {
     if (!/^\d{1,12}$/.test(mediaSourceId)) {
       throw new NotFoundException('Title not found');
     }
-    await getMedia(
+    const media = await getMedia(
       mediaType,
       mediaSourceId,
       await showsNsfw(this.prisma, authorId),
@@ -1151,7 +1156,13 @@ export class PostsService {
       authorId,
     );
     const post = await this.prisma.post.create({
-      data: { mediaType, mediaSourceId, authorId, ...data },
+      data: {
+        mediaType,
+        mediaSourceId,
+        isAdult: media.isAdult === true,
+        authorId,
+        ...data,
+      },
       include: postInclude,
     });
     await addHashtags(this.prisma, { postId: post.id }, post, hashtags);
