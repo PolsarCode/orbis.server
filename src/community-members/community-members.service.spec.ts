@@ -41,6 +41,7 @@ function setup() {
     comment: { findMany: jest.fn().mockResolvedValue([]) },
     forumThread: { findMany: jest.fn().mockResolvedValue([]) },
     forumPost: { findMany: jest.fn().mockResolvedValue([]) },
+    repost: { deleteMany: jest.fn() },
     $transaction: jest.fn((operations: unknown[]) => Promise.all(operations)),
   };
   const communities = {
@@ -124,7 +125,7 @@ describe('Removing members', () => {
 });
 
 describe('Banning', () => {
-  it('records the ban, removes the membership and deletes what they posted there', async () => {
+  it('records the ban, removes the membership and deletes what they posted or reposted there', async () => {
     const { prisma, posts, comments, forum, presence, service } = setup();
     prisma.post.findMany.mockResolvedValue([{ id: 10 }]);
     prisma.comment.findMany.mockResolvedValue([{ id: 21 }, { id: 20 }]);
@@ -154,6 +155,9 @@ describe('Banning', () => {
         communityId: 9,
       },
     );
+    expect(prisma.repost.deleteMany).toHaveBeenCalledWith({
+      where: { communityId: 9, userId: MEMBER },
+    });
     expect(posts.remove).toHaveBeenCalledWith(ADMIN, 10);
     expect(comments.remove).toHaveBeenCalledWith(ADMIN, 21);
     expect(comments.remove).toHaveBeenCalledWith(ADMIN, 20);

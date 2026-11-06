@@ -1736,6 +1736,9 @@ async function createNotifications() {
         mediaSourceId: true,
         content: true,
         createdAt: true,
+        isQuote: true,
+        quotePostId: true,
+        quoteActivityId: true,
         wallUser: { select: { username: true } },
       },
     }),
@@ -1858,6 +1861,70 @@ async function createNotifications() {
           : 'commented on your post',
       });
     }
+  }
+
+  const postLinks = new Map(
+    posts.map((post) => [
+      post.id,
+      `${
+        post.mediaType
+          ? `/library/${post.mediaType}/${post.mediaSourceId}`
+          : post.wallUser
+            ? `/users/${post.wallUser.username}`
+            : `/communities/${post.communityId}`
+      }?post=${post.id}`,
+    ]),
+  );
+  const shared = (
+    postId: number | null,
+    activityId: number | null,
+  ): { ownerId?: number; link?: string; what: string } => {
+    if (postId !== null) {
+      return {
+        ownerId: postAuthors.get(postId),
+        link: postLinks.get(postId),
+        what: 'post',
+      };
+    }
+    const owner = activityOwners.get(activityId!);
+    return {
+      ownerId: owner?.id,
+      link: owner && `/users/${owner.username}?activity=${activityId}`,
+      what: 'library update',
+    };
+  };
+  const reposts = await prisma.repost.findMany({
+    select: { userId: true, postId: true, activityId: true, createdAt: true },
+  });
+  for (const repost of reposts) {
+    const { ownerId, link, what } = shared(repost.postId, repost.activityId);
+    if (ownerId === undefined || !link || ownerId === repost.userId) continue;
+    notifications.push({
+      userId: ownerId,
+      actorId: repost.userId,
+      type: 'repost',
+      message: `reposted your ${what}`,
+      link,
+      createdAt: repost.createdAt,
+      readAt: readAt(repost.createdAt),
+    });
+  }
+  for (const post of posts) {
+    if (!post.isQuote) continue;
+    const { ownerId, link, what } = shared(
+      post.quotePostId,
+      post.quoteActivityId,
+    );
+    if (ownerId === undefined || !link || ownerId === post.authorId) continue;
+    notifications.push({
+      userId: ownerId,
+      actorId: post.authorId,
+      type: 'quote',
+      message: `quoted your ${what}`,
+      link,
+      createdAt: post.createdAt,
+      readAt: readAt(post.createdAt),
+    });
   }
 
   const friendships = await prisma.friendship.findMany();
@@ -2362,6 +2429,88 @@ async function createBookmarks(): Promise<number> {
 
   await prisma.bookmark.createMany({ data: bookmarks });
   return bookmarks.length;
+}
+
+function sharedAfter(createdAt: Date, minutes: number) {
+  return new Date(
+    Math.min(Date.now() - 60 * 1000, createdAt.getTime() + minutes * 60 * 1000),
+  );
+}
+
+async function createReposts(): Promise<number> {
+  const shareable = {
+    hiddenAt: null,
+    forumThreadId: null,
+    isQuote: false,
+    community: { isPublic: true },
+  };
+  const [club, adminPost, activity, quoted] = await Promise.all([
+    prisma.community.findFirstOrThrow({
+      where: { name: 'Seasonal Anime Club' },
+      select: { id: true },
+    }),
+    prisma.post.findFirst({
+      where: { ...shareable, authorId: userIds.admin },
+      orderBy: { createdAt: 'desc' },
+      select: { id: true, createdAt: true },
+    }),
+    prisma.libraryActivity.findFirst({
+      where: {
+        entry: {
+          isPublic: true,
+          isAdult: false,
+          userId: { not: userIds.tanjiro },
+          user: { isPublic: true },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+      select: { id: true, createdAt: true },
+    }),
+    prisma.post.findFirst({
+      where: { ...shareable, authorId: { notIn: [userIds.luffy] } },
+      orderBy: { createdAt: 'desc' },
+      skip: 1,
+      select: { id: true, createdAt: true },
+    }),
+  ]);
+
+  const reposts = [
+    adminPost && {
+      userId: userIds.naruto,
+      postId: adminPost.id,
+      communityId: null,
+      createdAt: sharedAfter(adminPost.createdAt, 25),
+    },
+    adminPost && {
+      userId: userIds.goku,
+      postId: adminPost.id,
+      communityId: null,
+      createdAt: sharedAfter(adminPost.createdAt, 40),
+    },
+    activity && {
+      userId: userIds.tanjiro,
+      activityId: activity.id,
+      communityId: club.id,
+      createdAt: sharedAfter(activity.createdAt, 15),
+    },
+  ].filter((repost) => repost !== null);
+  await prisma.repost.createMany({ data: reposts });
+
+  if (quoted) {
+    await prisma.post.create({
+      data: {
+        wallUserId: userIds.luffy,
+        authorId: userIds.luffy,
+        content:
+          '<p>Everybody needs to see this one! Adding it to the list before Zoro gets lost looking for it. Shishishi!</p>',
+        isQuote: true,
+        quotePostId: quoted.id,
+        createdAt: sharedAfter(quoted.createdAt, 30),
+      },
+    });
+  }
+
+  return reposts.length + (quoted ? 1 : 0);
 }
 
 const hashtagFollows: [UserKey, string, number][] = [
@@ -3061,6 +3210,7 @@ async function main() {
 
   console.log('🚩 Content reports created:', await createContentReports());
   console.log('🔖 Bookmarks created:', await createBookmarks());
+  console.log('🔁 Reposts and quotes created:', await createReposts());
   console.log('#️⃣ Hashtag uses created:', await createHashtags());
   console.log('🔔 Notifications created:', await createNotifications());
   console.log('💬 Chats created:', await createChats());

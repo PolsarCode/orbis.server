@@ -45,8 +45,16 @@ function setup() {
       findMany: jest.fn().mockResolvedValue([]),
     },
     keywordFilter: { findMany: jest.fn().mockResolvedValue([]) },
-    post: { findFirst: jest.fn(), findMany: jest.fn() },
+    post: {
+      findFirst: jest.fn(),
+      findMany: jest.fn(),
+      groupBy: jest.fn().mockResolvedValue([]),
+    },
     libraryActivity: { findMany: jest.fn().mockResolvedValue([]) },
+    repost: {
+      findMany: jest.fn().mockResolvedValue([]),
+      groupBy: jest.fn().mockResolvedValue([]),
+    },
     bookmark: {
       findMany: jest.fn().mockResolvedValue([]),
       upsert: jest.fn(),
@@ -267,6 +275,7 @@ describe('Listing saved posts', () => {
     );
     savedRows(prisma, first, second);
     prisma.post.findMany
+      .mockResolvedValue([])
       .mockResolvedValueOnce(
         first.slice(0, 5).map(({ bookmarkableId }) => post(bookmarkableId)),
       )

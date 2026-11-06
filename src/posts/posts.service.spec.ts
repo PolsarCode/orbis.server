@@ -40,6 +40,9 @@ const activity = {
   },
 };
 
+const listed = (mock: jest.Mock) =>
+  mock.mock.calls.map(([args]) => args).filter((args) => 'include' in args);
+
 describe('Feed content filters', () => {
   const prisma = {
     block: {
@@ -51,8 +54,9 @@ describe('Feed content filters', () => {
       findMany: jest.fn().mockResolvedValue([]),
     },
     keywordFilter: { findMany: jest.fn().mockResolvedValue([]) },
-    post: { findMany: jest.fn() },
+    post: { findMany: jest.fn(), groupBy: jest.fn() },
     libraryActivity: { findMany: jest.fn() },
+    repost: { findMany: jest.fn(), groupBy: jest.fn() },
     contentReport: { findMany: jest.fn() },
     user: { findUnique: jest.fn() },
     friendship: { findFirst: jest.fn() },
@@ -72,7 +76,10 @@ describe('Feed content filters', () => {
     prisma.post.findMany.mockImplementation(({ where }) =>
       Promise.resolve(isPinnedQuery(where) ? [] : [post]),
     );
+    prisma.post.groupBy.mockResolvedValue([]);
     prisma.libraryActivity.findMany.mockResolvedValue([activity]);
+    prisma.repost.findMany.mockResolvedValue([]);
+    prisma.repost.groupBy.mockResolvedValue([]);
     prisma.contentReport.findMany.mockResolvedValue([]);
     prisma.user.findUnique.mockResolvedValue(person);
     prisma.friendship.findFirst.mockResolvedValue(null);
@@ -171,7 +178,7 @@ describe('Feed content filters', () => {
     );
     expect(second.items).toHaveLength(1);
     expect(second.nextCursor).toBeNull();
-    const where = prisma.post.findMany.mock.calls[1][0].where;
+    const { where } = listed(prisma.post.findMany)[1];
     expect(where.AND).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -270,8 +277,8 @@ describe('Feed content filters', () => {
     }
 
     const contains = { contains: 'frieren', mode: 'insensitive' };
-    const [searchPosts, feedPosts] = prisma.post.findMany.mock.calls.map(
-      ([args]) => args.where.AND,
+    const [searchPosts, feedPosts] = listed(prisma.post.findMany).map(
+      (args) => args.where.AND,
     );
     expect(searchPosts[0]).toEqual(feedPosts[0]);
     expect(searchPosts).toContainEqual({
@@ -300,23 +307,23 @@ describe('Feed content filters', () => {
     });
 
     await service.findForMember(1);
-    expect(
-      prisma.libraryActivity.findMany.mock.calls[1][0].where.entry.user,
-    ).toEqual({
-      OR: [
-        { suspendedAt: null },
-        { suspendedUntil: { lte: expect.any(Date) } },
-      ],
-      blocksMade: { none: { blockedId: 1 } },
-      blocksReceived: { none: { blockerId: 1 } },
-      mutesReceived: { none: { muterId: 1 } },
-      memberships: {
-        some: {
-          showLibraryUpdates: true,
-          community: { memberships: { some: { userId: 1 } } },
+    expect(listed(prisma.libraryActivity.findMany)[1].where.entry.user).toEqual(
+      {
+        OR: [
+          { suspendedAt: null },
+          { suspendedUntil: { lte: expect.any(Date) } },
+        ],
+        blocksMade: { none: { blockedId: 1 } },
+        blocksReceived: { none: { blockerId: 1 } },
+        mutesReceived: { none: { muterId: 1 } },
+        memberships: {
+          some: {
+            showLibraryUpdates: true,
+            community: { memberships: { some: { userId: 1 } } },
+          },
         },
       },
-    });
+    );
   });
 
   it('hides 18+ library updates unless the viewer turned NSFW on', async () => {
@@ -328,7 +335,7 @@ describe('Feed content filters', () => {
     prisma.user.findUnique.mockResolvedValue({ ...person, showNsfw: true });
     await service.findForMember(1);
     expect(
-      prisma.libraryActivity.findMany.mock.calls[1][0].where.entry,
+      listed(prisma.libraryActivity.findMany)[1].where.entry,
     ).not.toHaveProperty('isAdult');
   });
 
@@ -351,7 +358,11 @@ describe('Creating posts with a link card', () => {
   const create = jest.fn(({ data }) => ({ id: 9, ...data, author: person }));
   const service = new PostsService(
     {
-      post: { create },
+      post: { create, findMany: jest.fn().mockResolvedValue([]) },
+      block: { findMany: jest.fn().mockResolvedValue([]) },
+      mute: { findMany: jest.fn().mockResolvedValue([]) },
+      keywordFilter: { findMany: jest.fn().mockResolvedValue([]) },
+      contentReport: { findMany: jest.fn().mockResolvedValue([]) },
       membership: { findMany: jest.fn().mockResolvedValue([]) },
       user: {
         findUnique: jest.fn().mockResolvedValue({
@@ -419,8 +430,19 @@ describe('Opening a post or library update from a link', () => {
       findMany: jest.fn().mockResolvedValue([]),
     },
     keywordFilter: { findMany: jest.fn().mockResolvedValue([]) },
-    post: { findFirst: jest.fn() },
-    libraryActivity: { findFirst: jest.fn() },
+    post: {
+      findFirst: jest.fn(),
+      findMany: jest.fn().mockResolvedValue([]),
+      groupBy: jest.fn().mockResolvedValue([]),
+    },
+    libraryActivity: {
+      findFirst: jest.fn(),
+      findMany: jest.fn().mockResolvedValue([]),
+    },
+    repost: {
+      findMany: jest.fn().mockResolvedValue([]),
+      groupBy: jest.fn().mockResolvedValue([]),
+    },
     contentReport: { findMany: jest.fn().mockResolvedValue([]) },
     user: { findUnique: jest.fn().mockResolvedValue({ showNsfw: false }) },
     membership: { findMany: jest.fn().mockResolvedValue([]) },

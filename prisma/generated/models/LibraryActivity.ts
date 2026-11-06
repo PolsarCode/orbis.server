@@ -262,6 +262,8 @@ export type LibraryActivityWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"LibraryActivity"> | Date | string
   entry?: Prisma.XOR<Prisma.LibraryEntryScalarRelationFilter, Prisma.LibraryEntryWhereInput>
   commentHashtagUsages?: Prisma.HashtagUsageListRelationFilter
+  reposts?: Prisma.RepostListRelationFilter
+  quotes?: Prisma.PostListRelationFilter
 }
 
 export type LibraryActivityOrderByWithRelationInput = {
@@ -275,6 +277,8 @@ export type LibraryActivityOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   entry?: Prisma.LibraryEntryOrderByWithRelationInput
   commentHashtagUsages?: Prisma.HashtagUsageOrderByRelationAggregateInput
+  reposts?: Prisma.RepostOrderByRelationAggregateInput
+  quotes?: Prisma.PostOrderByRelationAggregateInput
 }
 
 export type LibraryActivityWhereUniqueInput = Prisma.AtLeast<{
@@ -291,6 +295,8 @@ export type LibraryActivityWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"LibraryActivity"> | Date | string
   entry?: Prisma.XOR<Prisma.LibraryEntryScalarRelationFilter, Prisma.LibraryEntryWhereInput>
   commentHashtagUsages?: Prisma.HashtagUsageListRelationFilter
+  reposts?: Prisma.RepostListRelationFilter
+  quotes?: Prisma.PostListRelationFilter
 }, "id">
 
 export type LibraryActivityOrderByWithAggregationInput = {
@@ -332,6 +338,8 @@ export type LibraryActivityCreateInput = {
   createdAt?: Date | string
   entry: Prisma.LibraryEntryCreateNestedOneWithoutActivitiesInput
   commentHashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutTargetActivityInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutActivityInput
+  quotes?: Prisma.PostCreateNestedManyWithoutQuoteActivityInput
 }
 
 export type LibraryActivityUncheckedCreateInput = {
@@ -344,6 +352,8 @@ export type LibraryActivityUncheckedCreateInput = {
   likeCount?: number
   createdAt?: Date | string
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutTargetActivityInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutActivityInput
+  quotes?: Prisma.PostUncheckedCreateNestedManyWithoutQuoteActivityInput
 }
 
 export type LibraryActivityUpdateInput = {
@@ -355,6 +365,8 @@ export type LibraryActivityUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   entry?: Prisma.LibraryEntryUpdateOneRequiredWithoutActivitiesNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutTargetActivityNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutActivityNestedInput
+  quotes?: Prisma.PostUpdateManyWithoutQuoteActivityNestedInput
 }
 
 export type LibraryActivityUncheckedUpdateInput = {
@@ -367,6 +379,8 @@ export type LibraryActivityUncheckedUpdateInput = {
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutTargetActivityNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutActivityNestedInput
+  quotes?: Prisma.PostUncheckedUpdateManyWithoutQuoteActivityNestedInput
 }
 
 export type LibraryActivityCreateManyInput = {
@@ -466,6 +480,38 @@ export type LibraryActivitySumOrderByAggregateInput = {
   likeCount?: Prisma.SortOrder
 }
 
+export type LibraryActivityCreateNestedOneWithoutQuotesInput = {
+  create?: Prisma.XOR<Prisma.LibraryActivityCreateWithoutQuotesInput, Prisma.LibraryActivityUncheckedCreateWithoutQuotesInput>
+  connectOrCreate?: Prisma.LibraryActivityCreateOrConnectWithoutQuotesInput
+  connect?: Prisma.LibraryActivityWhereUniqueInput
+}
+
+export type LibraryActivityUpdateOneWithoutQuotesNestedInput = {
+  create?: Prisma.XOR<Prisma.LibraryActivityCreateWithoutQuotesInput, Prisma.LibraryActivityUncheckedCreateWithoutQuotesInput>
+  connectOrCreate?: Prisma.LibraryActivityCreateOrConnectWithoutQuotesInput
+  upsert?: Prisma.LibraryActivityUpsertWithoutQuotesInput
+  disconnect?: Prisma.LibraryActivityWhereInput | boolean
+  delete?: Prisma.LibraryActivityWhereInput | boolean
+  connect?: Prisma.LibraryActivityWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.LibraryActivityUpdateToOneWithWhereWithoutQuotesInput, Prisma.LibraryActivityUpdateWithoutQuotesInput>, Prisma.LibraryActivityUncheckedUpdateWithoutQuotesInput>
+}
+
+export type LibraryActivityCreateNestedOneWithoutRepostsInput = {
+  create?: Prisma.XOR<Prisma.LibraryActivityCreateWithoutRepostsInput, Prisma.LibraryActivityUncheckedCreateWithoutRepostsInput>
+  connectOrCreate?: Prisma.LibraryActivityCreateOrConnectWithoutRepostsInput
+  connect?: Prisma.LibraryActivityWhereUniqueInput
+}
+
+export type LibraryActivityUpdateOneWithoutRepostsNestedInput = {
+  create?: Prisma.XOR<Prisma.LibraryActivityCreateWithoutRepostsInput, Prisma.LibraryActivityUncheckedCreateWithoutRepostsInput>
+  connectOrCreate?: Prisma.LibraryActivityCreateOrConnectWithoutRepostsInput
+  upsert?: Prisma.LibraryActivityUpsertWithoutRepostsInput
+  disconnect?: Prisma.LibraryActivityWhereInput | boolean
+  delete?: Prisma.LibraryActivityWhereInput | boolean
+  connect?: Prisma.LibraryActivityWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.LibraryActivityUpdateToOneWithWhereWithoutRepostsInput, Prisma.LibraryActivityUpdateWithoutRepostsInput>, Prisma.LibraryActivityUncheckedUpdateWithoutRepostsInput>
+}
+
 export type LibraryActivityCreateNestedOneWithoutCommentHashtagUsagesInput = {
   create?: Prisma.XOR<Prisma.LibraryActivityCreateWithoutCommentHashtagUsagesInput, Prisma.LibraryActivityUncheckedCreateWithoutCommentHashtagUsagesInput>
   connectOrCreate?: Prisma.LibraryActivityCreateOrConnectWithoutCommentHashtagUsagesInput
@@ -524,6 +570,138 @@ export type LibraryActivityUncheckedUpdateManyWithoutEntryNestedInput = {
   deleteMany?: Prisma.LibraryActivityScalarWhereInput | Prisma.LibraryActivityScalarWhereInput[]
 }
 
+export type LibraryActivityCreateWithoutQuotesInput = {
+  status: $Enums.LibraryStatus
+  progressFrom?: number | null
+  progressTo?: number | null
+  commentCount?: number
+  likeCount?: number
+  createdAt?: Date | string
+  entry: Prisma.LibraryEntryCreateNestedOneWithoutActivitiesInput
+  commentHashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutTargetActivityInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutActivityInput
+}
+
+export type LibraryActivityUncheckedCreateWithoutQuotesInput = {
+  id?: number
+  entryId: number
+  status: $Enums.LibraryStatus
+  progressFrom?: number | null
+  progressTo?: number | null
+  commentCount?: number
+  likeCount?: number
+  createdAt?: Date | string
+  commentHashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutTargetActivityInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutActivityInput
+}
+
+export type LibraryActivityCreateOrConnectWithoutQuotesInput = {
+  where: Prisma.LibraryActivityWhereUniqueInput
+  create: Prisma.XOR<Prisma.LibraryActivityCreateWithoutQuotesInput, Prisma.LibraryActivityUncheckedCreateWithoutQuotesInput>
+}
+
+export type LibraryActivityUpsertWithoutQuotesInput = {
+  update: Prisma.XOR<Prisma.LibraryActivityUpdateWithoutQuotesInput, Prisma.LibraryActivityUncheckedUpdateWithoutQuotesInput>
+  create: Prisma.XOR<Prisma.LibraryActivityCreateWithoutQuotesInput, Prisma.LibraryActivityUncheckedCreateWithoutQuotesInput>
+  where?: Prisma.LibraryActivityWhereInput
+}
+
+export type LibraryActivityUpdateToOneWithWhereWithoutQuotesInput = {
+  where?: Prisma.LibraryActivityWhereInput
+  data: Prisma.XOR<Prisma.LibraryActivityUpdateWithoutQuotesInput, Prisma.LibraryActivityUncheckedUpdateWithoutQuotesInput>
+}
+
+export type LibraryActivityUpdateWithoutQuotesInput = {
+  status?: Prisma.EnumLibraryStatusFieldUpdateOperationsInput | $Enums.LibraryStatus
+  progressFrom?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  progressTo?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  commentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  likeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  entry?: Prisma.LibraryEntryUpdateOneRequiredWithoutActivitiesNestedInput
+  commentHashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutTargetActivityNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutActivityNestedInput
+}
+
+export type LibraryActivityUncheckedUpdateWithoutQuotesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  entryId?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumLibraryStatusFieldUpdateOperationsInput | $Enums.LibraryStatus
+  progressFrom?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  progressTo?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  commentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  likeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  commentHashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutTargetActivityNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutActivityNestedInput
+}
+
+export type LibraryActivityCreateWithoutRepostsInput = {
+  status: $Enums.LibraryStatus
+  progressFrom?: number | null
+  progressTo?: number | null
+  commentCount?: number
+  likeCount?: number
+  createdAt?: Date | string
+  entry: Prisma.LibraryEntryCreateNestedOneWithoutActivitiesInput
+  commentHashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutTargetActivityInput
+  quotes?: Prisma.PostCreateNestedManyWithoutQuoteActivityInput
+}
+
+export type LibraryActivityUncheckedCreateWithoutRepostsInput = {
+  id?: number
+  entryId: number
+  status: $Enums.LibraryStatus
+  progressFrom?: number | null
+  progressTo?: number | null
+  commentCount?: number
+  likeCount?: number
+  createdAt?: Date | string
+  commentHashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutTargetActivityInput
+  quotes?: Prisma.PostUncheckedCreateNestedManyWithoutQuoteActivityInput
+}
+
+export type LibraryActivityCreateOrConnectWithoutRepostsInput = {
+  where: Prisma.LibraryActivityWhereUniqueInput
+  create: Prisma.XOR<Prisma.LibraryActivityCreateWithoutRepostsInput, Prisma.LibraryActivityUncheckedCreateWithoutRepostsInput>
+}
+
+export type LibraryActivityUpsertWithoutRepostsInput = {
+  update: Prisma.XOR<Prisma.LibraryActivityUpdateWithoutRepostsInput, Prisma.LibraryActivityUncheckedUpdateWithoutRepostsInput>
+  create: Prisma.XOR<Prisma.LibraryActivityCreateWithoutRepostsInput, Prisma.LibraryActivityUncheckedCreateWithoutRepostsInput>
+  where?: Prisma.LibraryActivityWhereInput
+}
+
+export type LibraryActivityUpdateToOneWithWhereWithoutRepostsInput = {
+  where?: Prisma.LibraryActivityWhereInput
+  data: Prisma.XOR<Prisma.LibraryActivityUpdateWithoutRepostsInput, Prisma.LibraryActivityUncheckedUpdateWithoutRepostsInput>
+}
+
+export type LibraryActivityUpdateWithoutRepostsInput = {
+  status?: Prisma.EnumLibraryStatusFieldUpdateOperationsInput | $Enums.LibraryStatus
+  progressFrom?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  progressTo?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  commentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  likeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  entry?: Prisma.LibraryEntryUpdateOneRequiredWithoutActivitiesNestedInput
+  commentHashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutTargetActivityNestedInput
+  quotes?: Prisma.PostUpdateManyWithoutQuoteActivityNestedInput
+}
+
+export type LibraryActivityUncheckedUpdateWithoutRepostsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  entryId?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumLibraryStatusFieldUpdateOperationsInput | $Enums.LibraryStatus
+  progressFrom?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  progressTo?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  commentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  likeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  commentHashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutTargetActivityNestedInput
+  quotes?: Prisma.PostUncheckedUpdateManyWithoutQuoteActivityNestedInput
+}
+
 export type LibraryActivityCreateWithoutCommentHashtagUsagesInput = {
   status: $Enums.LibraryStatus
   progressFrom?: number | null
@@ -532,6 +710,8 @@ export type LibraryActivityCreateWithoutCommentHashtagUsagesInput = {
   likeCount?: number
   createdAt?: Date | string
   entry: Prisma.LibraryEntryCreateNestedOneWithoutActivitiesInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutActivityInput
+  quotes?: Prisma.PostCreateNestedManyWithoutQuoteActivityInput
 }
 
 export type LibraryActivityUncheckedCreateWithoutCommentHashtagUsagesInput = {
@@ -543,6 +723,8 @@ export type LibraryActivityUncheckedCreateWithoutCommentHashtagUsagesInput = {
   commentCount?: number
   likeCount?: number
   createdAt?: Date | string
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutActivityInput
+  quotes?: Prisma.PostUncheckedCreateNestedManyWithoutQuoteActivityInput
 }
 
 export type LibraryActivityCreateOrConnectWithoutCommentHashtagUsagesInput = {
@@ -569,6 +751,8 @@ export type LibraryActivityUpdateWithoutCommentHashtagUsagesInput = {
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   entry?: Prisma.LibraryEntryUpdateOneRequiredWithoutActivitiesNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutActivityNestedInput
+  quotes?: Prisma.PostUpdateManyWithoutQuoteActivityNestedInput
 }
 
 export type LibraryActivityUncheckedUpdateWithoutCommentHashtagUsagesInput = {
@@ -580,6 +764,8 @@ export type LibraryActivityUncheckedUpdateWithoutCommentHashtagUsagesInput = {
   commentCount?: Prisma.IntFieldUpdateOperationsInput | number
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutActivityNestedInput
+  quotes?: Prisma.PostUncheckedUpdateManyWithoutQuoteActivityNestedInput
 }
 
 export type LibraryActivityCreateWithoutEntryInput = {
@@ -590,6 +776,8 @@ export type LibraryActivityCreateWithoutEntryInput = {
   likeCount?: number
   createdAt?: Date | string
   commentHashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutTargetActivityInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutActivityInput
+  quotes?: Prisma.PostCreateNestedManyWithoutQuoteActivityInput
 }
 
 export type LibraryActivityUncheckedCreateWithoutEntryInput = {
@@ -601,6 +789,8 @@ export type LibraryActivityUncheckedCreateWithoutEntryInput = {
   likeCount?: number
   createdAt?: Date | string
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutTargetActivityInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutActivityInput
+  quotes?: Prisma.PostUncheckedCreateNestedManyWithoutQuoteActivityInput
 }
 
 export type LibraryActivityCreateOrConnectWithoutEntryInput = {
@@ -661,6 +851,8 @@ export type LibraryActivityUpdateWithoutEntryInput = {
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   commentHashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutTargetActivityNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutActivityNestedInput
+  quotes?: Prisma.PostUpdateManyWithoutQuoteActivityNestedInput
 }
 
 export type LibraryActivityUncheckedUpdateWithoutEntryInput = {
@@ -672,6 +864,8 @@ export type LibraryActivityUncheckedUpdateWithoutEntryInput = {
   likeCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutTargetActivityNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutActivityNestedInput
+  quotes?: Prisma.PostUncheckedUpdateManyWithoutQuoteActivityNestedInput
 }
 
 export type LibraryActivityUncheckedUpdateManyWithoutEntryInput = {
@@ -691,10 +885,14 @@ export type LibraryActivityUncheckedUpdateManyWithoutEntryInput = {
 
 export type LibraryActivityCountOutputType = {
   commentHashtagUsages: number
+  reposts: number
+  quotes: number
 }
 
 export type LibraryActivityCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   commentHashtagUsages?: boolean | LibraryActivityCountOutputTypeCountCommentHashtagUsagesArgs
+  reposts?: boolean | LibraryActivityCountOutputTypeCountRepostsArgs
+  quotes?: boolean | LibraryActivityCountOutputTypeCountQuotesArgs
 }
 
 /**
@@ -714,6 +912,20 @@ export type LibraryActivityCountOutputTypeCountCommentHashtagUsagesArgs<ExtArgs 
   where?: Prisma.HashtagUsageWhereInput
 }
 
+/**
+ * LibraryActivityCountOutputType without action
+ */
+export type LibraryActivityCountOutputTypeCountRepostsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.RepostWhereInput
+}
+
+/**
+ * LibraryActivityCountOutputType without action
+ */
+export type LibraryActivityCountOutputTypeCountQuotesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PostWhereInput
+}
+
 
 export type LibraryActivitySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -726,6 +938,8 @@ export type LibraryActivitySelect<ExtArgs extends runtime.Types.Extensions.Inter
   createdAt?: boolean
   entry?: boolean | Prisma.LibraryEntryDefaultArgs<ExtArgs>
   commentHashtagUsages?: boolean | Prisma.LibraryActivity$commentHashtagUsagesArgs<ExtArgs>
+  reposts?: boolean | Prisma.LibraryActivity$repostsArgs<ExtArgs>
+  quotes?: boolean | Prisma.LibraryActivity$quotesArgs<ExtArgs>
   _count?: boolean | Prisma.LibraryActivityCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["libraryActivity"]>
 
@@ -768,6 +982,8 @@ export type LibraryActivityOmit<ExtArgs extends runtime.Types.Extensions.Interna
 export type LibraryActivityInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   entry?: boolean | Prisma.LibraryEntryDefaultArgs<ExtArgs>
   commentHashtagUsages?: boolean | Prisma.LibraryActivity$commentHashtagUsagesArgs<ExtArgs>
+  reposts?: boolean | Prisma.LibraryActivity$repostsArgs<ExtArgs>
+  quotes?: boolean | Prisma.LibraryActivity$quotesArgs<ExtArgs>
   _count?: boolean | Prisma.LibraryActivityCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type LibraryActivityIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -782,6 +998,8 @@ export type $LibraryActivityPayload<ExtArgs extends runtime.Types.Extensions.Int
   objects: {
     entry: Prisma.$LibraryEntryPayload<ExtArgs>
     commentHashtagUsages: Prisma.$HashtagUsagePayload<ExtArgs>[]
+    reposts: Prisma.$RepostPayload<ExtArgs>[]
+    quotes: Prisma.$PostPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1188,6 +1406,8 @@ export interface Prisma__LibraryActivityClient<T, Null = never, ExtArgs extends 
   readonly [Symbol.toStringTag]: "PrismaPromise"
   entry<T extends Prisma.LibraryEntryDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LibraryEntryDefaultArgs<ExtArgs>>): Prisma.Prisma__LibraryEntryClient<runtime.Types.Result.GetResult<Prisma.$LibraryEntryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   commentHashtagUsages<T extends Prisma.LibraryActivity$commentHashtagUsagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LibraryActivity$commentHashtagUsagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HashtagUsagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reposts<T extends Prisma.LibraryActivity$repostsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LibraryActivity$repostsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RepostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  quotes<T extends Prisma.LibraryActivity$quotesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LibraryActivity$quotesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1642,6 +1862,54 @@ export type LibraryActivity$commentHashtagUsagesArgs<ExtArgs extends runtime.Typ
   take?: number
   skip?: number
   distinct?: Prisma.HashtagUsageScalarFieldEnum | Prisma.HashtagUsageScalarFieldEnum[]
+}
+
+/**
+ * LibraryActivity.reposts
+ */
+export type LibraryActivity$repostsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Repost
+   */
+  select?: Prisma.RepostSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Repost
+   */
+  omit?: Prisma.RepostOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RepostInclude<ExtArgs> | null
+  where?: Prisma.RepostWhereInput
+  orderBy?: Prisma.RepostOrderByWithRelationInput | Prisma.RepostOrderByWithRelationInput[]
+  cursor?: Prisma.RepostWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.RepostScalarFieldEnum | Prisma.RepostScalarFieldEnum[]
+}
+
+/**
+ * LibraryActivity.quotes
+ */
+export type LibraryActivity$quotesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Post
+   */
+  select?: Prisma.PostSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Post
+   */
+  omit?: Prisma.PostOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PostInclude<ExtArgs> | null
+  where?: Prisma.PostWhereInput
+  orderBy?: Prisma.PostOrderByWithRelationInput | Prisma.PostOrderByWithRelationInput[]
+  cursor?: Prisma.PostWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PostScalarFieldEnum | Prisma.PostScalarFieldEnum[]
 }
 
 /**

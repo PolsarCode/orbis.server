@@ -58,6 +58,33 @@ export async function blockedWith(
   );
 }
 
+export async function blockedPairs(
+  prisma: PrismaService,
+  some: number[],
+  others: number[],
+) {
+  const among = (ids: number[]) => ({ in: [...new Set(ids)] });
+  const blocks =
+    some.length === 0 || others.length === 0
+      ? []
+      : await prisma.block.findMany({
+          where: {
+            OR: [
+              { blockerId: among(some), blockedId: among(others) },
+              { blockerId: among(others), blockedId: among(some) },
+            ],
+          },
+          select: { blockerId: true, blockedId: true },
+        });
+  const pairs = new Set(
+    blocks.flatMap(({ blockerId, blockedId }) => [
+      `${blockerId}:${blockedId}`,
+      `${blockedId}:${blockerId}`,
+    ]),
+  );
+  return (a: number, b: number) => pairs.has(`${a}:${b}`);
+}
+
 export async function blockedWithAny(
   prisma: PrismaService,
   userId: number,

@@ -394,6 +394,7 @@ export const ModelName = {
   DiscordMessage: 'DiscordMessage',
   CommunityBan: 'CommunityBan',
   Post: 'Post',
+  Repost: 'Repost',
   Comment: 'Comment',
   Like: 'Like',
   Bookmark: 'Bookmark',
@@ -439,7 +440,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "community" | "membership" | "railFolder" | "role" | "membershipRole" | "invite" | "discordChannel" | "discordMessage" | "communityBan" | "post" | "comment" | "like" | "bookmark" | "forumSection" | "forumCategory" | "forumThread" | "forumPost" | "friendship" | "suggestionDismissal" | "hashtag" | "hashtagUsage" | "hashtagFollow" | "libraryEntry" | "libraryActivity" | "conversation" | "conversationMember" | "message" | "messageReaction" | "notification" | "report" | "reportComment" | "contentReport" | "block" | "mute" | "keywordFilter" | "setting" | "steamAccount" | "steamGame" | "user" | "oAuthAccount"
+    modelProps: "community" | "membership" | "railFolder" | "role" | "membershipRole" | "invite" | "discordChannel" | "discordMessage" | "communityBan" | "post" | "repost" | "comment" | "like" | "bookmark" | "forumSection" | "forumCategory" | "forumThread" | "forumPost" | "friendship" | "suggestionDismissal" | "hashtag" | "hashtagUsage" | "hashtagFollow" | "libraryEntry" | "libraryActivity" | "conversation" | "conversationMember" | "message" | "messageReaction" | "notification" | "report" | "reportComment" | "contentReport" | "block" | "mute" | "keywordFilter" | "setting" | "steamAccount" | "steamGame" | "user" | "oAuthAccount"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1180,6 +1181,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.PostCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.PostCountAggregateOutputType> | number
+        }
+      }
+    }
+    Repost: {
+      payload: Prisma.$RepostPayload<ExtArgs>
+      fields: Prisma.RepostFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.RepostFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RepostPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.RepostFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RepostPayload>
+        }
+        findFirst: {
+          args: Prisma.RepostFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RepostPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.RepostFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RepostPayload>
+        }
+        findMany: {
+          args: Prisma.RepostFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RepostPayload>[]
+        }
+        create: {
+          args: Prisma.RepostCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RepostPayload>
+        }
+        createMany: {
+          args: Prisma.RepostCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.RepostCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RepostPayload>[]
+        }
+        delete: {
+          args: Prisma.RepostDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RepostPayload>
+        }
+        update: {
+          args: Prisma.RepostUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RepostPayload>
+        }
+        deleteMany: {
+          args: Prisma.RepostDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.RepostUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.RepostUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RepostPayload>[]
+        }
+        upsert: {
+          args: Prisma.RepostUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RepostPayload>
+        }
+        aggregate: {
+          args: Prisma.RepostAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateRepost>
+        }
+        groupBy: {
+          args: Prisma.RepostGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RepostGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.RepostCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RepostCountAggregateOutputType> | number
         }
       }
     }
@@ -3585,10 +3660,25 @@ export const PostScalarFieldEnum = {
   editedAt: 'editedAt',
   pinnedAt: 'pinnedAt',
   forumThreadId: 'forumThreadId',
+  isQuote: 'isQuote',
+  quotePostId: 'quotePostId',
+  quoteActivityId: 'quoteActivityId',
   createdAt: 'createdAt'
 } as const
 
 export type PostScalarFieldEnum = (typeof PostScalarFieldEnum)[keyof typeof PostScalarFieldEnum]
+
+
+export const RepostScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  postId: 'postId',
+  activityId: 'activityId',
+  communityId: 'communityId',
+  createdAt: 'createdAt'
+} as const
+
+export type RepostScalarFieldEnum = (typeof RepostScalarFieldEnum)[keyof typeof RepostScalarFieldEnum]
 
 
 export const CommentScalarFieldEnum = {
@@ -4462,6 +4552,7 @@ export type GlobalOmitConfig = {
   discordMessage?: Prisma.DiscordMessageOmit
   communityBan?: Prisma.CommunityBanOmit
   post?: Prisma.PostOmit
+  repost?: Prisma.RepostOmit
   comment?: Prisma.CommentOmit
   like?: Prisma.LikeOmit
   bookmark?: Prisma.BookmarkOmit

@@ -34,6 +34,8 @@ export type PostAvgAggregateOutputType = {
   commentCount: number | null
   likeCount: number | null
   forumThreadId: number | null
+  quotePostId: number | null
+  quoteActivityId: number | null
 }
 
 export type PostSumAggregateOutputType = {
@@ -44,6 +46,8 @@ export type PostSumAggregateOutputType = {
   commentCount: number | null
   likeCount: number | null
   forumThreadId: number | null
+  quotePostId: number | null
+  quoteActivityId: number | null
 }
 
 export type PostMinAggregateOutputType = {
@@ -63,6 +67,9 @@ export type PostMinAggregateOutputType = {
   editedAt: Date | null
   pinnedAt: Date | null
   forumThreadId: number | null
+  isQuote: boolean | null
+  quotePostId: number | null
+  quoteActivityId: number | null
   createdAt: Date | null
 }
 
@@ -83,6 +90,9 @@ export type PostMaxAggregateOutputType = {
   editedAt: Date | null
   pinnedAt: Date | null
   forumThreadId: number | null
+  isQuote: boolean | null
+  quotePostId: number | null
+  quoteActivityId: number | null
   createdAt: Date | null
 }
 
@@ -103,6 +113,9 @@ export type PostCountAggregateOutputType = {
   editedAt: number
   pinnedAt: number
   forumThreadId: number
+  isQuote: number
+  quotePostId: number
+  quoteActivityId: number
   createdAt: number
   _all: number
 }
@@ -116,6 +129,8 @@ export type PostAvgAggregateInputType = {
   commentCount?: true
   likeCount?: true
   forumThreadId?: true
+  quotePostId?: true
+  quoteActivityId?: true
 }
 
 export type PostSumAggregateInputType = {
@@ -126,6 +141,8 @@ export type PostSumAggregateInputType = {
   commentCount?: true
   likeCount?: true
   forumThreadId?: true
+  quotePostId?: true
+  quoteActivityId?: true
 }
 
 export type PostMinAggregateInputType = {
@@ -145,6 +162,9 @@ export type PostMinAggregateInputType = {
   editedAt?: true
   pinnedAt?: true
   forumThreadId?: true
+  isQuote?: true
+  quotePostId?: true
+  quoteActivityId?: true
   createdAt?: true
 }
 
@@ -165,6 +185,9 @@ export type PostMaxAggregateInputType = {
   editedAt?: true
   pinnedAt?: true
   forumThreadId?: true
+  isQuote?: true
+  quotePostId?: true
+  quoteActivityId?: true
   createdAt?: true
 }
 
@@ -185,6 +208,9 @@ export type PostCountAggregateInputType = {
   editedAt?: true
   pinnedAt?: true
   forumThreadId?: true
+  isQuote?: true
+  quotePostId?: true
+  quoteActivityId?: true
   createdAt?: true
   _all?: true
 }
@@ -292,6 +318,9 @@ export type PostGroupByOutputType = {
   editedAt: Date | null
   pinnedAt: Date | null
   forumThreadId: number | null
+  isQuote: boolean
+  quotePostId: number | null
+  quoteActivityId: number | null
   createdAt: Date
   _count: PostCountAggregateOutputType | null
   _avg: PostAvgAggregateOutputType | null
@@ -335,11 +364,18 @@ export type PostWhereInput = {
   editedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
   pinnedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
   forumThreadId?: Prisma.IntNullableFilter<"Post"> | number | null
+  isQuote?: Prisma.BoolFilter<"Post"> | boolean
+  quotePostId?: Prisma.IntNullableFilter<"Post"> | number | null
+  quoteActivityId?: Prisma.IntNullableFilter<"Post"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Post"> | Date | string
   community?: Prisma.XOR<Prisma.CommunityNullableScalarRelationFilter, Prisma.CommunityWhereInput> | null
   wallUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   forumThread?: Prisma.XOR<Prisma.ForumThreadNullableScalarRelationFilter, Prisma.ForumThreadWhereInput> | null
+  quotePost?: Prisma.XOR<Prisma.PostNullableScalarRelationFilter, Prisma.PostWhereInput> | null
+  quoteActivity?: Prisma.XOR<Prisma.LibraryActivityNullableScalarRelationFilter, Prisma.LibraryActivityWhereInput> | null
+  quotes?: Prisma.PostListRelationFilter
+  reposts?: Prisma.RepostListRelationFilter
   hashtagUsages?: Prisma.HashtagUsageListRelationFilter
   commentHashtagUsages?: Prisma.HashtagUsageListRelationFilter
 }
@@ -361,11 +397,18 @@ export type PostOrderByWithRelationInput = {
   editedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   pinnedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   forumThreadId?: Prisma.SortOrderInput | Prisma.SortOrder
+  isQuote?: Prisma.SortOrder
+  quotePostId?: Prisma.SortOrderInput | Prisma.SortOrder
+  quoteActivityId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   community?: Prisma.CommunityOrderByWithRelationInput
   wallUser?: Prisma.UserOrderByWithRelationInput
   author?: Prisma.UserOrderByWithRelationInput
   forumThread?: Prisma.ForumThreadOrderByWithRelationInput
+  quotePost?: Prisma.PostOrderByWithRelationInput
+  quoteActivity?: Prisma.LibraryActivityOrderByWithRelationInput
+  quotes?: Prisma.PostOrderByRelationAggregateInput
+  reposts?: Prisma.RepostOrderByRelationAggregateInput
   hashtagUsages?: Prisma.HashtagUsageOrderByRelationAggregateInput
   commentHashtagUsages?: Prisma.HashtagUsageOrderByRelationAggregateInput
 }
@@ -390,11 +433,18 @@ export type PostWhereUniqueInput = Prisma.AtLeast<{
   hiddenAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
   editedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
   pinnedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
+  isQuote?: Prisma.BoolFilter<"Post"> | boolean
+  quotePostId?: Prisma.IntNullableFilter<"Post"> | number | null
+  quoteActivityId?: Prisma.IntNullableFilter<"Post"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Post"> | Date | string
   community?: Prisma.XOR<Prisma.CommunityNullableScalarRelationFilter, Prisma.CommunityWhereInput> | null
   wallUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   forumThread?: Prisma.XOR<Prisma.ForumThreadNullableScalarRelationFilter, Prisma.ForumThreadWhereInput> | null
+  quotePost?: Prisma.XOR<Prisma.PostNullableScalarRelationFilter, Prisma.PostWhereInput> | null
+  quoteActivity?: Prisma.XOR<Prisma.LibraryActivityNullableScalarRelationFilter, Prisma.LibraryActivityWhereInput> | null
+  quotes?: Prisma.PostListRelationFilter
+  reposts?: Prisma.RepostListRelationFilter
   hashtagUsages?: Prisma.HashtagUsageListRelationFilter
   commentHashtagUsages?: Prisma.HashtagUsageListRelationFilter
 }, "id" | "forumThreadId">
@@ -416,6 +466,9 @@ export type PostOrderByWithAggregationInput = {
   editedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   pinnedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   forumThreadId?: Prisma.SortOrderInput | Prisma.SortOrder
+  isQuote?: Prisma.SortOrder
+  quotePostId?: Prisma.SortOrderInput | Prisma.SortOrder
+  quoteActivityId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.PostCountOrderByAggregateInput
   _avg?: Prisma.PostAvgOrderByAggregateInput
@@ -444,6 +497,9 @@ export type PostScalarWhereWithAggregatesInput = {
   editedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Post"> | Date | string | null
   pinnedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Post"> | Date | string | null
   forumThreadId?: Prisma.IntNullableWithAggregatesFilter<"Post"> | number | null
+  isQuote?: Prisma.BoolWithAggregatesFilter<"Post"> | boolean
+  quotePostId?: Prisma.IntNullableWithAggregatesFilter<"Post"> | number | null
+  quoteActivityId?: Prisma.IntNullableWithAggregatesFilter<"Post"> | number | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Post"> | Date | string
 }
 
@@ -459,11 +515,16 @@ export type PostCreateInput = {
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
   pinnedAt?: Date | string | null
+  isQuote?: boolean
   createdAt?: Date | string
   community?: Prisma.CommunityCreateNestedOneWithoutPostsInput
   wallUser?: Prisma.UserCreateNestedOneWithoutWallPostsInput
   author: Prisma.UserCreateNestedOneWithoutPostsInput
   forumThread?: Prisma.ForumThreadCreateNestedOneWithoutFeedPostInput
+  quotePost?: Prisma.PostCreateNestedOneWithoutQuotesInput
+  quoteActivity?: Prisma.LibraryActivityCreateNestedOneWithoutQuotesInput
+  quotes?: Prisma.PostCreateNestedManyWithoutQuotePostInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutTargetPostInput
 }
@@ -485,7 +546,12 @@ export type PostUncheckedCreateInput = {
   editedAt?: Date | string | null
   pinnedAt?: Date | string | null
   forumThreadId?: number | null
+  isQuote?: boolean
+  quotePostId?: number | null
+  quoteActivityId?: number | null
   createdAt?: Date | string
+  quotes?: Prisma.PostUncheckedCreateNestedManyWithoutQuotePostInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutTargetPostInput
 }
@@ -502,11 +568,16 @@ export type PostUpdateInput = {
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   community?: Prisma.CommunityUpdateOneWithoutPostsNestedInput
   wallUser?: Prisma.UserUpdateOneWithoutWallPostsNestedInput
   author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
   forumThread?: Prisma.ForumThreadUpdateOneWithoutFeedPostNestedInput
+  quotePost?: Prisma.PostUpdateOneWithoutQuotesNestedInput
+  quoteActivity?: Prisma.LibraryActivityUpdateOneWithoutQuotesNestedInput
+  quotes?: Prisma.PostUpdateManyWithoutQuotePostNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutTargetPostNestedInput
 }
@@ -528,7 +599,12 @@ export type PostUncheckedUpdateInput = {
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   forumThreadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quotePostId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quoteActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  quotes?: Prisma.PostUncheckedUpdateManyWithoutQuotePostNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutTargetPostNestedInput
 }
@@ -550,6 +626,9 @@ export type PostCreateManyInput = {
   editedAt?: Date | string | null
   pinnedAt?: Date | string | null
   forumThreadId?: number | null
+  isQuote?: boolean
+  quotePostId?: number | null
+  quoteActivityId?: number | null
   createdAt?: Date | string
 }
 
@@ -565,6 +644,7 @@ export type PostUpdateManyMutationInput = {
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -585,6 +665,9 @@ export type PostUncheckedUpdateManyInput = {
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   forumThreadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quotePostId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quoteActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -596,6 +679,11 @@ export type PostListRelationFilter = {
 
 export type PostOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type PostNullableScalarRelationFilter = {
+  is?: Prisma.PostWhereInput | null
+  isNot?: Prisma.PostWhereInput | null
 }
 
 export type PostCountOrderByAggregateInput = {
@@ -615,6 +703,9 @@ export type PostCountOrderByAggregateInput = {
   editedAt?: Prisma.SortOrder
   pinnedAt?: Prisma.SortOrder
   forumThreadId?: Prisma.SortOrder
+  isQuote?: Prisma.SortOrder
+  quotePostId?: Prisma.SortOrder
+  quoteActivityId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -626,6 +717,8 @@ export type PostAvgOrderByAggregateInput = {
   commentCount?: Prisma.SortOrder
   likeCount?: Prisma.SortOrder
   forumThreadId?: Prisma.SortOrder
+  quotePostId?: Prisma.SortOrder
+  quoteActivityId?: Prisma.SortOrder
 }
 
 export type PostMaxOrderByAggregateInput = {
@@ -645,6 +738,9 @@ export type PostMaxOrderByAggregateInput = {
   editedAt?: Prisma.SortOrder
   pinnedAt?: Prisma.SortOrder
   forumThreadId?: Prisma.SortOrder
+  isQuote?: Prisma.SortOrder
+  quotePostId?: Prisma.SortOrder
+  quoteActivityId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -665,6 +761,9 @@ export type PostMinOrderByAggregateInput = {
   editedAt?: Prisma.SortOrder
   pinnedAt?: Prisma.SortOrder
   forumThreadId?: Prisma.SortOrder
+  isQuote?: Prisma.SortOrder
+  quotePostId?: Prisma.SortOrder
+  quoteActivityId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -676,11 +775,8 @@ export type PostSumOrderByAggregateInput = {
   commentCount?: Prisma.SortOrder
   likeCount?: Prisma.SortOrder
   forumThreadId?: Prisma.SortOrder
-}
-
-export type PostNullableScalarRelationFilter = {
-  is?: Prisma.PostWhereInput | null
-  isNot?: Prisma.PostWhereInput | null
+  quotePostId?: Prisma.SortOrder
+  quoteActivityId?: Prisma.SortOrder
 }
 
 export type PostCreateNestedManyWithoutCommunityInput = {
@@ -725,8 +821,82 @@ export type PostUncheckedUpdateManyWithoutCommunityNestedInput = {
   deleteMany?: Prisma.PostScalarWhereInput | Prisma.PostScalarWhereInput[]
 }
 
+export type PostCreateNestedOneWithoutQuotesInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutQuotesInput, Prisma.PostUncheckedCreateWithoutQuotesInput>
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutQuotesInput
+  connect?: Prisma.PostWhereUniqueInput
+}
+
+export type PostCreateNestedManyWithoutQuotePostInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutQuotePostInput, Prisma.PostUncheckedCreateWithoutQuotePostInput> | Prisma.PostCreateWithoutQuotePostInput[] | Prisma.PostUncheckedCreateWithoutQuotePostInput[]
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutQuotePostInput | Prisma.PostCreateOrConnectWithoutQuotePostInput[]
+  createMany?: Prisma.PostCreateManyQuotePostInputEnvelope
+  connect?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+}
+
+export type PostUncheckedCreateNestedManyWithoutQuotePostInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutQuotePostInput, Prisma.PostUncheckedCreateWithoutQuotePostInput> | Prisma.PostCreateWithoutQuotePostInput[] | Prisma.PostUncheckedCreateWithoutQuotePostInput[]
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutQuotePostInput | Prisma.PostCreateOrConnectWithoutQuotePostInput[]
+  createMany?: Prisma.PostCreateManyQuotePostInputEnvelope
+  connect?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+}
+
 export type NullableEnumMediaTypeFieldUpdateOperationsInput = {
   set?: $Enums.MediaType | null
+}
+
+export type PostUpdateOneWithoutQuotesNestedInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutQuotesInput, Prisma.PostUncheckedCreateWithoutQuotesInput>
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutQuotesInput
+  upsert?: Prisma.PostUpsertWithoutQuotesInput
+  disconnect?: Prisma.PostWhereInput | boolean
+  delete?: Prisma.PostWhereInput | boolean
+  connect?: Prisma.PostWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PostUpdateToOneWithWhereWithoutQuotesInput, Prisma.PostUpdateWithoutQuotesInput>, Prisma.PostUncheckedUpdateWithoutQuotesInput>
+}
+
+export type PostUpdateManyWithoutQuotePostNestedInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutQuotePostInput, Prisma.PostUncheckedCreateWithoutQuotePostInput> | Prisma.PostCreateWithoutQuotePostInput[] | Prisma.PostUncheckedCreateWithoutQuotePostInput[]
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutQuotePostInput | Prisma.PostCreateOrConnectWithoutQuotePostInput[]
+  upsert?: Prisma.PostUpsertWithWhereUniqueWithoutQuotePostInput | Prisma.PostUpsertWithWhereUniqueWithoutQuotePostInput[]
+  createMany?: Prisma.PostCreateManyQuotePostInputEnvelope
+  set?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+  disconnect?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+  delete?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+  connect?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+  update?: Prisma.PostUpdateWithWhereUniqueWithoutQuotePostInput | Prisma.PostUpdateWithWhereUniqueWithoutQuotePostInput[]
+  updateMany?: Prisma.PostUpdateManyWithWhereWithoutQuotePostInput | Prisma.PostUpdateManyWithWhereWithoutQuotePostInput[]
+  deleteMany?: Prisma.PostScalarWhereInput | Prisma.PostScalarWhereInput[]
+}
+
+export type PostUncheckedUpdateManyWithoutQuotePostNestedInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutQuotePostInput, Prisma.PostUncheckedCreateWithoutQuotePostInput> | Prisma.PostCreateWithoutQuotePostInput[] | Prisma.PostUncheckedCreateWithoutQuotePostInput[]
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutQuotePostInput | Prisma.PostCreateOrConnectWithoutQuotePostInput[]
+  upsert?: Prisma.PostUpsertWithWhereUniqueWithoutQuotePostInput | Prisma.PostUpsertWithWhereUniqueWithoutQuotePostInput[]
+  createMany?: Prisma.PostCreateManyQuotePostInputEnvelope
+  set?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+  disconnect?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+  delete?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+  connect?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+  update?: Prisma.PostUpdateWithWhereUniqueWithoutQuotePostInput | Prisma.PostUpdateWithWhereUniqueWithoutQuotePostInput[]
+  updateMany?: Prisma.PostUpdateManyWithWhereWithoutQuotePostInput | Prisma.PostUpdateManyWithWhereWithoutQuotePostInput[]
+  deleteMany?: Prisma.PostScalarWhereInput | Prisma.PostScalarWhereInput[]
+}
+
+export type PostCreateNestedOneWithoutRepostsInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutRepostsInput, Prisma.PostUncheckedCreateWithoutRepostsInput>
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutRepostsInput
+  connect?: Prisma.PostWhereUniqueInput
+}
+
+export type PostUpdateOneWithoutRepostsNestedInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutRepostsInput, Prisma.PostUncheckedCreateWithoutRepostsInput>
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutRepostsInput
+  upsert?: Prisma.PostUpsertWithoutRepostsInput
+  disconnect?: Prisma.PostWhereInput | boolean
+  delete?: Prisma.PostWhereInput | boolean
+  connect?: Prisma.PostWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PostUpdateToOneWithWhereWithoutRepostsInput, Prisma.PostUpdateWithoutRepostsInput>, Prisma.PostUncheckedUpdateWithoutRepostsInput>
 }
 
 export type PostCreateNestedOneWithoutForumThreadInput = {
@@ -791,6 +961,48 @@ export type PostUpdateOneWithoutCommentHashtagUsagesNestedInput = {
   delete?: Prisma.PostWhereInput | boolean
   connect?: Prisma.PostWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.PostUpdateToOneWithWhereWithoutCommentHashtagUsagesInput, Prisma.PostUpdateWithoutCommentHashtagUsagesInput>, Prisma.PostUncheckedUpdateWithoutCommentHashtagUsagesInput>
+}
+
+export type PostCreateNestedManyWithoutQuoteActivityInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutQuoteActivityInput, Prisma.PostUncheckedCreateWithoutQuoteActivityInput> | Prisma.PostCreateWithoutQuoteActivityInput[] | Prisma.PostUncheckedCreateWithoutQuoteActivityInput[]
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutQuoteActivityInput | Prisma.PostCreateOrConnectWithoutQuoteActivityInput[]
+  createMany?: Prisma.PostCreateManyQuoteActivityInputEnvelope
+  connect?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+}
+
+export type PostUncheckedCreateNestedManyWithoutQuoteActivityInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutQuoteActivityInput, Prisma.PostUncheckedCreateWithoutQuoteActivityInput> | Prisma.PostCreateWithoutQuoteActivityInput[] | Prisma.PostUncheckedCreateWithoutQuoteActivityInput[]
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutQuoteActivityInput | Prisma.PostCreateOrConnectWithoutQuoteActivityInput[]
+  createMany?: Prisma.PostCreateManyQuoteActivityInputEnvelope
+  connect?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+}
+
+export type PostUpdateManyWithoutQuoteActivityNestedInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutQuoteActivityInput, Prisma.PostUncheckedCreateWithoutQuoteActivityInput> | Prisma.PostCreateWithoutQuoteActivityInput[] | Prisma.PostUncheckedCreateWithoutQuoteActivityInput[]
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutQuoteActivityInput | Prisma.PostCreateOrConnectWithoutQuoteActivityInput[]
+  upsert?: Prisma.PostUpsertWithWhereUniqueWithoutQuoteActivityInput | Prisma.PostUpsertWithWhereUniqueWithoutQuoteActivityInput[]
+  createMany?: Prisma.PostCreateManyQuoteActivityInputEnvelope
+  set?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+  disconnect?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+  delete?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+  connect?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+  update?: Prisma.PostUpdateWithWhereUniqueWithoutQuoteActivityInput | Prisma.PostUpdateWithWhereUniqueWithoutQuoteActivityInput[]
+  updateMany?: Prisma.PostUpdateManyWithWhereWithoutQuoteActivityInput | Prisma.PostUpdateManyWithWhereWithoutQuoteActivityInput[]
+  deleteMany?: Prisma.PostScalarWhereInput | Prisma.PostScalarWhereInput[]
+}
+
+export type PostUncheckedUpdateManyWithoutQuoteActivityNestedInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutQuoteActivityInput, Prisma.PostUncheckedCreateWithoutQuoteActivityInput> | Prisma.PostCreateWithoutQuoteActivityInput[] | Prisma.PostUncheckedCreateWithoutQuoteActivityInput[]
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutQuoteActivityInput | Prisma.PostCreateOrConnectWithoutQuoteActivityInput[]
+  upsert?: Prisma.PostUpsertWithWhereUniqueWithoutQuoteActivityInput | Prisma.PostUpsertWithWhereUniqueWithoutQuoteActivityInput[]
+  createMany?: Prisma.PostCreateManyQuoteActivityInputEnvelope
+  set?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+  disconnect?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+  delete?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+  connect?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+  update?: Prisma.PostUpdateWithWhereUniqueWithoutQuoteActivityInput | Prisma.PostUpdateWithWhereUniqueWithoutQuoteActivityInput[]
+  updateMany?: Prisma.PostUpdateManyWithWhereWithoutQuoteActivityInput | Prisma.PostUpdateManyWithWhereWithoutQuoteActivityInput[]
+  deleteMany?: Prisma.PostScalarWhereInput | Prisma.PostScalarWhereInput[]
 }
 
 export type PostCreateNestedManyWithoutAuthorInput = {
@@ -889,10 +1101,15 @@ export type PostCreateWithoutCommunityInput = {
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
   pinnedAt?: Date | string | null
+  isQuote?: boolean
   createdAt?: Date | string
   wallUser?: Prisma.UserCreateNestedOneWithoutWallPostsInput
   author: Prisma.UserCreateNestedOneWithoutPostsInput
   forumThread?: Prisma.ForumThreadCreateNestedOneWithoutFeedPostInput
+  quotePost?: Prisma.PostCreateNestedOneWithoutQuotesInput
+  quoteActivity?: Prisma.LibraryActivityCreateNestedOneWithoutQuotesInput
+  quotes?: Prisma.PostCreateNestedManyWithoutQuotePostInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutTargetPostInput
 }
@@ -913,7 +1130,12 @@ export type PostUncheckedCreateWithoutCommunityInput = {
   editedAt?: Date | string | null
   pinnedAt?: Date | string | null
   forumThreadId?: number | null
+  isQuote?: boolean
+  quotePostId?: number | null
+  quoteActivityId?: number | null
   createdAt?: Date | string
+  quotes?: Prisma.PostUncheckedCreateNestedManyWithoutQuotePostInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutTargetPostInput
 }
@@ -964,7 +1186,323 @@ export type PostScalarWhereInput = {
   editedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
   pinnedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
   forumThreadId?: Prisma.IntNullableFilter<"Post"> | number | null
+  isQuote?: Prisma.BoolFilter<"Post"> | boolean
+  quotePostId?: Prisma.IntNullableFilter<"Post"> | number | null
+  quoteActivityId?: Prisma.IntNullableFilter<"Post"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Post"> | Date | string
+}
+
+export type PostCreateWithoutQuotesInput = {
+  mediaType?: $Enums.MediaType | null
+  mediaSourceId?: string | null
+  isAdult?: boolean
+  content: string
+  linkUrl?: string | null
+  spoiler?: string | null
+  commentCount?: number
+  likeCount?: number
+  hiddenAt?: Date | string | null
+  editedAt?: Date | string | null
+  pinnedAt?: Date | string | null
+  isQuote?: boolean
+  createdAt?: Date | string
+  community?: Prisma.CommunityCreateNestedOneWithoutPostsInput
+  wallUser?: Prisma.UserCreateNestedOneWithoutWallPostsInput
+  author: Prisma.UserCreateNestedOneWithoutPostsInput
+  forumThread?: Prisma.ForumThreadCreateNestedOneWithoutFeedPostInput
+  quotePost?: Prisma.PostCreateNestedOneWithoutQuotesInput
+  quoteActivity?: Prisma.LibraryActivityCreateNestedOneWithoutQuotesInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutPostInput
+  hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutPostInput
+  commentHashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutTargetPostInput
+}
+
+export type PostUncheckedCreateWithoutQuotesInput = {
+  id?: number
+  communityId?: number | null
+  wallUserId?: number | null
+  mediaType?: $Enums.MediaType | null
+  mediaSourceId?: string | null
+  isAdult?: boolean
+  authorId: number
+  content: string
+  linkUrl?: string | null
+  spoiler?: string | null
+  commentCount?: number
+  likeCount?: number
+  hiddenAt?: Date | string | null
+  editedAt?: Date | string | null
+  pinnedAt?: Date | string | null
+  forumThreadId?: number | null
+  isQuote?: boolean
+  quotePostId?: number | null
+  quoteActivityId?: number | null
+  createdAt?: Date | string
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutPostInput
+  hashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutPostInput
+  commentHashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutTargetPostInput
+}
+
+export type PostCreateOrConnectWithoutQuotesInput = {
+  where: Prisma.PostWhereUniqueInput
+  create: Prisma.XOR<Prisma.PostCreateWithoutQuotesInput, Prisma.PostUncheckedCreateWithoutQuotesInput>
+}
+
+export type PostCreateWithoutQuotePostInput = {
+  mediaType?: $Enums.MediaType | null
+  mediaSourceId?: string | null
+  isAdult?: boolean
+  content: string
+  linkUrl?: string | null
+  spoiler?: string | null
+  commentCount?: number
+  likeCount?: number
+  hiddenAt?: Date | string | null
+  editedAt?: Date | string | null
+  pinnedAt?: Date | string | null
+  isQuote?: boolean
+  createdAt?: Date | string
+  community?: Prisma.CommunityCreateNestedOneWithoutPostsInput
+  wallUser?: Prisma.UserCreateNestedOneWithoutWallPostsInput
+  author: Prisma.UserCreateNestedOneWithoutPostsInput
+  forumThread?: Prisma.ForumThreadCreateNestedOneWithoutFeedPostInput
+  quoteActivity?: Prisma.LibraryActivityCreateNestedOneWithoutQuotesInput
+  quotes?: Prisma.PostCreateNestedManyWithoutQuotePostInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutPostInput
+  hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutPostInput
+  commentHashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutTargetPostInput
+}
+
+export type PostUncheckedCreateWithoutQuotePostInput = {
+  id?: number
+  communityId?: number | null
+  wallUserId?: number | null
+  mediaType?: $Enums.MediaType | null
+  mediaSourceId?: string | null
+  isAdult?: boolean
+  authorId: number
+  content: string
+  linkUrl?: string | null
+  spoiler?: string | null
+  commentCount?: number
+  likeCount?: number
+  hiddenAt?: Date | string | null
+  editedAt?: Date | string | null
+  pinnedAt?: Date | string | null
+  forumThreadId?: number | null
+  isQuote?: boolean
+  quoteActivityId?: number | null
+  createdAt?: Date | string
+  quotes?: Prisma.PostUncheckedCreateNestedManyWithoutQuotePostInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutPostInput
+  hashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutPostInput
+  commentHashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutTargetPostInput
+}
+
+export type PostCreateOrConnectWithoutQuotePostInput = {
+  where: Prisma.PostWhereUniqueInput
+  create: Prisma.XOR<Prisma.PostCreateWithoutQuotePostInput, Prisma.PostUncheckedCreateWithoutQuotePostInput>
+}
+
+export type PostCreateManyQuotePostInputEnvelope = {
+  data: Prisma.PostCreateManyQuotePostInput | Prisma.PostCreateManyQuotePostInput[]
+  skipDuplicates?: boolean
+}
+
+export type PostUpsertWithoutQuotesInput = {
+  update: Prisma.XOR<Prisma.PostUpdateWithoutQuotesInput, Prisma.PostUncheckedUpdateWithoutQuotesInput>
+  create: Prisma.XOR<Prisma.PostCreateWithoutQuotesInput, Prisma.PostUncheckedCreateWithoutQuotesInput>
+  where?: Prisma.PostWhereInput
+}
+
+export type PostUpdateToOneWithWhereWithoutQuotesInput = {
+  where?: Prisma.PostWhereInput
+  data: Prisma.XOR<Prisma.PostUpdateWithoutQuotesInput, Prisma.PostUncheckedUpdateWithoutQuotesInput>
+}
+
+export type PostUpdateWithoutQuotesInput = {
+  mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
+  mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  commentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  likeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  community?: Prisma.CommunityUpdateOneWithoutPostsNestedInput
+  wallUser?: Prisma.UserUpdateOneWithoutWallPostsNestedInput
+  author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
+  forumThread?: Prisma.ForumThreadUpdateOneWithoutFeedPostNestedInput
+  quotePost?: Prisma.PostUpdateOneWithoutQuotesNestedInput
+  quoteActivity?: Prisma.LibraryActivityUpdateOneWithoutQuotesNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutPostNestedInput
+  hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutPostNestedInput
+  commentHashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutTargetPostNestedInput
+}
+
+export type PostUncheckedUpdateWithoutQuotesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  communityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  wallUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
+  mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  authorId?: Prisma.IntFieldUpdateOperationsInput | number
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  commentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  likeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  forumThreadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quotePostId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quoteActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutPostNestedInput
+  hashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutPostNestedInput
+  commentHashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutTargetPostNestedInput
+}
+
+export type PostUpsertWithWhereUniqueWithoutQuotePostInput = {
+  where: Prisma.PostWhereUniqueInput
+  update: Prisma.XOR<Prisma.PostUpdateWithoutQuotePostInput, Prisma.PostUncheckedUpdateWithoutQuotePostInput>
+  create: Prisma.XOR<Prisma.PostCreateWithoutQuotePostInput, Prisma.PostUncheckedCreateWithoutQuotePostInput>
+}
+
+export type PostUpdateWithWhereUniqueWithoutQuotePostInput = {
+  where: Prisma.PostWhereUniqueInput
+  data: Prisma.XOR<Prisma.PostUpdateWithoutQuotePostInput, Prisma.PostUncheckedUpdateWithoutQuotePostInput>
+}
+
+export type PostUpdateManyWithWhereWithoutQuotePostInput = {
+  where: Prisma.PostScalarWhereInput
+  data: Prisma.XOR<Prisma.PostUpdateManyMutationInput, Prisma.PostUncheckedUpdateManyWithoutQuotePostInput>
+}
+
+export type PostCreateWithoutRepostsInput = {
+  mediaType?: $Enums.MediaType | null
+  mediaSourceId?: string | null
+  isAdult?: boolean
+  content: string
+  linkUrl?: string | null
+  spoiler?: string | null
+  commentCount?: number
+  likeCount?: number
+  hiddenAt?: Date | string | null
+  editedAt?: Date | string | null
+  pinnedAt?: Date | string | null
+  isQuote?: boolean
+  createdAt?: Date | string
+  community?: Prisma.CommunityCreateNestedOneWithoutPostsInput
+  wallUser?: Prisma.UserCreateNestedOneWithoutWallPostsInput
+  author: Prisma.UserCreateNestedOneWithoutPostsInput
+  forumThread?: Prisma.ForumThreadCreateNestedOneWithoutFeedPostInput
+  quotePost?: Prisma.PostCreateNestedOneWithoutQuotesInput
+  quoteActivity?: Prisma.LibraryActivityCreateNestedOneWithoutQuotesInput
+  quotes?: Prisma.PostCreateNestedManyWithoutQuotePostInput
+  hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutPostInput
+  commentHashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutTargetPostInput
+}
+
+export type PostUncheckedCreateWithoutRepostsInput = {
+  id?: number
+  communityId?: number | null
+  wallUserId?: number | null
+  mediaType?: $Enums.MediaType | null
+  mediaSourceId?: string | null
+  isAdult?: boolean
+  authorId: number
+  content: string
+  linkUrl?: string | null
+  spoiler?: string | null
+  commentCount?: number
+  likeCount?: number
+  hiddenAt?: Date | string | null
+  editedAt?: Date | string | null
+  pinnedAt?: Date | string | null
+  forumThreadId?: number | null
+  isQuote?: boolean
+  quotePostId?: number | null
+  quoteActivityId?: number | null
+  createdAt?: Date | string
+  quotes?: Prisma.PostUncheckedCreateNestedManyWithoutQuotePostInput
+  hashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutPostInput
+  commentHashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutTargetPostInput
+}
+
+export type PostCreateOrConnectWithoutRepostsInput = {
+  where: Prisma.PostWhereUniqueInput
+  create: Prisma.XOR<Prisma.PostCreateWithoutRepostsInput, Prisma.PostUncheckedCreateWithoutRepostsInput>
+}
+
+export type PostUpsertWithoutRepostsInput = {
+  update: Prisma.XOR<Prisma.PostUpdateWithoutRepostsInput, Prisma.PostUncheckedUpdateWithoutRepostsInput>
+  create: Prisma.XOR<Prisma.PostCreateWithoutRepostsInput, Prisma.PostUncheckedCreateWithoutRepostsInput>
+  where?: Prisma.PostWhereInput
+}
+
+export type PostUpdateToOneWithWhereWithoutRepostsInput = {
+  where?: Prisma.PostWhereInput
+  data: Prisma.XOR<Prisma.PostUpdateWithoutRepostsInput, Prisma.PostUncheckedUpdateWithoutRepostsInput>
+}
+
+export type PostUpdateWithoutRepostsInput = {
+  mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
+  mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  commentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  likeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  community?: Prisma.CommunityUpdateOneWithoutPostsNestedInput
+  wallUser?: Prisma.UserUpdateOneWithoutWallPostsNestedInput
+  author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
+  forumThread?: Prisma.ForumThreadUpdateOneWithoutFeedPostNestedInput
+  quotePost?: Prisma.PostUpdateOneWithoutQuotesNestedInput
+  quoteActivity?: Prisma.LibraryActivityUpdateOneWithoutQuotesNestedInput
+  quotes?: Prisma.PostUpdateManyWithoutQuotePostNestedInput
+  hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutPostNestedInput
+  commentHashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutTargetPostNestedInput
+}
+
+export type PostUncheckedUpdateWithoutRepostsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  communityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  wallUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
+  mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  authorId?: Prisma.IntFieldUpdateOperationsInput | number
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  commentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  likeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  forumThreadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quotePostId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quoteActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  quotes?: Prisma.PostUncheckedUpdateManyWithoutQuotePostNestedInput
+  hashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutPostNestedInput
+  commentHashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutTargetPostNestedInput
 }
 
 export type PostCreateWithoutForumThreadInput = {
@@ -979,10 +1517,15 @@ export type PostCreateWithoutForumThreadInput = {
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
   pinnedAt?: Date | string | null
+  isQuote?: boolean
   createdAt?: Date | string
   community?: Prisma.CommunityCreateNestedOneWithoutPostsInput
   wallUser?: Prisma.UserCreateNestedOneWithoutWallPostsInput
   author: Prisma.UserCreateNestedOneWithoutPostsInput
+  quotePost?: Prisma.PostCreateNestedOneWithoutQuotesInput
+  quoteActivity?: Prisma.LibraryActivityCreateNestedOneWithoutQuotesInput
+  quotes?: Prisma.PostCreateNestedManyWithoutQuotePostInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutTargetPostInput
 }
@@ -1003,7 +1546,12 @@ export type PostUncheckedCreateWithoutForumThreadInput = {
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
   pinnedAt?: Date | string | null
+  isQuote?: boolean
+  quotePostId?: number | null
+  quoteActivityId?: number | null
   createdAt?: Date | string
+  quotes?: Prisma.PostUncheckedCreateNestedManyWithoutQuotePostInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutTargetPostInput
 }
@@ -1036,10 +1584,15 @@ export type PostUpdateWithoutForumThreadInput = {
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   community?: Prisma.CommunityUpdateOneWithoutPostsNestedInput
   wallUser?: Prisma.UserUpdateOneWithoutWallPostsNestedInput
   author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
+  quotePost?: Prisma.PostUpdateOneWithoutQuotesNestedInput
+  quoteActivity?: Prisma.LibraryActivityUpdateOneWithoutQuotesNestedInput
+  quotes?: Prisma.PostUpdateManyWithoutQuotePostNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutTargetPostNestedInput
 }
@@ -1060,7 +1613,12 @@ export type PostUncheckedUpdateWithoutForumThreadInput = {
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quotePostId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quoteActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  quotes?: Prisma.PostUncheckedUpdateManyWithoutQuotePostNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutTargetPostNestedInput
 }
@@ -1077,11 +1635,16 @@ export type PostCreateWithoutHashtagUsagesInput = {
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
   pinnedAt?: Date | string | null
+  isQuote?: boolean
   createdAt?: Date | string
   community?: Prisma.CommunityCreateNestedOneWithoutPostsInput
   wallUser?: Prisma.UserCreateNestedOneWithoutWallPostsInput
   author: Prisma.UserCreateNestedOneWithoutPostsInput
   forumThread?: Prisma.ForumThreadCreateNestedOneWithoutFeedPostInput
+  quotePost?: Prisma.PostCreateNestedOneWithoutQuotesInput
+  quoteActivity?: Prisma.LibraryActivityCreateNestedOneWithoutQuotesInput
+  quotes?: Prisma.PostCreateNestedManyWithoutQuotePostInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutTargetPostInput
 }
 
@@ -1102,7 +1665,12 @@ export type PostUncheckedCreateWithoutHashtagUsagesInput = {
   editedAt?: Date | string | null
   pinnedAt?: Date | string | null
   forumThreadId?: number | null
+  isQuote?: boolean
+  quotePostId?: number | null
+  quoteActivityId?: number | null
   createdAt?: Date | string
+  quotes?: Prisma.PostUncheckedCreateNestedManyWithoutQuotePostInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutTargetPostInput
 }
 
@@ -1123,11 +1691,16 @@ export type PostCreateWithoutCommentHashtagUsagesInput = {
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
   pinnedAt?: Date | string | null
+  isQuote?: boolean
   createdAt?: Date | string
   community?: Prisma.CommunityCreateNestedOneWithoutPostsInput
   wallUser?: Prisma.UserCreateNestedOneWithoutWallPostsInput
   author: Prisma.UserCreateNestedOneWithoutPostsInput
   forumThread?: Prisma.ForumThreadCreateNestedOneWithoutFeedPostInput
+  quotePost?: Prisma.PostCreateNestedOneWithoutQuotesInput
+  quoteActivity?: Prisma.LibraryActivityCreateNestedOneWithoutQuotesInput
+  quotes?: Prisma.PostCreateNestedManyWithoutQuotePostInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutPostInput
 }
 
@@ -1148,7 +1721,12 @@ export type PostUncheckedCreateWithoutCommentHashtagUsagesInput = {
   editedAt?: Date | string | null
   pinnedAt?: Date | string | null
   forumThreadId?: number | null
+  isQuote?: boolean
+  quotePostId?: number | null
+  quoteActivityId?: number | null
   createdAt?: Date | string
+  quotes?: Prisma.PostUncheckedCreateNestedManyWithoutQuotePostInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutPostInput
 }
 
@@ -1180,11 +1758,16 @@ export type PostUpdateWithoutHashtagUsagesInput = {
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   community?: Prisma.CommunityUpdateOneWithoutPostsNestedInput
   wallUser?: Prisma.UserUpdateOneWithoutWallPostsNestedInput
   author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
   forumThread?: Prisma.ForumThreadUpdateOneWithoutFeedPostNestedInput
+  quotePost?: Prisma.PostUpdateOneWithoutQuotesNestedInput
+  quoteActivity?: Prisma.LibraryActivityUpdateOneWithoutQuotesNestedInput
+  quotes?: Prisma.PostUpdateManyWithoutQuotePostNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutTargetPostNestedInput
 }
 
@@ -1205,7 +1788,12 @@ export type PostUncheckedUpdateWithoutHashtagUsagesInput = {
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   forumThreadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quotePostId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quoteActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  quotes?: Prisma.PostUncheckedUpdateManyWithoutQuotePostNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutTargetPostNestedInput
 }
 
@@ -1232,11 +1820,16 @@ export type PostUpdateWithoutCommentHashtagUsagesInput = {
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   community?: Prisma.CommunityUpdateOneWithoutPostsNestedInput
   wallUser?: Prisma.UserUpdateOneWithoutWallPostsNestedInput
   author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
   forumThread?: Prisma.ForumThreadUpdateOneWithoutFeedPostNestedInput
+  quotePost?: Prisma.PostUpdateOneWithoutQuotesNestedInput
+  quoteActivity?: Prisma.LibraryActivityUpdateOneWithoutQuotesNestedInput
+  quotes?: Prisma.PostUpdateManyWithoutQuotePostNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutPostNestedInput
 }
 
@@ -1257,8 +1850,90 @@ export type PostUncheckedUpdateWithoutCommentHashtagUsagesInput = {
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   forumThreadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quotePostId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quoteActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  quotes?: Prisma.PostUncheckedUpdateManyWithoutQuotePostNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutPostNestedInput
+}
+
+export type PostCreateWithoutQuoteActivityInput = {
+  mediaType?: $Enums.MediaType | null
+  mediaSourceId?: string | null
+  isAdult?: boolean
+  content: string
+  linkUrl?: string | null
+  spoiler?: string | null
+  commentCount?: number
+  likeCount?: number
+  hiddenAt?: Date | string | null
+  editedAt?: Date | string | null
+  pinnedAt?: Date | string | null
+  isQuote?: boolean
+  createdAt?: Date | string
+  community?: Prisma.CommunityCreateNestedOneWithoutPostsInput
+  wallUser?: Prisma.UserCreateNestedOneWithoutWallPostsInput
+  author: Prisma.UserCreateNestedOneWithoutPostsInput
+  forumThread?: Prisma.ForumThreadCreateNestedOneWithoutFeedPostInput
+  quotePost?: Prisma.PostCreateNestedOneWithoutQuotesInput
+  quotes?: Prisma.PostCreateNestedManyWithoutQuotePostInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutPostInput
+  hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutPostInput
+  commentHashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutTargetPostInput
+}
+
+export type PostUncheckedCreateWithoutQuoteActivityInput = {
+  id?: number
+  communityId?: number | null
+  wallUserId?: number | null
+  mediaType?: $Enums.MediaType | null
+  mediaSourceId?: string | null
+  isAdult?: boolean
+  authorId: number
+  content: string
+  linkUrl?: string | null
+  spoiler?: string | null
+  commentCount?: number
+  likeCount?: number
+  hiddenAt?: Date | string | null
+  editedAt?: Date | string | null
+  pinnedAt?: Date | string | null
+  forumThreadId?: number | null
+  isQuote?: boolean
+  quotePostId?: number | null
+  createdAt?: Date | string
+  quotes?: Prisma.PostUncheckedCreateNestedManyWithoutQuotePostInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutPostInput
+  hashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutPostInput
+  commentHashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutTargetPostInput
+}
+
+export type PostCreateOrConnectWithoutQuoteActivityInput = {
+  where: Prisma.PostWhereUniqueInput
+  create: Prisma.XOR<Prisma.PostCreateWithoutQuoteActivityInput, Prisma.PostUncheckedCreateWithoutQuoteActivityInput>
+}
+
+export type PostCreateManyQuoteActivityInputEnvelope = {
+  data: Prisma.PostCreateManyQuoteActivityInput | Prisma.PostCreateManyQuoteActivityInput[]
+  skipDuplicates?: boolean
+}
+
+export type PostUpsertWithWhereUniqueWithoutQuoteActivityInput = {
+  where: Prisma.PostWhereUniqueInput
+  update: Prisma.XOR<Prisma.PostUpdateWithoutQuoteActivityInput, Prisma.PostUncheckedUpdateWithoutQuoteActivityInput>
+  create: Prisma.XOR<Prisma.PostCreateWithoutQuoteActivityInput, Prisma.PostUncheckedCreateWithoutQuoteActivityInput>
+}
+
+export type PostUpdateWithWhereUniqueWithoutQuoteActivityInput = {
+  where: Prisma.PostWhereUniqueInput
+  data: Prisma.XOR<Prisma.PostUpdateWithoutQuoteActivityInput, Prisma.PostUncheckedUpdateWithoutQuoteActivityInput>
+}
+
+export type PostUpdateManyWithWhereWithoutQuoteActivityInput = {
+  where: Prisma.PostScalarWhereInput
+  data: Prisma.XOR<Prisma.PostUpdateManyMutationInput, Prisma.PostUncheckedUpdateManyWithoutQuoteActivityInput>
 }
 
 export type PostCreateWithoutAuthorInput = {
@@ -1273,10 +1948,15 @@ export type PostCreateWithoutAuthorInput = {
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
   pinnedAt?: Date | string | null
+  isQuote?: boolean
   createdAt?: Date | string
   community?: Prisma.CommunityCreateNestedOneWithoutPostsInput
   wallUser?: Prisma.UserCreateNestedOneWithoutWallPostsInput
   forumThread?: Prisma.ForumThreadCreateNestedOneWithoutFeedPostInput
+  quotePost?: Prisma.PostCreateNestedOneWithoutQuotesInput
+  quoteActivity?: Prisma.LibraryActivityCreateNestedOneWithoutQuotesInput
+  quotes?: Prisma.PostCreateNestedManyWithoutQuotePostInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutTargetPostInput
 }
@@ -1297,7 +1977,12 @@ export type PostUncheckedCreateWithoutAuthorInput = {
   editedAt?: Date | string | null
   pinnedAt?: Date | string | null
   forumThreadId?: number | null
+  isQuote?: boolean
+  quotePostId?: number | null
+  quoteActivityId?: number | null
   createdAt?: Date | string
+  quotes?: Prisma.PostUncheckedCreateNestedManyWithoutQuotePostInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutTargetPostInput
 }
@@ -1324,10 +2009,15 @@ export type PostCreateWithoutWallUserInput = {
   hiddenAt?: Date | string | null
   editedAt?: Date | string | null
   pinnedAt?: Date | string | null
+  isQuote?: boolean
   createdAt?: Date | string
   community?: Prisma.CommunityCreateNestedOneWithoutPostsInput
   author: Prisma.UserCreateNestedOneWithoutPostsInput
   forumThread?: Prisma.ForumThreadCreateNestedOneWithoutFeedPostInput
+  quotePost?: Prisma.PostCreateNestedOneWithoutQuotesInput
+  quoteActivity?: Prisma.LibraryActivityCreateNestedOneWithoutQuotesInput
+  quotes?: Prisma.PostCreateNestedManyWithoutQuotePostInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutTargetPostInput
 }
@@ -1348,7 +2038,12 @@ export type PostUncheckedCreateWithoutWallUserInput = {
   editedAt?: Date | string | null
   pinnedAt?: Date | string | null
   forumThreadId?: number | null
+  isQuote?: boolean
+  quotePostId?: number | null
+  quoteActivityId?: number | null
   createdAt?: Date | string
+  quotes?: Prisma.PostUncheckedCreateNestedManyWithoutQuotePostInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutTargetPostInput
 }
@@ -1411,6 +2106,9 @@ export type PostCreateManyCommunityInput = {
   editedAt?: Date | string | null
   pinnedAt?: Date | string | null
   forumThreadId?: number | null
+  isQuote?: boolean
+  quotePostId?: number | null
+  quoteActivityId?: number | null
   createdAt?: Date | string
 }
 
@@ -1426,10 +2124,15 @@ export type PostUpdateWithoutCommunityInput = {
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   wallUser?: Prisma.UserUpdateOneWithoutWallPostsNestedInput
   author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
   forumThread?: Prisma.ForumThreadUpdateOneWithoutFeedPostNestedInput
+  quotePost?: Prisma.PostUpdateOneWithoutQuotesNestedInput
+  quoteActivity?: Prisma.LibraryActivityUpdateOneWithoutQuotesNestedInput
+  quotes?: Prisma.PostUpdateManyWithoutQuotePostNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutTargetPostNestedInput
 }
@@ -1450,7 +2153,12 @@ export type PostUncheckedUpdateWithoutCommunityInput = {
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   forumThreadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quotePostId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quoteActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  quotes?: Prisma.PostUncheckedUpdateManyWithoutQuotePostNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutTargetPostNestedInput
 }
@@ -1471,6 +2179,199 @@ export type PostUncheckedUpdateManyWithoutCommunityInput = {
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   forumThreadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quotePostId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quoteActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type PostCreateManyQuotePostInput = {
+  id?: number
+  communityId?: number | null
+  wallUserId?: number | null
+  mediaType?: $Enums.MediaType | null
+  mediaSourceId?: string | null
+  isAdult?: boolean
+  authorId: number
+  content: string
+  linkUrl?: string | null
+  spoiler?: string | null
+  commentCount?: number
+  likeCount?: number
+  hiddenAt?: Date | string | null
+  editedAt?: Date | string | null
+  pinnedAt?: Date | string | null
+  forumThreadId?: number | null
+  isQuote?: boolean
+  quoteActivityId?: number | null
+  createdAt?: Date | string
+}
+
+export type PostUpdateWithoutQuotePostInput = {
+  mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
+  mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  commentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  likeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  community?: Prisma.CommunityUpdateOneWithoutPostsNestedInput
+  wallUser?: Prisma.UserUpdateOneWithoutWallPostsNestedInput
+  author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
+  forumThread?: Prisma.ForumThreadUpdateOneWithoutFeedPostNestedInput
+  quoteActivity?: Prisma.LibraryActivityUpdateOneWithoutQuotesNestedInput
+  quotes?: Prisma.PostUpdateManyWithoutQuotePostNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutPostNestedInput
+  hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutPostNestedInput
+  commentHashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutTargetPostNestedInput
+}
+
+export type PostUncheckedUpdateWithoutQuotePostInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  communityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  wallUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
+  mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  authorId?: Prisma.IntFieldUpdateOperationsInput | number
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  commentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  likeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  forumThreadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quoteActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  quotes?: Prisma.PostUncheckedUpdateManyWithoutQuotePostNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutPostNestedInput
+  hashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutPostNestedInput
+  commentHashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutTargetPostNestedInput
+}
+
+export type PostUncheckedUpdateManyWithoutQuotePostInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  communityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  wallUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
+  mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  authorId?: Prisma.IntFieldUpdateOperationsInput | number
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  commentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  likeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  forumThreadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quoteActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type PostCreateManyQuoteActivityInput = {
+  id?: number
+  communityId?: number | null
+  wallUserId?: number | null
+  mediaType?: $Enums.MediaType | null
+  mediaSourceId?: string | null
+  isAdult?: boolean
+  authorId: number
+  content: string
+  linkUrl?: string | null
+  spoiler?: string | null
+  commentCount?: number
+  likeCount?: number
+  hiddenAt?: Date | string | null
+  editedAt?: Date | string | null
+  pinnedAt?: Date | string | null
+  forumThreadId?: number | null
+  isQuote?: boolean
+  quotePostId?: number | null
+  createdAt?: Date | string
+}
+
+export type PostUpdateWithoutQuoteActivityInput = {
+  mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
+  mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  commentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  likeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  community?: Prisma.CommunityUpdateOneWithoutPostsNestedInput
+  wallUser?: Prisma.UserUpdateOneWithoutWallPostsNestedInput
+  author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
+  forumThread?: Prisma.ForumThreadUpdateOneWithoutFeedPostNestedInput
+  quotePost?: Prisma.PostUpdateOneWithoutQuotesNestedInput
+  quotes?: Prisma.PostUpdateManyWithoutQuotePostNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutPostNestedInput
+  hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutPostNestedInput
+  commentHashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutTargetPostNestedInput
+}
+
+export type PostUncheckedUpdateWithoutQuoteActivityInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  communityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  wallUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
+  mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  authorId?: Prisma.IntFieldUpdateOperationsInput | number
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  commentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  likeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  forumThreadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quotePostId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  quotes?: Prisma.PostUncheckedUpdateManyWithoutQuotePostNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutPostNestedInput
+  hashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutPostNestedInput
+  commentHashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutTargetPostNestedInput
+}
+
+export type PostUncheckedUpdateManyWithoutQuoteActivityInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  communityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  wallUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
+  mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  authorId?: Prisma.IntFieldUpdateOperationsInput | number
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  commentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  likeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  forumThreadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quotePostId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -1490,6 +2391,9 @@ export type PostCreateManyAuthorInput = {
   editedAt?: Date | string | null
   pinnedAt?: Date | string | null
   forumThreadId?: number | null
+  isQuote?: boolean
+  quotePostId?: number | null
+  quoteActivityId?: number | null
   createdAt?: Date | string
 }
 
@@ -1509,6 +2413,9 @@ export type PostCreateManyWallUserInput = {
   editedAt?: Date | string | null
   pinnedAt?: Date | string | null
   forumThreadId?: number | null
+  isQuote?: boolean
+  quotePostId?: number | null
+  quoteActivityId?: number | null
   createdAt?: Date | string
 }
 
@@ -1524,10 +2431,15 @@ export type PostUpdateWithoutAuthorInput = {
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   community?: Prisma.CommunityUpdateOneWithoutPostsNestedInput
   wallUser?: Prisma.UserUpdateOneWithoutWallPostsNestedInput
   forumThread?: Prisma.ForumThreadUpdateOneWithoutFeedPostNestedInput
+  quotePost?: Prisma.PostUpdateOneWithoutQuotesNestedInput
+  quoteActivity?: Prisma.LibraryActivityUpdateOneWithoutQuotesNestedInput
+  quotes?: Prisma.PostUpdateManyWithoutQuotePostNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutTargetPostNestedInput
 }
@@ -1548,7 +2460,12 @@ export type PostUncheckedUpdateWithoutAuthorInput = {
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   forumThreadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quotePostId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quoteActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  quotes?: Prisma.PostUncheckedUpdateManyWithoutQuotePostNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutTargetPostNestedInput
 }
@@ -1569,6 +2486,9 @@ export type PostUncheckedUpdateManyWithoutAuthorInput = {
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   forumThreadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quotePostId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quoteActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -1584,10 +2504,15 @@ export type PostUpdateWithoutWallUserInput = {
   hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   community?: Prisma.CommunityUpdateOneWithoutPostsNestedInput
   author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
   forumThread?: Prisma.ForumThreadUpdateOneWithoutFeedPostNestedInput
+  quotePost?: Prisma.PostUpdateOneWithoutQuotesNestedInput
+  quoteActivity?: Prisma.LibraryActivityUpdateOneWithoutQuotesNestedInput
+  quotes?: Prisma.PostUpdateManyWithoutQuotePostNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutTargetPostNestedInput
 }
@@ -1608,7 +2533,12 @@ export type PostUncheckedUpdateWithoutWallUserInput = {
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   forumThreadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quotePostId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quoteActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  quotes?: Prisma.PostUncheckedUpdateManyWithoutQuotePostNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutTargetPostNestedInput
 }
@@ -1629,6 +2559,9 @@ export type PostUncheckedUpdateManyWithoutWallUserInput = {
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   forumThreadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quotePostId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quoteActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -1638,11 +2571,15 @@ export type PostUncheckedUpdateManyWithoutWallUserInput = {
  */
 
 export type PostCountOutputType = {
+  quotes: number
+  reposts: number
   hashtagUsages: number
   commentHashtagUsages: number
 }
 
 export type PostCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  quotes?: boolean | PostCountOutputTypeCountQuotesArgs
+  reposts?: boolean | PostCountOutputTypeCountRepostsArgs
   hashtagUsages?: boolean | PostCountOutputTypeCountHashtagUsagesArgs
   commentHashtagUsages?: boolean | PostCountOutputTypeCountCommentHashtagUsagesArgs
 }
@@ -1655,6 +2592,20 @@ export type PostCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
    * Select specific fields to fetch from the PostCountOutputType
    */
   select?: Prisma.PostCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * PostCountOutputType without action
+ */
+export type PostCountOutputTypeCountQuotesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PostWhereInput
+}
+
+/**
+ * PostCountOutputType without action
+ */
+export type PostCountOutputTypeCountRepostsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.RepostWhereInput
 }
 
 /**
@@ -1689,11 +2640,18 @@ export type PostSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   editedAt?: boolean
   pinnedAt?: boolean
   forumThreadId?: boolean
+  isQuote?: boolean
+  quotePostId?: boolean
+  quoteActivityId?: boolean
   createdAt?: boolean
   community?: boolean | Prisma.Post$communityArgs<ExtArgs>
   wallUser?: boolean | Prisma.Post$wallUserArgs<ExtArgs>
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   forumThread?: boolean | Prisma.Post$forumThreadArgs<ExtArgs>
+  quotePost?: boolean | Prisma.Post$quotePostArgs<ExtArgs>
+  quoteActivity?: boolean | Prisma.Post$quoteActivityArgs<ExtArgs>
+  quotes?: boolean | Prisma.Post$quotesArgs<ExtArgs>
+  reposts?: boolean | Prisma.Post$repostsArgs<ExtArgs>
   hashtagUsages?: boolean | Prisma.Post$hashtagUsagesArgs<ExtArgs>
   commentHashtagUsages?: boolean | Prisma.Post$commentHashtagUsagesArgs<ExtArgs>
   _count?: boolean | Prisma.PostCountOutputTypeDefaultArgs<ExtArgs>
@@ -1716,11 +2674,16 @@ export type PostSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   editedAt?: boolean
   pinnedAt?: boolean
   forumThreadId?: boolean
+  isQuote?: boolean
+  quotePostId?: boolean
+  quoteActivityId?: boolean
   createdAt?: boolean
   community?: boolean | Prisma.Post$communityArgs<ExtArgs>
   wallUser?: boolean | Prisma.Post$wallUserArgs<ExtArgs>
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   forumThread?: boolean | Prisma.Post$forumThreadArgs<ExtArgs>
+  quotePost?: boolean | Prisma.Post$quotePostArgs<ExtArgs>
+  quoteActivity?: boolean | Prisma.Post$quoteActivityArgs<ExtArgs>
 }, ExtArgs["result"]["post"]>
 
 export type PostSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1740,11 +2703,16 @@ export type PostSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   editedAt?: boolean
   pinnedAt?: boolean
   forumThreadId?: boolean
+  isQuote?: boolean
+  quotePostId?: boolean
+  quoteActivityId?: boolean
   createdAt?: boolean
   community?: boolean | Prisma.Post$communityArgs<ExtArgs>
   wallUser?: boolean | Prisma.Post$wallUserArgs<ExtArgs>
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   forumThread?: boolean | Prisma.Post$forumThreadArgs<ExtArgs>
+  quotePost?: boolean | Prisma.Post$quotePostArgs<ExtArgs>
+  quoteActivity?: boolean | Prisma.Post$quoteActivityArgs<ExtArgs>
 }, ExtArgs["result"]["post"]>
 
 export type PostSelectScalar = {
@@ -1764,15 +2732,22 @@ export type PostSelectScalar = {
   editedAt?: boolean
   pinnedAt?: boolean
   forumThreadId?: boolean
+  isQuote?: boolean
+  quotePostId?: boolean
+  quoteActivityId?: boolean
   createdAt?: boolean
 }
 
-export type PostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "communityId" | "wallUserId" | "mediaType" | "mediaSourceId" | "isAdult" | "authorId" | "content" | "linkUrl" | "spoiler" | "commentCount" | "likeCount" | "hiddenAt" | "editedAt" | "pinnedAt" | "forumThreadId" | "createdAt", ExtArgs["result"]["post"]>
+export type PostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "communityId" | "wallUserId" | "mediaType" | "mediaSourceId" | "isAdult" | "authorId" | "content" | "linkUrl" | "spoiler" | "commentCount" | "likeCount" | "hiddenAt" | "editedAt" | "pinnedAt" | "forumThreadId" | "isQuote" | "quotePostId" | "quoteActivityId" | "createdAt", ExtArgs["result"]["post"]>
 export type PostInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   community?: boolean | Prisma.Post$communityArgs<ExtArgs>
   wallUser?: boolean | Prisma.Post$wallUserArgs<ExtArgs>
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   forumThread?: boolean | Prisma.Post$forumThreadArgs<ExtArgs>
+  quotePost?: boolean | Prisma.Post$quotePostArgs<ExtArgs>
+  quoteActivity?: boolean | Prisma.Post$quoteActivityArgs<ExtArgs>
+  quotes?: boolean | Prisma.Post$quotesArgs<ExtArgs>
+  reposts?: boolean | Prisma.Post$repostsArgs<ExtArgs>
   hashtagUsages?: boolean | Prisma.Post$hashtagUsagesArgs<ExtArgs>
   commentHashtagUsages?: boolean | Prisma.Post$commentHashtagUsagesArgs<ExtArgs>
   _count?: boolean | Prisma.PostCountOutputTypeDefaultArgs<ExtArgs>
@@ -1782,12 +2757,16 @@ export type PostIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   wallUser?: boolean | Prisma.Post$wallUserArgs<ExtArgs>
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   forumThread?: boolean | Prisma.Post$forumThreadArgs<ExtArgs>
+  quotePost?: boolean | Prisma.Post$quotePostArgs<ExtArgs>
+  quoteActivity?: boolean | Prisma.Post$quoteActivityArgs<ExtArgs>
 }
 export type PostIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   community?: boolean | Prisma.Post$communityArgs<ExtArgs>
   wallUser?: boolean | Prisma.Post$wallUserArgs<ExtArgs>
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   forumThread?: boolean | Prisma.Post$forumThreadArgs<ExtArgs>
+  quotePost?: boolean | Prisma.Post$quotePostArgs<ExtArgs>
+  quoteActivity?: boolean | Prisma.Post$quoteActivityArgs<ExtArgs>
 }
 
 export type $PostPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1797,6 +2776,10 @@ export type $PostPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     wallUser: Prisma.$UserPayload<ExtArgs> | null
     author: Prisma.$UserPayload<ExtArgs>
     forumThread: Prisma.$ForumThreadPayload<ExtArgs> | null
+    quotePost: Prisma.$PostPayload<ExtArgs> | null
+    quoteActivity: Prisma.$LibraryActivityPayload<ExtArgs> | null
+    quotes: Prisma.$PostPayload<ExtArgs>[]
+    reposts: Prisma.$RepostPayload<ExtArgs>[]
     hashtagUsages: Prisma.$HashtagUsagePayload<ExtArgs>[]
     commentHashtagUsages: Prisma.$HashtagUsagePayload<ExtArgs>[]
   }
@@ -1817,6 +2800,9 @@ export type $PostPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     editedAt: Date | null
     pinnedAt: Date | null
     forumThreadId: number | null
+    isQuote: boolean
+    quotePostId: number | null
+    quoteActivityId: number | null
     createdAt: Date
   }, ExtArgs["result"]["post"]>
   composites: {}
@@ -2216,6 +3202,10 @@ export interface Prisma__PostClient<T, Null = never, ExtArgs extends runtime.Typ
   wallUser<T extends Prisma.Post$wallUserArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Post$wallUserArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   author<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   forumThread<T extends Prisma.Post$forumThreadArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Post$forumThreadArgs<ExtArgs>>): Prisma.Prisma__ForumThreadClient<runtime.Types.Result.GetResult<Prisma.$ForumThreadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  quotePost<T extends Prisma.Post$quotePostArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Post$quotePostArgs<ExtArgs>>): Prisma.Prisma__PostClient<runtime.Types.Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  quoteActivity<T extends Prisma.Post$quoteActivityArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Post$quoteActivityArgs<ExtArgs>>): Prisma.Prisma__LibraryActivityClient<runtime.Types.Result.GetResult<Prisma.$LibraryActivityPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  quotes<T extends Prisma.Post$quotesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Post$quotesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reposts<T extends Prisma.Post$repostsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Post$repostsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RepostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   hashtagUsages<T extends Prisma.Post$hashtagUsagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Post$hashtagUsagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HashtagUsagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   commentHashtagUsages<T extends Prisma.Post$commentHashtagUsagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Post$commentHashtagUsagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HashtagUsagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -2263,6 +3253,9 @@ export interface PostFieldRefs {
   readonly editedAt: Prisma.FieldRef<"Post", 'DateTime'>
   readonly pinnedAt: Prisma.FieldRef<"Post", 'DateTime'>
   readonly forumThreadId: Prisma.FieldRef<"Post", 'Int'>
+  readonly isQuote: Prisma.FieldRef<"Post", 'Boolean'>
+  readonly quotePostId: Prisma.FieldRef<"Post", 'Int'>
+  readonly quoteActivityId: Prisma.FieldRef<"Post", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Post", 'DateTime'>
 }
     
@@ -2714,6 +3707,92 @@ export type Post$forumThreadArgs<ExtArgs extends runtime.Types.Extensions.Intern
    */
   include?: Prisma.ForumThreadInclude<ExtArgs> | null
   where?: Prisma.ForumThreadWhereInput
+}
+
+/**
+ * Post.quotePost
+ */
+export type Post$quotePostArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Post
+   */
+  select?: Prisma.PostSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Post
+   */
+  omit?: Prisma.PostOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PostInclude<ExtArgs> | null
+  where?: Prisma.PostWhereInput
+}
+
+/**
+ * Post.quoteActivity
+ */
+export type Post$quoteActivityArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the LibraryActivity
+   */
+  select?: Prisma.LibraryActivitySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the LibraryActivity
+   */
+  omit?: Prisma.LibraryActivityOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LibraryActivityInclude<ExtArgs> | null
+  where?: Prisma.LibraryActivityWhereInput
+}
+
+/**
+ * Post.quotes
+ */
+export type Post$quotesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Post
+   */
+  select?: Prisma.PostSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Post
+   */
+  omit?: Prisma.PostOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PostInclude<ExtArgs> | null
+  where?: Prisma.PostWhereInput
+  orderBy?: Prisma.PostOrderByWithRelationInput | Prisma.PostOrderByWithRelationInput[]
+  cursor?: Prisma.PostWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PostScalarFieldEnum | Prisma.PostScalarFieldEnum[]
+}
+
+/**
+ * Post.reposts
+ */
+export type Post$repostsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Repost
+   */
+  select?: Prisma.RepostSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Repost
+   */
+  omit?: Prisma.RepostOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RepostInclude<ExtArgs> | null
+  where?: Prisma.RepostWhereInput
+  orderBy?: Prisma.RepostOrderByWithRelationInput | Prisma.RepostOrderByWithRelationInput[]
+  cursor?: Prisma.RepostWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.RepostScalarFieldEnum | Prisma.RepostScalarFieldEnum[]
 }
 
 /**

@@ -62,6 +62,16 @@ function between(userId: number, otherId: number) {
   };
 }
 
+function sharedFrom(userId: number, ownerId: number) {
+  return {
+    userId,
+    OR: [
+      { post: { authorId: ownerId } },
+      { activity: { entry: { userId: ownerId } } },
+    ],
+  } satisfies Prisma.RepostWhereInput;
+}
+
 @Injectable()
 export class SafetyService {
   constructor(
@@ -118,6 +128,11 @@ export class SafetyService {
         update: {},
       }),
       this.prisma.friendship.deleteMany({ where: between(userId, target.id) }),
+      this.prisma.repost.deleteMany({
+        where: {
+          OR: [sharedFrom(userId, target.id), sharedFrom(target.id, userId)],
+        },
+      }),
     ]);
     if (unfriended > 0) {
       this.presence.notify([userId, target.id], 'friends:changed');

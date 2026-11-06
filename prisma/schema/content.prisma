@@ -15,33 +15,63 @@ enum BookmarkableType {
 }
 
 model Post {
-  id                   Int            @id @default(autoincrement())
+  id                   Int              @id @default(autoincrement())
   communityId          Int?
   wallUserId           Int?
   mediaType            MediaType?
   mediaSourceId        String?
-  isAdult              Boolean        @default(false)
+  isAdult              Boolean          @default(false)
   authorId             Int
   content              String
   linkUrl              String?
   spoiler              String?
-  commentCount         Int            @default(0)
-  likeCount            Int            @default(0)
+  commentCount         Int              @default(0)
+  likeCount            Int              @default(0)
   hiddenAt             DateTime?
   editedAt             DateTime?
   pinnedAt             DateTime?
-  forumThreadId        Int?           @unique
-  createdAt            DateTime       @default(now())
-  community            Community?     @relation(fields: [communityId], references: [id], onDelete: Cascade)
-  wallUser             User?          @relation("WallPosts", fields: [wallUserId], references: [id], onDelete: Cascade)
-  author               User           @relation(fields: [authorId], references: [id])
-  forumThread          ForumThread?   @relation(fields: [forumThreadId], references: [id], onDelete: Cascade)
-  hashtagUsages        HashtagUsage[] @relation("PostHashtags")
-  commentHashtagUsages HashtagUsage[] @relation("PostCommentHashtags")
+  forumThreadId        Int?             @unique
+  isQuote              Boolean          @default(false)
+  quotePostId          Int?
+  quoteActivityId      Int?
+  createdAt            DateTime         @default(now())
+  community            Community?       @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  wallUser             User?            @relation("WallPosts", fields: [wallUserId], references: [id], onDelete: Cascade)
+  author               User             @relation(fields: [authorId], references: [id])
+  forumThread          ForumThread?     @relation(fields: [forumThreadId], references: [id], onDelete: Cascade)
+  quotePost            Post?            @relation("PostQuotes", fields: [quotePostId], references: [id], onDelete: SetNull)
+  quoteActivity        LibraryActivity? @relation(fields: [quoteActivityId], references: [id], onDelete: SetNull)
+  quotes               Post[]           @relation("PostQuotes")
+  reposts              Repost[]
+  hashtagUsages        HashtagUsage[]   @relation("PostHashtags")
+  commentHashtagUsages HashtagUsage[]   @relation("PostCommentHashtags")
 
   @@index([communityId, createdAt(sort: Desc)])
   @@index([wallUserId, createdAt(sort: Desc)])
   @@index([mediaType, mediaSourceId, createdAt(sort: Desc)])
+  @@index([quotePostId, createdAt(sort: Desc)])
+  @@index([quoteActivityId, createdAt(sort: Desc)])
+}
+
+model Repost {
+  id          Int              @id @default(autoincrement())
+  userId      Int
+  postId      Int?
+  activityId  Int?
+  communityId Int?
+  createdAt   DateTime         @default(now())
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post        Post?            @relation(fields: [postId], references: [id], onDelete: Cascade)
+  activity    LibraryActivity? @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  community   Community?       @relation(fields: [communityId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@unique([userId, activityId])
+  @@index([postId, createdAt(sort: Desc)])
+  @@index([activityId, createdAt(sort: Desc)])
+  @@index([communityId, createdAt(sort: Desc)])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([createdAt(sort: Desc), id(sort: Desc)])
 }
 
 model Comment {

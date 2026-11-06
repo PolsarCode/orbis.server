@@ -68,6 +68,11 @@ export type CommunityBan = Prisma.CommunityBanModel
  */
 export type Post = Prisma.PostModel
 /**
+ * Model Repost
+ * 
+ */
+export type Repost = Prisma.RepostModel
+/**
  * Model Comment
  * 
  */

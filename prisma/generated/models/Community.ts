@@ -340,6 +340,7 @@ export type CommunityWhereInput = {
   forumCategories?: Prisma.ForumCategoryListRelationFilter
   forumThreads?: Prisma.ForumThreadListRelationFilter
   forumPosts?: Prisma.ForumPostListRelationFilter
+  reposts?: Prisma.RepostListRelationFilter
 }
 
 export type CommunityOrderByWithRelationInput = {
@@ -374,6 +375,7 @@ export type CommunityOrderByWithRelationInput = {
   forumCategories?: Prisma.ForumCategoryOrderByRelationAggregateInput
   forumThreads?: Prisma.ForumThreadOrderByRelationAggregateInput
   forumPosts?: Prisma.ForumPostOrderByRelationAggregateInput
+  reposts?: Prisma.RepostOrderByRelationAggregateInput
 }
 
 export type CommunityWhereUniqueInput = Prisma.AtLeast<{
@@ -411,6 +413,7 @@ export type CommunityWhereUniqueInput = Prisma.AtLeast<{
   forumCategories?: Prisma.ForumCategoryListRelationFilter
   forumThreads?: Prisma.ForumThreadListRelationFilter
   forumPosts?: Prisma.ForumPostListRelationFilter
+  reposts?: Prisma.RepostListRelationFilter
 }, "id">
 
 export type CommunityOrderByWithAggregationInput = {
@@ -495,6 +498,7 @@ export type CommunityCreateInput = {
   forumCategories?: Prisma.ForumCategoryCreateNestedManyWithoutCommunityInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutCommunityInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateInput = {
@@ -528,6 +532,7 @@ export type CommunityUncheckedCreateInput = {
   forumCategories?: Prisma.ForumCategoryUncheckedCreateNestedManyWithoutCommunityInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutCommunityInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUpdateInput = {
@@ -560,6 +565,7 @@ export type CommunityUpdateInput = {
   forumCategories?: Prisma.ForumCategoryUpdateManyWithoutCommunityNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutCommunityNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateInput = {
@@ -593,6 +599,7 @@ export type CommunityUncheckedUpdateInput = {
   forumCategories?: Prisma.ForumCategoryUncheckedUpdateManyWithoutCommunityNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutCommunityNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateManyInput = {
@@ -863,6 +870,22 @@ export type CommunityUpdateOneWithoutPostsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CommunityUpdateToOneWithWhereWithoutPostsInput, Prisma.CommunityUpdateWithoutPostsInput>, Prisma.CommunityUncheckedUpdateWithoutPostsInput>
 }
 
+export type CommunityCreateNestedOneWithoutRepostsInput = {
+  create?: Prisma.XOR<Prisma.CommunityCreateWithoutRepostsInput, Prisma.CommunityUncheckedCreateWithoutRepostsInput>
+  connectOrCreate?: Prisma.CommunityCreateOrConnectWithoutRepostsInput
+  connect?: Prisma.CommunityWhereUniqueInput
+}
+
+export type CommunityUpdateOneWithoutRepostsNestedInput = {
+  create?: Prisma.XOR<Prisma.CommunityCreateWithoutRepostsInput, Prisma.CommunityUncheckedCreateWithoutRepostsInput>
+  connectOrCreate?: Prisma.CommunityCreateOrConnectWithoutRepostsInput
+  upsert?: Prisma.CommunityUpsertWithoutRepostsInput
+  disconnect?: Prisma.CommunityWhereInput | boolean
+  delete?: Prisma.CommunityWhereInput | boolean
+  connect?: Prisma.CommunityWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CommunityUpdateToOneWithWhereWithoutRepostsInput, Prisma.CommunityUpdateWithoutRepostsInput>, Prisma.CommunityUncheckedUpdateWithoutRepostsInput>
+}
+
 export type CommunityCreateNestedOneWithoutCommentsInput = {
   create?: Prisma.XOR<Prisma.CommunityCreateWithoutCommentsInput, Prisma.CommunityUncheckedCreateWithoutCommentsInput>
   connectOrCreate?: Prisma.CommunityCreateOrConnectWithoutCommentsInput
@@ -1006,6 +1029,7 @@ export type CommunityCreateWithoutMembershipsInput = {
   forumCategories?: Prisma.ForumCategoryCreateNestedManyWithoutCommunityInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutCommunityInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutMembershipsInput = {
@@ -1038,6 +1062,7 @@ export type CommunityUncheckedCreateWithoutMembershipsInput = {
   forumCategories?: Prisma.ForumCategoryUncheckedCreateNestedManyWithoutCommunityInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutCommunityInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutMembershipsInput = {
@@ -1085,6 +1110,7 @@ export type CommunityUpdateWithoutMembershipsInput = {
   forumCategories?: Prisma.ForumCategoryUpdateManyWithoutCommunityNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutCommunityNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutMembershipsInput = {
@@ -1117,6 +1143,7 @@ export type CommunityUncheckedUpdateWithoutMembershipsInput = {
   forumCategories?: Prisma.ForumCategoryUncheckedUpdateManyWithoutCommunityNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutCommunityNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutRolesInput = {
@@ -1148,6 +1175,7 @@ export type CommunityCreateWithoutRolesInput = {
   forumCategories?: Prisma.ForumCategoryCreateNestedManyWithoutCommunityInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutCommunityInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutRolesInput = {
@@ -1180,6 +1208,7 @@ export type CommunityUncheckedCreateWithoutRolesInput = {
   forumCategories?: Prisma.ForumCategoryUncheckedCreateNestedManyWithoutCommunityInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutCommunityInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutRolesInput = {
@@ -1227,6 +1256,7 @@ export type CommunityUpdateWithoutRolesInput = {
   forumCategories?: Prisma.ForumCategoryUpdateManyWithoutCommunityNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutCommunityNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutRolesInput = {
@@ -1259,6 +1289,7 @@ export type CommunityUncheckedUpdateWithoutRolesInput = {
   forumCategories?: Prisma.ForumCategoryUncheckedUpdateManyWithoutCommunityNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutCommunityNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutInvitesInput = {
@@ -1290,6 +1321,7 @@ export type CommunityCreateWithoutInvitesInput = {
   forumCategories?: Prisma.ForumCategoryCreateNestedManyWithoutCommunityInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutCommunityInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutInvitesInput = {
@@ -1322,6 +1354,7 @@ export type CommunityUncheckedCreateWithoutInvitesInput = {
   forumCategories?: Prisma.ForumCategoryUncheckedCreateNestedManyWithoutCommunityInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutCommunityInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutInvitesInput = {
@@ -1369,6 +1402,7 @@ export type CommunityUpdateWithoutInvitesInput = {
   forumCategories?: Prisma.ForumCategoryUpdateManyWithoutCommunityNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutCommunityNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutInvitesInput = {
@@ -1401,6 +1435,7 @@ export type CommunityUncheckedUpdateWithoutInvitesInput = {
   forumCategories?: Prisma.ForumCategoryUncheckedUpdateManyWithoutCommunityNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutCommunityNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutDiscordChannelInput = {
@@ -1432,6 +1467,7 @@ export type CommunityCreateWithoutDiscordChannelInput = {
   forumCategories?: Prisma.ForumCategoryCreateNestedManyWithoutCommunityInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutCommunityInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutDiscordChannelInput = {
@@ -1464,6 +1500,7 @@ export type CommunityUncheckedCreateWithoutDiscordChannelInput = {
   forumCategories?: Prisma.ForumCategoryUncheckedCreateNestedManyWithoutCommunityInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutCommunityInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutDiscordChannelInput = {
@@ -1511,6 +1548,7 @@ export type CommunityUpdateWithoutDiscordChannelInput = {
   forumCategories?: Prisma.ForumCategoryUpdateManyWithoutCommunityNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutCommunityNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutDiscordChannelInput = {
@@ -1543,6 +1581,7 @@ export type CommunityUncheckedUpdateWithoutDiscordChannelInput = {
   forumCategories?: Prisma.ForumCategoryUncheckedUpdateManyWithoutCommunityNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutCommunityNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutBansInput = {
@@ -1574,6 +1613,7 @@ export type CommunityCreateWithoutBansInput = {
   forumCategories?: Prisma.ForumCategoryCreateNestedManyWithoutCommunityInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutCommunityInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutBansInput = {
@@ -1606,6 +1646,7 @@ export type CommunityUncheckedCreateWithoutBansInput = {
   forumCategories?: Prisma.ForumCategoryUncheckedCreateNestedManyWithoutCommunityInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutCommunityInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutBansInput = {
@@ -1653,6 +1694,7 @@ export type CommunityUpdateWithoutBansInput = {
   forumCategories?: Prisma.ForumCategoryUpdateManyWithoutCommunityNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutCommunityNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutBansInput = {
@@ -1685,6 +1727,7 @@ export type CommunityUncheckedUpdateWithoutBansInput = {
   forumCategories?: Prisma.ForumCategoryUncheckedUpdateManyWithoutCommunityNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutCommunityNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutPostsInput = {
@@ -1716,6 +1759,7 @@ export type CommunityCreateWithoutPostsInput = {
   forumCategories?: Prisma.ForumCategoryCreateNestedManyWithoutCommunityInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutCommunityInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutPostsInput = {
@@ -1748,6 +1792,7 @@ export type CommunityUncheckedCreateWithoutPostsInput = {
   forumCategories?: Prisma.ForumCategoryUncheckedCreateNestedManyWithoutCommunityInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutCommunityInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutPostsInput = {
@@ -1795,6 +1840,7 @@ export type CommunityUpdateWithoutPostsInput = {
   forumCategories?: Prisma.ForumCategoryUpdateManyWithoutCommunityNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutCommunityNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutPostsInput = {
@@ -1819,6 +1865,153 @@ export type CommunityUncheckedUpdateWithoutPostsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.MembershipUncheckedUpdateManyWithoutCommunityNestedInput
   roles?: Prisma.RoleUncheckedUpdateManyWithoutCommunityNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutCommunityNestedInput
+  invites?: Prisma.InviteUncheckedUpdateManyWithoutCommunityNestedInput
+  discordChannel?: Prisma.DiscordChannelUncheckedUpdateOneWithoutCommunityNestedInput
+  forumSections?: Prisma.ForumSectionUncheckedUpdateManyWithoutCommunityNestedInput
+  bans?: Prisma.CommunityBanUncheckedUpdateManyWithoutCommunityNestedInput
+  forumCategories?: Prisma.ForumCategoryUncheckedUpdateManyWithoutCommunityNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCommunityNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutCommunityNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutCommunityNestedInput
+}
+
+export type CommunityCreateWithoutRepostsInput = {
+  name: string
+  description?: string | null
+  iconUrl?: string | null
+  coverUrl?: string | null
+  backgroundUrl?: string | null
+  twitchUserId?: string | null
+  twitchLogin?: string | null
+  showTwitchLive?: boolean
+  showTwitchClips?: boolean
+  discordGuildId?: string | null
+  discordGuildName?: string | null
+  showDiscordOnline?: boolean
+  showDiscordInvite?: boolean
+  links?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  isPublic?: boolean
+  isVerified?: boolean
+  createdAt?: Date | string
+  owner: Prisma.UserCreateNestedOneWithoutOwnedCommunitiesInput
+  memberships?: Prisma.MembershipCreateNestedManyWithoutCommunityInput
+  roles?: Prisma.RoleCreateNestedManyWithoutCommunityInput
+  posts?: Prisma.PostCreateNestedManyWithoutCommunityInput
+  comments?: Prisma.CommentCreateNestedManyWithoutCommunityInput
+  invites?: Prisma.InviteCreateNestedManyWithoutCommunityInput
+  discordChannel?: Prisma.DiscordChannelCreateNestedOneWithoutCommunityInput
+  forumSections?: Prisma.ForumSectionCreateNestedManyWithoutCommunityInput
+  bans?: Prisma.CommunityBanCreateNestedManyWithoutCommunityInput
+  forumCategories?: Prisma.ForumCategoryCreateNestedManyWithoutCommunityInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutCommunityInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutCommunityInput
+}
+
+export type CommunityUncheckedCreateWithoutRepostsInput = {
+  id?: number
+  name: string
+  description?: string | null
+  iconUrl?: string | null
+  coverUrl?: string | null
+  backgroundUrl?: string | null
+  twitchUserId?: string | null
+  twitchLogin?: string | null
+  showTwitchLive?: boolean
+  showTwitchClips?: boolean
+  discordGuildId?: string | null
+  discordGuildName?: string | null
+  showDiscordOnline?: boolean
+  showDiscordInvite?: boolean
+  links?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  ownerId: number
+  isPublic?: boolean
+  isVerified?: boolean
+  createdAt?: Date | string
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutCommunityInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutCommunityInput
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutCommunityInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutCommunityInput
+  invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCommunityInput
+  discordChannel?: Prisma.DiscordChannelUncheckedCreateNestedOneWithoutCommunityInput
+  forumSections?: Prisma.ForumSectionUncheckedCreateNestedManyWithoutCommunityInput
+  bans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutCommunityInput
+  forumCategories?: Prisma.ForumCategoryUncheckedCreateNestedManyWithoutCommunityInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCommunityInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutCommunityInput
+}
+
+export type CommunityCreateOrConnectWithoutRepostsInput = {
+  where: Prisma.CommunityWhereUniqueInput
+  create: Prisma.XOR<Prisma.CommunityCreateWithoutRepostsInput, Prisma.CommunityUncheckedCreateWithoutRepostsInput>
+}
+
+export type CommunityUpsertWithoutRepostsInput = {
+  update: Prisma.XOR<Prisma.CommunityUpdateWithoutRepostsInput, Prisma.CommunityUncheckedUpdateWithoutRepostsInput>
+  create: Prisma.XOR<Prisma.CommunityCreateWithoutRepostsInput, Prisma.CommunityUncheckedCreateWithoutRepostsInput>
+  where?: Prisma.CommunityWhereInput
+}
+
+export type CommunityUpdateToOneWithWhereWithoutRepostsInput = {
+  where?: Prisma.CommunityWhereInput
+  data: Prisma.XOR<Prisma.CommunityUpdateWithoutRepostsInput, Prisma.CommunityUncheckedUpdateWithoutRepostsInput>
+}
+
+export type CommunityUpdateWithoutRepostsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  iconUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twitchUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twitchLogin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showTwitchLive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showTwitchClips?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  discordGuildId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discordGuildName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showDiscordOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showDiscordInvite?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  links?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  owner?: Prisma.UserUpdateOneRequiredWithoutOwnedCommunitiesNestedInput
+  memberships?: Prisma.MembershipUpdateManyWithoutCommunityNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutCommunityNestedInput
+  posts?: Prisma.PostUpdateManyWithoutCommunityNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutCommunityNestedInput
+  invites?: Prisma.InviteUpdateManyWithoutCommunityNestedInput
+  discordChannel?: Prisma.DiscordChannelUpdateOneWithoutCommunityNestedInput
+  forumSections?: Prisma.ForumSectionUpdateManyWithoutCommunityNestedInput
+  bans?: Prisma.CommunityBanUpdateManyWithoutCommunityNestedInput
+  forumCategories?: Prisma.ForumCategoryUpdateManyWithoutCommunityNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutCommunityNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutCommunityNestedInput
+}
+
+export type CommunityUncheckedUpdateWithoutRepostsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  iconUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twitchUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twitchLogin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showTwitchLive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showTwitchClips?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  discordGuildId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discordGuildName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showDiscordOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showDiscordInvite?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  links?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  ownerId?: Prisma.IntFieldUpdateOperationsInput | number
+  isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutCommunityNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutCommunityNestedInput
+  posts?: Prisma.PostUncheckedUpdateManyWithoutCommunityNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutCommunityNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCommunityNestedInput
   discordChannel?: Prisma.DiscordChannelUncheckedUpdateOneWithoutCommunityNestedInput
@@ -1858,6 +2051,7 @@ export type CommunityCreateWithoutCommentsInput = {
   forumCategories?: Prisma.ForumCategoryCreateNestedManyWithoutCommunityInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutCommunityInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutCommentsInput = {
@@ -1890,6 +2084,7 @@ export type CommunityUncheckedCreateWithoutCommentsInput = {
   forumCategories?: Prisma.ForumCategoryUncheckedCreateNestedManyWithoutCommunityInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutCommunityInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutCommentsInput = {
@@ -1937,6 +2132,7 @@ export type CommunityUpdateWithoutCommentsInput = {
   forumCategories?: Prisma.ForumCategoryUpdateManyWithoutCommunityNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutCommunityNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutCommentsInput = {
@@ -1969,6 +2165,7 @@ export type CommunityUncheckedUpdateWithoutCommentsInput = {
   forumCategories?: Prisma.ForumCategoryUncheckedUpdateManyWithoutCommunityNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutCommunityNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutForumSectionsInput = {
@@ -2000,6 +2197,7 @@ export type CommunityCreateWithoutForumSectionsInput = {
   forumCategories?: Prisma.ForumCategoryCreateNestedManyWithoutCommunityInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutCommunityInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutForumSectionsInput = {
@@ -2032,6 +2230,7 @@ export type CommunityUncheckedCreateWithoutForumSectionsInput = {
   forumCategories?: Prisma.ForumCategoryUncheckedCreateNestedManyWithoutCommunityInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutCommunityInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutForumSectionsInput = {
@@ -2079,6 +2278,7 @@ export type CommunityUpdateWithoutForumSectionsInput = {
   forumCategories?: Prisma.ForumCategoryUpdateManyWithoutCommunityNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutCommunityNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutForumSectionsInput = {
@@ -2111,6 +2311,7 @@ export type CommunityUncheckedUpdateWithoutForumSectionsInput = {
   forumCategories?: Prisma.ForumCategoryUncheckedUpdateManyWithoutCommunityNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutCommunityNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutForumCategoriesInput = {
@@ -2142,6 +2343,7 @@ export type CommunityCreateWithoutForumCategoriesInput = {
   bans?: Prisma.CommunityBanCreateNestedManyWithoutCommunityInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutCommunityInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutForumCategoriesInput = {
@@ -2174,6 +2376,7 @@ export type CommunityUncheckedCreateWithoutForumCategoriesInput = {
   bans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutCommunityInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutCommunityInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutForumCategoriesInput = {
@@ -2221,6 +2424,7 @@ export type CommunityUpdateWithoutForumCategoriesInput = {
   bans?: Prisma.CommunityBanUpdateManyWithoutCommunityNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutCommunityNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutForumCategoriesInput = {
@@ -2253,6 +2457,7 @@ export type CommunityUncheckedUpdateWithoutForumCategoriesInput = {
   bans?: Prisma.CommunityBanUncheckedUpdateManyWithoutCommunityNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutCommunityNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutForumThreadsInput = {
@@ -2284,6 +2489,7 @@ export type CommunityCreateWithoutForumThreadsInput = {
   bans?: Prisma.CommunityBanCreateNestedManyWithoutCommunityInput
   forumCategories?: Prisma.ForumCategoryCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutCommunityInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutForumThreadsInput = {
@@ -2316,6 +2522,7 @@ export type CommunityUncheckedCreateWithoutForumThreadsInput = {
   bans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutCommunityInput
   forumCategories?: Prisma.ForumCategoryUncheckedCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutCommunityInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutForumThreadsInput = {
@@ -2363,6 +2570,7 @@ export type CommunityUpdateWithoutForumThreadsInput = {
   bans?: Prisma.CommunityBanUpdateManyWithoutCommunityNestedInput
   forumCategories?: Prisma.ForumCategoryUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutCommunityNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutForumThreadsInput = {
@@ -2395,6 +2603,7 @@ export type CommunityUncheckedUpdateWithoutForumThreadsInput = {
   bans?: Prisma.CommunityBanUncheckedUpdateManyWithoutCommunityNestedInput
   forumCategories?: Prisma.ForumCategoryUncheckedUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutCommunityNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutForumPostsInput = {
@@ -2426,6 +2635,7 @@ export type CommunityCreateWithoutForumPostsInput = {
   bans?: Prisma.CommunityBanCreateNestedManyWithoutCommunityInput
   forumCategories?: Prisma.ForumCategoryCreateNestedManyWithoutCommunityInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutCommunityInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutForumPostsInput = {
@@ -2458,6 +2668,7 @@ export type CommunityUncheckedCreateWithoutForumPostsInput = {
   bans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutCommunityInput
   forumCategories?: Prisma.ForumCategoryUncheckedCreateNestedManyWithoutCommunityInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCommunityInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutForumPostsInput = {
@@ -2505,6 +2716,7 @@ export type CommunityUpdateWithoutForumPostsInput = {
   bans?: Prisma.CommunityBanUpdateManyWithoutCommunityNestedInput
   forumCategories?: Prisma.ForumCategoryUpdateManyWithoutCommunityNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutCommunityNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutForumPostsInput = {
@@ -2537,6 +2749,7 @@ export type CommunityUncheckedUpdateWithoutForumPostsInput = {
   bans?: Prisma.CommunityBanUncheckedUpdateManyWithoutCommunityNestedInput
   forumCategories?: Prisma.ForumCategoryUncheckedUpdateManyWithoutCommunityNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCommunityNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutOwnerInput = {
@@ -2568,6 +2781,7 @@ export type CommunityCreateWithoutOwnerInput = {
   forumCategories?: Prisma.ForumCategoryCreateNestedManyWithoutCommunityInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutCommunityInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutOwnerInput = {
@@ -2600,6 +2814,7 @@ export type CommunityUncheckedCreateWithoutOwnerInput = {
   forumCategories?: Prisma.ForumCategoryUncheckedCreateNestedManyWithoutCommunityInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutCommunityInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutOwnerInput = {
@@ -2703,6 +2918,7 @@ export type CommunityUpdateWithoutOwnerInput = {
   forumCategories?: Prisma.ForumCategoryUpdateManyWithoutCommunityNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutCommunityNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutOwnerInput = {
@@ -2735,6 +2951,7 @@ export type CommunityUncheckedUpdateWithoutOwnerInput = {
   forumCategories?: Prisma.ForumCategoryUncheckedUpdateManyWithoutCommunityNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutCommunityNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateManyWithoutOwnerInput = {
@@ -2774,6 +2991,7 @@ export type CommunityCountOutputType = {
   forumCategories: number
   forumThreads: number
   forumPosts: number
+  reposts: number
 }
 
 export type CommunityCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2787,6 +3005,7 @@ export type CommunityCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensi
   forumCategories?: boolean | CommunityCountOutputTypeCountForumCategoriesArgs
   forumThreads?: boolean | CommunityCountOutputTypeCountForumThreadsArgs
   forumPosts?: boolean | CommunityCountOutputTypeCountForumPostsArgs
+  reposts?: boolean | CommunityCountOutputTypeCountRepostsArgs
 }
 
 /**
@@ -2869,6 +3088,13 @@ export type CommunityCountOutputTypeCountForumPostsArgs<ExtArgs extends runtime.
   where?: Prisma.ForumPostWhereInput
 }
 
+/**
+ * CommunityCountOutputType without action
+ */
+export type CommunityCountOutputTypeCountRepostsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.RepostWhereInput
+}
+
 
 export type CommunitySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2902,6 +3128,7 @@ export type CommunitySelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   forumCategories?: boolean | Prisma.Community$forumCategoriesArgs<ExtArgs>
   forumThreads?: boolean | Prisma.Community$forumThreadsArgs<ExtArgs>
   forumPosts?: boolean | Prisma.Community$forumPostsArgs<ExtArgs>
+  reposts?: boolean | Prisma.Community$repostsArgs<ExtArgs>
   _count?: boolean | Prisma.CommunityCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["community"]>
 
@@ -2987,6 +3214,7 @@ export type CommunityInclude<ExtArgs extends runtime.Types.Extensions.InternalAr
   forumCategories?: boolean | Prisma.Community$forumCategoriesArgs<ExtArgs>
   forumThreads?: boolean | Prisma.Community$forumThreadsArgs<ExtArgs>
   forumPosts?: boolean | Prisma.Community$forumPostsArgs<ExtArgs>
+  reposts?: boolean | Prisma.Community$repostsArgs<ExtArgs>
   _count?: boolean | Prisma.CommunityCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type CommunityIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3011,6 +3239,7 @@ export type $CommunityPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     forumCategories: Prisma.$ForumCategoryPayload<ExtArgs>[]
     forumThreads: Prisma.$ForumThreadPayload<ExtArgs>[]
     forumPosts: Prisma.$ForumPostPayload<ExtArgs>[]
+    reposts: Prisma.$RepostPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -3438,6 +3667,7 @@ export interface Prisma__CommunityClient<T, Null = never, ExtArgs extends runtim
   forumCategories<T extends Prisma.Community$forumCategoriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Community$forumCategoriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ForumCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   forumThreads<T extends Prisma.Community$forumThreadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Community$forumThreadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ForumThreadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   forumPosts<T extends Prisma.Community$forumPostsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Community$forumPostsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ForumPostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reposts<T extends Prisma.Community$repostsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Community$repostsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RepostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4138,6 +4368,30 @@ export type Community$forumPostsArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.ForumPostScalarFieldEnum | Prisma.ForumPostScalarFieldEnum[]
+}
+
+/**
+ * Community.reposts
+ */
+export type Community$repostsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Repost
+   */
+  select?: Prisma.RepostSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Repost
+   */
+  omit?: Prisma.RepostOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RepostInclude<ExtArgs> | null
+  where?: Prisma.RepostWhereInput
+  orderBy?: Prisma.RepostOrderByWithRelationInput | Prisma.RepostOrderByWithRelationInput[]
+  cursor?: Prisma.RepostWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.RepostScalarFieldEnum | Prisma.RepostScalarFieldEnum[]
 }
 
 /**

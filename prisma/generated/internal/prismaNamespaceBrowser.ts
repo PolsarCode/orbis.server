@@ -61,6 +61,7 @@ export const ModelName = {
   DiscordMessage: 'DiscordMessage',
   CommunityBan: 'CommunityBan',
   Post: 'Post',
+  Repost: 'Repost',
   Comment: 'Comment',
   Like: 'Like',
   Bookmark: 'Bookmark',
@@ -252,10 +253,25 @@ export const PostScalarFieldEnum = {
   editedAt: 'editedAt',
   pinnedAt: 'pinnedAt',
   forumThreadId: 'forumThreadId',
+  isQuote: 'isQuote',
+  quotePostId: 'quotePostId',
+  quoteActivityId: 'quoteActivityId',
   createdAt: 'createdAt'
 } as const
 
 export type PostScalarFieldEnum = (typeof PostScalarFieldEnum)[keyof typeof PostScalarFieldEnum]
+
+
+export const RepostScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  postId: 'postId',
+  activityId: 'activityId',
+  communityId: 'communityId',
+  createdAt: 'createdAt'
+} as const
+
+export type RepostScalarFieldEnum = (typeof RepostScalarFieldEnum)[keyof typeof RepostScalarFieldEnum]
 
 
 export const CommentScalarFieldEnum = {

@@ -442,6 +442,7 @@ export type UserWhereInput = {
   railFolders?: Prisma.RailFolderListRelationFilter
   likes?: Prisma.LikeListRelationFilter
   bookmarks?: Prisma.BookmarkListRelationFilter
+  reposts?: Prisma.RepostListRelationFilter
   invites?: Prisma.InviteListRelationFilter
   createdConversations?: Prisma.ConversationListRelationFilter
   conversationsAsA?: Prisma.ConversationListRelationFilter
@@ -516,6 +517,7 @@ export type UserOrderByWithRelationInput = {
   railFolders?: Prisma.RailFolderOrderByRelationAggregateInput
   likes?: Prisma.LikeOrderByRelationAggregateInput
   bookmarks?: Prisma.BookmarkOrderByRelationAggregateInput
+  reposts?: Prisma.RepostOrderByRelationAggregateInput
   invites?: Prisma.InviteOrderByRelationAggregateInput
   createdConversations?: Prisma.ConversationOrderByRelationAggregateInput
   conversationsAsA?: Prisma.ConversationOrderByRelationAggregateInput
@@ -593,6 +595,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   railFolders?: Prisma.RailFolderListRelationFilter
   likes?: Prisma.LikeListRelationFilter
   bookmarks?: Prisma.BookmarkListRelationFilter
+  reposts?: Prisma.RepostListRelationFilter
   invites?: Prisma.InviteListRelationFilter
   createdConversations?: Prisma.ConversationListRelationFilter
   conversationsAsA?: Prisma.ConversationListRelationFilter
@@ -740,6 +743,7 @@ export type UserCreateInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -814,6 +818,7 @@ export type UserUncheckedCreateInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -887,6 +892,7 @@ export type UserUpdateInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -961,6 +967,7 @@ export type UserUncheckedUpdateInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -1313,6 +1320,20 @@ export type UserUpdateOneRequiredWithoutPostsNestedInput = {
   upsert?: Prisma.UserUpsertWithoutPostsInput
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPostsInput, Prisma.UserUpdateWithoutPostsInput>, Prisma.UserUncheckedUpdateWithoutPostsInput>
+}
+
+export type UserCreateNestedOneWithoutRepostsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutRepostsInput, Prisma.UserUncheckedCreateWithoutRepostsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutRepostsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutRepostsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutRepostsInput, Prisma.UserUncheckedCreateWithoutRepostsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutRepostsInput
+  upsert?: Prisma.UserUpsertWithoutRepostsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutRepostsInput, Prisma.UserUpdateWithoutRepostsInput>, Prisma.UserUncheckedUpdateWithoutRepostsInput>
 }
 
 export type UserCreateNestedOneWithoutCommentsInput = {
@@ -1870,6 +1891,7 @@ export type UserCreateWithoutOwnedCommunitiesInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -1943,6 +1965,7 @@ export type UserUncheckedCreateWithoutOwnedCommunitiesInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -2031,6 +2054,7 @@ export type UserUpdateWithoutOwnedCommunitiesInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -2104,6 +2128,7 @@ export type UserUncheckedUpdateWithoutOwnedCommunitiesInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -2176,6 +2201,7 @@ export type UserCreateWithoutMembershipsInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -2249,6 +2275,7 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -2337,6 +2364,7 @@ export type UserUpdateWithoutMembershipsInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -2410,6 +2438,7 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -2482,6 +2511,7 @@ export type UserCreateWithoutRailFoldersInput = {
   steamGames?: Prisma.SteamGameCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -2555,6 +2585,7 @@ export type UserUncheckedCreateWithoutRailFoldersInput = {
   steamGames?: Prisma.SteamGameUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -2643,6 +2674,7 @@ export type UserUpdateWithoutRailFoldersInput = {
   steamGames?: Prisma.SteamGameUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -2716,6 +2748,7 @@ export type UserUncheckedUpdateWithoutRailFoldersInput = {
   steamGames?: Prisma.SteamGameUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -2789,6 +2822,7 @@ export type UserCreateWithoutInvitesInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
   conversationsAsB?: Prisma.ConversationCreateNestedManyWithoutUserBInput
@@ -2862,6 +2896,7 @@ export type UserUncheckedCreateWithoutInvitesInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
   conversationsAsB?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserBInput
@@ -2950,6 +2985,7 @@ export type UserUpdateWithoutInvitesInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
   conversationsAsB?: Prisma.ConversationUpdateManyWithoutUserBNestedInput
@@ -3023,6 +3059,7 @@ export type UserUncheckedUpdateWithoutInvitesInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
   conversationsAsB?: Prisma.ConversationUncheckedUpdateManyWithoutUserBNestedInput
@@ -3094,6 +3131,7 @@ export type UserCreateWithoutCommunityBansInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -3167,6 +3205,7 @@ export type UserUncheckedCreateWithoutCommunityBansInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -3244,6 +3283,7 @@ export type UserCreateWithoutIssuedCommunityBansInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -3317,6 +3357,7 @@ export type UserUncheckedCreateWithoutIssuedCommunityBansInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -3405,6 +3446,7 @@ export type UserUpdateWithoutCommunityBansInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -3478,6 +3520,7 @@ export type UserUncheckedUpdateWithoutCommunityBansInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -3561,6 +3604,7 @@ export type UserUpdateWithoutIssuedCommunityBansInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -3634,6 +3678,7 @@ export type UserUncheckedUpdateWithoutIssuedCommunityBansInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -3706,6 +3751,7 @@ export type UserCreateWithoutWallPostsInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -3779,6 +3825,7 @@ export type UserUncheckedCreateWithoutWallPostsInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -3856,6 +3903,7 @@ export type UserCreateWithoutPostsInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -3929,6 +3977,7 @@ export type UserUncheckedCreateWithoutPostsInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -4017,6 +4066,7 @@ export type UserUpdateWithoutWallPostsInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -4090,6 +4140,7 @@ export type UserUncheckedUpdateWithoutWallPostsInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -4173,6 +4224,7 @@ export type UserUpdateWithoutPostsInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -4223,6 +4275,317 @@ export type UserUncheckedUpdateWithoutPostsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ownedCommunities?: Prisma.CommunityUncheckedUpdateManyWithoutOwnerNestedInput
   memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
+  wallPosts?: Prisma.PostUncheckedUpdateManyWithoutWallUserNestedInput
+  sentFriendships?: Prisma.FriendshipUncheckedUpdateManyWithoutRequesterNestedInput
+  receivedFriendships?: Prisma.FriendshipUncheckedUpdateManyWithoutAddresseeNestedInput
+  suggestionDismissals?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutUserNestedInput
+  dismissedBy?: Prisma.SuggestionDismissalUncheckedUpdateManyWithoutDismissedUserNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedUpdateManyWithoutBannedByNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutAuthorNestedInput
+  reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput
+  assignedReports?: Prisma.ReportUncheckedUpdateManyWithoutAssigneeNestedInput
+  reportComments?: Prisma.ReportCommentUncheckedUpdateManyWithoutAuthorNestedInput
+  contentReports?: Prisma.ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+  resolvedReports?: Prisma.ContentReportUncheckedUpdateManyWithoutResolvedByNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  causedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput
+  libraryEntries?: Prisma.LibraryEntryUncheckedUpdateManyWithoutUserNestedInput
+  steamAccount?: Prisma.SteamAccountUncheckedUpdateOneWithoutUserNestedInput
+  steamGames?: Prisma.SteamGameUncheckedUpdateManyWithoutUserNestedInput
+  railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
+  bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
+  invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
+  createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
+  conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
+  conversationsAsB?: Prisma.ConversationUncheckedUpdateManyWithoutUserBNestedInput
+  conversations?: Prisma.ConversationMemberUncheckedUpdateManyWithoutUserNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  oauthAccounts?: Prisma.OAuthAccountUncheckedUpdateManyWithoutUserNestedInput
+  messageReactions?: Prisma.MessageReactionUncheckedUpdateManyWithoutUserNestedInput
+  hashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutAuthorNestedInput
+  hashtagFollows?: Prisma.HashtagFollowUncheckedUpdateManyWithoutUserNestedInput
+  blocksMade?: Prisma.BlockUncheckedUpdateManyWithoutBlockerNestedInput
+  blocksReceived?: Prisma.BlockUncheckedUpdateManyWithoutBlockedNestedInput
+  mutesMade?: Prisma.MuteUncheckedUpdateManyWithoutMuterNestedInput
+  mutesReceived?: Prisma.MuteUncheckedUpdateManyWithoutMutedNestedInput
+  keywordFilters?: Prisma.KeywordFilterUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutRepostsInput = {
+  email: string
+  username: string
+  name?: string | null
+  avatarUrl?: string | null
+  coverUrl?: string | null
+  backgroundUrl?: string | null
+  password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
+  emailVerifiedAt?: Date | string | null
+  theme?: $Enums.Theme
+  appearOffline?: boolean
+  showNsfw?: boolean
+  showChangelog?: boolean
+  status?: $Enums.UserStatus
+  isPublic?: boolean
+  isAdmin?: boolean
+  isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
+  tourCompletedAt?: Date | string | null
+  checklistDismissedAt?: Date | string | null
+  completedTours?: Prisma.UserCreatecompletedToursInput | string[]
+  createdAt?: Date | string
+  ownedCommunities?: Prisma.CommunityCreateNestedManyWithoutOwnerInput
+  memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
+  posts?: Prisma.PostCreateNestedManyWithoutAuthorInput
+  wallPosts?: Prisma.PostCreateNestedManyWithoutWallUserInput
+  sentFriendships?: Prisma.FriendshipCreateNestedManyWithoutRequesterInput
+  receivedFriendships?: Prisma.FriendshipCreateNestedManyWithoutAddresseeInput
+  suggestionDismissals?: Prisma.SuggestionDismissalCreateNestedManyWithoutUserInput
+  dismissedBy?: Prisma.SuggestionDismissalCreateNestedManyWithoutDismissedUserInput
+  comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanCreateNestedManyWithoutBannedByInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutAuthorInput
+  reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput
+  assignedReports?: Prisma.ReportCreateNestedManyWithoutAssigneeInput
+  reportComments?: Prisma.ReportCommentCreateNestedManyWithoutAuthorInput
+  contentReports?: Prisma.ContentReportCreateNestedManyWithoutReporterInput
+  resolvedReports?: Prisma.ContentReportCreateNestedManyWithoutResolvedByInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  causedNotifications?: Prisma.NotificationCreateNestedManyWithoutActorInput
+  libraryEntries?: Prisma.LibraryEntryCreateNestedManyWithoutUserInput
+  steamAccount?: Prisma.SteamAccountCreateNestedOneWithoutUserInput
+  steamGames?: Prisma.SteamGameCreateNestedManyWithoutUserInput
+  railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
+  likes?: Prisma.LikeCreateNestedManyWithoutUserInput
+  bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
+  createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
+  conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
+  conversationsAsB?: Prisma.ConversationCreateNestedManyWithoutUserBInput
+  conversations?: Prisma.ConversationMemberCreateNestedManyWithoutUserInput
+  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  oauthAccounts?: Prisma.OAuthAccountCreateNestedManyWithoutUserInput
+  messageReactions?: Prisma.MessageReactionCreateNestedManyWithoutUserInput
+  hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutAuthorInput
+  hashtagFollows?: Prisma.HashtagFollowCreateNestedManyWithoutUserInput
+  blocksMade?: Prisma.BlockCreateNestedManyWithoutBlockerInput
+  blocksReceived?: Prisma.BlockCreateNestedManyWithoutBlockedInput
+  mutesMade?: Prisma.MuteCreateNestedManyWithoutMuterInput
+  mutesReceived?: Prisma.MuteCreateNestedManyWithoutMutedInput
+  keywordFilters?: Prisma.KeywordFilterCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutRepostsInput = {
+  id?: number
+  email: string
+  username: string
+  name?: string | null
+  avatarUrl?: string | null
+  coverUrl?: string | null
+  backgroundUrl?: string | null
+  password?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabledAt?: Date | string | null
+  twoFactorCodes?: Prisma.UserCreatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: number | null
+  emailVerifiedAt?: Date | string | null
+  theme?: $Enums.Theme
+  appearOffline?: boolean
+  showNsfw?: boolean
+  showChangelog?: boolean
+  status?: $Enums.UserStatus
+  isPublic?: boolean
+  isAdmin?: boolean
+  isVerified?: boolean
+  suspendedAt?: Date | string | null
+  suspendedUntil?: Date | string | null
+  suspensionReason?: string | null
+  suggestionSlots?: number
+  suggestionSlotsAt?: Date | string | null
+  tourCompletedAt?: Date | string | null
+  checklistDismissedAt?: Date | string | null
+  completedTours?: Prisma.UserCreatecompletedToursInput | string[]
+  createdAt?: Date | string
+  ownedCommunities?: Prisma.CommunityUncheckedCreateNestedManyWithoutOwnerInput
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput
+  wallPosts?: Prisma.PostUncheckedCreateNestedManyWithoutWallUserInput
+  sentFriendships?: Prisma.FriendshipUncheckedCreateNestedManyWithoutRequesterInput
+  receivedFriendships?: Prisma.FriendshipUncheckedCreateNestedManyWithoutAddresseeInput
+  suggestionDismissals?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutUserInput
+  dismissedBy?: Prisma.SuggestionDismissalUncheckedCreateNestedManyWithoutDismissedUserInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutAuthorInput
+  communityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutUserInput
+  issuedCommunityBans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutBannedByInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutAuthorInput
+  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput
+  assignedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutAssigneeInput
+  reportComments?: Prisma.ReportCommentUncheckedCreateNestedManyWithoutAuthorInput
+  contentReports?: Prisma.ContentReportUncheckedCreateNestedManyWithoutReporterInput
+  resolvedReports?: Prisma.ContentReportUncheckedCreateNestedManyWithoutResolvedByInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  causedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput
+  libraryEntries?: Prisma.LibraryEntryUncheckedCreateNestedManyWithoutUserInput
+  steamAccount?: Prisma.SteamAccountUncheckedCreateNestedOneWithoutUserInput
+  steamGames?: Prisma.SteamGameUncheckedCreateNestedManyWithoutUserInput
+  railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
+  bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
+  createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
+  conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
+  conversationsAsB?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserBInput
+  conversations?: Prisma.ConversationMemberUncheckedCreateNestedManyWithoutUserInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  oauthAccounts?: Prisma.OAuthAccountUncheckedCreateNestedManyWithoutUserInput
+  messageReactions?: Prisma.MessageReactionUncheckedCreateNestedManyWithoutUserInput
+  hashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutAuthorInput
+  hashtagFollows?: Prisma.HashtagFollowUncheckedCreateNestedManyWithoutUserInput
+  blocksMade?: Prisma.BlockUncheckedCreateNestedManyWithoutBlockerInput
+  blocksReceived?: Prisma.BlockUncheckedCreateNestedManyWithoutBlockedInput
+  mutesMade?: Prisma.MuteUncheckedCreateNestedManyWithoutMuterInput
+  mutesReceived?: Prisma.MuteUncheckedCreateNestedManyWithoutMutedInput
+  keywordFilters?: Prisma.KeywordFilterUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutRepostsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutRepostsInput, Prisma.UserUncheckedCreateWithoutRepostsInput>
+}
+
+export type UserUpsertWithoutRepostsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutRepostsInput, Prisma.UserUncheckedUpdateWithoutRepostsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutRepostsInput, Prisma.UserUncheckedCreateWithoutRepostsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutRepostsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutRepostsInput, Prisma.UserUncheckedUpdateWithoutRepostsInput>
+}
+
+export type UserUpdateWithoutRepostsInput = {
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
+  appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showNsfw?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showChangelog?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ownedCommunities?: Prisma.CommunityUpdateManyWithoutOwnerNestedInput
+  memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
+  posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput
+  wallPosts?: Prisma.PostUpdateManyWithoutWallUserNestedInput
+  sentFriendships?: Prisma.FriendshipUpdateManyWithoutRequesterNestedInput
+  receivedFriendships?: Prisma.FriendshipUpdateManyWithoutAddresseeNestedInput
+  suggestionDismissals?: Prisma.SuggestionDismissalUpdateManyWithoutUserNestedInput
+  dismissedBy?: Prisma.SuggestionDismissalUpdateManyWithoutDismissedUserNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutAuthorNestedInput
+  communityBans?: Prisma.CommunityBanUpdateManyWithoutUserNestedInput
+  issuedCommunityBans?: Prisma.CommunityBanUpdateManyWithoutBannedByNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutAuthorNestedInput
+  reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput
+  assignedReports?: Prisma.ReportUpdateManyWithoutAssigneeNestedInput
+  reportComments?: Prisma.ReportCommentUpdateManyWithoutAuthorNestedInput
+  contentReports?: Prisma.ContentReportUpdateManyWithoutReporterNestedInput
+  resolvedReports?: Prisma.ContentReportUpdateManyWithoutResolvedByNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  causedNotifications?: Prisma.NotificationUpdateManyWithoutActorNestedInput
+  libraryEntries?: Prisma.LibraryEntryUpdateManyWithoutUserNestedInput
+  steamAccount?: Prisma.SteamAccountUpdateOneWithoutUserNestedInput
+  steamGames?: Prisma.SteamGameUpdateManyWithoutUserNestedInput
+  railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
+  bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
+  createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
+  conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
+  conversationsAsB?: Prisma.ConversationUpdateManyWithoutUserBNestedInput
+  conversations?: Prisma.ConversationMemberUpdateManyWithoutUserNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  oauthAccounts?: Prisma.OAuthAccountUpdateManyWithoutUserNestedInput
+  messageReactions?: Prisma.MessageReactionUpdateManyWithoutUserNestedInput
+  hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutAuthorNestedInput
+  hashtagFollows?: Prisma.HashtagFollowUpdateManyWithoutUserNestedInput
+  blocksMade?: Prisma.BlockUpdateManyWithoutBlockerNestedInput
+  blocksReceived?: Prisma.BlockUpdateManyWithoutBlockedNestedInput
+  mutesMade?: Prisma.MuteUpdateManyWithoutMuterNestedInput
+  mutesReceived?: Prisma.MuteUpdateManyWithoutMutedNestedInput
+  keywordFilters?: Prisma.KeywordFilterUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutRepostsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorCodes?: Prisma.UserUpdatetwoFactorCodesInput | string[]
+  twoFactorLastStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
+  appearOffline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showNsfw?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showChangelog?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suggestionSlots?: Prisma.IntFieldUpdateOperationsInput | number
+  suggestionSlotsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tourCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  checklistDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedTours?: Prisma.UserUpdatecompletedToursInput | string[]
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ownedCommunities?: Prisma.CommunityUncheckedUpdateManyWithoutOwnerNestedInput
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
+  posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput
   wallPosts?: Prisma.PostUncheckedUpdateManyWithoutWallUserNestedInput
   sentFriendships?: Prisma.FriendshipUncheckedUpdateManyWithoutRequesterNestedInput
   receivedFriendships?: Prisma.FriendshipUncheckedUpdateManyWithoutAddresseeNestedInput
@@ -4318,6 +4681,7 @@ export type UserCreateWithoutCommentsInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -4391,6 +4755,7 @@ export type UserUncheckedCreateWithoutCommentsInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -4479,6 +4844,7 @@ export type UserUpdateWithoutCommentsInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -4552,6 +4918,7 @@ export type UserUncheckedUpdateWithoutCommentsInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -4624,6 +4991,7 @@ export type UserCreateWithoutLikesInput = {
   steamGames?: Prisma.SteamGameCreateNestedManyWithoutUserInput
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -4697,6 +5065,7 @@ export type UserUncheckedCreateWithoutLikesInput = {
   steamGames?: Prisma.SteamGameUncheckedCreateNestedManyWithoutUserInput
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -4785,6 +5154,7 @@ export type UserUpdateWithoutLikesInput = {
   steamGames?: Prisma.SteamGameUpdateManyWithoutUserNestedInput
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -4858,6 +5228,7 @@ export type UserUncheckedUpdateWithoutLikesInput = {
   steamGames?: Prisma.SteamGameUncheckedUpdateManyWithoutUserNestedInput
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -4930,6 +5301,7 @@ export type UserCreateWithoutBookmarksInput = {
   steamGames?: Prisma.SteamGameCreateNestedManyWithoutUserInput
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -5003,6 +5375,7 @@ export type UserUncheckedCreateWithoutBookmarksInput = {
   steamGames?: Prisma.SteamGameUncheckedCreateNestedManyWithoutUserInput
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -5091,6 +5464,7 @@ export type UserUpdateWithoutBookmarksInput = {
   steamGames?: Prisma.SteamGameUpdateManyWithoutUserNestedInput
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -5164,6 +5538,7 @@ export type UserUncheckedUpdateWithoutBookmarksInput = {
   steamGames?: Prisma.SteamGameUncheckedUpdateManyWithoutUserNestedInput
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -5236,6 +5611,7 @@ export type UserCreateWithoutForumThreadsInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -5309,6 +5685,7 @@ export type UserUncheckedCreateWithoutForumThreadsInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -5397,6 +5774,7 @@ export type UserUpdateWithoutForumThreadsInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -5470,6 +5848,7 @@ export type UserUncheckedUpdateWithoutForumThreadsInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -5542,6 +5921,7 @@ export type UserCreateWithoutForumPostsInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -5615,6 +5995,7 @@ export type UserUncheckedCreateWithoutForumPostsInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -5703,6 +6084,7 @@ export type UserUpdateWithoutForumPostsInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -5776,6 +6158,7 @@ export type UserUncheckedUpdateWithoutForumPostsInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -5848,6 +6231,7 @@ export type UserCreateWithoutSentFriendshipsInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -5921,6 +6305,7 @@ export type UserUncheckedCreateWithoutSentFriendshipsInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -5998,6 +6383,7 @@ export type UserCreateWithoutReceivedFriendshipsInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -6071,6 +6457,7 @@ export type UserUncheckedCreateWithoutReceivedFriendshipsInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -6159,6 +6546,7 @@ export type UserUpdateWithoutSentFriendshipsInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -6232,6 +6620,7 @@ export type UserUncheckedUpdateWithoutSentFriendshipsInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -6315,6 +6704,7 @@ export type UserUpdateWithoutReceivedFriendshipsInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -6388,6 +6778,7 @@ export type UserUncheckedUpdateWithoutReceivedFriendshipsInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -6460,6 +6851,7 @@ export type UserCreateWithoutSuggestionDismissalsInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -6533,6 +6925,7 @@ export type UserUncheckedCreateWithoutSuggestionDismissalsInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -6610,6 +7003,7 @@ export type UserCreateWithoutDismissedByInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -6683,6 +7077,7 @@ export type UserUncheckedCreateWithoutDismissedByInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -6771,6 +7166,7 @@ export type UserUpdateWithoutSuggestionDismissalsInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -6844,6 +7240,7 @@ export type UserUncheckedUpdateWithoutSuggestionDismissalsInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -6927,6 +7324,7 @@ export type UserUpdateWithoutDismissedByInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -7000,6 +7398,7 @@ export type UserUncheckedUpdateWithoutDismissedByInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -7073,6 +7472,7 @@ export type UserCreateWithoutHashtagUsagesInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -7146,6 +7546,7 @@ export type UserUncheckedCreateWithoutHashtagUsagesInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -7234,6 +7635,7 @@ export type UserUpdateWithoutHashtagUsagesInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -7307,6 +7709,7 @@ export type UserUncheckedUpdateWithoutHashtagUsagesInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -7379,6 +7782,7 @@ export type UserCreateWithoutHashtagFollowsInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -7452,6 +7856,7 @@ export type UserUncheckedCreateWithoutHashtagFollowsInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -7540,6 +7945,7 @@ export type UserUpdateWithoutHashtagFollowsInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -7613,6 +8019,7 @@ export type UserUncheckedUpdateWithoutHashtagFollowsInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -7684,6 +8091,7 @@ export type UserCreateWithoutLibraryEntriesInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -7757,6 +8165,7 @@ export type UserUncheckedCreateWithoutLibraryEntriesInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -7845,6 +8254,7 @@ export type UserUpdateWithoutLibraryEntriesInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -7918,6 +8328,7 @@ export type UserUncheckedUpdateWithoutLibraryEntriesInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -7991,6 +8402,7 @@ export type UserCreateWithoutCreatedConversationsInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
   conversationsAsB?: Prisma.ConversationCreateNestedManyWithoutUserBInput
@@ -8064,6 +8476,7 @@ export type UserUncheckedCreateWithoutCreatedConversationsInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
   conversationsAsB?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserBInput
@@ -8141,6 +8554,7 @@ export type UserCreateWithoutConversationsAsAInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsB?: Prisma.ConversationCreateNestedManyWithoutUserBInput
@@ -8214,6 +8628,7 @@ export type UserUncheckedCreateWithoutConversationsAsAInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsB?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserBInput
@@ -8291,6 +8706,7 @@ export type UserCreateWithoutConversationsAsBInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -8364,6 +8780,7 @@ export type UserUncheckedCreateWithoutConversationsAsBInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -8452,6 +8869,7 @@ export type UserUpdateWithoutCreatedConversationsInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
   conversationsAsB?: Prisma.ConversationUpdateManyWithoutUserBNestedInput
@@ -8525,6 +8943,7 @@ export type UserUncheckedUpdateWithoutCreatedConversationsInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
   conversationsAsB?: Prisma.ConversationUncheckedUpdateManyWithoutUserBNestedInput
@@ -8608,6 +9027,7 @@ export type UserUpdateWithoutConversationsAsAInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsB?: Prisma.ConversationUpdateManyWithoutUserBNestedInput
@@ -8681,6 +9101,7 @@ export type UserUncheckedUpdateWithoutConversationsAsAInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsB?: Prisma.ConversationUncheckedUpdateManyWithoutUserBNestedInput
@@ -8764,6 +9185,7 @@ export type UserUpdateWithoutConversationsAsBInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -8837,6 +9259,7 @@ export type UserUncheckedUpdateWithoutConversationsAsBInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -8909,6 +9332,7 @@ export type UserCreateWithoutConversationsInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -8982,6 +9406,7 @@ export type UserUncheckedCreateWithoutConversationsInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -9070,6 +9495,7 @@ export type UserUpdateWithoutConversationsInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -9143,6 +9569,7 @@ export type UserUncheckedUpdateWithoutConversationsInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -9215,6 +9642,7 @@ export type UserCreateWithoutMessagesInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -9288,6 +9716,7 @@ export type UserUncheckedCreateWithoutMessagesInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -9376,6 +9805,7 @@ export type UserUpdateWithoutMessagesInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -9449,6 +9879,7 @@ export type UserUncheckedUpdateWithoutMessagesInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -9521,6 +9952,7 @@ export type UserCreateWithoutMessageReactionsInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -9594,6 +10026,7 @@ export type UserUncheckedCreateWithoutMessageReactionsInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -9682,6 +10115,7 @@ export type UserUpdateWithoutMessageReactionsInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -9755,6 +10189,7 @@ export type UserUncheckedUpdateWithoutMessageReactionsInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -9826,6 +10261,7 @@ export type UserCreateWithoutNotificationsInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -9899,6 +10335,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -9976,6 +10413,7 @@ export type UserCreateWithoutCausedNotificationsInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -10049,6 +10487,7 @@ export type UserUncheckedCreateWithoutCausedNotificationsInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -10137,6 +10576,7 @@ export type UserUpdateWithoutNotificationsInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -10210,6 +10650,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -10293,6 +10734,7 @@ export type UserUpdateWithoutCausedNotificationsInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -10366,6 +10808,7 @@ export type UserUncheckedUpdateWithoutCausedNotificationsInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -10438,6 +10881,7 @@ export type UserCreateWithoutReportsInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -10511,6 +10955,7 @@ export type UserUncheckedCreateWithoutReportsInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -10588,6 +11033,7 @@ export type UserCreateWithoutAssignedReportsInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -10661,6 +11107,7 @@ export type UserUncheckedCreateWithoutAssignedReportsInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -10749,6 +11196,7 @@ export type UserUpdateWithoutReportsInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -10822,6 +11270,7 @@ export type UserUncheckedUpdateWithoutReportsInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -10905,6 +11354,7 @@ export type UserUpdateWithoutAssignedReportsInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -10978,6 +11428,7 @@ export type UserUncheckedUpdateWithoutAssignedReportsInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -11050,6 +11501,7 @@ export type UserCreateWithoutReportCommentsInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -11123,6 +11575,7 @@ export type UserUncheckedCreateWithoutReportCommentsInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -11211,6 +11664,7 @@ export type UserUpdateWithoutReportCommentsInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -11284,6 +11738,7 @@ export type UserUncheckedUpdateWithoutReportCommentsInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -11356,6 +11811,7 @@ export type UserCreateWithoutContentReportsInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -11429,6 +11885,7 @@ export type UserUncheckedCreateWithoutContentReportsInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -11506,6 +11963,7 @@ export type UserCreateWithoutResolvedReportsInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -11579,6 +12037,7 @@ export type UserUncheckedCreateWithoutResolvedReportsInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -11667,6 +12126,7 @@ export type UserUpdateWithoutContentReportsInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -11740,6 +12200,7 @@ export type UserUncheckedUpdateWithoutContentReportsInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -11823,6 +12284,7 @@ export type UserUpdateWithoutResolvedReportsInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -11896,6 +12358,7 @@ export type UserUncheckedUpdateWithoutResolvedReportsInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -11969,6 +12432,7 @@ export type UserCreateWithoutBlocksMadeInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -12042,6 +12506,7 @@ export type UserUncheckedCreateWithoutBlocksMadeInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -12119,6 +12584,7 @@ export type UserCreateWithoutBlocksReceivedInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -12192,6 +12658,7 @@ export type UserUncheckedCreateWithoutBlocksReceivedInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -12280,6 +12747,7 @@ export type UserUpdateWithoutBlocksMadeInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -12353,6 +12821,7 @@ export type UserUncheckedUpdateWithoutBlocksMadeInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -12436,6 +12905,7 @@ export type UserUpdateWithoutBlocksReceivedInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -12509,6 +12979,7 @@ export type UserUncheckedUpdateWithoutBlocksReceivedInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -12581,6 +13052,7 @@ export type UserCreateWithoutMutesMadeInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -12654,6 +13126,7 @@ export type UserUncheckedCreateWithoutMutesMadeInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -12731,6 +13204,7 @@ export type UserCreateWithoutMutesReceivedInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -12804,6 +13278,7 @@ export type UserUncheckedCreateWithoutMutesReceivedInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -12892,6 +13367,7 @@ export type UserUpdateWithoutMutesMadeInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -12965,6 +13441,7 @@ export type UserUncheckedUpdateWithoutMutesMadeInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -13048,6 +13525,7 @@ export type UserUpdateWithoutMutesReceivedInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -13121,6 +13599,7 @@ export type UserUncheckedUpdateWithoutMutesReceivedInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -13193,6 +13672,7 @@ export type UserCreateWithoutKeywordFiltersInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -13266,6 +13746,7 @@ export type UserUncheckedCreateWithoutKeywordFiltersInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -13354,6 +13835,7 @@ export type UserUpdateWithoutKeywordFiltersInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -13427,6 +13909,7 @@ export type UserUncheckedUpdateWithoutKeywordFiltersInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -13498,6 +13981,7 @@ export type UserCreateWithoutSteamAccountInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -13571,6 +14055,7 @@ export type UserUncheckedCreateWithoutSteamAccountInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -13659,6 +14144,7 @@ export type UserUpdateWithoutSteamAccountInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -13732,6 +14218,7 @@ export type UserUncheckedUpdateWithoutSteamAccountInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -13804,6 +14291,7 @@ export type UserCreateWithoutSteamGamesInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -13877,6 +14365,7 @@ export type UserUncheckedCreateWithoutSteamGamesInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -13965,6 +14454,7 @@ export type UserUpdateWithoutSteamGamesInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -14038,6 +14528,7 @@ export type UserUncheckedUpdateWithoutSteamGamesInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -14111,6 +14602,7 @@ export type UserCreateWithoutOauthAccountsInput = {
   railFolders?: Prisma.RailFolderCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationCreateNestedManyWithoutUserAInput
@@ -14184,6 +14676,7 @@ export type UserUncheckedCreateWithoutOauthAccountsInput = {
   railFolders?: Prisma.RailFolderUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutUserInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCreatorInput
   createdConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCreatorInput
   conversationsAsA?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserAInput
@@ -14272,6 +14765,7 @@ export type UserUpdateWithoutOauthAccountsInput = {
   railFolders?: Prisma.RailFolderUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUpdateManyWithoutUserANestedInput
@@ -14345,6 +14839,7 @@ export type UserUncheckedUpdateWithoutOauthAccountsInput = {
   railFolders?: Prisma.RailFolderUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutUserNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutCreatorNestedInput
   createdConversations?: Prisma.ConversationUncheckedUpdateManyWithoutCreatorNestedInput
   conversationsAsA?: Prisma.ConversationUncheckedUpdateManyWithoutUserANestedInput
@@ -14392,6 +14887,7 @@ export type UserCountOutputType = {
   railFolders: number
   likes: number
   bookmarks: number
+  reposts: number
   invites: number
   createdConversations: number
   conversationsAsA: number
@@ -14435,6 +14931,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   railFolders?: boolean | UserCountOutputTypeCountRailFoldersArgs
   likes?: boolean | UserCountOutputTypeCountLikesArgs
   bookmarks?: boolean | UserCountOutputTypeCountBookmarksArgs
+  reposts?: boolean | UserCountOutputTypeCountRepostsArgs
   invites?: boolean | UserCountOutputTypeCountInvitesArgs
   createdConversations?: boolean | UserCountOutputTypeCountCreatedConversationsArgs
   conversationsAsA?: boolean | UserCountOutputTypeCountConversationsAsAArgs
@@ -14640,6 +15137,13 @@ export type UserCountOutputTypeCountBookmarksArgs<ExtArgs extends runtime.Types.
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountRepostsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.RepostWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountInvitesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.InviteWhereInput
 }
@@ -14800,6 +15304,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   railFolders?: boolean | Prisma.User$railFoldersArgs<ExtArgs>
   likes?: boolean | Prisma.User$likesArgs<ExtArgs>
   bookmarks?: boolean | Prisma.User$bookmarksArgs<ExtArgs>
+  reposts?: boolean | Prisma.User$repostsArgs<ExtArgs>
   invites?: boolean | Prisma.User$invitesArgs<ExtArgs>
   createdConversations?: boolean | Prisma.User$createdConversationsArgs<ExtArgs>
   conversationsAsA?: boolean | Prisma.User$conversationsAsAArgs<ExtArgs>
@@ -14945,6 +15450,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   railFolders?: boolean | Prisma.User$railFoldersArgs<ExtArgs>
   likes?: boolean | Prisma.User$likesArgs<ExtArgs>
   bookmarks?: boolean | Prisma.User$bookmarksArgs<ExtArgs>
+  reposts?: boolean | Prisma.User$repostsArgs<ExtArgs>
   invites?: boolean | Prisma.User$invitesArgs<ExtArgs>
   createdConversations?: boolean | Prisma.User$createdConversationsArgs<ExtArgs>
   conversationsAsA?: boolean | Prisma.User$conversationsAsAArgs<ExtArgs>
@@ -14994,6 +15500,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     railFolders: Prisma.$RailFolderPayload<ExtArgs>[]
     likes: Prisma.$LikePayload<ExtArgs>[]
     bookmarks: Prisma.$BookmarkPayload<ExtArgs>[]
+    reposts: Prisma.$RepostPayload<ExtArgs>[]
     invites: Prisma.$InvitePayload<ExtArgs>[]
     createdConversations: Prisma.$ConversationPayload<ExtArgs>[]
     conversationsAsA: Prisma.$ConversationPayload<ExtArgs>[]
@@ -15461,6 +15968,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   railFolders<T extends Prisma.User$railFoldersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$railFoldersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RailFolderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   likes<T extends Prisma.User$likesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$likesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LikePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   bookmarks<T extends Prisma.User$bookmarksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$bookmarksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BookmarkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reposts<T extends Prisma.User$repostsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$repostsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RepostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   invites<T extends Prisma.User$invitesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$invitesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   createdConversations<T extends Prisma.User$createdConversationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdConversationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   conversationsAsA<T extends Prisma.User$conversationsAsAArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$conversationsAsAArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -16539,6 +17047,30 @@ export type User$bookmarksArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.BookmarkScalarFieldEnum | Prisma.BookmarkScalarFieldEnum[]
+}
+
+/**
+ * User.reposts
+ */
+export type User$repostsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Repost
+   */
+  select?: Prisma.RepostSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Repost
+   */
+  omit?: Prisma.RepostOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RepostInclude<ExtArgs> | null
+  where?: Prisma.RepostWhereInput
+  orderBy?: Prisma.RepostOrderByWithRelationInput | Prisma.RepostOrderByWithRelationInput[]
+  cursor?: Prisma.RepostWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.RepostScalarFieldEnum | Prisma.RepostScalarFieldEnum[]
 }
 
 /**

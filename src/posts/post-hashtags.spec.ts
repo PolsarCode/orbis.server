@@ -46,6 +46,7 @@ function setup() {
       })),
       findUnique: jest.fn(),
       findMany: jest.fn().mockResolvedValue([]),
+      groupBy: jest.fn().mockResolvedValue([]),
       update: jest.fn(({ data }) => ({
         id: 9,
         authorId: 1,
@@ -62,6 +63,10 @@ function setup() {
       findMany: jest.fn().mockResolvedValue([]),
     },
     libraryActivity: { findMany: jest.fn().mockResolvedValue([]) },
+    repost: {
+      findMany: jest.fn().mockResolvedValue([]),
+      groupBy: jest.fn().mockResolvedValue([]),
+    },
     contentReport: { findMany: jest.fn().mockResolvedValue([]) },
     membership: { findMany: jest.fn().mockResolvedValue([]) },
     bookmark: { findMany: jest.fn().mockResolvedValue([]) },

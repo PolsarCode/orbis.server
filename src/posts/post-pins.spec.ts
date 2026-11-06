@@ -48,8 +48,13 @@ function setup() {
       findMany: jest.fn(),
       count: jest.fn(),
       update: jest.fn(),
+      groupBy: jest.fn().mockResolvedValue([]),
     },
     libraryActivity: { findMany: jest.fn().mockResolvedValue([]) },
+    repost: {
+      findMany: jest.fn().mockResolvedValue([]),
+      groupBy: jest.fn().mockResolvedValue([]),
+    },
     contentReport: { findMany: jest.fn().mockResolvedValue([]) },
     user: {
       findUnique: jest
@@ -219,7 +224,9 @@ describe('Pinned posts in feeds', () => {
 
     await service.findForCommunity(1, 9, `${date.getTime()}_0_2`);
 
-    expect(prisma.post.findMany).toHaveBeenCalledTimes(1);
+    expect(
+      prisma.post.findMany.mock.calls.some(([{ where }]) => pinnedQuery(where)),
+    ).toBe(false);
     expect(prisma.post.findMany.mock.calls[0][0].where).toEqual(
       expect.objectContaining({ pinnedAt: null }),
     );

@@ -31,7 +31,7 @@ export function publicPosts(
   };
 }
 
-function publicPost(
+export function publicPost(
   viewer: ContentViewer,
   showNsfw: boolean,
 ): Prisma.PostWhereInput {
@@ -40,7 +40,7 @@ function publicPost(
   };
 }
 
-function publicActivity(
+export function publicActivity(
   viewerId: number,
   showNsfw: boolean,
 ): Prisma.LibraryActivityWhereInput {

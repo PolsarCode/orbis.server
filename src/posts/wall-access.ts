@@ -19,6 +19,10 @@ export function friendsOf(userId: number): Prisma.UserWhereInput {
   };
 }
 
+export function viewableProfiles(viewerId: number): Prisma.UserWhereInput {
+  return { OR: [{ isPublic: true }, { id: viewerId }, friendsOf(viewerId)] };
+}
+
 export async function requireWallAccess(
   prisma: PrismaService,
   userId: number,

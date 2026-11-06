@@ -117,6 +117,10 @@ export class CommunityMembersService {
     communityId: number,
     authorId: number,
   ) {
+    await this.prisma.repost.deleteMany({
+      where: { communityId, userId: authorId },
+    });
+
     const posts = await this.prisma.post.findMany({
       where: { communityId, authorId },
       select: { id: true },

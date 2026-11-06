@@ -33,7 +33,12 @@ import {
 import { CreatePostDto } from './dto/create-post.dto';
 import { BookmarkDto } from './dto/bookmark.dto';
 import { NotificationsService } from '../notifications/notifications.service';
-import { canViewProfile, friendsOf, requireWallAccess } from './wall-access';
+import {
+  canViewProfile,
+  friendsOf,
+  requireWallAccess,
+  viewableProfiles,
+} from './wall-access';
 import { LikesService } from '../likes/likes.service';
 import { coverUrl, getMedia } from '../library/library-api';
 import {
@@ -41,12 +46,14 @@ import {
   hiddenFor,
   ContentViewer,
   contentViewer,
+  strictViewer,
   unmutedFor,
   viewerContext,
   visibleActivityAuthor,
   visibleTo,
+  ViewerContext,
 } from '../moderation/visibility';
-import { blockState } from '../safety/blocks';
+import { blockedPairs, blockState, notBlockedWith } from '../safety/blocks';
 import { loadNicknames } from '../communities/nicknames';
 import { nsfwEntries, showsNsfw } from '../users/nsfw';
 import { loadSteamLinks, SteamLink } from '../steam/steam-links';
@@ -61,7 +68,19 @@ import {
   AuthorModeration,
   authorModeration,
 } from '../communities/member-moderation';
-import { publicPosts } from '../tags/public-content';
+import {
+  publicActivity,
+  publicPost,
+  publicPosts,
+} from '../tags/public-content';
+import {
+  availableOriginals,
+  shareableIds,
+  ShareTarget,
+  ShareType,
+  visibleReposters,
+  visibleReposts,
+} from './shareable';
 
 const postInclude = {
   author,
@@ -79,7 +98,25 @@ const previewSelect = {
   author,
 } as const;
 
+const quotedSelect = {
+  id: true,
+  content: true,
+  linkUrl: true,
+  spoiler: true,
+  createdAt: true,
+  communityId: true,
+  mediaType: true,
+  mediaSourceId: true,
+  author,
+  community: communitySummary,
+  wallUser: author,
+} as const;
+
 const PREVIEW_COMMENTS = 3;
+
+const REPOST_BATCH = PAGE_SIZE * 3;
+
+const REPOSTED_BY = 3;
 
 function postBody({ content, linkUrl, spoiler }: CreatePostDto) {
   const { html, empty } = sanitizeRichText(content);
@@ -104,11 +141,45 @@ type RawPost = Prisma.PostGetPayload<{
   include: typeof postInclude;
 }> & { type: 'post' };
 
+type Author = Prisma.UserGetPayload<typeof author>;
+
+export type RepostedBy = { people: Author[]; total: number };
+
+type ShareState = {
+  repostCount: number;
+  reposted: boolean;
+  canRepost: boolean;
+  canQuote: boolean;
+};
+
+type ShareFields = ShareState & { repostedBy: RepostedBy | null };
+
+export type RepostResult = { reposted: boolean; repostCount: number };
+
+export type Reposter = Author & { repostedAt: Date };
+
+type QuotedPost = Pick<
+  RawPost,
+  | 'id'
+  | 'content'
+  | 'linkUrl'
+  | 'spoiler'
+  | 'createdAt'
+  | 'author'
+  | 'community'
+  | 'wallUser'
+> & {
+  hiddenBecause: HiddenBecause | null;
+  media: { type: MediaType; sourceId: string; title: string | null } | null;
+};
+
 export type PostItem = RawPost &
-  Engagement & {
+  Engagement &
+  ShareFields & {
     liked: boolean;
     bookmarked: boolean;
     canDelete: boolean;
+    quote: QuotedItem | null;
     pinned?: boolean;
     canPin?: boolean;
     moderation?: AuthorModeration | null;
@@ -148,12 +219,19 @@ type RawActivity = {
   };
 };
 
-export type ActivityItem = RawActivity &
+type QuotedActivity = RawActivity &
   Engagement & { liked: boolean; steam: SteamLink | null };
+
+export type QuotedItem =
+  | { available: true; type: 'post'; post: QuotedPost }
+  | { available: true; type: 'activity'; activity: QuotedActivity }
+  | { available: false };
+
+export type ActivityItem = QuotedActivity & ShareFields;
 
 export type FeedItem = PostItem | ActivityItem;
 
-const RANK = { post: 0, activity: 2 } as const;
+const RANK = { post: 0, repost: 1, activity: 2 } as const;
 
 function excludedTypes(raw?: string) {
   if (!raw) return new Set<string>();
@@ -172,6 +250,16 @@ const SEARCH_LIMIT = 8;
 
 function inMyCommunities(userId: number) {
   return { community: { memberships: { some: { userId } } } };
+}
+
+function homeReposts(userId: number): Prisma.RepostWhereInput {
+  return {
+    OR: [
+      inMyCommunities(userId),
+      { communityId: null, userId },
+      { communityId: null, user: friendsOf(userId) },
+    ],
+  };
 }
 
 function homePosts(viewer: ContentViewer, showNsfw: boolean) {
@@ -212,8 +300,14 @@ function profilePosts(ownerId: number, viewerId: number) {
   };
 }
 
-function viewableProfiles(viewerId: number): Prisma.UserWhereInput {
-  return { OR: [{ isPublic: true }, { id: viewerId }, friendsOf(viewerId)] };
+function profileReposts(
+  ownerId: number,
+  viewerId: number,
+): Prisma.RepostWhereInput {
+  return {
+    userId: ownerId,
+    OR: [{ communityId: null }, { community: visibleCommunity(viewerId) }],
+  };
 }
 
 export function viewablePosts(viewer: ContentViewer): Prisma.PostWhereInput {
@@ -253,6 +347,32 @@ function parseBookmarkCursor(raw?: string): BookmarkCursor | undefined {
   }
 
   return { savedAt: new Date(Number(match[1])), id };
+}
+
+function createdBefore(cursor?: BookmarkCursor) {
+  if (!cursor) return {};
+  return {
+    OR: [
+      { createdAt: { lt: cursor.savedAt } },
+      { createdAt: cursor.savedAt, id: { lt: cursor.id } },
+    ],
+  };
+}
+
+function postLink(
+  id: number,
+  post: {
+    communityId: number | null;
+    mediaType: MediaType | null;
+    mediaSourceId: string | null;
+    wallUser: { username: string } | null;
+  },
+) {
+  return post.mediaType
+    ? `/library/${post.mediaType}/${post.mediaSourceId}?post=${id}`
+    : post.wallUser
+      ? `/users/${post.wallUser.username}?post=${id}`
+      : `/communities/${post.communityId}?post=${id}`;
 }
 
 function savedBefore(cursor?: BookmarkCursor) {
@@ -332,6 +452,86 @@ function toActivity(
   };
 }
 
+type RepostEntry = {
+  type: 'repost';
+  id: number;
+  createdAt: Date;
+  target: ShareTarget;
+};
+
+type FeedRow = RawPost | RawActivity | RepostEntry;
+
+type Stream = { rows: FeedRow[]; full: boolean };
+
+const noStream: Stream = { rows: [], full: false };
+
+function streamOf(rows: FeedRow[], take = PAGE_SIZE + 1): Stream {
+  return { rows, full: rows.length >= take };
+}
+
+function keyOf({ type, id }: { type: ShareType; id: number }) {
+  return `${type}:${id}`;
+}
+
+function repostOf({ type, id }: ShareTarget) {
+  return type === 'post' ? { postId: id } : { activityId: id };
+}
+
+type OwnedTarget = ShareTarget & { ownerId: number };
+
+function unblockedQuotes({
+  type,
+  id,
+  ownerId,
+}: OwnedTarget): Prisma.PostWhereInput {
+  return {
+    ...(type === 'post' ? { quotePostId: id } : { quoteActivityId: id }),
+    author: notBlockedWith(ownerId),
+  };
+}
+
+function rowKey(postId: number | null, activityId: number | null) {
+  return postId !== null
+    ? keyOf({ type: 'post', id: postId })
+    : keyOf({ type: 'activity', id: activityId! });
+}
+
+function originalOf(row: FeedRow): ShareTarget {
+  return row.type === 'repost' ? row.target : { type: row.type, id: row.id };
+}
+
+function feedPage(streams: Stream[], pinned: ShareTarget[] = []) {
+  const merged = streams.flatMap(({ rows }) => rows).sort(compareFeedItems);
+  const limits = streams.flatMap(({ rows, full }) =>
+    full ? [rows[rows.length - 1]] : [],
+  );
+  const seen = new Set(pinned.map(keyOf));
+  const cards: ShareTarget[] = [];
+  let used = 0;
+  for (const row of merged) {
+    if (limits.some((limit) => compareFeedItems(row, limit) > 0)) break;
+    const original = originalOf(row);
+    const key = keyOf(original);
+    if (!seen.has(key)) {
+      if (cards.length === PAGE_SIZE) break;
+      seen.add(key);
+      cards.push(original);
+    }
+    used += 1;
+  }
+  const rows = merged.slice(0, used);
+  const last = rows[rows.length - 1];
+  const more = used < merged.length || limits.length > 0;
+  return {
+    cards,
+    rows,
+    nextCursor:
+      more && last
+        ? `${last.createdAt.getTime()}_${RANK[last.type]}_${last.id}`
+        : null,
+  };
+}
+
 function nextCursor<T extends Sortable>(merged: T[], page: T[]) {
   const last = page[page.length - 1];
   return merged.length > PAGE_SIZE
@@ -370,33 +570,49 @@ export class PostsService {
   ): Promise<FeedItem[]> {
     const idsOf = (type: 'post' | 'activity') =>
       items.flatMap((item) => (item.type === type ? [item.id] : []));
-    const viewer = await viewerContext(this.prisma, viewerId);
-    const [likedPosts, likedActivities, bookmarkedPosts, previews] =
-      await Promise.all([
-        this.likes.likedBy(viewerId, 'post', idsOf('post')),
-        this.likes.likedBy(viewerId, 'activity', idsOf('activity')),
-        this.bookmarkedBy(viewerId, 'post', idsOf('post')),
-        Promise.all(
-          items.map((item) =>
-            item.commentCount === 0
-              ? []
-              : this.prisma.comment
-                  .findMany({
-                    where: {
-                      commentableType: item.type,
-                      commentableId: item.id,
-                      parentId: null,
-                      deletedAt: null,
-                      ...visibleTo(viewer, 'comment'),
-                    },
-                    orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
-                    take: PREVIEW_COMMENTS,
-                    select: previewSelect,
-                  })
-                  .then((comments) => comments.reverse()),
-          ),
+    const [viewer, showNsfw] = await Promise.all([
+      viewerContext(this.prisma, viewerId),
+      showsNsfw(this.prisma, viewerId),
+    ]);
+    const [
+      likedPosts,
+      likedActivities,
+      bookmarkedPosts,
+      previews,
+      shareOf,
+      quoteOf,
+    ] = await Promise.all([
+      this.likes.likedBy(viewerId, 'post', idsOf('post')),
+      this.likes.likedBy(viewerId, 'activity', idsOf('activity')),
+      this.bookmarkedBy(viewerId, 'post', idsOf('post')),
+      Promise.all(
+        items.map((item) =>
+          item.commentCount === 0
+            ? []
+            : this.prisma.comment
+                .findMany({
+                  where: {
+                    commentableType: item.type,
+                    commentableId: item.id,
+                    parentId: null,
+                    deletedAt: null,
+                    ...visibleTo(viewer, 'comment'),
+                  },
+                  orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+                  take: PREVIEW_COMMENTS,
+                  select: previewSelect,
+                })
+                .then((comments) => comments.reverse()),
         ),
-      ]);
+      ),
+      this.shareState(viewer, showNsfw, items),
+      this.quotesOf(
+        viewer,
+        showNsfw,
+        items.flatMap((item) => (item.type === 'post' ? [item] : [])),
+        { muted },
+      ),
+    ]);
 
     const communityOf = (item: (typeof items)[number]) =>
       item.type === 'activity' ? null : item.communityId;
@@ -464,6 +680,8 @@ export class PostsService {
           previewComments,
           steam,
           hiddenBecause,
+          ...shareOf(item),
+          repostedBy: null,
         };
       }
       const canDelete =
@@ -489,8 +707,456 @@ export class PostsService {
           [item.spoiler],
           { muted },
         ),
+        ...shareOf(item),
+        repostedBy: null,
+        quote: quoteOf(item),
       };
     });
+  }
+
+  private async repostCounts(viewer: ContentViewer, targets: OwnedTarget[]) {
+    const counts = new Map<
+      string,
+      Omit<ShareState, 'canRepost' | 'canQuote'>
+    >();
+    if (targets.length === 0) return counts;
+    const idsOf = (type: ShareType) =>
+      targets.flatMap((target) => (target.type === type ? [target.id] : []));
+    const ofTargets = {
+      OR: [
+        { postId: { in: idsOf('post') } },
+        { activityId: { in: idsOf('activity') } },
+      ],
+    };
+    const [reposts, quotes, mine] = await Promise.all([
+      this.prisma.repost.groupBy({
+        by: ['postId', 'activityId'],
+        where: { AND: [ofTargets, visibleReposts(viewer.id)] },
+        _count: { _all: true },
+      }),
+      this.prisma.post.groupBy({
+        by: ['quotePostId', 'quoteActivityId'],
+        where: {
+          AND: [{ OR: targets.map(unblockedQuotes) }, viewablePosts(viewer)],
+        },
+        _count: { _all: true },
+      }),
+      this.prisma.repost.findMany({
+        where: { AND: [ofTargets, { userId: viewer.id }] },
+        select: { postId: true, activityId: true },
+      }),
+    ]);
+    const entry = (postId: number | null, activityId: number | null) => {
+      const key = rowKey(postId, activityId);
+      const found = counts.get(key) ?? { repostCount: 0, reposted: false };
+      counts.set(key, found);
+      return found;
+    };
+    for (const { postId, activityId, _count } of reposts) {
+      entry(postId, activityId).repostCount += _count._all;
+    }
+    for (const { quotePostId, quoteActivityId, _count } of quotes) {
+      entry(quotePostId, quoteActivityId).repostCount += _count._all;
+    }
+    for (const { postId, activityId } of mine) {
+      entry(postId, activityId).reposted = true;
+    }
+    return counts;
+  }
+
+  private async shareState(
+    viewer: ContentViewer,
+    showNsfw: boolean,
+    items: { type: ShareType; id: number; author: { id: number } }[],
+  ) {
+    const idsOf = (type: ShareType) =>
+      items.flatMap((item) => (item.type === type ? [item.id] : []));
+    const [counts, posts, activities] = await Promise.all([
+      this.repostCounts(
+        viewer,
+        items.map(({ type, id, author }) => ({ type, id, ownerId: author.id })),
+      ),
+      shareableIds(this.prisma, viewer, showNsfw, 'post', idsOf('post')),
+      shareableIds(
+        this.prisma,
+        viewer,
+        showNsfw,
+        'activity',
+        idsOf('activity'),
+      ),
+    ]);
+    return (item: {
+      type: ShareType;
+      id: number;
+      author: { id: number };
+    }): ShareState => {
+      const canQuote = (item.type === 'post' ? posts : activities).has(item.id);
+      return {
+        repostCount: 0,
+        reposted: false,
+        ...counts.get(keyOf(item)),
+        canRepost: canQuote && item.author.id !== viewer.id,
+        canQuote,
+      };
+    };
+  }
+
+  private async mediaTitles(
+    posts: { mediaType: MediaType | null; mediaSourceId: string | null }[],
+  ) {
+    const pages = posts.flatMap(({ mediaType, mediaSourceId }) =>
+      mediaType === null || mediaSourceId === null
+        ? []
+        : [{ mediaType, sourceId: mediaSourceId }],
+    );
+    if (pages.length === 0) return new Map<string, string>();
+    const entries = await this.prisma.libraryEntry.findMany({
+      where: { OR: pages },
+      distinct: ['mediaType', 'sourceId'],
+      select: { mediaType: true, sourceId: true, title: true },
+    });
+    return new Map(
+      entries.map(({ mediaType, sourceId, title }) => [
+        `${mediaType}:${sourceId}`,
+        title,
+      ]),
+    );
+  }
+
+  private async quotesOf(
+    viewer: ViewerContext,
+    showNsfw: boolean,
+    posts: Pick<
+      RawPost,
+      'authorId' | 'isQuote' | 'quotePostId' | 'quoteActivityId'
+    >[],
+    { muted = true } = {},
+  ) {
+    const idsOf = (key: 'quotePostId' | 'quoteActivityId') => [
+      ...new Set(
+        posts.flatMap((post) =>
+          post.isQuote && post[key] !== null ? [post[key]] : [],
+        ),
+      ),
+    ];
+    const postIds = idsOf('quotePostId');
+    const activityIds = idsOf('quoteActivityId');
+    if (postIds.length === 0 && activityIds.length === 0) {
+      return ({ isQuote }: Pick<RawPost, 'isQuote'>): QuotedItem | null =>
+        isQuote ? { available: false } : null;
+    }
+    const [quotedPosts, quotedActivities] = await Promise.all([
+      postIds.length === 0
+        ? []
+        : this.prisma.post.findMany({
+            where: {
+              AND: [{ id: { in: postIds } }, publicPost(viewer, showNsfw)],
+            },
+            select: quotedSelect,
+          }),
+      activityIds.length === 0
+        ? []
+        : this.prisma.libraryActivity.findMany({
+            where: {
+              AND: [
+                { id: { in: activityIds } },
+                publicActivity(viewer.id, showNsfw),
+              ],
+            },
+            include: activityInclude,
+          }),
+    ]);
+    const activities = quotedActivities.map(toActivity);
+    const [withNickname, titles, liked, steamOf, blocked] = await Promise.all([
+      loadNicknames(
+        this.prisma,
+        quotedPosts.map((post) => ({
+          communityId: post.communityId,
+          userId: post.author.id,
+        })),
+      ),
+      this.mediaTitles(quotedPosts),
+      this.likes.likedBy(
+        viewer.id,
+        'activity',
+        activities.map(({ id }) => id),
+      ),
+      loadSteamLinks(
+        this.prisma,
+        activities.map((activity) => ({
+          userId: activity.author.id,
+          appId: activity.steamAppId,
+        })),
+      ),
+      blockedPairs(
+        this.prisma,
+        posts.map(({ authorId }) => authorId),
+        [...quotedPosts, ...activities].map(({ author }) => author.id),
+      ),
+    ]);
+
+    const postById = new Map(
+      quotedPosts.map((post): [number, QuotedPost] => [
+        post.id,
+        {
+          id: post.id,
+          content: post.content,
+          linkUrl: post.linkUrl,
+          spoiler: post.spoiler,
+          createdAt: post.createdAt,
+          author: withNickname(post.communityId, post.author),
+          community: post.community,
+          wallUser: post.wallUser,
+          hiddenBecause: hiddenFor(
+            viewer,
+            post.author.id,
+            post.content,
+            [post.spoiler],
+            { muted },
+          ),
+          media:
+            post.mediaType === null || post.mediaSourceId === null
+              ? null
+              : {
+                  type: post.mediaType,
+                  sourceId: post.mediaSourceId,
+                  title:
+                    titles.get(`${post.mediaType}:${post.mediaSourceId}`) ??
+                    null,
+                },
+        },
+      ]),
+    );
+    const activityById = new Map(
+      activities.map((activity): [number, QuotedActivity] => [
+        activity.id,
+        {
+          ...activity,
+          liked: liked.has(activity.id),
+          previewComments: [],
+          steam: steamOf(activity.author.id, activity.steamAppId),
+          hiddenBecause: hiddenFor(
+            viewer,
+            activity.author.id,
+            '',
+            [activity.media.title],
+            { muted },
+          ),
+        },
+      ]),
+    );
+
+    return ({
+      authorId,
+      isQuote,
+      quotePostId,
+      quoteActivityId,
+    }: Pick<
+      RawPost,
+      'authorId' | 'isQuote' | 'quotePostId' | 'quoteActivityId'
+    >): QuotedItem | null => {
+      if (!isQuote) return null;
+      const post = quotePostId === null ? undefined : postById.get(quotePostId);
+      if (post && !blocked(authorId, post.author.id)) {
+        return { available: true, type: 'post', post };
+      }
+      const activity =
+        quoteActivityId === null
+          ? undefined
+          : activityById.get(quoteActivityId);
+      if (activity && !blocked(authorId, activity.author.id)) {
+        return { available: true, type: 'activity', activity };
+      }
+      return { available: false };
+    };
+  }
+
+  private async newPostShares(
+    authorId: number,
+    post: Omit<RawPost, 'type'>,
+  ): Promise<ShareFields & { quote: QuotedItem | null }> {
+    const [viewer, showNsfw] = await Promise.all([
+      viewerContext(this.prisma, authorId),
+      showsNsfw(this.prisma, authorId),
+    ]);
+    const [shareable, quoteOf] = await Promise.all([
+      shareableIds(this.prisma, viewer, showNsfw, 'post', [post.id]),
+      this.quotesOf(viewer, showNsfw, [post]),
+    ]);
+    return {
+      repostCount: 0,
+      reposted: false,
+      canRepost: false,
+      canQuote: shareable.has(post.id),
+      repostedBy: null,
+      quote: quoteOf(post),
+    };
+  }
+
+  private async repostedBy(
+    viewerId: number,
+    list: Prisma.RepostWhereInput,
+    muted: boolean,
+    items: ShareTarget[],
+  ) {
+    const result = new Map<string, RepostedBy>();
+    if (items.length === 0) return result;
+    const idsOf = (type: ShareType) =>
+      items.flatMap((item) => (item.type === type ? [item.id] : []));
+    const where = { AND: [list, visibleReposters(viewerId, { muted })] };
+    const totals = await this.prisma.repost.groupBy({
+      by: ['postId', 'activityId'],
+      where: {
+        AND: [
+          where,
+          {
+            OR: [
+              { postId: { in: idsOf('post') } },
+              { activityId: { in: idsOf('activity') } },
+            ],
+          },
+        ],
+      },
+      _count: { _all: true },
+    });
+    const people = await Promise.all(
+      totals.map(({ postId, activityId }) =>
+        this.prisma.repost.findMany({
+          where: { AND: [where, { postId, activityId }] },
+          orderBy: newestFirst,
+          take: REPOSTED_BY,
+          select: { user: author },
+        }),
+      ),
+    );
+    totals.forEach(({ postId, activityId, _count }, index) => {
+      result.set(rowKey(postId, activityId), {
+        people: people[index].map(({ user }) => user),
+        total: _count._all,
+      });
+    });
+    return result;
+  }
+
+  private async repostStream(
+    viewer: ContentViewer,
+    showNsfw: boolean,
+    {
+      list,
+      cursor,
+      excluded,
+      muted,
+    }: {
+      list: Prisma.RepostWhereInput;
+      cursor?: FeedCursor;
+      excluded: Set<string>;
+      muted: boolean;
+    },
+  ): Promise<Stream> {
+    if (
+      excluded.has('repost') ||
+      (excluded.has('post') && excluded.has('activity'))
+    ) {
+      return noStream;
+    }
+    const rows = await this.prisma.repost.findMany({
+      where: {
+        AND: [
+          list,
+          visibleReposters(viewer.id, { muted }),
+          availableOriginals(viewer, showNsfw, { muted, excluded }),
+          olderThan(cursor, RANK.repost),
+        ],
+      },
+      orderBy: newestFirst,
+      take: REPOST_BATCH,
+      select: { id: true, createdAt: true, postId: true, activityId: true },
+    });
+    return streamOf(
+      rows.map(({ id, createdAt, postId, activityId }) => ({
+        type: 'repost' as const,
+        id,
+        createdAt,
+        target:
+          postId !== null
+            ? { type: 'post' as const, id: postId }
+            : { type: 'activity' as const, id: activityId! },
+      })),
+      REPOST_BATCH,
+    );
+  }
+
+  private async listPage(
+    viewerId: number,
+    {
+      streams,
+      pinned = [],
+      reposts,
+      muted,
+    }: {
+      streams: Stream[];
+      pinned?: RawPost[];
+      reposts: Prisma.RepostWhereInput;
+      muted: boolean;
+    },
+  ): Promise<Page<FeedItem>> {
+    const { cards, rows, nextCursor } = feedPage(
+      streams,
+      pinned.map(originalOf),
+    );
+    const loaded = new Map<string, RawPost | RawActivity>();
+    for (const row of rows) {
+      if (row.type !== 'repost') loaded.set(keyOf(row), row);
+    }
+    const missing = (type: ShareType) =>
+      cards.flatMap((card) =>
+        card.type === type && !loaded.has(keyOf(card)) ? [card.id] : [],
+      );
+    const [posts, activities] = await Promise.all([
+      missing('post').length === 0
+        ? []
+        : this.prisma.post.findMany({
+            where: { id: { in: missing('post') } },
+            include: postInclude,
+          }),
+      missing('activity').length === 0
+        ? []
+        : this.prisma.libraryActivity.findMany({
+            where: { id: { in: missing('activity') } },
+            include: activityInclude,
+          }),
+    ]);
+    for (const post of posts) {
+      loaded.set(keyOf({ type: 'post', id: post.id }), {
+        ...post,
+        type: 'post',
+      });
+    }
+    for (const activity of activities) {
+      loaded.set(
+        keyOf({ type: 'activity', id: activity.id }),
+        toActivity(activity),
+      );
+    }
+
+    const page = [
+      ...pinned,
+      ...cards.flatMap((card) => {
+        const raw = loaded.get(keyOf(card));
+        return raw ? [raw] : [];
+      }),
+    ];
+    const [items, repostedBy] = await Promise.all([
+      this.engage(viewerId, page),
+      this.repostedBy(viewerId, reposts, muted, page),
+    ]);
+    return {
+      items: items.map((item) => ({
+        ...item,
+        repostedBy: repostedBy.get(keyOf(item)) ?? null,
+      })),
+      nextCursor,
+    };
   }
 
   private async bookmarkedBy(
@@ -654,9 +1320,11 @@ export class PostsService {
     const cursor = parseFeedCursor(rawCursor);
     const excluded = excludedTypes(exclude);
     const viewer = await contentViewer(this.prisma, viewerId);
-    const nsfw = nsfwEntries(await showsNsfw(this.prisma, viewerId));
+    const showNsfw = await showsNsfw(this.prisma, viewerId);
+    const nsfw = nsfwEntries(showNsfw);
+    const reposts = { communityId };
 
-    const [pinned, posts, activities] = await Promise.all([
+    const [pinned, posts, activities, shared] = await Promise.all([
       cursor || excluded.has('post')
         ? []
         : this.prisma.post.findMany({
@@ -705,27 +1373,38 @@ export class PostsService {
             take: PAGE_SIZE + 1,
             include: activityInclude,
           }),
+      this.repostStream(viewer, showNsfw, {
+        list: reposts,
+        cursor,
+        excluded,
+        muted: true,
+      }),
     ]);
 
-    const merged = [
-      ...posts.map((post) => ({ ...post, type: 'post' as const })),
-      ...activities.map(toActivity),
-    ].sort(compareFeedItems);
-    const page = merged.slice(0, PAGE_SIZE);
-    const items = await this.engage(viewerId, [
-      ...pinned.map((post) => ({ ...post, type: 'post' as const })),
-      ...page,
-    ]);
+    const { items, nextCursor } = await this.listPage(viewerId, {
+      streams: [
+        streamOf(posts.map((post) => ({ ...post, type: 'post' as const }))),
+        streamOf(activities.map(toActivity)),
+        shared,
+      ],
+      pinned: pinned.map((post) => ({ ...post, type: 'post' as const })),
+      reposts,
+      muted: true,
+    });
     const canPin =
       (await managedCommunities(this.prisma, viewerId, [communityId])).size > 0;
 
     return {
-      items: items.map((item) =>
-        item.type === 'post'
-          ? { ...item, pinned: item.pinnedAt !== null, canPin }
-          : item,
-      ),
-      nextCursor: nextCursor(merged, page),
+      items: items.map((item) => {
+        if (item.type !== 'post') return item;
+        const here = item.communityId === communityId;
+        return {
+          ...item,
+          pinned: here && item.pinnedAt !== null,
+          canPin: here && canPin,
+        };
+      }),
+      nextCursor,
     };
   }
 
@@ -849,8 +1528,9 @@ export class PostsService {
     const viewer = await contentViewer(this.prisma, userId);
     const showNsfw = await showsNsfw(this.prisma, userId);
     const nsfw = nsfwEntries(showNsfw);
+    const reposts = homeReposts(userId);
 
-    const [posts, activities] = await Promise.all([
+    const [posts, activities, shared] = await Promise.all([
       excluded.has('post')
         ? []
         : this.prisma.post.findMany({
@@ -890,16 +1570,23 @@ export class PostsService {
             take: PAGE_SIZE + 1,
             include: activityInclude,
           }),
+      this.repostStream(viewer, showNsfw, {
+        list: reposts,
+        cursor,
+        excluded,
+        muted: true,
+      }),
     ]);
 
-    const merged = [
-      ...posts.map((post) => ({ ...post, type: 'post' as const })),
-      ...activities.map(toActivity),
-    ].sort(compareFeedItems);
-    const page = merged.slice(0, PAGE_SIZE);
-    const items = await this.engage(userId, page);
-
-    return { items, nextCursor: nextCursor(merged, page) };
+    return this.listPage(userId, {
+      streams: [
+        streamOf(posts.map((post) => ({ ...post, type: 'post' as const }))),
+        streamOf(activities.map(toActivity)),
+        shared,
+      ],
+      reposts,
+      muted: true,
+    });
   }
 
   async findForProfile(
@@ -914,9 +1601,11 @@ export class PostsService {
     if (owner.blocking) return { items: [], nextCursor: null };
 
     const viewer = await contentViewer(this.prisma, viewerId);
-    const nsfw = nsfwEntries(await showsNsfw(this.prisma, viewerId));
+    const showNsfw = await showsNsfw(this.prisma, viewerId);
+    const nsfw = nsfwEntries(showNsfw);
     const pinnedOnWall = { wallUserId: owner.id, pinnedAt: { not: null } };
-    const [pinned, posts, activities] = await Promise.all([
+    const reposts = profileReposts(owner.id, viewerId);
+    const [pinned, posts, activities, shared] = await Promise.all([
       cursor || excluded.has('post')
         ? []
         : this.prisma.post.findMany({
@@ -957,17 +1646,24 @@ export class PostsService {
             take: PAGE_SIZE + 1,
             include: activityInclude,
           }),
+      this.repostStream(viewer, showNsfw, {
+        list: reposts,
+        cursor,
+        excluded,
+        muted: false,
+      }),
     ]);
 
-    const merged = [
-      ...posts.map((post) => ({ ...post, type: 'post' as const })),
-      ...activities.map(toActivity),
-    ].sort(compareFeedItems);
-    const page = merged.slice(0, PAGE_SIZE);
-    const items = await this.engage(viewerId, [
-      ...pinned.map((post) => ({ ...post, type: 'post' as const })),
-      ...page,
-    ]);
+    const { items, nextCursor } = await this.listPage(viewerId, {
+      streams: [
+        streamOf(posts.map((post) => ({ ...post, type: 'post' as const }))),
+        streamOf(activities.map(toActivity)),
+        shared,
+      ],
+      pinned: pinned.map((post) => ({ ...post, type: 'post' as const })),
+      reposts,
+      muted: false,
+    });
 
     return {
       items: items.map((item) => {
@@ -979,7 +1675,7 @@ export class PostsService {
           canPin: onWall && viewerId === owner.id,
         };
       }),
-      nextCursor: nextCursor(merged, page),
+      nextCursor,
     };
   }
 
@@ -1102,13 +1798,17 @@ export class PostsService {
     });
     if (!owner) throw new NotFoundException('User not found');
     await requireWallAccess(this.prisma, authorId, owner.id);
+    if (body.quote && owner.id !== authorId) {
+      throw new ForbiddenException('You can’t post there');
+    }
+    const quoted = await this.quoted(authorId, body.quote);
 
     const { data, mentioned, hashtags } = await this.withMentions(
       body,
       authorId,
     );
     const post = await this.prisma.post.create({
-      data: { wallUserId: owner.id, authorId, ...data },
+      data: { wallUserId: owner.id, authorId, ...data, ...quoted?.data },
       include: postInclude,
     });
     await addHashtags(this.prisma, { postId: post.id }, post, hashtags);
@@ -1130,6 +1830,7 @@ export class PostsService {
       link,
       alreadyNotified: [owner.id],
     });
+    await this.notifyShared(authorId, quoted, 'quote', null);
     return {
       ...post,
       type: 'post',
@@ -1138,6 +1839,7 @@ export class PostsService {
       previewComments: [],
       hiddenBecause: null,
       canDelete: true,
+      ...(await this.newPostShares(authorId, post)),
     };
   }
 
@@ -1200,6 +1902,7 @@ export class PostsService {
     authorId: number,
     body: CreatePostDto,
   ): Promise<PostItem> {
+    if (body.quote) throw new BadRequestException('You can’t quote here');
     if (!/^\d{1,12}$/.test(mediaSourceId)) {
       throw new NotFoundException('Title not found');
     }
@@ -1239,6 +1942,7 @@ export class PostsService {
       previewComments: [],
       hiddenBecause: null,
       canDelete: true,
+      ...(await this.newPostShares(authorId, post)),
     };
   }
 
@@ -1247,12 +1951,13 @@ export class PostsService {
     authorId: number,
     body: CreatePostDto,
   ): Promise<PostItem> {
+    const quoted = await this.quoted(authorId, body.quote);
     const { data, mentioned, hashtags } = await this.withMentions(
       body,
       authorId,
     );
     const post = await this.prisma.post.create({
-      data: { communityId, authorId, ...data },
+      data: { communityId, authorId, ...data, ...quoted?.data },
       include: postInclude,
     });
     await addHashtags(this.prisma, { postId: post.id }, post, hashtags);
@@ -1263,6 +1968,7 @@ export class PostsService {
       message: 'mentioned you in a post',
       link: `/communities/${communityId}?post=${post.id}`,
     });
+    await this.notifyShared(authorId, quoted, 'quote', communityId);
     void this.discordChannel.postCreated(post.id);
     const withNickname = await loadNicknames(this.prisma, [
       { communityId, userId: authorId },
@@ -1276,6 +1982,311 @@ export class PostsService {
       previewComments: [],
       hiddenBecause: null,
       canDelete: true,
+      ...(await this.newPostShares(authorId, post)),
+    };
+  }
+
+  private async original(
+    viewer: ContentViewer,
+    showNsfw: boolean,
+    { type, id }: ShareTarget,
+  ) {
+    const inRange = id >= 1 && id <= MAX_INT;
+    if (type === 'post') {
+      const post = inRange
+        ? await this.prisma.post.findFirst({
+            where: {
+              AND: [
+                { id },
+                viewablePosts(viewer),
+                ...(showNsfw ? [] : [{ isAdult: false }]),
+              ],
+            },
+            select: {
+              authorId: true,
+              communityId: true,
+              mediaType: true,
+              mediaSourceId: true,
+              wallUser: { select: { username: true } },
+            },
+          })
+        : null;
+      if (!post) throw new NotFoundException('Post not found');
+      return { type, ownerId: post.authorId, link: postLink(id, post) };
+    }
+
+    const activity = inRange
+      ? await this.prisma.libraryActivity.findFirst({
+          where: {
+            id,
+            entry: {
+              OR: [{ isPublic: true }, { userId: viewer.id }],
+              ...nsfwEntries(showNsfw),
+              user: {
+                AND: [
+                  notSuspended(),
+                  visibleActivityAuthor(viewer.id),
+                  viewableProfiles(viewer.id),
+                ],
+              },
+            },
+          },
+          select: {
+            entry: {
+              select: { user: { select: { id: true, username: true } } },
+            },
+          },
+        })
+      : null;
+    if (!activity) throw new NotFoundException('Library update not found');
+    const { user } = activity.entry;
+    return {
+      type,
+      ownerId: user.id,
+      link: `/users/${user.username}?activity=${id}`,
+    };
+  }
+
+  private async shareableOriginal(
+    userId: number,
+    target: ShareTarget,
+    denied: string,
+    { own = true } = {},
+  ) {
+    const [viewer, showNsfw] = await Promise.all([
+      strictViewer(this.prisma, userId),
+      showsNsfw(this.prisma, userId),
+    ]);
+    const original = await this.original(viewer, showNsfw, target);
+    const shareable = await shareableIds(
+      this.prisma,
+      viewer,
+      showNsfw,
+      target.type,
+      [target.id],
+    );
+    if (!shareable.has(target.id) || (!own && original.ownerId === userId)) {
+      throw new ForbiddenException(denied);
+    }
+    return original;
+  }
+
+  private async quoted(authorId: number, quote?: ShareTarget) {
+    if (!quote) return null;
+    const original = await this.shareableOriginal(
+      authorId,
+      quote,
+      'You can’t quote this',
+    );
+    return {
+      ...original,
+      data: {
+        isQuote: true,
+        quotePostId: quote.type === 'post' ? quote.id : null,
+        quoteActivityId: quote.type === 'activity' ? quote.id : null,
+      },
+    };
+  }
+
+  private async notifyShared(
+    actorId: number,
+    original: { type: ShareType; ownerId: number; link: string } | null,
+    kind: 'repost' | 'quote',
+    communityId: number | null,
+  ) {
+    if (!original || original.ownerId === actorId) return;
+    const [notified, visible] = await Promise.all([
+      this.prisma.notification.findFirst({
+        where: {
+          userId: original.ownerId,
+          actorId,
+          type: { in: ['repost', 'quote'] },
+          link: original.link,
+        },
+        select: { id: true },
+      }),
+      communityId === null
+        ? this.prisma.user.findFirst({
+            where: { id: actorId, ...viewableProfiles(original.ownerId) },
+            select: { id: true },
+          })
+        : this.prisma.community.findFirst({
+            where: { id: communityId, ...visibleCommunity(original.ownerId) },
+            select: { id: true },
+          }),
+    ]);
+    if (notified || !visible) return;
+    const what = original.type === 'post' ? 'post' : 'library update';
+    await this.notifications.notify([
+      {
+        userId: original.ownerId,
+        actorId,
+        type: kind,
+        message: `${kind === 'repost' ? 'reposted' : 'quoted'} your ${what}`,
+        link: original.link,
+      },
+    ]);
+  }
+
+  private async repostCountOf(viewerId: number, target: OwnedTarget) {
+    const viewer = await contentViewer(this.prisma, viewerId);
+    const counts = await this.repostCounts(viewer, [target]);
+    return counts.get(keyOf(target))?.repostCount ?? 0;
+  }
+
+  private async ownerOf({ type, id }: ShareTarget) {
+    if (type === 'post') {
+      const post = await this.prisma.post.findUnique({
+        where: { id },
+        select: { authorId: true },
+      });
+      return post?.authorId ?? null;
+    }
+    const activity = await this.prisma.libraryActivity.findUnique({
+      where: { id },
+      select: { entry: { select: { userId: true } } },
+    });
+    return activity?.entry.userId ?? null;
+  }
+
+  async setRepost(
+    userId: number,
+    target: ShareTarget,
+    communityId: number | null,
+  ): Promise<RepostResult> {
+    const original = await this.shareableOriginal(
+      userId,
+      target,
+      'You can’t repost this',
+      { own: false },
+    );
+    if (communityId !== null) {
+      const membership = await this.prisma.membership.findUnique({
+        where: { userId_communityId: { userId, communityId } },
+        select: { userId: true },
+      });
+      if (!membership) throw new ForbiddenException('You can’t post there');
+    }
+
+    const { count } = await this.prisma.repost.createMany({
+      data: [{ userId, communityId, ...repostOf(target) }],
+      skipDuplicates: true,
+    });
+    if (count > 0) {
+      await this.notifyShared(userId, original, 'repost', communityId);
+    } else {
+      const existing = await this.prisma.repost.findFirst({
+        where: { userId, ...repostOf(target) },
+        select: { id: true, communityId: true },
+      });
+      if (existing && existing.communityId !== communityId) {
+        await this.prisma.repost.update({
+          where: { id: existing.id },
+          data: { communityId, createdAt: new Date() },
+        });
+      }
+    }
+    return {
+      reposted: true,
+      repostCount: await this.repostCountOf(userId, {
+        ...target,
+        ownerId: original.ownerId,
+      }),
+    };
+  }
+
+  async removeRepost(
+    userId: number,
+    target: ShareTarget,
+  ): Promise<RepostResult> {
+    if (target.id < 1 || target.id > MAX_INT) {
+      throw new NotFoundException('Not found');
+    }
+    await this.prisma.repost.deleteMany({
+      where: { userId, ...repostOf(target) },
+    });
+    const ownerId = await this.ownerOf(target);
+    return {
+      reposted: false,
+      repostCount:
+        ownerId === null
+          ? 0
+          : await this.repostCountOf(userId, { ...target, ownerId }),
+    };
+  }
+
+  async findReposters(
+    viewerId: number,
+    target: ShareTarget,
+    rawCursor?: string,
+  ): Promise<Page<Reposter>> {
+    const cursor = parseBookmarkCursor(rawCursor);
+    const [viewer, showNsfw] = await Promise.all([
+      contentViewer(this.prisma, viewerId),
+      showsNsfw(this.prisma, viewerId),
+    ]);
+    await this.original(viewer, showNsfw, target);
+    const rows = await this.prisma.repost.findMany({
+      where: {
+        AND: [
+          repostOf(target),
+          visibleReposts(viewerId),
+          createdBefore(cursor),
+        ],
+      },
+      orderBy: newestFirst,
+      take: PAGE_SIZE + 1,
+      select: { id: true, createdAt: true, user: author },
+    });
+    const page = rows.slice(0, PAGE_SIZE);
+    const last = page[page.length - 1];
+    return {
+      items: page.map(({ user, createdAt }) => ({
+        ...user,
+        repostedAt: createdAt,
+      })),
+      nextCursor:
+        rows.length > PAGE_SIZE
+          ? `${last.createdAt.getTime()}_${last.id}`
+          : null,
+    };
+  }
+
+  async findQuotes(
+    viewerId: number,
+    target: ShareTarget,
+    rawCursor?: string,
+  ): Promise<Page<FeedItem>> {
+    const cursor = parseBookmarkCursor(rawCursor);
+    const [viewer, showNsfw] = await Promise.all([
+      contentViewer(this.prisma, viewerId),
+      showsNsfw(this.prisma, viewerId),
+    ]);
+    const { ownerId } = await this.original(viewer, showNsfw, target);
+    const posts = await this.prisma.post.findMany({
+      where: {
+        AND: [
+          unblockedQuotes({ ...target, ownerId }),
+          viewablePosts(viewer),
+          createdBefore(cursor),
+        ],
+      },
+      orderBy: newestFirst,
+      take: PAGE_SIZE + 1,
+      include: postInclude,
+    });
+    const page = posts.slice(0, PAGE_SIZE);
+    const last = page[page.length - 1];
+    const items = await this.engage(
+      viewerId,
+      page.map((post) => ({ ...post, type: 'post' as const })),
+    );
+    return {
+      items,
+      nextCursor:
+        posts.length > PAGE_SIZE
+          ? `${last.createdAt.getTime()}_${last.id}`
+          : null,
     };
   }
 
@@ -1284,6 +2295,7 @@ export class PostsService {
     postId: number,
     body: CreatePostDto,
   ): Promise<FeedItem> {
+    if (body.quote) throw new BadRequestException('You can’t quote here');
     const post = await this.prisma.post.findUnique({
       where: { id: postId },
       select: {

@@ -46,6 +46,8 @@ model LibraryActivity {
   createdAt            DateTime       @default(now())
   entry                LibraryEntry   @relation(fields: [entryId], references: [id], onDelete: Cascade)
   commentHashtagUsages HashtagUsage[]
+  reposts              Repost[]
+  quotes               Post[]
 
   @@index([createdAt(sort: Desc)])
   @@index([entryId])

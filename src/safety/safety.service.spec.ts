@@ -36,6 +36,7 @@ describe('SafetyService', () => {
       deleteMany: jest.fn(),
     },
     friendship: { deleteMany: jest.fn() },
+    repost: { deleteMany: jest.fn() },
     keywordFilter: {
       findUnique: jest.fn(),
       findMany: jest.fn(),
@@ -92,6 +93,34 @@ describe('SafetyService', () => {
         },
       });
       expect(presence.notify).toHaveBeenCalledWith([1, 2], 'friends:changed');
+    });
+
+    it('drops reposts between the two of them both ways in the same go', async () => {
+      prisma.repost.deleteMany.mockReturnValueOnce('drop reposts');
+
+      await service.block(1, 'zoro');
+
+      expect(prisma.$transaction.mock.calls[0][0]).toContain('drop reposts');
+      expect(prisma.repost.deleteMany).toHaveBeenCalledWith({
+        where: {
+          OR: [
+            {
+              userId: 1,
+              OR: [
+                { post: { authorId: 2 } },
+                { activity: { entry: { userId: 2 } } },
+              ],
+            },
+            {
+              userId: 2,
+              OR: [
+                { post: { authorId: 1 } },
+                { activity: { entry: { userId: 1 } } },
+              ],
+            },
+          ],
+        },
+      });
     });
 
     it('sends no friend list update when they weren’t friends', async () => {

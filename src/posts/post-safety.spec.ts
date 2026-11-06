@@ -81,9 +81,10 @@ describe('Blocked and muted people in post lists', () => {
     },
     mute: { findMany: jest.fn() },
     keywordFilter: { findMany: jest.fn() },
-    post: { findMany: jest.fn() },
+    post: { findMany: jest.fn(), groupBy: jest.fn() },
     comment: { findMany: jest.fn() },
     libraryActivity: { findMany: jest.fn() },
+    repost: { findMany: jest.fn(), groupBy: jest.fn() },
     contentReport: { findMany: jest.fn() },
     user: { findUnique: jest.fn() },
     friendship: { findFirst: jest.fn() },
@@ -110,7 +111,10 @@ describe('Blocked and muted people in post lists', () => {
     prisma.post.findMany.mockImplementation(({ where }) =>
       Promise.resolve(isPinnedQuery(where) ? [] : posts),
     );
+    prisma.post.groupBy.mockResolvedValue([]);
     prisma.libraryActivity.findMany.mockResolvedValue([]);
+    prisma.repost.findMany.mockResolvedValue([]);
+    prisma.repost.groupBy.mockResolvedValue([]);
     prisma.comment.findMany.mockResolvedValue([]);
     prisma.contentReport.findMany.mockResolvedValue([]);
     prisma.user.findUnique.mockResolvedValue({ id: 2, isPublic: true });

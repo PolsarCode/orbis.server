@@ -168,6 +168,20 @@ describe('Notifications across blocks and mutes', () => {
     ]);
   });
 
+  it('drops reposts and quotes across a block or from muted people', async () => {
+    block.findMany.mockResolvedValue([{ blockerId: 4, blockedId: 9 }]);
+    mute.findMany.mockResolvedValue([{ muterId: 5, mutedId: 9 }]);
+
+    await service.notify([
+      note(4, 9, 'repost'),
+      note(5, 9, 'quote'),
+      note(6, 9, 'repost'),
+      note(9, 9, 'quote'),
+    ]);
+
+    expect(created()).toEqual([{ userId: 6, actorId: 9, type: 'repost' }]);
+  });
+
   it('never drops ticket updates, even from someone blocked or muted', async () => {
     block.findMany.mockResolvedValue([{ blockerId: 4, blockedId: 9 }]);
     mute.findMany.mockResolvedValue([{ muterId: 5, mutedId: 9 }]);

@@ -27,10 +27,15 @@ describe('Editing and deleting posts', () => {
     keywordFilter: { findMany: jest.fn().mockResolvedValue([]) },
     post: {
       findUnique: jest.fn(),
-      findMany: jest.fn(),
+      findMany: jest.fn().mockResolvedValue([]),
+      groupBy: jest.fn().mockResolvedValue([]),
       update: jest.fn(),
       delete: jest.fn(),
       deleteMany: jest.fn(),
+    },
+    repost: {
+      findMany: jest.fn().mockResolvedValue([]),
+      groupBy: jest.fn().mockResolvedValue([]),
     },
     comment: { findMany: jest.fn(), deleteMany: jest.fn() },
     like: { deleteMany: jest.fn() },
