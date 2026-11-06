@@ -13,6 +13,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt.guard';
+import { AllowUnconfirmed } from '../auth/confirmed-email.guard';
 import { MINUTE, RateLimit } from '../common/throttle';
 import { AddMembersDto } from './dto/add-members.dto';
 import { CreateGroupDto } from './dto/create-group.dto';
@@ -106,6 +107,27 @@ export class MessagesController {
   @HttpCode(204)
   accept(@Req() req, @Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.messagesService.accept(req.user.userId, id);
+  }
+
+  @RateLimit(60, MINUTE)
+  @Post(':id/mute')
+  @HttpCode(200)
+  @AllowUnconfirmed()
+  mute(
+    @Req() req,
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<{ muted: boolean }> {
+    return this.messagesService.setMuted(req.user.userId, id, true);
+  }
+
+  @RateLimit(60, MINUTE)
+  @Delete(':id/mute')
+  @AllowUnconfirmed()
+  unmute(
+    @Req() req,
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<{ muted: boolean }> {
+    return this.messagesService.setMuted(req.user.userId, id, false);
   }
 
   @Delete(':id')

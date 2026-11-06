@@ -83,6 +83,9 @@ export const ModelName = {
   Report: 'Report',
   ReportComment: 'ReportComment',
   ContentReport: 'ContentReport',
+  Block: 'Block',
+  Mute: 'Mute',
+  KeywordFilter: 'KeywordFilter',
   Setting: 'Setting',
   SteamAccount: 'SteamAccount',
   SteamGame: 'SteamGame',
@@ -471,7 +474,8 @@ export const ConversationMemberScalarFieldEnum = {
   userId: 'userId',
   status: 'status',
   unread: 'unread',
-  readAt: 'readAt'
+  readAt: 'readAt',
+  mutedAt: 'mutedAt'
 } as const
 
 export type ConversationMemberScalarFieldEnum = (typeof ConversationMemberScalarFieldEnum)[keyof typeof ConversationMemberScalarFieldEnum]
@@ -556,6 +560,35 @@ export const ContentReportScalarFieldEnum = {
 } as const
 
 export type ContentReportScalarFieldEnum = (typeof ContentReportScalarFieldEnum)[keyof typeof ContentReportScalarFieldEnum]
+
+
+export const BlockScalarFieldEnum = {
+  blockerId: 'blockerId',
+  blockedId: 'blockedId',
+  createdAt: 'createdAt'
+} as const
+
+export type BlockScalarFieldEnum = (typeof BlockScalarFieldEnum)[keyof typeof BlockScalarFieldEnum]
+
+
+export const MuteScalarFieldEnum = {
+  muterId: 'muterId',
+  mutedId: 'mutedId',
+  createdAt: 'createdAt'
+} as const
+
+export type MuteScalarFieldEnum = (typeof MuteScalarFieldEnum)[keyof typeof MuteScalarFieldEnum]
+
+
+export const KeywordFilterScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  phrase: 'phrase',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+} as const
+
+export type KeywordFilterScalarFieldEnum = (typeof KeywordFilterScalarFieldEnum)[keyof typeof KeywordFilterScalarFieldEnum]
 
 
 export const SettingScalarFieldEnum = {

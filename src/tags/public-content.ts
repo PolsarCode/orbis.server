@@ -1,12 +1,16 @@
 import { Prisma } from '../../prisma/generated/client';
 import { visibleThreads } from '../forum/forum-helpers';
-import { ReportedIds, visibleTo } from '../moderation/visibility';
+import {
+  ContentViewer,
+  unblockedPeople,
+  visibleActivityAuthor,
+  visibleTo,
+} from '../moderation/visibility';
 import { nsfwEntries } from '../users/nsfw';
 import { notSuspended } from '../users/suspension';
 
 export function publicPosts(
-  viewerId: number,
-  reported: ReportedIds,
+  viewer: ContentViewer,
   showNsfw: boolean,
 ): Prisma.PostWhereInput {
   return {
@@ -20,77 +24,69 @@ export function publicPosts(
       },
       ...(showNsfw ? [] : [{ isAdult: false }]),
       {
-        OR: [
-          { forumThreadId: null },
-          { forumThread: visibleThreads(viewerId, reported.forum_post) },
-        ],
+        OR: [{ forumThreadId: null }, { forumThread: visibleThreads(viewer) }],
       },
+      { OR: [{ wallUserId: null }, { wallUser: unblockedPeople(viewer) }] },
     ],
   };
 }
 
 function publicPost(
-  viewerId: number,
-  reported: ReportedIds,
+  viewer: ContentViewer,
   showNsfw: boolean,
 ): Prisma.PostWhereInput {
   return {
-    AND: [
-      publicPosts(viewerId, reported, showNsfw),
-      visibleTo(viewerId, reported.post),
-    ],
+    AND: [publicPosts(viewer, showNsfw), visibleTo(viewer, 'post')],
   };
 }
 
-function publicActivity(showNsfw: boolean): Prisma.LibraryActivityWhereInput {
+function publicActivity(
+  viewerId: number,
+  showNsfw: boolean,
+): Prisma.LibraryActivityWhereInput {
   return {
     entry: {
       isPublic: true,
       ...nsfwEntries(showNsfw),
-      user: { isPublic: true, ...notSuspended() },
+      user: {
+        isPublic: true,
+        ...notSuspended(),
+        ...visibleActivityAuthor(viewerId),
+      },
     },
   };
 }
 
-function publicForumPost(
-  viewerId: number,
-  reported: ReportedIds,
-): Prisma.ForumPostWhereInput {
+function publicForumPost(viewer: ContentViewer): Prisma.ForumPostWhereInput {
   return {
     AND: [
       { community: { isPublic: true } },
-      { thread: visibleThreads(viewerId, reported.forum_post) },
+      { thread: visibleThreads(viewer) },
       { OR: [{ opening: false }, { thread: { feedPost: { is: null } } }] },
-      visibleTo(viewerId, reported.forum_post),
+      visibleTo(viewer, 'forum_post'),
     ],
   };
 }
 
 export function publicUsages(
-  viewerId: number,
-  reported: ReportedIds,
+  viewer: ContentViewer,
   showNsfw: boolean,
 ): Prisma.HashtagUsageWhereInput {
   return {
     OR: [
-      { post: publicPost(viewerId, reported, showNsfw) },
+      { post: publicPost(viewer, showNsfw) },
       {
         AND: [
-          {
-            comment: {
-              deletedAt: null,
-              ...visibleTo(viewerId, reported.comment),
-            },
-          },
+          { comment: { deletedAt: null, ...visibleTo(viewer, 'comment') } },
           {
             OR: [
-              { targetPost: publicPost(viewerId, reported, showNsfw) },
-              { targetActivity: publicActivity(showNsfw) },
+              { targetPost: publicPost(viewer, showNsfw) },
+              { targetActivity: publicActivity(viewer.id, showNsfw) },
             ],
           },
         ],
       },
-      { forumPost: publicForumPost(viewerId, reported) },
+      { forumPost: publicForumPost(viewer) },
     ],
   };
 }

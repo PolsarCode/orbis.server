@@ -34,6 +34,15 @@ const manager = (communityId: number, ownerId: number) => ({
 
 function setup() {
   const prisma = {
+    block: {
+      count: jest.fn().mockResolvedValue(0),
+      findMany: jest.fn().mockResolvedValue([]),
+    },
+    mute: {
+      count: jest.fn().mockResolvedValue(0),
+      findMany: jest.fn().mockResolvedValue([]),
+    },
+    keywordFilter: { findMany: jest.fn().mockResolvedValue([]) },
     post: {
       findUnique: jest.fn(),
       findMany: jest.fn(),

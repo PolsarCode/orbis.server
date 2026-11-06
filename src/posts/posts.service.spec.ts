@@ -42,6 +42,15 @@ const activity = {
 
 describe('Feed content filters', () => {
   const prisma = {
+    block: {
+      count: jest.fn().mockResolvedValue(0),
+      findMany: jest.fn().mockResolvedValue([]),
+    },
+    mute: {
+      count: jest.fn().mockResolvedValue(0),
+      findMany: jest.fn().mockResolvedValue([]),
+    },
+    keywordFilter: { findMany: jest.fn().mockResolvedValue([]) },
     post: { findMany: jest.fn() },
     libraryActivity: { findMany: jest.fn() },
     contentReport: { findMany: jest.fn() },
@@ -230,9 +239,13 @@ describe('Feed content filters', () => {
 
   it('shows community authors by their nickname there', async () => {
     prisma.post.findMany.mockResolvedValue([{ ...post, communityId: 5 }]);
-    prisma.membership.findMany.mockResolvedValueOnce([
-      { communityId: 5, userId: person.id, nickname: 'Navigator' },
-    ]);
+    prisma.membership.findMany.mockImplementation(({ select }) =>
+      Promise.resolve(
+        select.nickname
+          ? [{ communityId: 5, userId: person.id, nickname: 'Navigator' }]
+          : [],
+      ),
+    );
 
     const { items } = await service.findForCommunity(
       1,
@@ -245,8 +258,16 @@ describe('Feed content filters', () => {
   });
 
   it('searches posts from the same places as the home feed', async () => {
-    await service.searchFeed(1, '  frieren ');
-    await service.findForMember(1);
+    jest.useFakeTimers({
+      now: new Date('2026-11-05T12:00:00Z'),
+      doNotFake: ['nextTick', 'queueMicrotask', 'setImmediate'],
+    });
+    try {
+      await service.searchFeed(1, '  frieren ');
+      await service.findForMember(1);
+    } finally {
+      jest.useRealTimers();
+    }
 
     const contains = { contains: 'frieren', mode: 'insensitive' };
     const [searchPosts, feedPosts] = prisma.post.findMany.mock.calls.map(
@@ -272,6 +293,9 @@ describe('Feed content filters', () => {
         { suspendedAt: null },
         { suspendedUntil: { lte: expect.any(Date) } },
       ],
+      blocksMade: { none: { blockedId: 1 } },
+      blocksReceived: { none: { blockerId: 1 } },
+      mutesReceived: { none: { muterId: 1 } },
       memberships: { some: { communityId: 9, showLibraryUpdates: true } },
     });
 
@@ -283,6 +307,9 @@ describe('Feed content filters', () => {
         { suspendedAt: null },
         { suspendedUntil: { lte: expect.any(Date) } },
       ],
+      blocksMade: { none: { blockedId: 1 } },
+      blocksReceived: { none: { blockerId: 1 } },
+      mutesReceived: { none: { muterId: 1 } },
       memberships: {
         some: {
           showLibraryUpdates: true,
@@ -383,6 +410,15 @@ describe('Creating posts with a link card', () => {
 
 describe('Opening a post or library update from a link', () => {
   const prisma = {
+    block: {
+      count: jest.fn().mockResolvedValue(0),
+      findMany: jest.fn().mockResolvedValue([]),
+    },
+    mute: {
+      count: jest.fn().mockResolvedValue(0),
+      findMany: jest.fn().mockResolvedValue([]),
+    },
+    keywordFilter: { findMany: jest.fn().mockResolvedValue([]) },
     post: { findFirst: jest.fn() },
     libraryActivity: { findFirst: jest.fn() },
     contentReport: { findMany: jest.fn().mockResolvedValue([]) },
@@ -443,6 +479,8 @@ describe('Opening a post or library update from a link', () => {
                 { suspendedAt: null },
                 { suspendedUntil: { lte: expect.any(Date) } },
               ],
+              blocksMade: { none: { blockedId: 1 } },
+              blocksReceived: { none: { blockerId: 1 } },
               memberships: {
                 some: { communityId: 7, showLibraryUpdates: true },
               },

@@ -957,6 +957,23 @@ const suggestionDismissals: [UserKey, UserKey, number][] = [
   ['admin', 'vegeta', 3],
 ];
 
+const blocks: [UserKey, UserKey, number][] = [['admin', 'nezuko', 4]];
+
+const mutes: [UserKey, UserKey, number][] = [
+  ['admin', 'vegeta', 2],
+  ['tanjiro', 'zoro', 6],
+];
+
+const keywordFilters: [UserKey, string, number, number | null][] = [
+  ['admin', 'final arc', 9, null],
+  ['admin', 'manga spoilers', 1, 6],
+  ['user', '#jjkspoilers', 0, 1],
+];
+
+const mutedChats: [string, UserKey, number][] = [
+  ['Straw Hat Watch Party', 'admin', 3],
+];
+
 const friendships: [UserKey, UserKey, 'accepted' | 'pending'][] = [
   ['admin', 'naruto', 'accepted'],
   ['admin', 'luffy', 'accepted'],
@@ -1638,6 +1655,13 @@ async function createChats() {
           }),
         },
       },
+    });
+  }
+
+  for (const [name, member, hoursAgo] of mutedChats) {
+    await prisma.conversationMember.updateMany({
+      where: { userId: userIds[member], conversation: { name } },
+      data: { mutedAt: minutesAgo(hours(hoursAgo)) },
     });
   }
 
@@ -2853,6 +2877,36 @@ async function main() {
       dismissedAt: minutesAgo(days(daysAgo)),
     })),
   });
+
+  await prisma.block.createMany({
+    data: blocks.map(([blocker, blocked, daysAgo]) => ({
+      blockerId: userIds[blocker],
+      blockedId: userIds[blocked],
+      createdAt: minutesAgo(days(daysAgo)),
+    })),
+  });
+
+  await prisma.mute.createMany({
+    data: mutes.map(([muter, muted, daysAgo]) => ({
+      muterId: userIds[muter],
+      mutedId: userIds[muted],
+      createdAt: minutesAgo(days(daysAgo)),
+    })),
+  });
+
+  await prisma.keywordFilter.createMany({
+    data: keywordFilters.map(([user, phrase, daysAgo, daysLeft]) => ({
+      userId: userIds[user],
+      phrase,
+      createdAt: minutesAgo(days(daysAgo)),
+      expiresAt: daysLeft === null ? null : minutesAgo(-days(daysLeft)),
+    })),
+  });
+
+  console.log(
+    '🛡️ Blocks, mutes and keyword filters created:',
+    blocks.length + mutes.length + keywordFilters.length,
+  );
 
   for (const wallPost of wallPosts) {
     const post = await prisma.post.create({

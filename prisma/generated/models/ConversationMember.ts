@@ -44,6 +44,7 @@ export type ConversationMemberMinAggregateOutputType = {
   status: $Enums.ConversationStatus | null
   unread: number | null
   readAt: Date | null
+  mutedAt: Date | null
 }
 
 export type ConversationMemberMaxAggregateOutputType = {
@@ -52,6 +53,7 @@ export type ConversationMemberMaxAggregateOutputType = {
   status: $Enums.ConversationStatus | null
   unread: number | null
   readAt: Date | null
+  mutedAt: Date | null
 }
 
 export type ConversationMemberCountAggregateOutputType = {
@@ -60,6 +62,7 @@ export type ConversationMemberCountAggregateOutputType = {
   status: number
   unread: number
   readAt: number
+  mutedAt: number
   _all: number
 }
 
@@ -82,6 +85,7 @@ export type ConversationMemberMinAggregateInputType = {
   status?: true
   unread?: true
   readAt?: true
+  mutedAt?: true
 }
 
 export type ConversationMemberMaxAggregateInputType = {
@@ -90,6 +94,7 @@ export type ConversationMemberMaxAggregateInputType = {
   status?: true
   unread?: true
   readAt?: true
+  mutedAt?: true
 }
 
 export type ConversationMemberCountAggregateInputType = {
@@ -98,6 +103,7 @@ export type ConversationMemberCountAggregateInputType = {
   status?: true
   unread?: true
   readAt?: true
+  mutedAt?: true
   _all?: true
 }
 
@@ -193,6 +199,7 @@ export type ConversationMemberGroupByOutputType = {
   status: $Enums.ConversationStatus
   unread: number
   readAt: Date | null
+  mutedAt: Date | null
   _count: ConversationMemberCountAggregateOutputType | null
   _avg: ConversationMemberAvgAggregateOutputType | null
   _sum: ConversationMemberSumAggregateOutputType | null
@@ -224,6 +231,7 @@ export type ConversationMemberWhereInput = {
   status?: Prisma.EnumConversationStatusFilter<"ConversationMember"> | $Enums.ConversationStatus
   unread?: Prisma.IntFilter<"ConversationMember"> | number
   readAt?: Prisma.DateTimeNullableFilter<"ConversationMember"> | Date | string | null
+  mutedAt?: Prisma.DateTimeNullableFilter<"ConversationMember"> | Date | string | null
   conversation?: Prisma.XOR<Prisma.ConversationScalarRelationFilter, Prisma.ConversationWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
@@ -234,6 +242,7 @@ export type ConversationMemberOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   unread?: Prisma.SortOrder
   readAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  mutedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   conversation?: Prisma.ConversationOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
 }
@@ -248,6 +257,7 @@ export type ConversationMemberWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumConversationStatusFilter<"ConversationMember"> | $Enums.ConversationStatus
   unread?: Prisma.IntFilter<"ConversationMember"> | number
   readAt?: Prisma.DateTimeNullableFilter<"ConversationMember"> | Date | string | null
+  mutedAt?: Prisma.DateTimeNullableFilter<"ConversationMember"> | Date | string | null
   conversation?: Prisma.XOR<Prisma.ConversationScalarRelationFilter, Prisma.ConversationWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "conversationId_userId">
@@ -258,6 +268,7 @@ export type ConversationMemberOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   unread?: Prisma.SortOrder
   readAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  mutedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ConversationMemberCountOrderByAggregateInput
   _avg?: Prisma.ConversationMemberAvgOrderByAggregateInput
   _max?: Prisma.ConversationMemberMaxOrderByAggregateInput
@@ -274,12 +285,14 @@ export type ConversationMemberScalarWhereWithAggregatesInput = {
   status?: Prisma.EnumConversationStatusWithAggregatesFilter<"ConversationMember"> | $Enums.ConversationStatus
   unread?: Prisma.IntWithAggregatesFilter<"ConversationMember"> | number
   readAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ConversationMember"> | Date | string | null
+  mutedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ConversationMember"> | Date | string | null
 }
 
 export type ConversationMemberCreateInput = {
   status?: $Enums.ConversationStatus
   unread?: number
   readAt?: Date | string | null
+  mutedAt?: Date | string | null
   conversation: Prisma.ConversationCreateNestedOneWithoutMembersInput
   user: Prisma.UserCreateNestedOneWithoutConversationsInput
 }
@@ -290,12 +303,14 @@ export type ConversationMemberUncheckedCreateInput = {
   status?: $Enums.ConversationStatus
   unread?: number
   readAt?: Date | string | null
+  mutedAt?: Date | string | null
 }
 
 export type ConversationMemberUpdateInput = {
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   unread?: Prisma.IntFieldUpdateOperationsInput | number
   readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mutedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   conversation?: Prisma.ConversationUpdateOneRequiredWithoutMembersNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutConversationsNestedInput
 }
@@ -306,6 +321,7 @@ export type ConversationMemberUncheckedUpdateInput = {
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   unread?: Prisma.IntFieldUpdateOperationsInput | number
   readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mutedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ConversationMemberCreateManyInput = {
@@ -314,12 +330,14 @@ export type ConversationMemberCreateManyInput = {
   status?: $Enums.ConversationStatus
   unread?: number
   readAt?: Date | string | null
+  mutedAt?: Date | string | null
 }
 
 export type ConversationMemberUpdateManyMutationInput = {
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   unread?: Prisma.IntFieldUpdateOperationsInput | number
   readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mutedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ConversationMemberUncheckedUpdateManyInput = {
@@ -328,6 +346,7 @@ export type ConversationMemberUncheckedUpdateManyInput = {
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   unread?: Prisma.IntFieldUpdateOperationsInput | number
   readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mutedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ConversationMemberListRelationFilter = {
@@ -351,6 +370,7 @@ export type ConversationMemberCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   unread?: Prisma.SortOrder
   readAt?: Prisma.SortOrder
+  mutedAt?: Prisma.SortOrder
 }
 
 export type ConversationMemberAvgOrderByAggregateInput = {
@@ -365,6 +385,7 @@ export type ConversationMemberMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   unread?: Prisma.SortOrder
   readAt?: Prisma.SortOrder
+  mutedAt?: Prisma.SortOrder
 }
 
 export type ConversationMemberMinOrderByAggregateInput = {
@@ -373,6 +394,7 @@ export type ConversationMemberMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   unread?: Prisma.SortOrder
   readAt?: Prisma.SortOrder
+  mutedAt?: Prisma.SortOrder
 }
 
 export type ConversationMemberSumOrderByAggregateInput = {
@@ -473,6 +495,7 @@ export type ConversationMemberCreateWithoutConversationInput = {
   status?: $Enums.ConversationStatus
   unread?: number
   readAt?: Date | string | null
+  mutedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutConversationsInput
 }
 
@@ -481,6 +504,7 @@ export type ConversationMemberUncheckedCreateWithoutConversationInput = {
   status?: $Enums.ConversationStatus
   unread?: number
   readAt?: Date | string | null
+  mutedAt?: Date | string | null
 }
 
 export type ConversationMemberCreateOrConnectWithoutConversationInput = {
@@ -518,12 +542,14 @@ export type ConversationMemberScalarWhereInput = {
   status?: Prisma.EnumConversationStatusFilter<"ConversationMember"> | $Enums.ConversationStatus
   unread?: Prisma.IntFilter<"ConversationMember"> | number
   readAt?: Prisma.DateTimeNullableFilter<"ConversationMember"> | Date | string | null
+  mutedAt?: Prisma.DateTimeNullableFilter<"ConversationMember"> | Date | string | null
 }
 
 export type ConversationMemberCreateWithoutUserInput = {
   status?: $Enums.ConversationStatus
   unread?: number
   readAt?: Date | string | null
+  mutedAt?: Date | string | null
   conversation: Prisma.ConversationCreateNestedOneWithoutMembersInput
 }
 
@@ -532,6 +558,7 @@ export type ConversationMemberUncheckedCreateWithoutUserInput = {
   status?: $Enums.ConversationStatus
   unread?: number
   readAt?: Date | string | null
+  mutedAt?: Date | string | null
 }
 
 export type ConversationMemberCreateOrConnectWithoutUserInput = {
@@ -565,12 +592,14 @@ export type ConversationMemberCreateManyConversationInput = {
   status?: $Enums.ConversationStatus
   unread?: number
   readAt?: Date | string | null
+  mutedAt?: Date | string | null
 }
 
 export type ConversationMemberUpdateWithoutConversationInput = {
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   unread?: Prisma.IntFieldUpdateOperationsInput | number
   readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mutedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutConversationsNestedInput
 }
 
@@ -579,6 +608,7 @@ export type ConversationMemberUncheckedUpdateWithoutConversationInput = {
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   unread?: Prisma.IntFieldUpdateOperationsInput | number
   readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mutedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ConversationMemberUncheckedUpdateManyWithoutConversationInput = {
@@ -586,6 +616,7 @@ export type ConversationMemberUncheckedUpdateManyWithoutConversationInput = {
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   unread?: Prisma.IntFieldUpdateOperationsInput | number
   readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mutedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ConversationMemberCreateManyUserInput = {
@@ -593,12 +624,14 @@ export type ConversationMemberCreateManyUserInput = {
   status?: $Enums.ConversationStatus
   unread?: number
   readAt?: Date | string | null
+  mutedAt?: Date | string | null
 }
 
 export type ConversationMemberUpdateWithoutUserInput = {
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   unread?: Prisma.IntFieldUpdateOperationsInput | number
   readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mutedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   conversation?: Prisma.ConversationUpdateOneRequiredWithoutMembersNestedInput
 }
 
@@ -607,6 +640,7 @@ export type ConversationMemberUncheckedUpdateWithoutUserInput = {
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   unread?: Prisma.IntFieldUpdateOperationsInput | number
   readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mutedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ConversationMemberUncheckedUpdateManyWithoutUserInput = {
@@ -614,6 +648,7 @@ export type ConversationMemberUncheckedUpdateManyWithoutUserInput = {
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   unread?: Prisma.IntFieldUpdateOperationsInput | number
   readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mutedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -624,6 +659,7 @@ export type ConversationMemberSelect<ExtArgs extends runtime.Types.Extensions.In
   status?: boolean
   unread?: boolean
   readAt?: boolean
+  mutedAt?: boolean
   conversation?: boolean | Prisma.ConversationDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["conversationMember"]>
@@ -634,6 +670,7 @@ export type ConversationMemberSelectCreateManyAndReturn<ExtArgs extends runtime.
   status?: boolean
   unread?: boolean
   readAt?: boolean
+  mutedAt?: boolean
   conversation?: boolean | Prisma.ConversationDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["conversationMember"]>
@@ -644,6 +681,7 @@ export type ConversationMemberSelectUpdateManyAndReturn<ExtArgs extends runtime.
   status?: boolean
   unread?: boolean
   readAt?: boolean
+  mutedAt?: boolean
   conversation?: boolean | Prisma.ConversationDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["conversationMember"]>
@@ -654,9 +692,10 @@ export type ConversationMemberSelectScalar = {
   status?: boolean
   unread?: boolean
   readAt?: boolean
+  mutedAt?: boolean
 }
 
-export type ConversationMemberOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"conversationId" | "userId" | "status" | "unread" | "readAt", ExtArgs["result"]["conversationMember"]>
+export type ConversationMemberOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"conversationId" | "userId" | "status" | "unread" | "readAt" | "mutedAt", ExtArgs["result"]["conversationMember"]>
 export type ConversationMemberInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   conversation?: boolean | Prisma.ConversationDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -682,6 +721,7 @@ export type $ConversationMemberPayload<ExtArgs extends runtime.Types.Extensions.
     status: $Enums.ConversationStatus
     unread: number
     readAt: Date | null
+    mutedAt: Date | null
   }, ExtArgs["result"]["conversationMember"]>
   composites: {}
 }
@@ -1112,6 +1152,7 @@ export interface ConversationMemberFieldRefs {
   readonly status: Prisma.FieldRef<"ConversationMember", 'ConversationStatus'>
   readonly unread: Prisma.FieldRef<"ConversationMember", 'Int'>
   readonly readAt: Prisma.FieldRef<"ConversationMember", 'DateTime'>
+  readonly mutedAt: Prisma.FieldRef<"ConversationMember", 'DateTime'>
 }
     
 

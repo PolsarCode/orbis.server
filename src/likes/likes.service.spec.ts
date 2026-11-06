@@ -20,6 +20,7 @@ const target = {
 
 describe('Liking comments', () => {
   const prisma = {
+    block: { count: jest.fn().mockResolvedValue(0) },
     comment: { findFirst: jest.fn(), update: jest.fn() },
     contentReport: { findMany: jest.fn() },
     like: { findUnique: jest.fn(), create: jest.fn(), delete: jest.fn() },
@@ -117,6 +118,17 @@ describe('Liking comments', () => {
                 { authorId: 1 },
               ],
             },
+            {
+              OR: [
+                {
+                  author: {
+                    blocksMade: { none: { blockedId: 1 } },
+                    blocksReceived: { none: { blockerId: 1 } },
+                  },
+                },
+                { authorId: 1 },
+              ],
+            },
             { id: { notIn: [12] } },
           ],
         },
@@ -125,6 +137,26 @@ describe('Liking comments', () => {
     expect(requireTargetAccess).not.toHaveBeenCalled();
     expect(prisma.like.create).not.toHaveBeenCalled();
     expect(prisma.comment.update).not.toHaveBeenCalled();
+  });
+
+  it('won’t like a post across a block, either way', async () => {
+    prisma.block.count.mockResolvedValueOnce(1);
+
+    await expect(
+      service.setLike(1, { type: 'post', id: 7, liked: true }),
+    ).rejects.toThrow(NotFoundException);
+
+    expect(prisma.block.count).toHaveBeenCalledWith({
+      where: {
+        OR: [
+          { blockerId: 1, blockedId: 2 },
+          { blockerId: 2, blockedId: 1 },
+        ],
+      },
+    });
+    expect(requireTargetAccess).not.toHaveBeenCalled();
+    expect(prisma.like.create).not.toHaveBeenCalled();
+    expect(prisma.post.update).not.toHaveBeenCalled();
   });
 
   it('keeps liking posts and library updates directly', async () => {

@@ -28,7 +28,14 @@ import {
   unlinkHashtags,
 } from '../common/hashtags';
 import { loadNicknames } from '../communities/nicknames';
-import { reportedBy, visibleTo } from '../moderation/visibility';
+import {
+  hiddenFor,
+  ContentViewer,
+  contentViewer,
+  viewerContext,
+  ViewerContext,
+  visibleTo,
+} from '../moderation/visibility';
 import { spoilerOf } from '../common/spoiler';
 import {
   CreateForumPostDto,
@@ -141,13 +148,13 @@ export class ForumService {
     viewerId: number,
     communityId: number,
     threadId: number,
-    reported: number[],
+    viewer: ContentViewer,
   ) {
     const thread = await this.prisma.forumThread.findFirst({
       where: {
         id: threadId,
         communityId,
-        ...visibleThreads(viewerId, reported),
+        ...visibleThreads(viewer),
       },
       select: {
         ...threadSelect,
@@ -169,7 +176,7 @@ export class ForumService {
     viewerId: number,
     communityId: number,
     threads: RawThread[],
-    reported: number[],
+    viewer: ContentViewer,
   ) {
     const lastReplies = await Promise.all(
       threads.map(({ id }) =>
@@ -177,7 +184,7 @@ export class ForumService {
           where: {
             threadId: id,
             opening: false,
-            ...visibleTo(viewerId, reported),
+            ...visibleTo(viewer, 'forum_post'),
           },
           orderBy: newestFirst,
           select: { createdAt: true, author },
@@ -213,7 +220,7 @@ export class ForumService {
     viewerId: number,
     communityId: number,
     posts: RawPost[],
-    reported: number[],
+    viewer: ViewerContext,
     manager: boolean,
   ) {
     const quoteIds = [
@@ -230,7 +237,10 @@ export class ForumService {
       quoteIds.length === 0
         ? Promise.resolve([])
         : this.prisma.forumPost.findMany({
-            where: { id: { in: quoteIds }, ...visibleTo(viewerId, reported) },
+            where: {
+              id: { in: quoteIds },
+              ...visibleTo(viewer, 'forum_post'),
+            },
             select: quoteSelect,
           }),
     ]);
@@ -257,6 +267,9 @@ export class ForumService {
           ...quote,
           author: withNickname(communityId, quote.author),
           available: true as const,
+          hiddenBecause: hiddenFor(viewer, quote.author.id, quote.content, [
+            quote.spoiler,
+          ]),
         },
       ]),
     );
@@ -275,6 +288,9 @@ export class ForumService {
       canEdit: post.author.id === viewerId,
       canDelete: post.author.id === viewerId || manager,
       moderation: moderationOf(communityId, post.author.id),
+      hiddenBecause: hiddenFor(viewer, post.author.id, post.content, [
+        post.spoiler,
+      ]),
     }));
   }
 
@@ -304,10 +320,10 @@ export class ForumService {
     };
 
     const page = pageNumber(rawPage);
-    const reported = await reportedBy(this.prisma, viewerId);
+    const viewer = await contentViewer(this.prisma, viewerId);
     const where = {
       categoryId,
-      ...visibleThreads(viewerId, reported.forum_post),
+      ...visibleThreads(viewer),
     };
     const [total, threads, pinned, member, manager] = await Promise.all([
       this.prisma.forumThread.count({ where: { ...where, pinnedAt: null } }),
@@ -332,7 +348,7 @@ export class ForumService {
       viewerId,
       communityId,
       [...pinned, ...threads],
-      reported.forum_post,
+      viewer,
     );
 
     return {
@@ -354,14 +370,14 @@ export class ForumService {
     rawPage?: number,
     postId?: number,
   ) {
-    const reported = await reportedBy(this.prisma, viewerId);
+    const viewer = await viewerContext(this.prisma, viewerId);
     const thread = await this.visibleThread(
       viewerId,
       communityId,
       threadId,
-      reported.forum_post,
+      viewer,
     );
-    const where = { threadId, ...visibleTo(viewerId, reported.forum_post) };
+    const where = { threadId, ...visibleTo(viewer, 'forum_post') };
 
     let page = pageNumber(rawPage);
     if (postId !== undefined) {
@@ -396,13 +412,7 @@ export class ForumService {
       isForumManager(this.prisma, viewerId, communityId),
     ]);
     const [items, withNickname] = await Promise.all([
-      this.decoratePosts(
-        viewerId,
-        communityId,
-        posts,
-        reported.forum_post,
-        manager,
-      ),
+      this.decoratePosts(viewerId, communityId, posts, viewer, manager),
       loadNicknames(this.prisma, [{ communityId, userId: thread.authorId }]),
     ]);
     const { pinnedAt, lockedAt, authorId, ...rest } = thread;
@@ -426,7 +436,7 @@ export class ForumService {
 
   async findForTags(viewerId: number, ids: number[]) {
     if (ids.length === 0) return [];
-    const [rows, reported] = await Promise.all([
+    const [rows, viewer] = await Promise.all([
       this.prisma.forumPost.findMany({
         where: { id: { in: ids } },
         select: {
@@ -442,7 +452,7 @@ export class ForumService {
           },
         },
       }),
-      reportedBy(this.prisma, viewerId),
+      viewerContext(this.prisma, viewerId),
     ]);
     const communityIds = [
       ...new Set(rows.map(({ communityId }) => communityId)),
@@ -460,7 +470,7 @@ export class ForumService {
           rows.flatMap(({ communityId: home, thread, ...post }) =>
             home === communityId ? [post] : [],
           ),
-          reported.forum_post,
+          viewer,
           managed.has(communityId),
         ),
       ),
@@ -562,12 +572,12 @@ export class ForumService {
     threadId: number,
     { content, quoteId, linkUrl, spoiler }: CreateForumPostDto,
   ) {
-    const reported = await reportedBy(this.prisma, userId);
+    const viewer = await contentViewer(this.prisma, userId);
     const thread = await this.visibleThread(
       userId,
       communityId,
       threadId,
-      reported.forum_post,
+      viewer,
     );
     if (
       thread.lockedAt !== null &&
@@ -583,7 +593,7 @@ export class ForumService {
             where: {
               id: quoteId,
               threadId,
-              ...visibleTo(userId, reported.forum_post),
+              ...visibleTo(viewer, 'forum_post'),
             },
             select: { id: true, authorId: true },
           });
@@ -783,15 +793,15 @@ export class ForumService {
       link: forumPostLink(communityId, post.threadId, postId),
     });
 
-    const [reported, manager] = await Promise.all([
-      reportedBy(this.prisma, userId),
+    const [viewer, manager] = await Promise.all([
+      viewerContext(this.prisma, userId),
       isForumManager(this.prisma, userId, communityId),
     ]);
     const [item] = await this.decoratePosts(
       userId,
       communityId,
       [updated],
-      reported.forum_post,
+      viewer,
       manager,
     );
     return item;
@@ -868,19 +878,19 @@ export class ForumService {
     const query = rawQuery.trim().slice(0, 100);
     if (query.length < 2) return [];
 
-    const reported = await reportedBy(this.prisma, viewerId);
+    const viewer = await contentViewer(this.prisma, viewerId);
     const contains = { contains: query, mode: 'insensitive' as const };
     const threads = await this.prisma.forumThread.findMany({
       where: {
         communityId,
-        ...visibleThreads(viewerId, reported.forum_post),
+        ...visibleThreads(viewer),
         OR: [
           { title: contains },
           {
             posts: {
               some: {
                 OR: [{ content: contains }, { spoiler: contains }],
-                ...visibleTo(viewerId, reported.forum_post),
+                ...visibleTo(viewer, 'forum_post'),
               },
             },
           },

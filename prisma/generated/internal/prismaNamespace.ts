@@ -416,6 +416,9 @@ export const ModelName = {
   Report: 'Report',
   ReportComment: 'ReportComment',
   ContentReport: 'ContentReport',
+  Block: 'Block',
+  Mute: 'Mute',
+  KeywordFilter: 'KeywordFilter',
   Setting: 'Setting',
   SteamAccount: 'SteamAccount',
   SteamGame: 'SteamGame',
@@ -436,7 +439,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "community" | "membership" | "railFolder" | "role" | "membershipRole" | "invite" | "discordChannel" | "discordMessage" | "communityBan" | "post" | "comment" | "like" | "bookmark" | "forumSection" | "forumCategory" | "forumThread" | "forumPost" | "friendship" | "suggestionDismissal" | "hashtag" | "hashtagUsage" | "hashtagFollow" | "libraryEntry" | "libraryActivity" | "conversation" | "conversationMember" | "message" | "messageReaction" | "notification" | "report" | "reportComment" | "contentReport" | "setting" | "steamAccount" | "steamGame" | "user" | "oAuthAccount"
+    modelProps: "community" | "membership" | "railFolder" | "role" | "membershipRole" | "invite" | "discordChannel" | "discordMessage" | "communityBan" | "post" | "comment" | "like" | "bookmark" | "forumSection" | "forumCategory" | "forumThread" | "forumPost" | "friendship" | "suggestionDismissal" | "hashtag" | "hashtagUsage" | "hashtagFollow" | "libraryEntry" | "libraryActivity" | "conversation" | "conversationMember" | "message" | "messageReaction" | "notification" | "report" | "reportComment" | "contentReport" | "block" | "mute" | "keywordFilter" | "setting" | "steamAccount" | "steamGame" | "user" | "oAuthAccount"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2808,6 +2811,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Block: {
+      payload: Prisma.$BlockPayload<ExtArgs>
+      fields: Prisma.BlockFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BlockFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BlockPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BlockFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BlockPayload>
+        }
+        findFirst: {
+          args: Prisma.BlockFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BlockPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BlockFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BlockPayload>
+        }
+        findMany: {
+          args: Prisma.BlockFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BlockPayload>[]
+        }
+        create: {
+          args: Prisma.BlockCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BlockPayload>
+        }
+        createMany: {
+          args: Prisma.BlockCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BlockCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BlockPayload>[]
+        }
+        delete: {
+          args: Prisma.BlockDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BlockPayload>
+        }
+        update: {
+          args: Prisma.BlockUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BlockPayload>
+        }
+        deleteMany: {
+          args: Prisma.BlockDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BlockUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BlockUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BlockPayload>[]
+        }
+        upsert: {
+          args: Prisma.BlockUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BlockPayload>
+        }
+        aggregate: {
+          args: Prisma.BlockAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBlock>
+        }
+        groupBy: {
+          args: Prisma.BlockGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BlockGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BlockCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BlockCountAggregateOutputType> | number
+        }
+      }
+    }
+    Mute: {
+      payload: Prisma.$MutePayload<ExtArgs>
+      fields: Prisma.MuteFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MuteFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MutePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MuteFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MutePayload>
+        }
+        findFirst: {
+          args: Prisma.MuteFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MutePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MuteFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MutePayload>
+        }
+        findMany: {
+          args: Prisma.MuteFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MutePayload>[]
+        }
+        create: {
+          args: Prisma.MuteCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MutePayload>
+        }
+        createMany: {
+          args: Prisma.MuteCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MuteCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MutePayload>[]
+        }
+        delete: {
+          args: Prisma.MuteDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MutePayload>
+        }
+        update: {
+          args: Prisma.MuteUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MutePayload>
+        }
+        deleteMany: {
+          args: Prisma.MuteDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MuteUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MuteUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MutePayload>[]
+        }
+        upsert: {
+          args: Prisma.MuteUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MutePayload>
+        }
+        aggregate: {
+          args: Prisma.MuteAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMute>
+        }
+        groupBy: {
+          args: Prisma.MuteGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MuteGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MuteCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MuteCountAggregateOutputType> | number
+        }
+      }
+    }
+    KeywordFilter: {
+      payload: Prisma.$KeywordFilterPayload<ExtArgs>
+      fields: Prisma.KeywordFilterFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.KeywordFilterFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeywordFilterPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.KeywordFilterFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeywordFilterPayload>
+        }
+        findFirst: {
+          args: Prisma.KeywordFilterFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeywordFilterPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.KeywordFilterFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeywordFilterPayload>
+        }
+        findMany: {
+          args: Prisma.KeywordFilterFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeywordFilterPayload>[]
+        }
+        create: {
+          args: Prisma.KeywordFilterCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeywordFilterPayload>
+        }
+        createMany: {
+          args: Prisma.KeywordFilterCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.KeywordFilterCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeywordFilterPayload>[]
+        }
+        delete: {
+          args: Prisma.KeywordFilterDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeywordFilterPayload>
+        }
+        update: {
+          args: Prisma.KeywordFilterUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeywordFilterPayload>
+        }
+        deleteMany: {
+          args: Prisma.KeywordFilterDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.KeywordFilterUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.KeywordFilterUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeywordFilterPayload>[]
+        }
+        upsert: {
+          args: Prisma.KeywordFilterUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeywordFilterPayload>
+        }
+        aggregate: {
+          args: Prisma.KeywordFilterAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateKeywordFilter>
+        }
+        groupBy: {
+          args: Prisma.KeywordFilterGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.KeywordFilterGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.KeywordFilterCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.KeywordFilterCountAggregateOutputType> | number
+        }
+      }
+    }
     Setting: {
       payload: Prisma.$SettingPayload<ExtArgs>
       fields: Prisma.SettingFieldRefs
@@ -3582,7 +3807,8 @@ export const ConversationMemberScalarFieldEnum = {
   userId: 'userId',
   status: 'status',
   unread: 'unread',
-  readAt: 'readAt'
+  readAt: 'readAt',
+  mutedAt: 'mutedAt'
 } as const
 
 export type ConversationMemberScalarFieldEnum = (typeof ConversationMemberScalarFieldEnum)[keyof typeof ConversationMemberScalarFieldEnum]
@@ -3667,6 +3893,35 @@ export const ContentReportScalarFieldEnum = {
 } as const
 
 export type ContentReportScalarFieldEnum = (typeof ContentReportScalarFieldEnum)[keyof typeof ContentReportScalarFieldEnum]
+
+
+export const BlockScalarFieldEnum = {
+  blockerId: 'blockerId',
+  blockedId: 'blockedId',
+  createdAt: 'createdAt'
+} as const
+
+export type BlockScalarFieldEnum = (typeof BlockScalarFieldEnum)[keyof typeof BlockScalarFieldEnum]
+
+
+export const MuteScalarFieldEnum = {
+  muterId: 'muterId',
+  mutedId: 'mutedId',
+  createdAt: 'createdAt'
+} as const
+
+export type MuteScalarFieldEnum = (typeof MuteScalarFieldEnum)[keyof typeof MuteScalarFieldEnum]
+
+
+export const KeywordFilterScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  phrase: 'phrase',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+} as const
+
+export type KeywordFilterScalarFieldEnum = (typeof KeywordFilterScalarFieldEnum)[keyof typeof KeywordFilterScalarFieldEnum]
 
 
 export const SettingScalarFieldEnum = {
@@ -4229,6 +4484,9 @@ export type GlobalOmitConfig = {
   report?: Prisma.ReportOmit
   reportComment?: Prisma.ReportCommentOmit
   contentReport?: Prisma.ContentReportOmit
+  block?: Prisma.BlockOmit
+  mute?: Prisma.MuteOmit
+  keywordFilter?: Prisma.KeywordFilterOmit
   setting?: Prisma.SettingOmit
   steamAccount?: Prisma.SteamAccountOmit
   steamGame?: Prisma.SteamGameOmit

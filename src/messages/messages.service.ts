@@ -14,6 +14,7 @@ import {
   MESSAGE_PAGE_SIZE,
   pair,
 } from './conversation';
+import { blockedWith, isBlocked } from '../safety/blocks';
 
 const person = {
   select: { id: true, username: true, name: true, avatarUrl: true },
@@ -36,6 +37,7 @@ const conversationSelect = {
       unread: true,
       status: true,
       readAt: true,
+      mutedAt: true,
       user: person,
     },
   },
@@ -80,11 +82,18 @@ export type ChatPerson = {
   avatarUrl: string | null;
 };
 
+const BLOCKED = { kind: 'blocked' } as const;
+
+const BLOCKED_TEXT = 'Message from someone you blocked';
+
+const NONE: ReadonlySet<number> = new Set();
+
 export type ChatReply = {
   id: number;
   senderId: number;
   sender: ChatPerson;
   text: string;
+  hiddenBecause: typeof BLOCKED | null;
 };
 
 export type ChatReaction = { emoji: string; userIds: number[] };
@@ -99,6 +108,7 @@ export type ChatMessage = {
   editedAt: string | null;
   replyTo: ChatReply | null;
   reactions: ChatReaction[];
+  hiddenBecause: typeof BLOCKED | null;
 };
 
 export type InboxEntry = {
@@ -113,12 +123,16 @@ export type InboxEntry = {
   lastAt: string;
   unread: number;
   status: ConversationStatus;
+  muted: boolean;
+  canMessage: boolean;
 };
 
 export type ChatHistory = {
   messages: ChatMessage[];
   members: (ChatPerson & { readAt: string | null })[];
   hasMore: boolean;
+  muted: boolean;
+  canMessage: boolean;
 };
 
 function toPerson({ id, username, name, avatarUrl }: Person): ChatPerson {
@@ -144,8 +158,12 @@ function reactionsOf(reactions: LoadedMessage['reactions']): ChatReaction[] {
   return [...grouped].map(([emoji, userIds]) => ({ emoji, userIds }));
 }
 
-function toMessage(message: LoadedMessage): ChatMessage {
+function toMessage(
+  message: LoadedMessage,
+  collapsed: ReadonlySet<number> = NONE,
+): ChatMessage {
   const { replyTo } = message;
+  const replyHidden = replyTo !== null && collapsed.has(replyTo.senderId);
   return {
     id: message.id,
     senderId: message.senderId,
@@ -158,10 +176,20 @@ function toMessage(message: LoadedMessage): ChatMessage {
       id: replyTo.id,
       senderId: replyTo.senderId,
       sender: toPerson(replyTo.sender),
-      text: replyTo.text,
+      text: replyHidden ? '' : replyTo.text,
+      hiddenBecause: replyHidden ? BLOCKED : null,
     },
     reactions: reactionsOf(message.reactions),
+    hiddenBecause:
+      !message.system && collapsed.has(message.senderId) ? BLOCKED : null,
   };
+}
+
+function collapsedIn(
+  conversation: LoadedConversation,
+  blocked: ReadonlySet<number>,
+) {
+  return conversation.isGroup ? blocked : NONE;
 }
 
 function othersOf(conversation: LoadedConversation, userId: number) {
@@ -180,22 +208,32 @@ function othersOf(conversation: LoadedConversation, userId: number) {
 function entryFor(
   conversation: LoadedConversation,
   userId: number,
+  blocked: ReadonlySet<number> = NONE,
 ): InboxEntry | null {
   const mine = conversation.members.find((member) => member.userId === userId);
   if (!mine) return null;
+  const others = othersOf(conversation, userId);
+  const lastHidden =
+    conversation.isGroup &&
+    !conversation.lastSystem &&
+    conversation.lastSenderId !== null &&
+    blocked.has(conversation.lastSenderId);
 
   return {
     id: conversation.id,
     isGroup: conversation.isGroup,
     name: conversation.name,
     creatorId: conversation.creatorId,
-    members: othersOf(conversation, userId).map(toPerson),
-    lastText: conversation.lastText,
+    members: others.map(toPerson),
+    lastText: lastHidden ? BLOCKED_TEXT : conversation.lastText,
     lastSenderId: conversation.lastSenderId,
     lastSystem: conversation.lastSystem,
     lastAt: conversation.lastMessageAt.toISOString(),
     unread: mine.unread,
     status: mine.status,
+    muted: mine.mutedAt !== null,
+    canMessage:
+      conversation.isGroup || !others.some(({ id }) => blocked.has(id)),
   };
 }
 
@@ -223,8 +261,11 @@ export class MessagesService {
       orderBy: { conversation: { lastMessageAt: 'desc' } },
       select: { conversation: { select: conversationSelect } },
     });
+    const blocked = await blockedWith(this.prisma, userId);
 
-    return members.map(({ conversation }) => entryFor(conversation, userId)!);
+    return members.map(
+      ({ conversation }) => entryFor(conversation, userId, blocked)!,
+    );
   }
 
   async direct(userId: number, otherId: number): Promise<InboxEntry> {
@@ -232,6 +273,9 @@ export class MessagesService {
       throw new BadRequestException('You cannot message yourself');
     }
     await this.requireUsers([otherId]);
+    if (await isBlocked(this.prisma, userId, otherId)) {
+      throw new ForbiddenException('You can’t message this person');
+    }
 
     const open = () =>
       this.prisma.conversation.upsert({
@@ -268,6 +312,7 @@ export class MessagesService {
       );
     }
     await this.requireUsers(others);
+    await this.requireUnblocked(userId, others);
     const friends = await this.friendIdsOf(userId, others);
 
     const message = await this.prisma.$transaction(async (tx) => {
@@ -293,9 +338,9 @@ export class MessagesService {
       return this.post(tx, id, userId, 'created the group', true);
     });
 
-    const conversation = await this.broadcast(
+    const { conversation } = await this.broadcast(
       message.conversationId,
-      toMessage(message),
+      message,
     );
     return entryFor(conversation, userId)!;
   }
@@ -308,7 +353,8 @@ export class MessagesService {
     if (before !== undefined && (before < 1 || before > MAX_INT)) {
       throw new BadRequestException('Invalid cursor');
     }
-    const { conversation } = await this.membership(userId, id);
+    const { conversation, mine } = await this.membership(userId, id);
+    const others = othersOf(conversation, userId);
 
     const page = await this.prisma.message.findMany({
       where: {
@@ -320,9 +366,21 @@ export class MessagesService {
       select: messageSelect,
     });
 
+    const blocked = await blockedWith(this.prisma, userId, [
+      ...new Set([
+        ...others.map((other) => other.id),
+        ...page.flatMap(({ senderId, replyTo }) =>
+          replyTo ? [senderId, replyTo.senderId] : [senderId],
+        ),
+      ]),
+    ]);
+    const collapsed = collapsedIn(conversation, blocked);
     return {
-      messages: page.slice(0, MESSAGE_PAGE_SIZE).reverse().map(toMessage),
-      members: othersOf(conversation, userId).map((other) => ({
+      messages: page
+        .slice(0, MESSAGE_PAGE_SIZE)
+        .reverse()
+        .map((message) => toMessage(message, collapsed)),
+      members: others.map((other) => ({
         ...toPerson(other),
         readAt:
           conversation.members
@@ -330,6 +388,9 @@ export class MessagesService {
             ?.readAt?.toISOString() ?? null,
       })),
       hasMore: page.length > MESSAGE_PAGE_SIZE,
+      muted: mine.mutedAt !== null,
+      canMessage:
+        conversation.isGroup || !others.some(({ id }) => blocked.has(id)),
     };
   }
 
@@ -352,9 +413,7 @@ export class MessagesService {
       }
     }
 
-    const other = conversation.isGroup
-      ? null
-      : othersOf(conversation, userId)[0];
+    const other = await this.requireMessageable(userId, conversation);
     const friends = other
       ? await this.friendIdsOf(userId, [other.id])
       : new Set<number>();
@@ -390,9 +449,8 @@ export class MessagesService {
       return message;
     });
 
-    const sent = toMessage(message);
-    await this.broadcast(id, sent);
-    return sent;
+    const { blockedFor } = await this.broadcast(id, message);
+    return toMessage(message, collapsedIn(conversation, blockedFor(userId)));
   }
 
   async edit(
@@ -404,6 +462,7 @@ export class MessagesService {
     const text = content.trim();
     if (!text) throw new BadRequestException('Message cannot be empty');
     const { conversation } = await this.membership(userId, id);
+    await this.requireMessageable(userId, conversation);
     if (messageId < 1 || messageId > MAX_INT) {
       throw new NotFoundException('Message not found');
     }
@@ -416,13 +475,11 @@ export class MessagesService {
       throw new ForbiddenException('You can only edit your own messages');
     }
 
-    const message = toMessage(
-      await this.prisma.message.update({
-        where: { id: messageId },
-        data: { text, editedAt: new Date() },
-        select: messageSelect,
-      }),
-    );
+    const updated = await this.prisma.message.update({
+      where: { id: messageId },
+      data: { text, editedAt: new Date() },
+      select: messageSelect,
+    });
     const latest = await this.prisma.message.findFirst({
       where: { conversationId: id },
       orderBy: { id: 'desc' },
@@ -435,12 +492,7 @@ export class MessagesService {
       });
       await this.broadcast(id);
     }
-    this.presence.notify(
-      conversation.members.map((member) => member.userId),
-      'message:updated',
-      { conversationId: id, message },
-    );
-    return message;
+    return this.notifyUpdated(conversation, userId, updated);
   }
 
   async react(
@@ -453,6 +505,7 @@ export class MessagesService {
     if (mine.status !== 'accepted') {
       throw new ForbiddenException('Accept the chat first');
     }
+    await this.requireMessageable(userId, conversation);
     if (messageId < 1 || messageId > MAX_INT) {
       throw new NotFoundException('Message not found');
     }
@@ -477,18 +530,11 @@ export class MessagesService {
       });
     }
 
-    const message = toMessage(
-      await this.prisma.message.findUniqueOrThrow({
-        where: { id: messageId },
-        select: messageSelect,
-      }),
-    );
-    this.presence.notify(
-      conversation.members.map((member) => member.userId),
-      'message:updated',
-      { conversationId: id, message },
-    );
-    return message;
+    const updated = await this.prisma.message.findUniqueOrThrow({
+      where: { id: messageId },
+      select: messageSelect,
+    });
+    return this.notifyUpdated(conversation, userId, updated);
   }
 
   async read(userId: number, id: number) {
@@ -502,7 +548,11 @@ export class MessagesService {
 
     const conversation = await this.load(id);
     this.presence.notify([userId], 'conversation', {
-      conversation: entryFor(conversation, userId),
+      conversation: entryFor(
+        conversation,
+        userId,
+        await this.blockedFor(conversation, userId),
+      ),
     });
     if (accepted) {
       this.presence.notify(
@@ -523,8 +573,13 @@ export class MessagesService {
       where: { conversationId_userId: { conversationId: id, userId } },
       data: { status: 'accepted' },
     });
+    const conversation = await this.load(id);
     this.presence.notify([userId], 'conversation', {
-      conversation: entryFor(await this.load(id), userId),
+      conversation: entryFor(
+        conversation,
+        userId,
+        await this.blockedFor(conversation, userId),
+      ),
     });
   }
 
@@ -551,7 +606,7 @@ export class MessagesService {
         true,
       );
     });
-    await this.broadcast(id, toMessage(message));
+    await this.broadcast(id, message);
   }
 
   async addMembers(userId: number, id: number, userIds: number[]) {
@@ -569,6 +624,7 @@ export class MessagesService {
       );
     }
     const people = await this.requireUsers(added);
+    await this.requireUnblocked(userId, added);
     const friends = await this.friendIdsOf(userId, added);
 
     const message = await this.prisma.$transaction(async (tx) => {
@@ -583,7 +639,7 @@ export class MessagesService {
       });
       return this.post(tx, id, userId, `added ${listNames(people)}`, true);
     });
-    await this.broadcast(id, toMessage(message));
+    await this.broadcast(id, message);
   }
 
   async removeMember(userId: number, id: number, targetId: number) {
@@ -619,7 +675,7 @@ export class MessagesService {
     });
 
     this.presence.notify([targetId], 'conversation:removed', { id });
-    await this.broadcast(id, toMessage(message));
+    await this.broadcast(id, message);
   }
 
   async typing(userId: number, id: number, typing: boolean) {
@@ -676,20 +732,136 @@ export class MessagesService {
     return message;
   }
 
-  private async broadcast(id: number, message?: ChatMessage) {
+  private async broadcast(id: number, message?: LoadedMessage) {
     const conversation = await this.load(id);
+    const blockedFor = await this.blocksAmong(conversation, message);
     for (const { userId } of conversation.members) {
-      const entry = entryFor(conversation, userId);
+      const blocked = blockedFor(userId);
+      const entry = entryFor(conversation, userId, blocked);
       if (message) {
         this.presence.notify([userId], 'message', {
           conversation: entry,
-          message,
+          message: toMessage(message, collapsedIn(conversation, blocked)),
         });
       } else {
         this.presence.notify([userId], 'conversation', { conversation: entry });
       }
     }
-    return conversation;
+    return { conversation, blockedFor };
+  }
+
+  private async blocksAmong(
+    conversation: LoadedConversation,
+    message?: LoadedMessage,
+  ) {
+    const ids = [
+      ...new Set([
+        ...conversation.members.map((member) => member.userId),
+        ...[conversation.userA, conversation.userB].flatMap((other) =>
+          other ? [other.id] : [],
+        ),
+        ...(conversation.lastSenderId === null
+          ? []
+          : [conversation.lastSenderId]),
+        ...(message ? [message.senderId] : []),
+        ...(message?.replyTo ? [message.replyTo.senderId] : []),
+      ]),
+    ];
+    const blocks =
+      ids.length < 2
+        ? []
+        : await this.prisma.block.findMany({
+            where: { blockerId: { in: ids }, blockedId: { in: ids } },
+            select: { blockerId: true, blockedId: true },
+          });
+    return (userId: number): ReadonlySet<number> =>
+      new Set(
+        blocks.flatMap(({ blockerId, blockedId }) =>
+          blockerId === userId
+            ? [blockedId]
+            : blockedId === userId
+              ? [blockerId]
+              : [],
+        ),
+      );
+  }
+
+  private async notifyUpdated(
+    conversation: LoadedConversation,
+    userId: number,
+    updated: LoadedMessage,
+  ) {
+    const blockedFor = conversation.isGroup
+      ? await this.blocksAmong(conversation, updated)
+      : () => NONE;
+    const viewOf = (memberId: number) =>
+      toMessage(updated, collapsedIn(conversation, blockedFor(memberId)));
+    const audiences = new Map<
+      string,
+      { ids: number[]; message: ChatMessage }
+    >();
+    for (const { userId: memberId } of conversation.members) {
+      const message = viewOf(memberId);
+      const key = JSON.stringify([
+        message.hiddenBecause,
+        message.replyTo?.hiddenBecause ?? null,
+      ]);
+      const audience = audiences.get(key) ?? { ids: [], message };
+      audience.ids.push(memberId);
+      audiences.set(key, audience);
+    }
+    for (const { ids, message } of audiences.values()) {
+      this.presence.notify(ids, 'message:updated', {
+        conversationId: conversation.id,
+        message,
+      });
+    }
+    return viewOf(userId);
+  }
+
+  async setMuted(userId: number, id: number, muted: boolean) {
+    await this.membership(userId, id);
+    await this.prisma.conversationMember.update({
+      where: { conversationId_userId: { conversationId: id, userId } },
+      data: { mutedAt: muted ? new Date() : null },
+    });
+    const conversation = await this.load(id);
+    this.presence.notify([userId], 'conversation', {
+      conversation: entryFor(
+        conversation,
+        userId,
+        await this.blockedFor(conversation, userId),
+      ),
+    });
+    return { muted };
+  }
+
+  private async blockedFor(conversation: LoadedConversation, userId: number) {
+    return blockedWith(this.prisma, userId, [
+      ...othersOf(conversation, userId).map((other) => other.id),
+      ...(conversation.lastSenderId === null
+        ? []
+        : [conversation.lastSenderId]),
+    ]);
+  }
+
+  private async requireMessageable(
+    userId: number,
+    conversation: LoadedConversation,
+  ) {
+    const other = conversation.isGroup
+      ? null
+      : (othersOf(conversation, userId)[0] ?? null);
+    if (other && (await isBlocked(this.prisma, userId, other.id))) {
+      throw new ForbiddenException('You can’t message this person');
+    }
+    return other;
+  }
+
+  private async requireUnblocked(userId: number, others: number[]) {
+    if ((await blockedWith(this.prisma, userId, others)).size > 0) {
+      throw new ForbiddenException('You can’t add this person');
+    }
   }
 
   private acceptedOthers(conversation: LoadedConversation, userId: number) {

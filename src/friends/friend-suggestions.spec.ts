@@ -24,6 +24,7 @@ const fullSlots = { suggestionSlots: 10, suggestionSlotsAt: null };
 
 function prismaFor(slots: object = fullSlots) {
   return {
+    block: { findMany: jest.fn().mockResolvedValue([]) },
     suggestionDismissal: {
       findMany: jest.fn((): { dismissedUserId: number }[] => []),
     },
@@ -258,6 +259,7 @@ describe('Suggestion slots', () => {
         update: jest.fn(),
       },
       friendship: { findFirst: jest.fn(() => null), create: jest.fn() },
+      block: { count: jest.fn(() => 0) },
     };
     const service = new FriendsService(
       prisma as unknown as PrismaService,

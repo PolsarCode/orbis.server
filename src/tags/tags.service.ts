@@ -5,7 +5,8 @@ import { PAGE_SIZE } from '../common/pagination';
 import { DAY } from '../common/throttle';
 import { hashtagName } from '../common/hashtags';
 import { MAX_INT } from '../communities/community-member.guard';
-import { reportedBy } from '../moderation/visibility';
+import { contentViewer } from '../moderation/visibility';
+import { notMutedBy } from '../safety/blocks';
 import { showsNsfw } from '../users/nsfw';
 import { PostItem, PostsService } from '../posts/posts.service';
 import {
@@ -81,11 +82,11 @@ export class TagsService {
   ) {}
 
   private async publicWhere(viewerId: number) {
-    const [reported, showNsfw] = await Promise.all([
-      reportedBy(this.prisma, viewerId),
+    const [viewer, showNsfw] = await Promise.all([
+      contentViewer(this.prisma, viewerId),
       showsNsfw(this.prisma, viewerId),
     ]);
-    return publicUsages(viewerId, reported, showNsfw);
+    return publicUsages(viewer, showNsfw);
   }
 
   private async peopleByTag(where: Prisma.HashtagUsageWhereInput, since: Date) {
@@ -217,7 +218,9 @@ export class TagsService {
     const scoped = { AND: [{ hashtagId: hashtag.id }, where] };
     const [usages, people] = await Promise.all([
       this.prisma.hashtagUsage.findMany({
-        where: { AND: [scoped, before(cursor)] },
+        where: {
+          AND: [scoped, before(cursor), { author: notMutedBy(viewerId) }],
+        },
         orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
         take: PAGE_SIZE + 1,
         select: {

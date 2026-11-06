@@ -35,7 +35,15 @@ import {
   targetOf,
 } from '../posts/wall-access';
 import { LikesService } from '../likes/likes.service';
-import { reportedBy } from '../moderation/visibility';
+import {
+  blockExempt,
+  HiddenBecause,
+  hiddenFor,
+  unblockedFor,
+  ViewerContext,
+  viewerContext,
+} from '../moderation/visibility';
+import { blockedWithAny } from '../safety/blocks';
 import { loadNicknames } from '../communities/nicknames';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
@@ -83,6 +91,7 @@ export type CommentView = RawComment & {
   hidden: 'review' | 'reported' | null;
   deleted: boolean;
   canDelete: boolean;
+  hiddenBecause: HiddenBecause | null;
 };
 
 type CommentAuthor = Prisma.UserGetPayload<typeof author> & {
@@ -112,12 +121,20 @@ export class CommentsService {
     }
 
     const commentableType = type as CommentableType;
-    const { communityId, wallUserId } = await targetOf(
+    const { communityId, wallUserId, ownerId } = await targetOf(
       this.prisma,
       userId,
       commentableType,
       id,
     );
+    const viewer = await viewerContext(this.prisma, userId);
+    if (
+      await blockedWithAny(this.prisma, userId, [ownerId, wallUserId], {
+        theirs: !blockExempt(viewer, communityId),
+      })
+    ) {
+      throw new NotFoundException('Not found');
+    }
     if (communityId !== null) {
       await requireViewAccess(this.prisma, userId, communityId);
     } else if (wallUserId !== null) {
@@ -128,14 +145,17 @@ export class CommentsService {
       where: {
         commentableType,
         commentableId: id,
-        OR: [{ author: notSuspended() }, { authorId: userId }],
+        AND: [
+          { OR: [{ author: notSuspended() }, { authorId: userId }] },
+          unblockedFor(viewer),
+        ],
       },
       orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
       take: MAX_COMMENTS,
       select: commentSelect,
     });
     return this.present(
-      userId,
+      viewer,
       comments.map((comment) => ({ communityId, comment })),
     );
   }
@@ -159,13 +179,15 @@ export class CommentsService {
         row.commentableType === type ? [row.commentableId] : [],
       );
     const [views, posts, activities] = await Promise.all([
-      this.present(
-        userId,
-        rows.map(
-          ({ communityId, commentableType, commentableId, ...comment }) => ({
-            communityId,
-            comment,
-          }),
+      viewerContext(this.prisma, userId).then((viewer) =>
+        this.present(
+          viewer,
+          rows.map(
+            ({ communityId, commentableType, commentableId, ...comment }) => ({
+              communityId,
+              comment,
+            }),
+          ),
         ),
       ),
       this.prisma.post.findMany({
@@ -230,16 +252,16 @@ export class CommentsService {
   }
 
   private async present(
-    userId: number,
+    viewer: ViewerContext,
     rows: { communityId: number | null; comment: RawComment }[],
   ): Promise<CommentView[]> {
-    const [liked, reported, withNickname, managed] = await Promise.all([
+    const userId = viewer.id;
+    const [liked, withNickname, managed] = await Promise.all([
       this.likes.likedBy(
         userId,
         'comment',
         rows.map(({ comment }) => comment.id),
       ),
-      reportedBy(this.prisma, userId),
       loadNicknames(
         this.prisma,
         rows.map(({ communityId, comment }) => ({
@@ -253,7 +275,7 @@ export class CommentsService {
         rows.map(({ communityId }) => communityId),
       ),
     ]);
-    const reportedIds = new Set(reported.comment);
+    const reportedIds = new Set(viewer.reported.comment);
 
     return rows.map(({ communityId, comment }) => {
       const own = comment.author.id === userId;
@@ -277,6 +299,12 @@ export class CommentsService {
         canDelete:
           !deleted &&
           (own || (communityId !== null && managed.has(communityId))),
+        hiddenBecause:
+          hidden || deleted
+            ? null
+            : hiddenFor(viewer, comment.author.id, comment.content, [
+                comment.spoiler,
+              ]),
       };
     });
   }
@@ -298,6 +326,15 @@ export class CommentsService {
       if (parent?.commentableType !== type || parent.commentableId !== id) {
         throw new BadRequestException('Invalid parent comment');
       }
+    }
+    if (
+      await blockedWithAny(this.prisma, userId, [
+        home.ownerId,
+        home.wallUserId,
+        parentAuthorId,
+      ])
+    ) {
+      throw new NotFoundException('Not found');
     }
 
     const { html, empty } = sanitizeRichText(unlinkHashtags(content));
@@ -352,6 +389,7 @@ export class CommentsService {
       hidden: null,
       deleted: false,
       canDelete: true,
+      hiddenBecause: null,
     };
   }
 
@@ -437,6 +475,7 @@ export class CommentsService {
       hidden: null,
       deleted: false,
       canDelete: true,
+      hiddenBecause: null,
     };
   }
 

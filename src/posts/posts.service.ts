@@ -36,7 +36,17 @@ import { NotificationsService } from '../notifications/notifications.service';
 import { canViewProfile, friendsOf, requireWallAccess } from './wall-access';
 import { LikesService } from '../likes/likes.service';
 import { coverUrl, getMedia } from '../library/library-api';
-import { ReportedIds, reportedBy, visibleTo } from '../moderation/visibility';
+import {
+  HiddenBecause,
+  hiddenFor,
+  ContentViewer,
+  contentViewer,
+  unmutedFor,
+  viewerContext,
+  visibleActivityAuthor,
+  visibleTo,
+} from '../moderation/visibility';
+import { blockState } from '../safety/blocks';
 import { loadNicknames } from '../communities/nicknames';
 import { nsfwEntries, showsNsfw } from '../users/nsfw';
 import { loadSteamLinks, SteamLink } from '../steam/steam-links';
@@ -85,7 +95,10 @@ export type PreviewComment = Prisma.CommentGetPayload<{
   select: typeof previewSelect;
 }>;
 
-type Engagement = { previewComments: PreviewComment[] };
+type Engagement = {
+  previewComments: (PreviewComment & { hiddenBecause: HiddenBecause | null })[];
+  hiddenBecause: HiddenBecause | null;
+};
 
 type RawPost = Prisma.PostGetPayload<{
   include: typeof postInclude;
@@ -161,7 +174,8 @@ function inMyCommunities(userId: number) {
   return { community: { memberships: { some: { userId } } } };
 }
 
-function homePosts(userId: number, reported: ReportedIds, showNsfw: boolean) {
+function homePosts(viewer: ContentViewer, showNsfw: boolean) {
+  const userId = viewer.id;
   return {
     OR: [
       inMyCommunities(userId),
@@ -170,7 +184,7 @@ function homePosts(userId: number, reported: ReportedIds, showNsfw: boolean) {
       { wallUser: friendsOf(userId) },
       {
         AND: [
-          publicPosts(userId, reported, showNsfw),
+          publicPosts(viewer, showNsfw),
           {
             hashtagUsages: {
               some: { hashtag: { follows: { some: { userId } } } },
@@ -202,10 +216,8 @@ function viewableProfiles(viewerId: number): Prisma.UserWhereInput {
   return { OR: [{ isPublic: true }, { id: viewerId }, friendsOf(viewerId)] };
 }
 
-export function viewablePosts(
-  viewerId: number,
-  reported: number[],
-): Prisma.PostWhereInput {
+export function viewablePosts(viewer: ContentViewer): Prisma.PostWhereInput {
+  const viewerId = viewer.id;
   return {
     AND: [
       {
@@ -220,7 +232,7 @@ export function viewablePosts(
           { mediaType: { not: null } },
         ],
       },
-      visibleTo(viewerId, reported),
+      visibleTo(viewer, 'post'),
     ],
   };
 }
@@ -354,10 +366,11 @@ export class PostsService {
   private async engage(
     viewerId: number,
     items: (RawPost | RawActivity)[],
+    { muted = true } = {},
   ): Promise<FeedItem[]> {
     const idsOf = (type: 'post' | 'activity') =>
       items.flatMap((item) => (item.type === type ? [item.id] : []));
-    const reported = await reportedBy(this.prisma, viewerId);
+    const viewer = await viewerContext(this.prisma, viewerId);
     const [likedPosts, likedActivities, bookmarkedPosts, previews] =
       await Promise.all([
         this.likes.likedBy(viewerId, 'post', idsOf('post')),
@@ -374,7 +387,7 @@ export class PostsService {
                       commentableId: item.id,
                       parentId: null,
                       deletedAt: null,
-                      ...visibleTo(viewerId, reported.comment),
+                      ...visibleTo(viewer, 'comment'),
                     },
                     orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
                     take: PREVIEW_COMMENTS,
@@ -428,13 +441,30 @@ export class PostsService {
       const previewComments = previews[index].map((comment) => ({
         ...comment,
         author: withNickname(communityId, comment.author),
+        hiddenBecause: hiddenFor(viewer, comment.author.id, comment.content, [
+          comment.spoiler,
+        ]),
       }));
       const liked = (item.type === 'post' ? likedPosts : likedActivities).has(
         item.id,
       );
       if (item.type === 'activity') {
         const steam = steamOf(item.author.id, item.steamAppId);
-        return { ...item, author, liked, previewComments, steam };
+        const hiddenBecause = hiddenFor(
+          viewer,
+          item.author.id,
+          '',
+          [item.media.title],
+          { muted },
+        );
+        return {
+          ...item,
+          author,
+          liked,
+          previewComments,
+          steam,
+          hiddenBecause,
+        };
       }
       const canDelete =
         item.author.id === viewerId ||
@@ -452,6 +482,13 @@ export class PostsService {
         previewComments,
         canDelete,
         moderation,
+        hiddenBecause: hiddenFor(
+          viewer,
+          item.author.id,
+          item.content,
+          [item.spoiler],
+          { muted },
+        ),
       };
     });
   }
@@ -483,7 +520,7 @@ export class PostsService {
       cursor?: BookmarkCursor;
     },
   ) {
-    const reported = await reportedBy(this.prisma, viewerId);
+    const viewer = await contentViewer(this.prisma, viewerId);
     const saved: { savedAt: Date; post: RawPost }[] = [];
     let before = cursor;
 
@@ -505,7 +542,7 @@ export class PostsService {
           AND: [
             { id: { in: rows.map(({ bookmarkableId }) => bookmarkableId) } },
             filter,
-            viewablePosts(viewerId, reported.post),
+            viewablePosts(viewer),
           ],
         },
         include: postInclude,
@@ -581,6 +618,7 @@ export class PostsService {
     return this.engage(
       viewerId,
       saved.map(({ post }) => post),
+      { muted: false },
     );
   }
 
@@ -590,9 +628,9 @@ export class PostsService {
   ): Promise<BookmarkResult> {
     const key = { userId, bookmarkableType: type, bookmarkableId: id };
     if (bookmarked) {
-      const reported = await reportedBy(this.prisma, userId);
+      const viewer = await contentViewer(this.prisma, userId);
       const post = await this.prisma.post.findFirst({
-        where: { AND: [{ id }, viewablePosts(userId, reported.post)] },
+        where: { AND: [{ id }, viewablePosts(viewer)] },
         select: { id: true },
       });
       if (!post) throw new NotFoundException('Post not found');
@@ -615,7 +653,7 @@ export class PostsService {
   ): Promise<Page<FeedItem>> {
     const cursor = parseFeedCursor(rawCursor);
     const excluded = excludedTypes(exclude);
-    const reported = await reportedBy(this.prisma, viewerId);
+    const viewer = await contentViewer(this.prisma, viewerId);
     const nsfw = nsfwEntries(await showsNsfw(this.prisma, viewerId));
 
     const [pinned, posts, activities] = await Promise.all([
@@ -625,7 +663,7 @@ export class PostsService {
             where: {
               communityId,
               pinnedAt: { not: null },
-              ...visibleTo(viewerId, reported.post),
+              AND: [visibleTo(viewer, 'post'), unmutedFor(viewerId)],
             },
             orderBy: { pinnedAt: 'desc' },
             include: postInclude,
@@ -636,8 +674,11 @@ export class PostsService {
             where: {
               communityId,
               pinnedAt: null,
-              ...olderThan(cursor, RANK.post),
-              ...visibleTo(viewerId, reported.post),
+              AND: [
+                olderThan(cursor, RANK.post),
+                visibleTo(viewer, 'post'),
+                unmutedFor(viewerId),
+              ],
             },
             orderBy: newestFirst,
             take: PAGE_SIZE + 1,
@@ -652,6 +693,7 @@ export class PostsService {
                 ...nsfw,
                 user: {
                   ...notSuspended(),
+                  ...visibleActivityAuthor(viewerId, { muted: true }),
                   memberships: {
                     some: { communityId, showLibraryUpdates: true },
                   },
@@ -695,12 +737,12 @@ export class PostsService {
     if (postId < 1 || postId > MAX_INT) {
       throw new NotFoundException('Post not found');
     }
-    const reported = await reportedBy(this.prisma, viewerId);
+    const viewer = await contentViewer(this.prisma, viewerId);
     const post = await this.prisma.post.findFirst({
       where: {
         id: postId,
         communityId,
-        ...visibleTo(viewerId, reported.post),
+        ...visibleTo(viewer, 'post'),
       },
       include: postInclude,
     });
@@ -727,6 +769,7 @@ export class PostsService {
           ...nsfw,
           user: {
             ...notSuspended(),
+            ...visibleActivityAuthor(viewerId),
             memberships: { some: { communityId, showLibraryUpdates: true } },
           },
         },
@@ -747,13 +790,13 @@ export class PostsService {
     const query = rawQuery.trim().slice(0, 100);
     if (query.length < 2) return [];
 
-    const reported = await reportedBy(this.prisma, viewerId);
+    const viewer = await contentViewer(this.prisma, viewerId);
     const contains = { contains: query, mode: 'insensitive' as const };
     const posts = await this.prisma.post.findMany({
       where: {
         communityId,
         OR: [{ content: contains }, { spoiler: contains }],
-        ...visibleTo(viewerId, reported.post),
+        ...visibleTo(viewer, 'post'),
       },
       orderBy: newestFirst,
       take: SEARCH_LIMIT,
@@ -763,6 +806,7 @@ export class PostsService {
     return this.engage(
       viewerId,
       posts.map((post) => ({ ...post, type: 'post' as const })),
+      { muted: false },
     );
   }
 
@@ -770,17 +814,17 @@ export class PostsService {
     const query = rawQuery.trim().slice(0, 100);
     if (query.length < 2) return [];
 
-    const [reported, showNsfw] = await Promise.all([
-      reportedBy(this.prisma, viewerId),
+    const [viewer, showNsfw] = await Promise.all([
+      contentViewer(this.prisma, viewerId),
       showsNsfw(this.prisma, viewerId),
     ]);
     const contains = { contains: query, mode: 'insensitive' as const };
     const posts = await this.prisma.post.findMany({
       where: {
         AND: [
-          homePosts(viewerId, reported, showNsfw),
+          homePosts(viewer, showNsfw),
           { OR: [{ content: contains }, { spoiler: contains }] },
-          visibleTo(viewerId, reported.post),
+          visibleTo(viewer, 'post'),
         ],
       },
       orderBy: newestFirst,
@@ -791,6 +835,7 @@ export class PostsService {
     return this.engage(
       viewerId,
       posts.map((post) => ({ ...post, type: 'post' as const })),
+      { muted: false },
     );
   }
 
@@ -801,7 +846,7 @@ export class PostsService {
   ): Promise<Page<FeedItem>> {
     const cursor = parseFeedCursor(rawCursor);
     const excluded = excludedTypes(exclude);
-    const reported = await reportedBy(this.prisma, userId);
+    const viewer = await contentViewer(this.prisma, userId);
     const showNsfw = await showsNsfw(this.prisma, userId);
     const nsfw = nsfwEntries(showNsfw);
 
@@ -811,9 +856,10 @@ export class PostsService {
         : this.prisma.post.findMany({
             where: {
               AND: [
-                homePosts(userId, reported, showNsfw),
+                homePosts(viewer, showNsfw),
                 olderThan(cursor, RANK.post),
-                visibleTo(userId, reported.post),
+                visibleTo(viewer, 'post'),
+                unmutedFor(userId),
               ],
             },
             orderBy: newestFirst,
@@ -829,6 +875,7 @@ export class PostsService {
                 ...nsfw,
                 user: {
                   ...notSuspended(),
+                  ...visibleActivityAuthor(userId, { muted: true }),
                   memberships: {
                     some: {
                       showLibraryUpdates: true,
@@ -864,8 +911,9 @@ export class PostsService {
     const cursor = parseFeedCursor(rawCursor);
     const excluded = excludedTypes(exclude);
     const owner = await this.viewableProfile(viewerId, username);
+    if (owner.blocking) return { items: [], nextCursor: null };
 
-    const reported = await reportedBy(this.prisma, viewerId);
+    const viewer = await contentViewer(this.prisma, viewerId);
     const nsfw = nsfwEntries(await showsNsfw(this.prisma, viewerId));
     const pinnedOnWall = { wallUserId: owner.id, pinnedAt: { not: null } };
     const [pinned, posts, activities] = await Promise.all([
@@ -873,7 +921,7 @@ export class PostsService {
         ? []
         : this.prisma.post.findMany({
             where: {
-              AND: [pinnedOnWall, visibleTo(viewerId, reported.post)],
+              AND: [pinnedOnWall, visibleTo(viewer, 'post')],
             },
             orderBy: { pinnedAt: 'desc' },
             include: postInclude,
@@ -886,7 +934,7 @@ export class PostsService {
                 profilePosts(owner.id, viewerId),
                 { NOT: pinnedOnWall },
                 olderThan(cursor, RANK.post),
-                visibleTo(viewerId, reported.post),
+                visibleTo(viewer, 'post'),
               ],
             },
             orderBy: newestFirst,
@@ -944,13 +992,14 @@ export class PostsService {
       throw new NotFoundException('Post not found');
     }
     const owner = await this.viewableProfile(viewerId, username);
-    const reported = await reportedBy(this.prisma, viewerId);
+    if (owner.blocking) throw new NotFoundException('Post not found');
+    const viewer = await contentViewer(this.prisma, viewerId);
     const post = await this.prisma.post.findFirst({
       where: {
         AND: [
           { id: postId },
           profilePosts(owner.id, viewerId),
-          visibleTo(viewerId, reported.post),
+          visibleTo(viewer, 'post'),
         ],
       },
       include: postInclude,
@@ -970,6 +1019,9 @@ export class PostsService {
       throw new NotFoundException('Library update not found');
     }
     const owner = await this.viewableProfile(viewerId, username);
+    if (owner.blocking) {
+      throw new NotFoundException('Library update not found');
+    }
     const nsfw = nsfwEntries(await showsNsfw(this.prisma, viewerId));
     const activity = await this.prisma.libraryActivity.findFirst({
       where: {
@@ -996,16 +1048,16 @@ export class PostsService {
   ): Promise<FeedItem[]> {
     const owner = await this.viewableProfile(viewerId, username);
     const query = rawQuery.trim().slice(0, 100);
-    if (query.length < 2) return [];
+    if (query.length < 2 || owner.blocking) return [];
 
-    const reported = await reportedBy(this.prisma, viewerId);
+    const viewer = await contentViewer(this.prisma, viewerId);
     const contains = { contains: query, mode: 'insensitive' as const };
     const posts = await this.prisma.post.findMany({
       where: {
         AND: [
           profilePosts(owner.id, viewerId),
           { OR: [{ content: contains }, { spoiler: contains }] },
-          visibleTo(viewerId, reported.post),
+          visibleTo(viewer, 'post'),
         ],
       },
       orderBy: newestFirst,
@@ -1016,6 +1068,7 @@ export class PostsService {
     return this.engage(
       viewerId,
       posts.map((post) => ({ ...post, type: 'post' as const })),
+      { muted: false },
     );
   }
 
@@ -1025,10 +1078,17 @@ export class PostsService {
       select: { id: true, isPublic: true },
     });
     if (!owner) throw new NotFoundException('User not found');
+    const { blocking, blockedBy } = await blockState(
+      this.prisma,
+      viewerId,
+      owner.id,
+    );
+    if (blockedBy) throw new NotFoundException('This profile isn’t available');
+    if (blocking) return { ...owner, blocking };
     if (!(await canViewProfile(this.prisma, viewerId, owner))) {
       throw new ForbiddenException('This profile is private');
     }
-    return owner;
+    return { ...owner, blocking };
   }
 
   async createOnWall(
@@ -1076,6 +1136,7 @@ export class PostsService {
       liked: false,
       bookmarked: false,
       previewComments: [],
+      hiddenBecause: null,
       canDelete: true,
     };
   }
@@ -1096,10 +1157,7 @@ export class PostsService {
             mediaType,
             mediaSourceId,
             ...olderThan(cursor, RANK.post),
-            ...visibleTo(
-              viewerId,
-              (await reportedBy(this.prisma, viewerId)).post,
-            ),
+            ...visibleTo(await contentViewer(this.prisma, viewerId), 'post'),
           },
           orderBy: newestFirst,
           take: PAGE_SIZE + 1,
@@ -1126,7 +1184,7 @@ export class PostsService {
         id: postId,
         mediaType,
         mediaSourceId,
-        ...visibleTo(viewerId, (await reportedBy(this.prisma, viewerId)).post),
+        ...visibleTo(await contentViewer(this.prisma, viewerId), 'post'),
       },
       include: postInclude,
     });
@@ -1179,6 +1237,7 @@ export class PostsService {
       liked: false,
       bookmarked: false,
       previewComments: [],
+      hiddenBecause: null,
       canDelete: true,
     };
   }
@@ -1215,6 +1274,7 @@ export class PostsService {
       liked: false,
       bookmarked: false,
       previewComments: [],
+      hiddenBecause: null,
       canDelete: true,
     };
   }

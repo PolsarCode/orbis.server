@@ -20,12 +20,22 @@ afterEach(() => jest.useRealTimers());
 
 function setup() {
   const prisma = {
+    block: {
+      count: jest.fn().mockResolvedValue(0),
+      findMany: jest.fn().mockResolvedValue([]),
+    },
+    mute: {
+      count: jest.fn().mockResolvedValue(0),
+      findMany: jest.fn().mockResolvedValue([]),
+    },
+    keywordFilter: { findMany: jest.fn().mockResolvedValue([]) },
     contentReport: {
       findMany: jest
         .fn()
         .mockResolvedValue([{ targetType: 'comment', targetId: 66 }]),
     },
     user: { findUnique: jest.fn().mockResolvedValue({ showNsfw: false }) },
+    membership: { findMany: jest.fn().mockResolvedValue([]) },
     hashtag: {
       findUnique: jest.fn(),
       findMany: jest.fn().mockResolvedValue([]),
@@ -74,14 +84,21 @@ const uses = (hashtagId: number, ...authorIds: number[]) =>
   authorIds.map((authorId) => ({ hashtagId, authorId }));
 
 describe('Which content counts on tag pages', () => {
-  const reported = { post: [11], comment: [22], forum_post: [33] };
-  const where = publicUsages(1, reported, false) as {
+  const viewer = {
+    id: 1,
+    reported: { post: [11], comment: [22], forum_post: [33] },
+    siteAdmin: false,
+    manages: [],
+  };
+  jest.useFakeTimers({ now: new Date('2026-11-05T12:00:00Z') });
+  const where = publicUsages(viewer, false) as {
     OR: [
       { post: { AND: [{ AND: object[] }, object] } },
       { AND: [{ comment: object }, { OR: [object, object] }] },
       { forumPost: { AND: object[] } },
     ];
   };
+  jest.useRealTimers();
   const [posts, comments, forumPosts] = where.OR;
   const visible = (ids: number[]) => ({
     AND: [
@@ -94,6 +111,17 @@ describe('Which content counts on tag pages', () => {
                 { suspendedAt: null },
                 { suspendedUntil: { lte: expect.any(Date) } },
               ],
+            },
+          },
+          { authorId: 1 },
+        ],
+      },
+      {
+        OR: [
+          {
+            author: {
+              blocksMade: { none: { blockedId: 1 } },
+              blocksReceived: { none: { blockerId: 1 } },
             },
           },
           { authorId: 1 },
@@ -115,20 +143,43 @@ describe('Which content counts on tag pages', () => {
 
   it('leaves out posts on 18+ titles unless the viewer has 18+ on', () => {
     expect(posts.post.AND[0].AND).toContainEqual({ isAdult: false });
-    const shown = publicUsages(1, reported, true) as typeof where;
+    const shown = publicUsages(viewer, true) as typeof where;
     expect(shown.OR[0].post.AND[0].AND).not.toContainEqual({ isAdult: false });
   });
 
   it('only shows a thread’s feed copy while the thread itself is visible', () => {
     jest.useFakeTimers({ now: new Date('2026-11-05T12:00:00Z') });
     try {
-      const fresh = publicUsages(1, reported, false) as typeof where;
+      const fresh = publicUsages(viewer, false) as typeof where;
       expect(fresh.OR[0].post.AND[0].AND).toContainEqual({
-        OR: [{ forumThreadId: null }, { forumThread: visibleThreads(1, [33]) }],
+        OR: [{ forumThreadId: null }, { forumThread: visibleThreads(viewer) }],
       });
     } finally {
       jest.useRealTimers();
     }
+  });
+
+  it('leaves out posts on the wall of someone blocked either way', () => {
+    expect(posts.post.AND[0].AND).toContainEqual({
+      OR: [
+        { wallUserId: null },
+        {
+          wallUser: {
+            blocksMade: { none: { blockedId: 1 } },
+            blocksReceived: { none: { blockerId: 1 } },
+          },
+        },
+      ],
+    });
+    const admin = publicUsages({ ...viewer, siteAdmin: true }, false) as {
+      OR: [{ post: { AND: [{ AND: object[] }] } }];
+    };
+    expect(admin.OR[0].post.AND[0].AND).toContainEqual({
+      OR: [
+        { wallUserId: null },
+        { wallUser: { blocksReceived: { none: { blockerId: 1 } } } },
+      ],
+    });
   });
 
   it('leaves out hidden posts, suspended authors and posts the viewer reported', () => {
@@ -150,6 +201,8 @@ describe('Which content counts on tag pages', () => {
               { suspendedAt: null },
               { suspendedUntil: { lte: expect.any(Date) } },
             ],
+            blocksMade: { none: { blockedId: 1 } },
+            blocksReceived: { none: { blockerId: 1 } },
           },
         },
       },
@@ -157,7 +210,7 @@ describe('Which content counts on tag pages', () => {
   });
 
   it('shows 18+ library updates’ comments only to people who turned 18+ on', () => {
-    const allowed = publicUsages(1, reported, true) as typeof where;
+    const allowed = publicUsages(viewer, true) as typeof where;
     expect(JSON.stringify(allowed.OR[1])).not.toContain('isAdult');
   });
 
@@ -211,6 +264,18 @@ describe('Tag pages', () => {
       },
       items: [],
       nextCursor: null,
+    });
+  });
+
+  it('leaves out content from people the viewer muted', async () => {
+    const { prisma, service } = setup();
+    prisma.hashtag.findUnique.mockResolvedValue(tagRow);
+
+    await service.findOne(1, 'frieren');
+
+    const [{ where }] = prisma.hashtagUsage.findMany.mock.calls[0];
+    expect(where.AND[2]).toEqual({
+      author: { mutesReceived: { none: { muterId: 1 } } },
     });
   });
 
@@ -383,7 +448,15 @@ describe('Trending tags', () => {
     await service.trending(1);
 
     expect(prisma.hashtagUsage.groupBy.mock.calls[0][0].where.AND[0]).toEqual(
-      publicUsages(1, { post: [], comment: [66], forum_post: [] }, false),
+      publicUsages(
+        {
+          id: 1,
+          reported: { post: [], comment: [66], forum_post: [] },
+          siteAdmin: false,
+          manages: [],
+        },
+        false,
+      ),
     );
   });
 });
@@ -482,7 +555,15 @@ describe('Searching tags', () => {
     const [args] = prisma.hashtagUsage.groupBy.mock.calls[0];
     expect(args.where.AND).toEqual([
       { hashtag: { name: { startsWith: 'fe' } } },
-      publicUsages(1, { post: [], comment: [66], forum_post: [] }, false),
+      publicUsages(
+        {
+          id: 1,
+          reported: { post: [], comment: [66], forum_post: [] },
+          siteAdmin: false,
+          manages: [],
+        },
+        false,
+      ),
     ]);
     expect(args.take).toBe(8);
     expect(args.orderBy).toEqual([

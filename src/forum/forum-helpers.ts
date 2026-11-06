@@ -1,7 +1,7 @@
 import { Prisma } from '../../prisma/generated/client';
 import { PrismaService } from '../prisma.service';
 import { managedCommunities } from '../communities/managed-communities';
-import { visibleTo } from '../moderation/visibility';
+import { ContentViewer, visibleTo } from '../moderation/visibility';
 
 export const FORUM_PAGE_SIZE = 20;
 
@@ -17,9 +17,9 @@ export function forumPostLink(
   return `${threadLink(communityId, threadId)}?post=${postId}`;
 }
 
-export function visibleThreads(viewerId: number, reported: number[]) {
+export function visibleThreads(viewer: ContentViewer) {
   return {
-    posts: { some: { opening: true, ...visibleTo(viewerId, reported) } },
+    posts: { some: { opening: true, ...visibleTo(viewer, 'forum_post') } },
   } satisfies Prisma.ForumThreadWhereInput;
 }
 

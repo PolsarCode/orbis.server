@@ -36,6 +36,15 @@ afterEach(() => jest.useRealTimers());
 
 function setup() {
   const prisma = {
+    block: {
+      count: jest.fn().mockResolvedValue(0),
+      findMany: jest.fn().mockResolvedValue([]),
+    },
+    mute: {
+      count: jest.fn().mockResolvedValue(0),
+      findMany: jest.fn().mockResolvedValue([]),
+    },
+    keywordFilter: { findMany: jest.fn().mockResolvedValue([]) },
     post: { findFirst: jest.fn(), findMany: jest.fn() },
     libraryActivity: { findMany: jest.fn().mockResolvedValue([]) },
     bookmark: {
@@ -69,8 +78,17 @@ function savedRows(
   );
 }
 
+const viewerOf = (reported: number[]) => ({
+  id: 1,
+  reported: { post: reported, comment: [], forum_post: [] },
+  siteAdmin: false,
+  manages: [],
+});
+
 describe('Who can see a saved post', () => {
-  const where = viewablePosts(1, [9]) as { AND: [{ OR: object[] }, object] };
+  const where = viewablePosts(viewerOf([9])) as {
+    AND: [{ OR: object[] }, object];
+  };
 
   it('follows where the post lives', () => {
     expect(where.AND[0].OR).toEqual([
@@ -105,6 +123,17 @@ describe('Who can see a saved post', () => {
                   { suspendedAt: null },
                   { suspendedUntil: { lte: expect.any(Date) } },
                 ],
+              },
+            },
+            { authorId: 1 },
+          ],
+        },
+        {
+          OR: [
+            {
+              author: {
+                blocksMade: { none: { blockedId: 1 } },
+                blocksReceived: { none: { blockerId: 1 } },
               },
             },
             { authorId: 1 },
@@ -166,7 +195,7 @@ describe('Saving posts', () => {
     ).resolves.toEqual({ bookmarked: true });
 
     expect(prisma.post.findFirst).toHaveBeenCalledWith({
-      where: { AND: [{ id: 7 }, viewablePosts(1, [9])] },
+      where: { AND: [{ id: 7 }, viewablePosts(viewerOf([9]))] },
       select: { id: true },
     });
     expect(prisma.bookmark.upsert).toHaveBeenCalledWith({
@@ -221,7 +250,9 @@ describe('Listing saved posts', () => {
       select: { bookmarkableId: true, createdAt: true },
     });
     expect(prisma.post.findMany).toHaveBeenCalledWith({
-      where: { AND: [{ id: { in: [3, 5, 4] } }, {}, viewablePosts(1, [])] },
+      where: {
+        AND: [{ id: { in: [3, 5, 4] } }, {}, viewablePosts(viewerOf([]))],
+      },
       include: expect.any(Object),
     });
   });
@@ -323,7 +354,7 @@ describe('Searching saved posts', () => {
         AND: [
           { id: { in: [3, 5] } },
           { OR: [{ content: contains }, { spoiler: contains }] },
-          viewablePosts(1, [9]),
+          viewablePosts(viewerOf([9])),
         ],
       },
       include: expect.any(Object),

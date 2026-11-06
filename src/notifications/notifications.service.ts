@@ -8,6 +8,7 @@ import { PresenceGateway } from '../friends/presence.gateway';
 import { author } from '../common/author';
 import { NotificationType, Prisma } from '../../prisma/generated/client';
 import { MAX_INT } from '../communities/community-member.guard';
+import { notBlockedWith } from '../safety/blocks';
 
 const PAGE_SIZE = 20;
 
@@ -23,6 +24,9 @@ const filters: Record<string, NotificationType[]> = {
   friends: ['friend_request', 'friend_accepted'],
   reports: ['report_status', 'report_assigned', 'report_comment'],
 };
+
+const MODERATION: NotificationType[] = filters.reports;
+const FRIENDS: NotificationType[] = filters.friends;
 
 export type NotificationQuery = {
   cursor?: number;
@@ -56,9 +60,53 @@ export class NotificationsService {
     private presence: PresenceGateway,
   ) {}
 
+  private async silenced(notifications: NewNotification[]) {
+    const social = notifications.filter(
+      ({ actorId, type }) => actorId !== null && !MODERATION.includes(type),
+    );
+    if (social.length === 0) return () => false;
+
+    const userIds = [...new Set(social.map(({ userId }) => userId))];
+    const actorIds = [...new Set(social.map(({ actorId }) => actorId!))];
+    const [blocks, mutes] = await Promise.all([
+      this.prisma.block.findMany({
+        where: {
+          OR: [
+            { blockerId: { in: userIds }, blockedId: { in: actorIds } },
+            { blockerId: { in: actorIds }, blockedId: { in: userIds } },
+          ],
+        },
+        select: { blockerId: true, blockedId: true },
+      }),
+      this.prisma.mute.findMany({
+        where: { muterId: { in: userIds }, mutedId: { in: actorIds } },
+        select: { muterId: true, mutedId: true },
+      }),
+    ]);
+    const blocked = new Set(
+      blocks.flatMap(({ blockerId, blockedId }) => [
+        `${blockerId}:${blockedId}`,
+        `${blockedId}:${blockerId}`,
+      ]),
+    );
+    const muted = new Set(
+      mutes.map(({ muterId, mutedId }) => `${muterId}:${mutedId}`),
+    );
+    return ({ userId, actorId, type }: NewNotification) => {
+      if (actorId === null || MODERATION.includes(type)) return false;
+      const key = `${userId}:${actorId}`;
+      return blocked.has(key) || (muted.has(key) && !FRIENDS.includes(type));
+    };
+  }
+
   async notify(notifications: NewNotification[]) {
-    const recipients = notifications.filter(
+    const others = notifications.filter(
       ({ userId, actorId }) => userId !== actorId,
+    );
+    if (others.length === 0) return;
+    const isSilenced = await this.silenced(others);
+    const recipients = others.filter(
+      (notification) => !isSilenced(notification),
     );
     if (recipients.length === 0) return;
 
@@ -93,6 +141,15 @@ export class NotificationsService {
       userId,
       ...(filter && filters[filter] && { type: { in: filters[filter] } }),
       ...(unread && { readAt: null }),
+      AND: [
+        {
+          OR: [
+            { actorId: null },
+            { type: { in: MODERATION } },
+            { actor: notBlockedWith(userId) },
+          ],
+        },
+      ],
       ...(search && {
         OR: [
           { message: { contains: search, mode: 'insensitive' } },

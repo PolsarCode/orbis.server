@@ -21,6 +21,7 @@ import { deleteWebhook } from '../discord-channel/discord-webhook';
 import { discussionCleanup } from '../comments/discussion-cleanup';
 import { requireEstablishedAccount } from '../common/new-account';
 import { isBanned, requireNotBanned } from './bans';
+import { blockedWith } from '../safety/blocks';
 
 export type CommunityMember = {
   userId: number;
@@ -603,7 +604,10 @@ export class CommunitiesService {
     return this.railLayout(userId);
   }
 
-  async findMembers(communityId: number): Promise<CommunityMember[]> {
+  async findMembers(
+    viewerId: number,
+    communityId: number,
+  ): Promise<CommunityMember[]> {
     const community = await this.prisma.community.findUnique({
       where: { id: communityId },
       select: {
@@ -632,10 +636,18 @@ export class CommunitiesService {
     });
 
     if (!community) return [];
+    const blocked = await blockedWith(
+      this.prisma,
+      viewerId,
+      community.memberships.map(({ user }) => user.id),
+    );
 
     return community.memberships
       .map(({ nickname, joinedAt, user, roles }) => {
         const isOwner = user.id === community.ownerId;
+        const shown = blocked.has(user.id)
+          ? { ...user, appearOffline: true }
+          : user;
         return {
           userId: user.id,
           username: user.username,
@@ -643,10 +655,10 @@ export class CommunitiesService {
           avatarUrl: user.avatarUrl,
           coverUrl: user.coverUrl,
           isVerified: user.isVerified,
-          online: !user.appearOffline && this.presence.isOnline(user.id),
-          status: this.presence.statusOf(user.id, user),
-          playing: this.presence.playingOf(user.id, user),
-          twitchLogin: this.presence.twitchOf(user.id, user),
+          online: !shown.appearOffline && this.presence.isOnline(user.id),
+          status: this.presence.statusOf(user.id, shown),
+          playing: this.presence.playingOf(user.id, shown),
+          twitchLogin: this.presence.twitchOf(user.id, shown),
           nickname,
           joinedAt,
           isOwner,
@@ -959,6 +971,6 @@ export class CommunitiesService {
       });
     }
 
-    return this.findMembers(communityId);
+    return this.findMembers(userId, communityId);
   }
 }

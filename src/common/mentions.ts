@@ -1,5 +1,6 @@
 import { PrismaService } from '../prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
+import { notBlockedWith } from '../safety/blocks';
 
 export const MAX_MENTIONS = 10;
 
@@ -81,7 +82,7 @@ export async function resolveMentions(
   if (usernames.length === 0) return { html, mentioned: [] };
 
   const users = await prisma.user.findMany({
-    where: { username: { in: usernames } },
+    where: { username: { in: usernames }, ...notBlockedWith(authorId) },
     select: { id: true, username: true },
   });
   return {

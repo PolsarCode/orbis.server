@@ -1,6 +1,29 @@
 import { PrismaService } from '../prisma.service';
 import { isAdministrator } from './permissions';
 
+const managerSelect = {
+  communityId: true,
+  community: { select: { ownerId: true } },
+  roles: { select: { role: { select: { permissions: true } } } },
+} as const;
+
+function managedBy(
+  userId: number,
+  memberships: {
+    communityId: number;
+    community: { ownerId: number };
+    roles: { role: { permissions: bigint } }[];
+  }[],
+) {
+  return memberships
+    .filter(
+      ({ community, roles }) =>
+        community.ownerId === userId ||
+        roles.some(({ role }) => isAdministrator(role.permissions)),
+    )
+    .map(({ communityId }) => communityId);
+}
+
 export async function managedCommunities(
   prisma: PrismaService,
   userId: number,
@@ -13,19 +36,21 @@ export async function managedCommunities(
 
   const memberships = await prisma.membership.findMany({
     where: { userId, communityId: { in: ids } },
-    select: {
-      communityId: true,
-      community: { select: { ownerId: true } },
-      roles: { select: { role: { select: { permissions: true } } } },
-    },
+    select: managerSelect,
   });
-  return new Set(
-    memberships
-      .filter(
-        ({ community, roles }) =>
-          community.ownerId === userId ||
-          roles.some(({ role }) => isAdministrator(role.permissions)),
-      )
-      .map(({ communityId }) => communityId),
-  );
+  return new Set(managedBy(userId, memberships));
+}
+
+export async function allManagedCommunities(
+  prisma: PrismaService,
+  userId: number,
+): Promise<number[]> {
+  const memberships = await prisma.membership.findMany({
+    where: {
+      userId,
+      OR: [{ community: { ownerId: userId } }, { roles: { some: {} } }],
+    },
+    select: managerSelect,
+  });
+  return managedBy(userId, memberships);
 }

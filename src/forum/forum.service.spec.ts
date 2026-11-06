@@ -62,6 +62,15 @@ const createdThread = {
 
 function setup() {
   const prisma = {
+    block: {
+      count: jest.fn().mockResolvedValue(0),
+      findMany: jest.fn().mockResolvedValue([]),
+    },
+    mute: {
+      count: jest.fn().mockResolvedValue(0),
+      findMany: jest.fn().mockResolvedValue([]),
+    },
+    keywordFilter: { findMany: jest.fn().mockResolvedValue([]) },
     contentReport: {
       findMany: jest.fn().mockResolvedValue([]),
       deleteMany: jest.fn(),
@@ -86,6 +95,7 @@ function setup() {
     like: { deleteMany: jest.fn() },
     notification: { deleteMany: jest.fn() },
     membership: { findMany: jest.fn().mockResolvedValue([]) },
+    user: { findUnique: jest.fn().mockResolvedValue(null) },
     communityBan: { findMany: jest.fn().mockResolvedValue([]) },
     hashtag: {
       upsert: jest.fn(({ where }: { where: { name: string } }) =>
@@ -253,7 +263,12 @@ describe('Moderating authors from a thread', () => {
       null,
       null,
     ]);
-    expect(prisma.membership.findMany).not.toHaveBeenCalled();
+    expect(prisma.membership.findMany).toHaveBeenCalledTimes(1);
+    expect(prisma.membership.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { userId: 7, OR: expect.any(Array) },
+      }),
+    );
 
     jest.mocked(isForumManager).mockResolvedValue(true);
     const owner = await service.thread(7, 3, 9);
@@ -261,6 +276,165 @@ describe('Moderating authors from a thread', () => {
       { remove: true, ban: true },
       null,
     ]);
+  });
+});
+
+describe('Blocked and muted people in forum threads', () => {
+  function post(id: number, authorId: number, extra: object = {}) {
+    return {
+      id,
+      threadId: 9,
+      opening: id === 40,
+      content: '<p>Frieren is peak</p>',
+      linkUrl: null,
+      spoiler: null,
+      quoteId: null,
+      likeCount: 0,
+      hiddenAt: null,
+      editedAt: null,
+      createdAt: new Date(),
+      author: { ...author, id: authorId },
+      ...extra,
+    };
+  }
+
+  function threadSetup() {
+    const context = setup();
+    context.prisma.forumThread.findFirst.mockResolvedValue({
+      ...thread(9),
+      authorId: 4,
+      category: { id: 5, name: 'General', section: null },
+    });
+    return context;
+  }
+
+  it('leaves out posts from people blocked either way', async () => {
+    const { prisma, service } = threadSetup();
+
+    await service.thread(1, 3, 9);
+
+    const [{ where }] = prisma.forumPost.findMany.mock.calls[0];
+    expect(where.AND).toContainEqual({
+      OR: [
+        {
+          author: {
+            blocksMade: { none: { blockedId: 1 } },
+            blocksReceived: { none: { blockerId: 1 } },
+          },
+        },
+        { authorId: 1 },
+      ],
+    });
+  });
+
+  it('collapses muted people and filtered phrases, but not the viewer’s own posts', async () => {
+    const { prisma, service } = threadSetup();
+    prisma.mute.findMany.mockResolvedValue([{ mutedId: 7 }]);
+    prisma.keywordFilter.findMany.mockResolvedValue([{ phrase: 'frieren' }]);
+    prisma.forumPost.findMany.mockResolvedValue([
+      post(40, 7),
+      post(41, 4),
+      post(42, 4, { content: '<p>Episode 12</p>', spoiler: 'Frieren' }),
+      post(43, 4, { content: '<p>Dungeon Meshi</p>' }),
+      post(44, 1),
+    ]);
+
+    const { items } = await service.thread(1, 3, 9);
+
+    const filtered = { kind: 'filtered', phrase: 'frieren' };
+    expect(items.map(({ hiddenBecause }) => hiddenBecause)).toEqual([
+      { kind: 'muted' },
+      filtered,
+      filtered,
+      null,
+      null,
+    ]);
+  });
+
+  it('collapses quotes of muted people and filtered phrases like the posts themselves', async () => {
+    const { prisma, service } = threadSetup();
+    prisma.mute.findMany.mockResolvedValue([{ mutedId: 7 }]);
+    prisma.keywordFilter.findMany.mockResolvedValue([{ phrase: 'frieren' }]);
+    const quote = (id: number, authorId: number, content: string) => ({
+      id,
+      content,
+      linkUrl: null,
+      spoiler: null,
+      createdAt: new Date(),
+      author: { ...author, id: authorId },
+    });
+    prisma.forumPost.findMany.mockImplementation(({ where }) =>
+      Promise.resolve(
+        'threadId' in where
+          ? [
+              post(45, 4, { content: '<p>Agreed</p>', quoteId: 50 }),
+              post(46, 4, { content: '<p>Agreed</p>', quoteId: 51 }),
+              post(47, 4, { content: '<p>Agreed</p>', quoteId: 52 }),
+              post(48, 4, { content: '<p>Agreed</p>', quoteId: 53 }),
+            ]
+          : [
+              quote(50, 7, '<p>Dungeon Meshi</p>'),
+              quote(51, 4, '<p>Frieren is peak</p>'),
+              quote(52, 4, '<p>Dungeon Meshi</p>'),
+            ],
+      ),
+    );
+
+    const { items } = await service.thread(1, 3, 9);
+
+    expect(items.map(({ quote }) => quote)).toEqual([
+      expect.objectContaining({ id: 50, hiddenBecause: { kind: 'muted' } }),
+      expect.objectContaining({
+        id: 51,
+        hiddenBecause: { kind: 'filtered', phrase: 'frieren' },
+      }),
+      expect.objectContaining({ id: 52, hiddenBecause: null }),
+      { id: 53, available: false },
+    ]);
+  });
+
+  it('shows community admins posts from people who blocked them in the communities they run', async () => {
+    const { prisma, service } = threadSetup();
+    prisma.membership.findMany.mockResolvedValue([
+      { communityId: 3, community: { ownerId: 1 }, roles: [] },
+    ]);
+
+    await service.thread(1, 3, 9);
+
+    const [{ where }] = prisma.forumPost.findMany.mock.calls[0];
+    expect(where.AND).toContainEqual({
+      OR: [
+        {
+          author: {
+            blocksMade: { none: { blockedId: 1 } },
+            blocksReceived: { none: { blockerId: 1 } },
+          },
+        },
+        { authorId: 1 },
+        {
+          communityId: { in: [3] },
+          author: { blocksReceived: { none: { blockerId: 1 } } },
+        },
+      ],
+    });
+  });
+
+  it('shows site admins posts from people who blocked them', async () => {
+    const { prisma, service } = threadSetup();
+    prisma.user.findUnique.mockResolvedValue({
+      isAdmin: true,
+      email: 'admin@anime.test',
+    });
+
+    await service.thread(1, 3, 9);
+
+    const [{ where }] = prisma.forumPost.findMany.mock.calls[0];
+    expect(where.AND).toContainEqual({
+      OR: [
+        { author: { blocksReceived: { none: { blockerId: 1 } } } },
+        { authorId: 1 },
+      ],
+    });
   });
 });
 

@@ -33,6 +33,7 @@ describe('CommentsService.create', () => {
     like: { create: likeCreate },
     post: { update: jest.fn() },
     user: { findUnique: jest.fn() },
+    block: { count: jest.fn().mockResolvedValue(0) },
     membership: { findMany: jest.fn().mockResolvedValue([]) },
     hashtag: {
       upsert: jest.fn(({ where }: { where: { name: string } }) =>

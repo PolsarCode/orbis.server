@@ -82,6 +82,11 @@ model User {
   messageReactions     MessageReaction[]
   hashtagUsages        HashtagUsage[]
   hashtagFollows       HashtagFollow[]
+  blocksMade           Block[]               @relation("BlocksMade")
+  blocksReceived       Block[]               @relation("BlocksReceived")
+  mutesMade            Mute[]                @relation("MutesMade")
+  mutesReceived        Mute[]                @relation("MutesReceived")
+  keywordFilters       KeywordFilter[]
 }
 
 model OAuthAccount {

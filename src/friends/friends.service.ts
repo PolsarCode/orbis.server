@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -12,6 +13,7 @@ import { NotificationsService } from '../notifications/notifications.service';
 import type { Prisma } from '../../prisma/generated/client';
 import { nsfwEntries, showsNsfw } from '../users/nsfw';
 import { notSuspended } from '../users/suspension';
+import { blockedWith, isBlocked, notBlockedWith } from '../safety/blocks';
 import {
   MUTUAL_PREVIEW,
   SHARED_STATUSES,
@@ -148,6 +150,7 @@ export class FriendsService {
     const users = await this.prisma.user.findMany({
       where: {
         id: { not: userId },
+        ...notBlockedWith(userId),
         OR: [
           { username: { contains: q, mode: 'insensitive' } },
           { name: { contains: q, mode: 'insensitive' } },
@@ -191,7 +194,7 @@ export class FriendsService {
     const limit = slots ? availableSlots(slots) : 0;
     if (limit === 0) return [];
 
-    const [friendships, dismissals, memberships, library, showNsfw] =
+    const [friendships, dismissals, memberships, library, showNsfw, blocked] =
       await Promise.all([
         this.prisma.friendship.findMany({
           where: { OR: [{ requesterId: userId }, { addresseeId: userId }] },
@@ -210,12 +213,14 @@ export class FriendsService {
           select: { mediaId: true },
         }),
         showsNsfw(this.prisma, userId),
+        blockedWith(this.prisma, userId),
       ]);
 
     const friendIds: number[] = [];
     const leftOut = new Set([
       userId,
       ...dismissals.map(({ dismissedUserId }) => dismissedUserId),
+      ...blocked,
     ]);
     for (const { requesterId, addresseeId, status } of friendships) {
       const other = requesterId === userId ? addresseeId : requesterId;
@@ -397,6 +402,11 @@ export class FriendsService {
     if (!target) throw new NotFoundException('User not found');
     if (target.id === userId) {
       throw new BadRequestException('You cannot add yourself');
+    }
+    if (await isBlocked(this.prisma, userId, target.id)) {
+      throw new ForbiddenException(
+        'You can’t send this person a friend request',
+      );
     }
 
     const existing = await this.prisma.friendship.findFirst({

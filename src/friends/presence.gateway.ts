@@ -12,6 +12,7 @@ import { Server, Socket } from 'socket.io';
 import type { UserStatus } from '../../prisma/generated/client';
 import { PrismaService } from '../prisma.service';
 import { isSuspended, suspensionFields } from '../users/suspension';
+import { notBlockedWith } from '../safety/blocks';
 
 const room = (userId: number) => `user:${userId}`;
 
@@ -233,6 +234,7 @@ export class PresenceGateway
       this.prisma.membership.findMany({
         where: {
           userId: { not: userId },
+          user: notBlockedWith(userId),
           community: { memberships: { some: { userId } } },
         },
         distinct: ['userId'],

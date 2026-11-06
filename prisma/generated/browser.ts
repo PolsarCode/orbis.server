@@ -178,6 +178,21 @@ export type ReportComment = Prisma.ReportCommentModel
  */
 export type ContentReport = Prisma.ContentReportModel
 /**
+ * Model Block
+ * 
+ */
+export type Block = Prisma.BlockModel
+/**
+ * Model Mute
+ * 
+ */
+export type Mute = Prisma.MuteModel
+/**
+ * Model KeywordFilter
+ * 
+ */
+export type KeywordFilter = Prisma.KeywordFilterModel
+/**
  * Model Setting
  * 
  */

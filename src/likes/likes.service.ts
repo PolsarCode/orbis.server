@@ -6,9 +6,10 @@ import {
   requireTargetAccess,
   targetOf,
 } from '../posts/wall-access';
-import { reportedBy, visibleTo } from '../moderation/visibility';
+import { strictViewer, visibleTo } from '../moderation/visibility';
 import { requireMembership } from '../communities/require-membership';
 import { visibleThreads } from '../forum/forum-helpers';
+import { isBlocked } from '../safety/blocks';
 import { LikeDto } from './dto/like.dto';
 
 export type LikeResult = { likeCount: number; liked: boolean };
@@ -31,12 +32,12 @@ export class LikesService {
   }
 
   private async requireForumPostAccess(userId: number, id: number) {
-    const reported = await reportedBy(this.prisma, userId);
+    const viewer = await strictViewer(this.prisma, userId);
     const post = await this.prisma.forumPost.findFirst({
       where: {
         id,
-        ...visibleTo(userId, reported.forum_post),
-        thread: visibleThreads(userId, reported.forum_post),
+        ...visibleTo(viewer, 'forum_post'),
+        thread: visibleThreads(viewer),
       },
       select: { communityId: true },
     });
@@ -51,9 +52,9 @@ export class LikesService {
   ): Promise<EngagementTarget> {
     if (type !== 'comment') return targetOf(this.prisma, userId, type, id);
 
-    const reported = await reportedBy(this.prisma, userId);
+    const viewer = await strictViewer(this.prisma, userId);
     const comment = await this.prisma.comment.findFirst({
-      where: { id, deletedAt: null, ...visibleTo(userId, reported.comment) },
+      where: { id, deletedAt: null, ...visibleTo(viewer, 'comment') },
       select: { commentableType: true, commentableId: true },
     });
     if (!comment) throw new NotFoundException('Not found');
@@ -73,6 +74,9 @@ export class LikesService {
       await this.requireForumPostAccess(userId, id);
     } else {
       const target = await this.targetFor(userId, type, id);
+      if (await isBlocked(this.prisma, userId, target.ownerId)) {
+        throw new NotFoundException('Not found');
+      }
       await requireTargetAccess(this.prisma, userId, target);
     }
 

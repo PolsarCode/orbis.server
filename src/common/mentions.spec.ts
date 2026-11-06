@@ -81,6 +81,29 @@ describe('Mentions', () => {
     expect(mentioned).toEqual([{ id: 5, username: 'naruto' }]);
   });
 
+  it('doesn’t link or return people blocked either way', async () => {
+    prisma.user.findMany.mockResolvedValue([{ id: 5, username: 'naruto' }]);
+
+    const { html, mentioned } = await resolveMentions(
+      prisma as unknown as PrismaService,
+      '<p>@naruto @sasuke</p>',
+      1,
+    );
+
+    expect(prisma.user.findMany).toHaveBeenCalledWith({
+      where: {
+        username: { in: ['naruto', 'sasuke'] },
+        blocksMade: { none: { blockedId: 1 } },
+        blocksReceived: { none: { blockerId: 1 } },
+      },
+      select: { id: true, username: true },
+    });
+    expect(html).toBe(
+      '<p><a href="/users/naruto" class="mention">@naruto</a> @sasuke</p>',
+    );
+    expect(mentioned).toEqual([{ id: 5, username: 'naruto' }]);
+  });
+
   async function notify(
     place: Parameters<typeof notifyMentions>[2]['place'],
     alreadyNotified: number[] = [],

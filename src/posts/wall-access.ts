@@ -2,6 +2,7 @@ import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { MediaType, Prisma } from '../../prisma/generated/client';
 import { requireMembership } from '../communities/require-membership';
+import { blockState } from '../safety/blocks';
 
 export function friendsOf(userId: number): Prisma.UserWhereInput {
   return {
@@ -46,7 +47,10 @@ export async function canViewProfile(
   viewerId: number,
   owner: { id: number; isPublic: boolean },
 ) {
-  if (owner.isPublic || owner.id === viewerId) return true;
+  if (owner.id === viewerId) return true;
+  const { blocking, blockedBy } = await blockState(prisma, viewerId, owner.id);
+  if (blocking || blockedBy) return false;
+  if (owner.isPublic) return true;
 
   const friendship = await prisma.friendship.findFirst({
     where: {

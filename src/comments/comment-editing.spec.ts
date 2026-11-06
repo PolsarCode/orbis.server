@@ -29,6 +29,15 @@ const author = { id: 1, username: 'reader', name: null, avatarUrl: null };
 
 describe('Editing and deleting comments', () => {
   const prisma = {
+    block: {
+      count: jest.fn().mockResolvedValue(0),
+      findMany: jest.fn().mockResolvedValue([]),
+    },
+    mute: {
+      count: jest.fn().mockResolvedValue(0),
+      findMany: jest.fn().mockResolvedValue([]),
+    },
+    keywordFilter: { findMany: jest.fn().mockResolvedValue([]) },
     comment: {
       findUnique: jest.fn(),
       findMany: jest.fn(),

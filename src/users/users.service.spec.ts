@@ -63,6 +63,15 @@ describe('Onboarding', () => {
     count: jest.fn().mockResolvedValue(value),
   });
   const prisma = {
+    block: {
+      count: jest.fn().mockResolvedValue(0),
+      findMany: jest.fn().mockResolvedValue([]),
+    },
+    mute: {
+      count: jest.fn().mockResolvedValue(0),
+      findMany: jest.fn().mockResolvedValue([]),
+    },
+    keywordFilter: { findMany: jest.fn().mockResolvedValue([]) },
     user: {
       findUniqueOrThrow: jest.fn().mockResolvedValue({
         avatarUrl: null,
@@ -118,6 +127,15 @@ describe('Twitch on profiles', () => {
     channel: 'Naruto',
   };
   const prisma = {
+    block: {
+      count: jest.fn().mockResolvedValue(0),
+      findMany: jest.fn().mockResolvedValue([]),
+    },
+    mute: {
+      count: jest.fn().mockResolvedValue(0),
+      findMany: jest.fn().mockResolvedValue([]),
+    },
+    keywordFilter: { findMany: jest.fn().mockResolvedValue([]) },
     user: { findUnique: jest.fn() },
     friendship: { findMany: jest.fn(), findFirst: jest.fn() },
     post: { count: jest.fn() },
@@ -240,6 +258,15 @@ describe('Suspending accounts', () => {
     head: { id: 1, isAdmin: false, email: 'head@orbis.test' },
   };
   const prisma = {
+    block: {
+      count: jest.fn().mockResolvedValue(0),
+      findMany: jest.fn().mockResolvedValue([]),
+    },
+    mute: {
+      count: jest.fn().mockResolvedValue(0),
+      findMany: jest.fn().mockResolvedValue([]),
+    },
+    keywordFilter: { findMany: jest.fn().mockResolvedValue([]) },
     user: {
       findUnique: jest.fn(
         ({ where }: { where: { id?: number; username?: string } }) =>

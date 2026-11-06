@@ -30,6 +30,7 @@ import {
 import { DAY } from '../common/throttle';
 import { StorageService } from '../storage/storage.service';
 import { canViewProfile } from '../posts/wall-access';
+import { blockState, notBlockedWith } from '../safety/blocks';
 import { PresenceGateway, PresenceStatus } from '../friends/presence.gateway';
 import { NextStream, TwitchLiveService } from '../friends/twitch-live.service';
 
@@ -49,6 +50,8 @@ export type PublicProfile = {
   isVerified: boolean;
   isPublic: boolean;
   restricted: boolean;
+  blocked: boolean;
+  muted: boolean;
   suspension?: ProfileSuspension | null;
   twoFactorEnabled?: boolean | null;
   hasClips: boolean;
@@ -424,7 +427,19 @@ export class UsersService {
     });
     if (!user) throw new NotFoundException('User not found');
 
-    if (!(await canViewProfile(this.prisma, viewerId, user))) {
+    const { blocking, blockedBy } = await blockState(
+      this.prisma,
+      viewerId,
+      user.id,
+    );
+    if (blockedBy) throw new NotFoundException('This profile isn’t available');
+    const muted =
+      viewerId !== user.id &&
+      (await this.prisma.mute.count({
+        where: { muterId: viewerId, mutedId: user.id },
+      })) > 0;
+
+    if (blocking || !(await canViewProfile(this.prisma, viewerId, user))) {
       const headAdmin = isHeadAdmin(user.email);
       return {
         userId: user.id,
@@ -438,6 +453,8 @@ export class UsersService {
         isVerified: user.isVerified,
         isPublic: false,
         restricted: true,
+        blocked: blocking,
+        muted,
         hasClips: false,
         twitchLogin: null,
         nextStream: null,
@@ -472,6 +489,8 @@ export class UsersService {
         where: {
           status: 'accepted',
           OR: [{ requesterId: user.id }, { addresseeId: user.id }],
+          requester: notBlockedWith(viewerId),
+          addressee: notBlockedWith(viewerId),
         },
         orderBy: { createdAt: 'desc' },
         select: { requester: friendUser, addressee: friendUser },
@@ -514,6 +533,8 @@ export class UsersService {
       isAdmin: rest.isAdmin || headAdmin,
       isHeadAdmin: headAdmin,
       restricted: false,
+      blocked: false,
+      muted,
       hasClips: oauthAccounts.some((account) => account.showClips),
       twitchLogin: liveChannel?.username ?? null,
       nextStream,

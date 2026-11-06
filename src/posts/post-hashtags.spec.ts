@@ -27,6 +27,15 @@ const createdAt = new Date('2026-11-05T10:00:00Z');
 
 function setup() {
   const prisma = {
+    block: {
+      count: jest.fn().mockResolvedValue(0),
+      findMany: jest.fn().mockResolvedValue([]),
+    },
+    mute: {
+      count: jest.fn().mockResolvedValue(0),
+      findMany: jest.fn().mockResolvedValue([]),
+    },
+    keywordFilter: { findMany: jest.fn().mockResolvedValue([]) },
     post: {
       create: jest.fn(({ data }) => ({
         id: 9,
@@ -213,10 +222,15 @@ describe('Hashtags in posts', () => {
 });
 
 describe('Followed tags in the home feed', () => {
-  const none = { post: [], comment: [], forum_post: [] };
+  const viewer = {
+    id: 1,
+    reported: { post: [], comment: [], forum_post: [] },
+    siteAdmin: false,
+    manages: [],
+  };
   const followed = () => ({
     AND: [
-      publicPosts(1, none, false),
+      publicPosts(viewer, false),
       {
         hashtagUsages: {
           some: { hashtag: { follows: { some: { userId: 1 } } } },
@@ -255,7 +269,7 @@ describe('Followed tags in the home feed', () => {
   });
 
   it('only counts posts people outside the community or profile could see', () => {
-    expect(publicPosts(1, none, false).AND).toEqual([
+    expect(publicPosts(viewer, false).AND).toEqual([
       {
         OR: [
           { community: { isPublic: true } },
@@ -265,10 +279,21 @@ describe('Followed tags in the home feed', () => {
       },
       { isAdult: false },
       {
-        OR: [{ forumThreadId: null }, { forumThread: visibleThreads(1, []) }],
+        OR: [{ forumThreadId: null }, { forumThread: visibleThreads(viewer) }],
+      },
+      {
+        OR: [
+          { wallUserId: null },
+          {
+            wallUser: {
+              blocksMade: { none: { blockedId: 1 } },
+              blocksReceived: { none: { blockerId: 1 } },
+            },
+          },
+        ],
       },
     ]);
-    expect(publicPosts(1, none, true).AND).not.toContainEqual({
+    expect(publicPosts(viewer, true).AND).not.toContainEqual({
       isAdult: false,
     });
   });

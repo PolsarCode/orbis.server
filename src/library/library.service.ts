@@ -26,6 +26,7 @@ import {
 import { GUEST_USER_ID } from '../auth/allow-guest';
 import { nsfwEntries, showsNsfw } from '../users/nsfw';
 import { notSuspended } from '../users/suspension';
+import { notBlockedWith } from '../safety/blocks';
 import { loadSteamLinks, SteamLink } from '../steam/steam-links';
 import { DiscordChannelService } from '../discord-channel/discord-channel.service';
 
@@ -389,6 +390,7 @@ export class LibraryService {
           isPublic: true,
           userId: { not: userId },
           user: {
+            ...notBlockedWith(userId),
             memberships: {
               some: { community: { memberships: { some: { userId } } } },
             },

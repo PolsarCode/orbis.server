@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { PostsService } from '../posts/posts.service';
-import { reportedBy } from '../moderation/visibility';
+import { contentViewer } from '../moderation/visibility';
 import {
   CreateForumCategoryDto,
   ForumSectionDto,
@@ -99,8 +99,7 @@ export class ForumCategoriesService {
     sections: ForumSectionItem[];
     categories: ForumCategoryItem[];
   }> {
-    const reported = await reportedBy(this.prisma, viewerId);
-    const visible = visibleThreads(viewerId, reported.forum_post);
+    const visible = visibleThreads(await contentViewer(this.prisma, viewerId));
     const [sections, categories] = await Promise.all([
       this.prisma.forumSection.findMany({
         where: { communityId },

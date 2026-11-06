@@ -115,9 +115,10 @@ export class CommunitiesController {
   @AllowGuest()
   @UseGuards(CommunityViewerGuard)
   findMembers(
+    @Req() req,
     @Param('communityId', ParseIntPipe) communityId: number,
   ): Promise<CommunityMember[]> {
-    return this.communitiesService.findMembers(communityId);
+    return this.communitiesService.findMembers(req.user.userId, communityId);
   }
 
   @Put(':communityId/admins/:userId')

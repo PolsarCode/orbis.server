@@ -1,12 +1,13 @@
 import { BadGatewayException, NotFoundException } from '@nestjs/common';
 import { LibraryService } from './library.service';
-import { getMediaList } from './library-api';
+import { getMedia, getMediaList } from './library-api';
 import { PrismaService } from '../prisma.service';
 import { DiscordChannelService } from '../discord-channel/discord-channel.service';
 import { MediaType } from '../../prisma/generated/client';
 
 jest.mock('./library-api', () => ({
   ...jest.requireActual('./library-api'),
+  getMedia: jest.fn(),
   getMediaList: jest.fn(),
 }));
 
@@ -127,5 +128,37 @@ describe('Media lists', () => {
       library.mediaList(5, MediaType.anime, 'popular'),
     ).rejects.toBeInstanceOf(NotFoundException);
     expect(fetchList).not.toHaveBeenCalled();
+  });
+});
+
+describe('Title page', () => {
+  const prisma = {
+    user: { findUnique: jest.fn().mockResolvedValue({ showNsfw: false }) },
+    libraryEntry: {
+      findUnique: jest.fn().mockResolvedValue(null),
+      findMany: jest.fn().mockResolvedValue([]),
+    },
+  };
+  const library = new LibraryService(
+    prisma as unknown as PrismaService,
+    {} as DiscordChannelService,
+  );
+
+  it('leaves people blocked either way out of who else has the title', async () => {
+    (getMedia as jest.Mock).mockResolvedValue(media('1'));
+
+    await library.media(5, MediaType.anime, '1');
+
+    expect(prisma.libraryEntry.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          mediaId: 'ANIME_1',
+          user: expect.objectContaining({
+            blocksMade: { none: { blockedId: 5 } },
+            blocksReceived: { none: { blockerId: 5 } },
+          }),
+        }),
+      }),
+    );
   });
 });

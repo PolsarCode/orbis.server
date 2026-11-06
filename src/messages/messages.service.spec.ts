@@ -56,6 +56,15 @@ const group = (members = [member(1), member(2), member(3)]) =>
 
 describe('MessagesService', () => {
   const prisma = {
+    block: {
+      count: jest.fn().mockResolvedValue(0),
+      findMany: jest.fn().mockResolvedValue([]),
+    },
+    mute: {
+      count: jest.fn().mockResolvedValue(0),
+      findMany: jest.fn().mockResolvedValue([]),
+    },
+    keywordFilter: { findMany: jest.fn().mockResolvedValue([]) },
     user: {
       findMany: jest.fn(({ where: { id } }) =>
         id.in.map((key: number) => users[key]).filter(Boolean),
