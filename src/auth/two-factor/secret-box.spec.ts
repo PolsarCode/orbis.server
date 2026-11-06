@@ -26,8 +26,10 @@ describe('Stored authenticator secrets', () => {
 
     process.env.TWO_FACTOR_KEY = 'test-key';
     const [iv, tag, data] = sealed.split('.');
+    const tampered = Buffer.from(data, 'base64');
+    tampered[0] ^= 1;
     expect(() =>
-      openSecret([iv, tag, `A${data.slice(1)}`].join('.')),
+      openSecret([iv, tag, tampered.toString('base64')].join('.')),
     ).toThrow();
   });
 
