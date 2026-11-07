@@ -8,6 +8,7 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
+import { Subject } from 'rxjs';
 import { Server, Socket } from 'socket.io';
 import type { UserStatus } from '../../prisma/generated/client';
 import { PrismaService } from '../prisma.service';
@@ -35,6 +36,7 @@ export class PresenceGateway
   private live = new Map<number, string>();
   private playing = new Map<number, string>();
   private liveCommunities = new Set<number>();
+  readonly cameOnline = new Subject<number>();
 
   constructor(
     private jwt: JwtService,
@@ -70,6 +72,7 @@ export class PresenceGateway
     const count = (this.connections.get(userId) ?? 0) + 1;
     this.connections.set(userId, count);
     if (count === 1 || wasIdle) await this.broadcastPresence(userId);
+    if (count === 1) this.cameOnline.next(userId);
   }
 
   disconnectUser(userId: number) {

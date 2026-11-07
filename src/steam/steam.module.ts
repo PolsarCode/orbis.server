@@ -4,11 +4,12 @@ import { PresenceModule } from '../friends/presence.module';
 import { LibraryModule } from '../library/library.module';
 import { PrismaService } from '../prisma.service';
 import { SteamController } from './steam.controller';
+import { SteamPlayingService } from './steam-playing.service';
 import { SteamService } from './steam.service';
 
 @Module({
   imports: [LibraryModule, PresenceModule, JwtModule.register({})],
   controllers: [SteamController],
-  providers: [SteamService, PrismaService],
+  providers: [SteamService, SteamPlayingService, PrismaService],
 })
 export class SteamModule {}

@@ -125,6 +125,21 @@ describe('PresenceGateway', () => {
     expect(gateway.statusOf(7, visible)).toBe('offline');
   });
 
+  it('announces someone coming online only on their first connection', async () => {
+    const cameOnline = jest.fn();
+    gateway.cameOnline.subscribe(cameOnline);
+
+    const first = await connect();
+    const second = await connect();
+    expect(cameOnline).toHaveBeenCalledTimes(1);
+    expect(cameOnline).toHaveBeenCalledWith(7);
+
+    await gateway.handleDisconnect(first);
+    await gateway.handleDisconnect(second);
+    await connect();
+    expect(cameOnline).toHaveBeenCalledTimes(2);
+  });
+
   it('shares the Steam game someone is playing only while they are online', async () => {
     await gateway.updatePlaying(new Map([[7, 'NBA 2K26']]));
     expect(gateway.playingOf(7, visible)).toBeNull();
