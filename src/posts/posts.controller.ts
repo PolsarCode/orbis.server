@@ -20,6 +20,7 @@ import { CommunityMemberGuard } from '../communities/community-member.guard';
 import { CommunityViewerGuard } from '../communities/community-viewer.guard';
 import { RateLimit, MINUTE } from '../common/throttle';
 import { UserId } from '../common/user-id';
+import { EditHistory } from '../common/edit-history';
 
 @Controller('communities/:communityId/posts')
 @UseGuards(JwtAuthGuard)
@@ -97,6 +98,15 @@ export class PostsController {
 @UseGuards(JwtAuthGuard)
 export class PostController {
   constructor(private readonly postsService: PostsService) {}
+
+  @Get(':postId/edits')
+  @AllowGuest()
+  edits(
+    @UserId() userId: number,
+    @Param('postId', ParseIntPipe) postId: number,
+  ): Promise<EditHistory> {
+    return this.postsService.findEdits(userId, postId);
+  }
 
   @RateLimit(30, MINUTE)
   @Patch(':postId')

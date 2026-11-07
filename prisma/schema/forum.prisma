@@ -73,6 +73,7 @@ model ForumPost {
   quote         ForumPost?     @relation("ForumQuotes", fields: [quoteId], references: [id], onDelete: SetNull)
   quotedBy      ForumPost[]    @relation("ForumQuotes")
   hashtagUsages HashtagUsage[]
+  editVersions  EditVersion[]
 
   @@index([threadId, createdAt])
   @@index([communityId])

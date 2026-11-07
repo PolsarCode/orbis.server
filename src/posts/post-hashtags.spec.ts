@@ -26,6 +26,7 @@ const person = { id: 1, username: 'frieren', name: null, avatarUrl: null };
 const createdAt = new Date('2026-11-05T10:00:00Z');
 
 function setup() {
+  let written = {};
   const prisma = {
     block: {
       count: jest.fn().mockResolvedValue(0),
@@ -47,7 +48,11 @@ function setup() {
       findUnique: jest.fn(),
       findMany: jest.fn().mockResolvedValue([]),
       groupBy: jest.fn().mockResolvedValue([]),
-      update: jest.fn(({ data }) => ({
+      updateMany: jest.fn(({ data }) => {
+        written = data;
+        return { count: 1 };
+      }),
+      findUniqueOrThrow: jest.fn(() => ({
         id: 9,
         authorId: 1,
         communityId: 5,
@@ -55,9 +60,10 @@ function setup() {
         commentCount: 0,
         createdAt,
         author: person,
-        ...data,
+        ...written,
       })),
     },
+    editVersion: { create: jest.fn() },
     user: {
       findUnique: jest.fn().mockResolvedValue({ id: 4, username: 'himmel' }),
       findMany: jest.fn().mockResolvedValue([]),
@@ -76,7 +82,11 @@ function setup() {
       ),
     },
     hashtagUsage: { createMany: jest.fn(), deleteMany: jest.fn() },
-    $transaction: jest.fn((operations: unknown[]) => Promise.all(operations)),
+    $transaction: jest.fn((operations: unknown): unknown =>
+      typeof operations === 'function'
+        ? (operations as (tx: typeof prisma) => unknown)(prisma)
+        : Promise.all(operations as unknown[]),
+    ),
   };
   const discordChannel = {
     postCreated: jest.fn(),
@@ -180,7 +190,7 @@ describe('Hashtags in posts', () => {
       content: '<p><a href="/tags/frieren" class="hashtag">#Frieren</a></p>',
     });
 
-    expect(prisma.post.update.mock.calls[0][0].data.content).toBe(
+    expect(prisma.post.updateMany.mock.calls[0][0].data.content).toBe(
       '<p><a href="/tags/frieren" class="hashtag">#Frieren</a></p>',
     );
     expect(prisma.hashtagUsage.deleteMany).toHaveBeenCalledWith({
@@ -211,7 +221,15 @@ describe('Hashtags in posts', () => {
       skipDuplicates: true,
     });
 
-    prisma.post.findUnique.mockResolvedValue({ id: 9 });
+    prisma.post.findUnique.mockResolvedValue({
+      id: 9,
+      authorId: 1,
+      content: '<p>#Frieren</p>',
+      linkUrl: null,
+      spoiler: null,
+      createdAt,
+      editedAt: null,
+    });
     await service.threadChanged(
       3,
       { content: '<p>Edited</p>', linkUrl: null, spoiler: null },

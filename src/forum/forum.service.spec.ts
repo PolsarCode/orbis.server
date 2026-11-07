@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
@@ -8,9 +9,13 @@ import { PrismaService } from '../prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { LikesService } from '../likes/likes.service';
 import { PostsService } from '../posts/posts.service';
-import { isForumManager, isMember } from './forum-helpers';
+import { isForumManager, isMember, visibleThreads } from './forum-helpers';
 import { notifyMentions } from '../common/mentions';
 import { requireEstablishedAccount } from '../common/new-account';
+import { editHistorySelect } from '../common/edit-history';
+import { visibleCommunity } from '../communities/require-membership';
+import { visibleTo } from '../moderation/visibility';
+import { GUEST_USER_ID } from '../auth/allow-guest';
 
 jest.mock('./forum-helpers', () => ({
   ...jest.requireActual('./forum-helpers'),
@@ -89,9 +94,11 @@ function setup() {
       findMany: jest.fn().mockResolvedValue([]),
       count: jest.fn().mockResolvedValue(0),
       create: jest.fn(),
-      update: jest.fn(),
+      updateMany: jest.fn().mockResolvedValue({ count: 1 }),
+      findUniqueOrThrow: jest.fn(),
       delete: jest.fn(),
     },
+    editVersion: { create: jest.fn() },
     like: { deleteMany: jest.fn() },
     notification: { deleteMany: jest.fn() },
     membership: { findMany: jest.fn().mockResolvedValue([]) },
@@ -720,12 +727,12 @@ describe('Editing and deleting', () => {
     await expect(
       service.updatePost(7, 3, 40, { content: '<p>Not mine</p>' }),
     ).rejects.toBeInstanceOf(ForbiddenException);
-    expect(prisma.forumPost.update).not.toHaveBeenCalled();
+    expect(prisma.forumPost.updateMany).not.toHaveBeenCalled();
   });
 
   it('keeps the feed post in step when the opening post or title changes', async () => {
     const { prisma, posts, service } = setup();
-    prisma.forumPost.update.mockResolvedValue({
+    prisma.forumPost.findUniqueOrThrow.mockResolvedValue({
       id: 40,
       opening: true,
       content: '<p>New</p>',
@@ -750,7 +757,7 @@ describe('Editing and deleting', () => {
     await service.updatePost(7, 3, 40, { content: '<p>New</p>' });
     expect(posts.threadChanged).toHaveBeenCalledWith(
       9,
-      { content: '<p>New</p>', linkUrl: null },
+      { content: '<p>New</p>', linkUrl: null, spoiler: null },
       [],
     );
 
@@ -846,6 +853,210 @@ describe('Editing and deleting', () => {
       ForbiddenException,
     );
     expect(prisma.forumPost.delete).not.toHaveBeenCalled();
+  });
+});
+
+describe('Forum edit history', () => {
+  const posted = new Date('2026-11-01T10:00:00Z');
+  const firstEdit = new Date('2026-11-01T10:05:00Z');
+  const secondEdit = new Date('2026-11-01T11:00:00Z');
+  const viewer = (id: number) => ({
+    id,
+    reported: { post: [], comment: [], forum_post: [] },
+    siteAdmin: false,
+    manages: [],
+  });
+  const visibleIn = (viewerId: number) => ({
+    id: 40,
+    communityId: 3,
+    community: visibleCommunity(viewerId),
+    thread: visibleThreads(viewer(viewerId)),
+    ...visibleTo(viewer(viewerId), 'forum_post'),
+  });
+
+  beforeEach(() =>
+    jest.useFakeTimers({
+      now: secondEdit,
+      doNotFake: ['nextTick', 'setImmediate', 'queueMicrotask'],
+    }),
+  );
+  afterEach(() => jest.useRealTimers());
+
+  it('saves the previous version with an edit, and neither marks it edited nor saves one when the body is the same', async () => {
+    const { prisma, service } = setup();
+    prisma.forumPost.findFirst.mockResolvedValue({
+      authorId: 7,
+      content: '<p>Old</p>',
+      linkUrl: null,
+      spoiler: null,
+      createdAt: posted,
+      editedAt: firstEdit,
+      threadId: 9,
+      opening: false,
+    });
+    let written = {};
+    prisma.forumPost.updateMany.mockImplementation(({ data }) => {
+      written = data;
+      return { count: 1 };
+    });
+    prisma.forumPost.findUniqueOrThrow.mockImplementation(() => ({
+      id: 41,
+      opening: false,
+      createdAt: posted,
+      author,
+      ...written,
+    }));
+
+    await service.updatePost(7, 3, 41, { content: '<p>New</p>' });
+    await service.updatePost(7, 3, 41, { content: '<p>Old</p>' });
+
+    expect(prisma.forumPost.updateMany.mock.calls).toEqual([
+      [
+        {
+          where: { id: 41, editedAt: firstEdit },
+          data: {
+            content: '<p>New</p>',
+            linkUrl: null,
+            spoiler: null,
+            editedAt: secondEdit,
+          },
+        },
+      ],
+      [
+        {
+          where: { id: 41, editedAt: firstEdit },
+          data: { content: '<p>Old</p>', linkUrl: null, spoiler: null },
+        },
+      ],
+    ]);
+    expect(prisma.editVersion.create).toHaveBeenCalledTimes(1);
+    expect(prisma.editVersion.create).toHaveBeenCalledWith({
+      data: {
+        forumPostId: 41,
+        content: '<p>Old</p>',
+        linkUrl: null,
+        spoiler: null,
+        createdAt: firstEdit,
+      },
+    });
+  });
+
+  it('refuses an edit when the post was edited after it was read, saving nothing', async () => {
+    const { prisma, posts, service } = setup();
+    prisma.forumPost.findFirst.mockResolvedValue({
+      authorId: 7,
+      content: '<p>Old</p>',
+      linkUrl: null,
+      spoiler: null,
+      createdAt: posted,
+      editedAt: null,
+      threadId: 9,
+      opening: true,
+    });
+    prisma.forumPost.updateMany.mockResolvedValue({ count: 0 });
+
+    await expect(
+      service.updatePost(7, 3, 40, { content: '<p>Mine</p>' }),
+    ).rejects.toThrow(
+      new ConflictException(
+        'This was edited somewhere else. Reload and try again',
+      ),
+    );
+    expect(prisma.editVersion.create).not.toHaveBeenCalled();
+    expect(prisma.hashtagUsage.deleteMany).not.toHaveBeenCalled();
+    expect(posts.threadChanged).not.toHaveBeenCalled();
+  });
+
+  it('lists every version newest first, starting with the current one', async () => {
+    const { prisma, service } = setup();
+    const versions = [
+      {
+        content: '<p>Second</p>',
+        linkUrl: null,
+        spoiler: null,
+        createdAt: firstEdit,
+      },
+      {
+        content: '<p>First</p>',
+        linkUrl: null,
+        spoiler: null,
+        createdAt: posted,
+      },
+    ];
+    prisma.forumPost.findFirst.mockResolvedValue({
+      content: '<p>Third</p>',
+      linkUrl: null,
+      spoiler: null,
+      createdAt: posted,
+      editedAt: secondEdit,
+      editVersions: versions,
+    });
+
+    await expect(service.findEdits(7, 3, 40)).resolves.toEqual([
+      {
+        content: '<p>Third</p>',
+        linkUrl: null,
+        spoiler: null,
+        createdAt: secondEdit,
+      },
+      ...versions,
+    ]);
+    expect(prisma.forumPost.findFirst).toHaveBeenCalledWith({
+      where: visibleIn(7),
+      select: editHistorySelect,
+    });
+  });
+
+  it('answers 404 outside a private community, across a block, for hidden posts and in hidden threads', async () => {
+    const { prisma, service } = setup();
+
+    await expect(service.findEdits(7, 3, 40)).rejects.toThrow(
+      new NotFoundException('Post not found'),
+    );
+    const { where } = prisma.forumPost.findFirst.mock.calls[0][0];
+    expect(where).toEqual(visibleIn(7));
+    expect(where.community).toEqual({
+      OR: [{ isPublic: true }, { memberships: { some: { userId: 7 } } }],
+    });
+    expect(where.AND).toContainEqual({
+      OR: [{ hiddenAt: null }, { authorId: 7 }],
+    });
+  });
+
+  it('answers 404 for ids out of range without looking them up', async () => {
+    const { prisma, service } = setup();
+
+    await expect(service.findEdits(7, 3, 2 ** 31)).rejects.toThrow(
+      NotFoundException,
+    );
+    await expect(service.findEdits(7, 2 ** 31, 40)).rejects.toThrow(
+      NotFoundException,
+    );
+    expect(prisma.forumPost.findFirst).not.toHaveBeenCalled();
+  });
+
+  it('lets guests read the history of posts in public communities', async () => {
+    const { prisma, service } = setup();
+    prisma.forumPost.findFirst.mockResolvedValue({
+      content: '<p>Only</p>',
+      linkUrl: null,
+      spoiler: null,
+      createdAt: posted,
+      editedAt: null,
+      editVersions: [],
+    });
+
+    await expect(service.findEdits(GUEST_USER_ID, 3, 40)).resolves.toEqual([
+      {
+        content: '<p>Only</p>',
+        linkUrl: null,
+        spoiler: null,
+        createdAt: posted,
+      },
+    ]);
+    expect(prisma.forumPost.findFirst.mock.calls[0][0].where).toEqual(
+      visibleIn(GUEST_USER_ID),
+    );
   });
 });
 
@@ -949,12 +1160,17 @@ describe('Hashtags in forum posts', () => {
       threadId: 9,
       opening: true,
     });
-    prisma.forumPost.update.mockImplementation(({ data }) => ({
+    let written = {};
+    prisma.forumPost.updateMany.mockImplementation(({ data }) => {
+      written = data;
+      return { count: 1 };
+    });
+    prisma.forumPost.findUniqueOrThrow.mockImplementation(() => ({
       id: 40,
       opening: true,
       createdAt,
       author,
-      ...data,
+      ...written,
     }));
 
     await service.updatePost(7, 3, 40, {

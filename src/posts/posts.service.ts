@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { requireUserNamed } from '../users/user-lookup';
 import { MAX_INT } from '../communities/community-member.guard';
+import { visibleCommunity } from '../communities/require-membership';
 import { PrismaService } from '../prisma.service';
 import {
   BookmarkableType,
@@ -70,6 +71,14 @@ import { managedCommunities } from '../communities/managed-communities';
 import { discussionCleanup } from '../comments/discussion-cleanup';
 import { containsLink, requireEstablishedAccount } from '../common/new-account';
 import { spoilerOf } from '../common/spoiler';
+import {
+  editableSelect,
+  EditHistory,
+  editHistory,
+  editHistorySelect,
+  recordEdit,
+  requireLatest,
+} from '../common/edit-history';
 import { notSuspended } from '../users/suspension';
 import { pinLimit, pinLimitMessage } from './pins';
 import {
@@ -80,6 +89,7 @@ import {
   publicActivity,
   publicPost,
   publicPosts,
+  visibleThreadAndWall,
 } from '../tags/public-content';
 import {
   availableOriginals,
@@ -290,12 +300,6 @@ function homePosts(viewer: ContentViewer, showNsfw: boolean) {
   };
 }
 
-function visibleCommunity(viewerId: number) {
-  return {
-    OR: [{ isPublic: true }, { memberships: { some: { userId: viewerId } } }],
-  };
-}
-
 function profilePosts(ownerId: number, viewerId: number) {
   return {
     OR: [
@@ -363,6 +367,38 @@ export function viewablePosts(viewer: ContentViewer): Prisma.PostWhereInput {
       },
       visibleTo(viewer, 'post'),
     ],
+  };
+}
+
+export function viewablePost(
+  viewer: ContentViewer,
+  showNsfw: boolean,
+): Prisma.PostWhereInput {
+  return {
+    AND: [
+      viewablePosts(viewer),
+      nsfwEntries(showNsfw),
+      ...visibleThreadAndWall(viewer),
+    ],
+  };
+}
+
+export function viewableActivity(
+  viewer: ContentViewer,
+  showNsfw: boolean,
+): Prisma.LibraryActivityWhereInput {
+  return {
+    entry: {
+      OR: [{ isPublic: true }, { userId: viewer.id }],
+      ...nsfwEntries(showNsfw),
+      user: {
+        AND: [
+          notSuspended(),
+          visibleActivityAuthor(viewer.id),
+          viewableProfiles(viewer.id),
+        ],
+      },
+    },
   };
 }
 
@@ -1895,13 +1931,7 @@ export class PostsService {
     if (type === 'post') {
       const post = inRange
         ? await this.prisma.post.findFirst({
-            where: {
-              AND: [
-                { id },
-                viewablePosts(viewer),
-                ...(showNsfw ? [] : [{ isAdult: false }]),
-              ],
-            },
+            where: { id, ...viewablePost(viewer, showNsfw) },
             select: {
               authorId: true,
               communityId: true,
@@ -1917,20 +1947,7 @@ export class PostsService {
 
     const activity = inRange
       ? await this.prisma.libraryActivity.findFirst({
-          where: {
-            id,
-            entry: {
-              OR: [{ isPublic: true }, { userId: viewer.id }],
-              ...nsfwEntries(showNsfw),
-              user: {
-                AND: [
-                  notSuspended(),
-                  visibleActivityAuthor(viewer.id),
-                  viewableProfiles(viewer.id),
-                ],
-              },
-            },
-          },
+          where: { id, ...viewableActivity(viewer, showNsfw) },
           select: {
             entry: {
               select: { user: { select: { id: true, username: true } } },
@@ -2187,8 +2204,8 @@ export class PostsService {
     const post = await this.prisma.post.findUnique({
       where: { id: postId },
       select: {
+        ...editableSelect,
         authorId: true,
-        content: true,
         communityId: true,
         wallUserId: true,
         mediaType: true,
@@ -2209,10 +2226,20 @@ export class PostsService {
       { ...body, content: unlinkHashtags(unlinkMentions(body.content)) },
       userId,
     );
-    const updated = await this.prisma.post.update({
-      where: { id: postId },
-      data: { ...data, editedAt: new Date() },
-      include: postInclude,
+    const { edited, version } = recordEdit(post, data);
+    const updated = await this.prisma.$transaction(async (tx) => {
+      requireLatest(
+        await tx.post.updateMany({
+          where: { id: postId, editedAt: post.editedAt },
+          data: { ...data, ...edited },
+        }),
+      );
+      if (version)
+        await tx.editVersion.create({ data: { postId, ...version } });
+      return tx.post.findUniqueOrThrow({
+        where: { id: postId },
+        include: postInclude,
+      });
     });
     await replaceHashtags(this.prisma, { postId }, updated, hashtags);
 
@@ -2230,6 +2257,22 @@ export class PostsService {
 
     const [item] = await this.engage(userId, [asPost(updated)]);
     return item;
+  }
+
+  async findEdits(viewerId: number, postId: number): Promise<EditHistory> {
+    const [viewer, showNsfw] = await Promise.all([
+      contentViewer(this.prisma, viewerId),
+      showsNsfw(this.prisma, viewerId),
+    ]);
+    const post =
+      postId >= 1 && postId <= MAX_INT
+        ? await this.prisma.post.findFirst({
+            where: { id: postId, ...viewablePost(viewer, showNsfw) },
+            select: editHistorySelect,
+          })
+        : null;
+    if (!post) throw new NotFoundException('Post not found');
+    return editHistory(post);
   }
 
   async setPinned(userId: number, postId: number, pinned: boolean) {
@@ -2312,21 +2355,25 @@ export class PostsService {
   ) {
     const post = await this.prisma.post.findUnique({
       where: { forumThreadId: threadId },
-      select: { id: true },
+      select: { id: true, authorId: true, ...editableSelect },
     });
     if (!post) return;
     if (opening) {
-      const updated = await this.prisma.post.update({
-        where: { id: post.id },
-        data: { ...opening, editedAt: new Date() },
-        select: { authorId: true, createdAt: true },
+      const { edited, version } = recordEdit(post, opening);
+      await this.prisma.$transaction(async (tx) => {
+        requireLatest(
+          await tx.post.updateMany({
+            where: { id: post.id, editedAt: post.editedAt },
+            data: { ...opening, ...edited },
+          }),
+        );
+        if (version) {
+          await tx.editVersion.create({
+            data: { postId: post.id, ...version },
+          });
+        }
       });
-      await replaceHashtags(
-        this.prisma,
-        { postId: post.id },
-        updated,
-        hashtags,
-      );
+      await replaceHashtags(this.prisma, { postId: post.id }, post, hashtags);
     }
     void this.discordChannel.contentEdited('post', post.id);
   }

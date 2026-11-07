@@ -306,6 +306,7 @@ export type ForumPostWhereInput = {
   quote?: Prisma.XOR<Prisma.ForumPostNullableScalarRelationFilter, Prisma.ForumPostWhereInput> | null
   quotedBy?: Prisma.ForumPostListRelationFilter
   hashtagUsages?: Prisma.HashtagUsageListRelationFilter
+  editVersions?: Prisma.EditVersionListRelationFilter
 }
 
 export type ForumPostOrderByWithRelationInput = {
@@ -328,6 +329,7 @@ export type ForumPostOrderByWithRelationInput = {
   quote?: Prisma.ForumPostOrderByWithRelationInput
   quotedBy?: Prisma.ForumPostOrderByRelationAggregateInput
   hashtagUsages?: Prisma.HashtagUsageOrderByRelationAggregateInput
+  editVersions?: Prisma.EditVersionOrderByRelationAggregateInput
 }
 
 export type ForumPostWhereUniqueInput = Prisma.AtLeast<{
@@ -353,6 +355,7 @@ export type ForumPostWhereUniqueInput = Prisma.AtLeast<{
   quote?: Prisma.XOR<Prisma.ForumPostNullableScalarRelationFilter, Prisma.ForumPostWhereInput> | null
   quotedBy?: Prisma.ForumPostListRelationFilter
   hashtagUsages?: Prisma.HashtagUsageListRelationFilter
+  editVersions?: Prisma.EditVersionListRelationFilter
 }, "id">
 
 export type ForumPostOrderByWithAggregationInput = {
@@ -410,6 +413,7 @@ export type ForumPostCreateInput = {
   quote?: Prisma.ForumPostCreateNestedOneWithoutQuotedByInput
   quotedBy?: Prisma.ForumPostCreateNestedManyWithoutQuoteInput
   hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutForumPostInput
+  editVersions?: Prisma.EditVersionCreateNestedManyWithoutForumPostInput
 }
 
 export type ForumPostUncheckedCreateInput = {
@@ -428,6 +432,7 @@ export type ForumPostUncheckedCreateInput = {
   createdAt?: Date | string
   quotedBy?: Prisma.ForumPostUncheckedCreateNestedManyWithoutQuoteInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutForumPostInput
+  editVersions?: Prisma.EditVersionUncheckedCreateNestedManyWithoutForumPostInput
 }
 
 export type ForumPostUpdateInput = {
@@ -445,6 +450,7 @@ export type ForumPostUpdateInput = {
   quote?: Prisma.ForumPostUpdateOneWithoutQuotedByNestedInput
   quotedBy?: Prisma.ForumPostUpdateManyWithoutQuoteNestedInput
   hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutForumPostNestedInput
+  editVersions?: Prisma.EditVersionUpdateManyWithoutForumPostNestedInput
 }
 
 export type ForumPostUncheckedUpdateInput = {
@@ -463,6 +469,7 @@ export type ForumPostUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   quotedBy?: Prisma.ForumPostUncheckedUpdateManyWithoutQuoteNestedInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutForumPostNestedInput
+  editVersions?: Prisma.EditVersionUncheckedUpdateManyWithoutForumPostNestedInput
 }
 
 export type ForumPostCreateManyInput = {
@@ -629,6 +636,22 @@ export type ForumPostUncheckedUpdateManyWithoutCommunityNestedInput = {
   update?: Prisma.ForumPostUpdateWithWhereUniqueWithoutCommunityInput | Prisma.ForumPostUpdateWithWhereUniqueWithoutCommunityInput[]
   updateMany?: Prisma.ForumPostUpdateManyWithWhereWithoutCommunityInput | Prisma.ForumPostUpdateManyWithWhereWithoutCommunityInput[]
   deleteMany?: Prisma.ForumPostScalarWhereInput | Prisma.ForumPostScalarWhereInput[]
+}
+
+export type ForumPostCreateNestedOneWithoutEditVersionsInput = {
+  create?: Prisma.XOR<Prisma.ForumPostCreateWithoutEditVersionsInput, Prisma.ForumPostUncheckedCreateWithoutEditVersionsInput>
+  connectOrCreate?: Prisma.ForumPostCreateOrConnectWithoutEditVersionsInput
+  connect?: Prisma.ForumPostWhereUniqueInput
+}
+
+export type ForumPostUpdateOneWithoutEditVersionsNestedInput = {
+  create?: Prisma.XOR<Prisma.ForumPostCreateWithoutEditVersionsInput, Prisma.ForumPostUncheckedCreateWithoutEditVersionsInput>
+  connectOrCreate?: Prisma.ForumPostCreateOrConnectWithoutEditVersionsInput
+  upsert?: Prisma.ForumPostUpsertWithoutEditVersionsInput
+  disconnect?: Prisma.ForumPostWhereInput | boolean
+  delete?: Prisma.ForumPostWhereInput | boolean
+  connect?: Prisma.ForumPostWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ForumPostUpdateToOneWithWhereWithoutEditVersionsInput, Prisma.ForumPostUpdateWithoutEditVersionsInput>, Prisma.ForumPostUncheckedUpdateWithoutEditVersionsInput>
 }
 
 export type ForumPostCreateNestedManyWithoutThreadInput = {
@@ -803,6 +826,7 @@ export type ForumPostCreateWithoutCommunityInput = {
   quote?: Prisma.ForumPostCreateNestedOneWithoutQuotedByInput
   quotedBy?: Prisma.ForumPostCreateNestedManyWithoutQuoteInput
   hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutForumPostInput
+  editVersions?: Prisma.EditVersionCreateNestedManyWithoutForumPostInput
 }
 
 export type ForumPostUncheckedCreateWithoutCommunityInput = {
@@ -820,6 +844,7 @@ export type ForumPostUncheckedCreateWithoutCommunityInput = {
   createdAt?: Date | string
   quotedBy?: Prisma.ForumPostUncheckedCreateNestedManyWithoutQuoteInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutForumPostInput
+  editVersions?: Prisma.EditVersionUncheckedCreateNestedManyWithoutForumPostInput
 }
 
 export type ForumPostCreateOrConnectWithoutCommunityInput = {
@@ -867,6 +892,92 @@ export type ForumPostScalarWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"ForumPost"> | Date | string
 }
 
+export type ForumPostCreateWithoutEditVersionsInput = {
+  opening?: boolean
+  content: string
+  linkUrl?: string | null
+  spoiler?: string | null
+  likeCount?: number
+  hiddenAt?: Date | string | null
+  editedAt?: Date | string | null
+  createdAt?: Date | string
+  thread: Prisma.ForumThreadCreateNestedOneWithoutPostsInput
+  community: Prisma.CommunityCreateNestedOneWithoutForumPostsInput
+  author: Prisma.UserCreateNestedOneWithoutForumPostsInput
+  quote?: Prisma.ForumPostCreateNestedOneWithoutQuotedByInput
+  quotedBy?: Prisma.ForumPostCreateNestedManyWithoutQuoteInput
+  hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutForumPostInput
+}
+
+export type ForumPostUncheckedCreateWithoutEditVersionsInput = {
+  id?: number
+  threadId: number
+  communityId: number
+  authorId: number
+  opening?: boolean
+  content: string
+  linkUrl?: string | null
+  spoiler?: string | null
+  quoteId?: number | null
+  likeCount?: number
+  hiddenAt?: Date | string | null
+  editedAt?: Date | string | null
+  createdAt?: Date | string
+  quotedBy?: Prisma.ForumPostUncheckedCreateNestedManyWithoutQuoteInput
+  hashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutForumPostInput
+}
+
+export type ForumPostCreateOrConnectWithoutEditVersionsInput = {
+  where: Prisma.ForumPostWhereUniqueInput
+  create: Prisma.XOR<Prisma.ForumPostCreateWithoutEditVersionsInput, Prisma.ForumPostUncheckedCreateWithoutEditVersionsInput>
+}
+
+export type ForumPostUpsertWithoutEditVersionsInput = {
+  update: Prisma.XOR<Prisma.ForumPostUpdateWithoutEditVersionsInput, Prisma.ForumPostUncheckedUpdateWithoutEditVersionsInput>
+  create: Prisma.XOR<Prisma.ForumPostCreateWithoutEditVersionsInput, Prisma.ForumPostUncheckedCreateWithoutEditVersionsInput>
+  where?: Prisma.ForumPostWhereInput
+}
+
+export type ForumPostUpdateToOneWithWhereWithoutEditVersionsInput = {
+  where?: Prisma.ForumPostWhereInput
+  data: Prisma.XOR<Prisma.ForumPostUpdateWithoutEditVersionsInput, Prisma.ForumPostUncheckedUpdateWithoutEditVersionsInput>
+}
+
+export type ForumPostUpdateWithoutEditVersionsInput = {
+  opening?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  likeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  thread?: Prisma.ForumThreadUpdateOneRequiredWithoutPostsNestedInput
+  community?: Prisma.CommunityUpdateOneRequiredWithoutForumPostsNestedInput
+  author?: Prisma.UserUpdateOneRequiredWithoutForumPostsNestedInput
+  quote?: Prisma.ForumPostUpdateOneWithoutQuotedByNestedInput
+  quotedBy?: Prisma.ForumPostUpdateManyWithoutQuoteNestedInput
+  hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutForumPostNestedInput
+}
+
+export type ForumPostUncheckedUpdateWithoutEditVersionsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  threadId?: Prisma.IntFieldUpdateOperationsInput | number
+  communityId?: Prisma.IntFieldUpdateOperationsInput | number
+  authorId?: Prisma.IntFieldUpdateOperationsInput | number
+  opening?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  likeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  quotedBy?: Prisma.ForumPostUncheckedUpdateManyWithoutQuoteNestedInput
+  hashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutForumPostNestedInput
+}
+
 export type ForumPostCreateWithoutThreadInput = {
   opening?: boolean
   content: string
@@ -881,6 +992,7 @@ export type ForumPostCreateWithoutThreadInput = {
   quote?: Prisma.ForumPostCreateNestedOneWithoutQuotedByInput
   quotedBy?: Prisma.ForumPostCreateNestedManyWithoutQuoteInput
   hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutForumPostInput
+  editVersions?: Prisma.EditVersionCreateNestedManyWithoutForumPostInput
 }
 
 export type ForumPostUncheckedCreateWithoutThreadInput = {
@@ -898,6 +1010,7 @@ export type ForumPostUncheckedCreateWithoutThreadInput = {
   createdAt?: Date | string
   quotedBy?: Prisma.ForumPostUncheckedCreateNestedManyWithoutQuoteInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutForumPostInput
+  editVersions?: Prisma.EditVersionUncheckedCreateNestedManyWithoutForumPostInput
 }
 
 export type ForumPostCreateOrConnectWithoutThreadInput = {
@@ -940,6 +1053,7 @@ export type ForumPostCreateWithoutQuotedByInput = {
   author: Prisma.UserCreateNestedOneWithoutForumPostsInput
   quote?: Prisma.ForumPostCreateNestedOneWithoutQuotedByInput
   hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutForumPostInput
+  editVersions?: Prisma.EditVersionCreateNestedManyWithoutForumPostInput
 }
 
 export type ForumPostUncheckedCreateWithoutQuotedByInput = {
@@ -957,6 +1071,7 @@ export type ForumPostUncheckedCreateWithoutQuotedByInput = {
   editedAt?: Date | string | null
   createdAt?: Date | string
   hashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutForumPostInput
+  editVersions?: Prisma.EditVersionUncheckedCreateNestedManyWithoutForumPostInput
 }
 
 export type ForumPostCreateOrConnectWithoutQuotedByInput = {
@@ -978,6 +1093,7 @@ export type ForumPostCreateWithoutQuoteInput = {
   author: Prisma.UserCreateNestedOneWithoutForumPostsInput
   quotedBy?: Prisma.ForumPostCreateNestedManyWithoutQuoteInput
   hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutForumPostInput
+  editVersions?: Prisma.EditVersionCreateNestedManyWithoutForumPostInput
 }
 
 export type ForumPostUncheckedCreateWithoutQuoteInput = {
@@ -995,6 +1111,7 @@ export type ForumPostUncheckedCreateWithoutQuoteInput = {
   createdAt?: Date | string
   quotedBy?: Prisma.ForumPostUncheckedCreateNestedManyWithoutQuoteInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutForumPostInput
+  editVersions?: Prisma.EditVersionUncheckedCreateNestedManyWithoutForumPostInput
 }
 
 export type ForumPostCreateOrConnectWithoutQuoteInput = {
@@ -1032,6 +1149,7 @@ export type ForumPostUpdateWithoutQuotedByInput = {
   author?: Prisma.UserUpdateOneRequiredWithoutForumPostsNestedInput
   quote?: Prisma.ForumPostUpdateOneWithoutQuotedByNestedInput
   hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutForumPostNestedInput
+  editVersions?: Prisma.EditVersionUpdateManyWithoutForumPostNestedInput
 }
 
 export type ForumPostUncheckedUpdateWithoutQuotedByInput = {
@@ -1049,6 +1167,7 @@ export type ForumPostUncheckedUpdateWithoutQuotedByInput = {
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   hashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutForumPostNestedInput
+  editVersions?: Prisma.EditVersionUncheckedUpdateManyWithoutForumPostNestedInput
 }
 
 export type ForumPostUpsertWithWhereUniqueWithoutQuoteInput = {
@@ -1081,6 +1200,7 @@ export type ForumPostCreateWithoutHashtagUsagesInput = {
   author: Prisma.UserCreateNestedOneWithoutForumPostsInput
   quote?: Prisma.ForumPostCreateNestedOneWithoutQuotedByInput
   quotedBy?: Prisma.ForumPostCreateNestedManyWithoutQuoteInput
+  editVersions?: Prisma.EditVersionCreateNestedManyWithoutForumPostInput
 }
 
 export type ForumPostUncheckedCreateWithoutHashtagUsagesInput = {
@@ -1098,6 +1218,7 @@ export type ForumPostUncheckedCreateWithoutHashtagUsagesInput = {
   editedAt?: Date | string | null
   createdAt?: Date | string
   quotedBy?: Prisma.ForumPostUncheckedCreateNestedManyWithoutQuoteInput
+  editVersions?: Prisma.EditVersionUncheckedCreateNestedManyWithoutForumPostInput
 }
 
 export type ForumPostCreateOrConnectWithoutHashtagUsagesInput = {
@@ -1130,6 +1251,7 @@ export type ForumPostUpdateWithoutHashtagUsagesInput = {
   author?: Prisma.UserUpdateOneRequiredWithoutForumPostsNestedInput
   quote?: Prisma.ForumPostUpdateOneWithoutQuotedByNestedInput
   quotedBy?: Prisma.ForumPostUpdateManyWithoutQuoteNestedInput
+  editVersions?: Prisma.EditVersionUpdateManyWithoutForumPostNestedInput
 }
 
 export type ForumPostUncheckedUpdateWithoutHashtagUsagesInput = {
@@ -1147,6 +1269,7 @@ export type ForumPostUncheckedUpdateWithoutHashtagUsagesInput = {
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   quotedBy?: Prisma.ForumPostUncheckedUpdateManyWithoutQuoteNestedInput
+  editVersions?: Prisma.EditVersionUncheckedUpdateManyWithoutForumPostNestedInput
 }
 
 export type ForumPostCreateWithoutAuthorInput = {
@@ -1163,6 +1286,7 @@ export type ForumPostCreateWithoutAuthorInput = {
   quote?: Prisma.ForumPostCreateNestedOneWithoutQuotedByInput
   quotedBy?: Prisma.ForumPostCreateNestedManyWithoutQuoteInput
   hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutForumPostInput
+  editVersions?: Prisma.EditVersionCreateNestedManyWithoutForumPostInput
 }
 
 export type ForumPostUncheckedCreateWithoutAuthorInput = {
@@ -1180,6 +1304,7 @@ export type ForumPostUncheckedCreateWithoutAuthorInput = {
   createdAt?: Date | string
   quotedBy?: Prisma.ForumPostUncheckedCreateNestedManyWithoutQuoteInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutForumPostInput
+  editVersions?: Prisma.EditVersionUncheckedCreateNestedManyWithoutForumPostInput
 }
 
 export type ForumPostCreateOrConnectWithoutAuthorInput = {
@@ -1237,6 +1362,7 @@ export type ForumPostUpdateWithoutCommunityInput = {
   quote?: Prisma.ForumPostUpdateOneWithoutQuotedByNestedInput
   quotedBy?: Prisma.ForumPostUpdateManyWithoutQuoteNestedInput
   hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutForumPostNestedInput
+  editVersions?: Prisma.EditVersionUpdateManyWithoutForumPostNestedInput
 }
 
 export type ForumPostUncheckedUpdateWithoutCommunityInput = {
@@ -1254,6 +1380,7 @@ export type ForumPostUncheckedUpdateWithoutCommunityInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   quotedBy?: Prisma.ForumPostUncheckedUpdateManyWithoutQuoteNestedInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutForumPostNestedInput
+  editVersions?: Prisma.EditVersionUncheckedUpdateManyWithoutForumPostNestedInput
 }
 
 export type ForumPostUncheckedUpdateManyWithoutCommunityInput = {
@@ -1300,6 +1427,7 @@ export type ForumPostUpdateWithoutThreadInput = {
   quote?: Prisma.ForumPostUpdateOneWithoutQuotedByNestedInput
   quotedBy?: Prisma.ForumPostUpdateManyWithoutQuoteNestedInput
   hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutForumPostNestedInput
+  editVersions?: Prisma.EditVersionUpdateManyWithoutForumPostNestedInput
 }
 
 export type ForumPostUncheckedUpdateWithoutThreadInput = {
@@ -1317,6 +1445,7 @@ export type ForumPostUncheckedUpdateWithoutThreadInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   quotedBy?: Prisma.ForumPostUncheckedUpdateManyWithoutQuoteNestedInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutForumPostNestedInput
+  editVersions?: Prisma.EditVersionUncheckedUpdateManyWithoutForumPostNestedInput
 }
 
 export type ForumPostUncheckedUpdateManyWithoutThreadInput = {
@@ -1363,6 +1492,7 @@ export type ForumPostUpdateWithoutQuoteInput = {
   author?: Prisma.UserUpdateOneRequiredWithoutForumPostsNestedInput
   quotedBy?: Prisma.ForumPostUpdateManyWithoutQuoteNestedInput
   hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutForumPostNestedInput
+  editVersions?: Prisma.EditVersionUpdateManyWithoutForumPostNestedInput
 }
 
 export type ForumPostUncheckedUpdateWithoutQuoteInput = {
@@ -1380,6 +1510,7 @@ export type ForumPostUncheckedUpdateWithoutQuoteInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   quotedBy?: Prisma.ForumPostUncheckedUpdateManyWithoutQuoteNestedInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutForumPostNestedInput
+  editVersions?: Prisma.EditVersionUncheckedUpdateManyWithoutForumPostNestedInput
 }
 
 export type ForumPostUncheckedUpdateManyWithoutQuoteInput = {
@@ -1426,6 +1557,7 @@ export type ForumPostUpdateWithoutAuthorInput = {
   quote?: Prisma.ForumPostUpdateOneWithoutQuotedByNestedInput
   quotedBy?: Prisma.ForumPostUpdateManyWithoutQuoteNestedInput
   hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutForumPostNestedInput
+  editVersions?: Prisma.EditVersionUpdateManyWithoutForumPostNestedInput
 }
 
 export type ForumPostUncheckedUpdateWithoutAuthorInput = {
@@ -1443,6 +1575,7 @@ export type ForumPostUncheckedUpdateWithoutAuthorInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   quotedBy?: Prisma.ForumPostUncheckedUpdateManyWithoutQuoteNestedInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutForumPostNestedInput
+  editVersions?: Prisma.EditVersionUncheckedUpdateManyWithoutForumPostNestedInput
 }
 
 export type ForumPostUncheckedUpdateManyWithoutAuthorInput = {
@@ -1468,11 +1601,13 @@ export type ForumPostUncheckedUpdateManyWithoutAuthorInput = {
 export type ForumPostCountOutputType = {
   quotedBy: number
   hashtagUsages: number
+  editVersions: number
 }
 
 export type ForumPostCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   quotedBy?: boolean | ForumPostCountOutputTypeCountQuotedByArgs
   hashtagUsages?: boolean | ForumPostCountOutputTypeCountHashtagUsagesArgs
+  editVersions?: boolean | ForumPostCountOutputTypeCountEditVersionsArgs
 }
 
 /**
@@ -1499,6 +1634,13 @@ export type ForumPostCountOutputTypeCountHashtagUsagesArgs<ExtArgs extends runti
   where?: Prisma.HashtagUsageWhereInput
 }
 
+/**
+ * ForumPostCountOutputType without action
+ */
+export type ForumPostCountOutputTypeCountEditVersionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EditVersionWhereInput
+}
+
 
 export type ForumPostSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1520,6 +1662,7 @@ export type ForumPostSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   quote?: boolean | Prisma.ForumPost$quoteArgs<ExtArgs>
   quotedBy?: boolean | Prisma.ForumPost$quotedByArgs<ExtArgs>
   hashtagUsages?: boolean | Prisma.ForumPost$hashtagUsagesArgs<ExtArgs>
+  editVersions?: boolean | Prisma.ForumPost$editVersionsArgs<ExtArgs>
   _count?: boolean | Prisma.ForumPostCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["forumPost"]>
 
@@ -1587,6 +1730,7 @@ export type ForumPostInclude<ExtArgs extends runtime.Types.Extensions.InternalAr
   quote?: boolean | Prisma.ForumPost$quoteArgs<ExtArgs>
   quotedBy?: boolean | Prisma.ForumPost$quotedByArgs<ExtArgs>
   hashtagUsages?: boolean | Prisma.ForumPost$hashtagUsagesArgs<ExtArgs>
+  editVersions?: boolean | Prisma.ForumPost$editVersionsArgs<ExtArgs>
   _count?: boolean | Prisma.ForumPostCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ForumPostIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1611,6 +1755,7 @@ export type $ForumPostPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     quote: Prisma.$ForumPostPayload<ExtArgs> | null
     quotedBy: Prisma.$ForumPostPayload<ExtArgs>[]
     hashtagUsages: Prisma.$HashtagUsagePayload<ExtArgs>[]
+    editVersions: Prisma.$EditVersionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -2026,6 +2171,7 @@ export interface Prisma__ForumPostClient<T, Null = never, ExtArgs extends runtim
   quote<T extends Prisma.ForumPost$quoteArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ForumPost$quoteArgs<ExtArgs>>): Prisma.Prisma__ForumPostClient<runtime.Types.Result.GetResult<Prisma.$ForumPostPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   quotedBy<T extends Prisma.ForumPost$quotedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ForumPost$quotedByArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ForumPostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   hashtagUsages<T extends Prisma.ForumPost$hashtagUsagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ForumPost$hashtagUsagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HashtagUsagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  editVersions<T extends Prisma.ForumPost$editVersionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ForumPost$editVersionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EditVersionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2528,6 +2674,30 @@ export type ForumPost$hashtagUsagesArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.HashtagUsageScalarFieldEnum | Prisma.HashtagUsageScalarFieldEnum[]
+}
+
+/**
+ * ForumPost.editVersions
+ */
+export type ForumPost$editVersionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EditVersion
+   */
+  select?: Prisma.EditVersionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EditVersion
+   */
+  omit?: Prisma.EditVersionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EditVersionInclude<ExtArgs> | null
+  where?: Prisma.EditVersionWhereInput
+  orderBy?: Prisma.EditVersionOrderByWithRelationInput | Prisma.EditVersionOrderByWithRelationInput[]
+  cursor?: Prisma.EditVersionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EditVersionScalarFieldEnum | Prisma.EditVersionScalarFieldEnum[]
 }
 
 /**

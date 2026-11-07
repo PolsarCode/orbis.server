@@ -55,6 +55,16 @@ import {
 } from './forum-helpers';
 import { authorModeration } from '../communities/member-moderation';
 import { managedCommunities } from '../communities/managed-communities';
+import { MAX_INT } from '../communities/community-member.guard';
+import { visibleCommunity } from '../communities/require-membership';
+import {
+  editableSelect,
+  EditHistory,
+  editHistory,
+  editHistorySelect,
+  recordEdit,
+  requireLatest,
+} from '../common/edit-history';
 
 const SEARCH_LIMIT = 8;
 const MAX_PAGE = 100000;
@@ -745,7 +755,12 @@ export class ForumService {
   ) {
     const post = await this.prisma.forumPost.findFirst({
       where: { id: postId, communityId },
-      select: { authorId: true, content: true, threadId: true, opening: true },
+      select: {
+        ...editableSelect,
+        authorId: true,
+        threadId: true,
+        opening: true,
+      },
     });
     if (!post) throw new NotFoundException('Post not found');
     if (post.authorId !== userId) {
@@ -757,15 +772,28 @@ export class ForumService {
       userId,
       linkUrl,
     );
-    const updated = await this.prisma.forumPost.update({
-      where: { id: postId },
-      data: {
-        content: html,
-        linkUrl: linkUrl ?? null,
-        spoiler: spoilerOf(spoiler),
-        editedAt: new Date(),
-      },
-      select: postSelect,
+    const body = {
+      content: html,
+      linkUrl: linkUrl ?? null,
+      spoiler: spoilerOf(spoiler),
+    };
+    const { edited, version } = recordEdit(post, body);
+    const updated = await this.prisma.$transaction(async (tx) => {
+      requireLatest(
+        await tx.forumPost.updateMany({
+          where: { id: postId, editedAt: post.editedAt },
+          data: { ...body, ...edited },
+        }),
+      );
+      if (version) {
+        await tx.editVersion.create({
+          data: { forumPostId: postId, ...version },
+        });
+      }
+      return tx.forumPost.findUniqueOrThrow({
+        where: { id: postId },
+        select: postSelect,
+      });
     });
     await replaceHashtags(
       this.prisma,
@@ -774,15 +802,7 @@ export class ForumService {
       hashtags,
     );
     if (post.opening) {
-      await this.posts.threadChanged(
-        post.threadId,
-        {
-          content: html,
-          linkUrl: linkUrl ?? null,
-          spoiler: updated.spoiler,
-        },
-        hashtags,
-      );
+      await this.posts.threadChanged(post.threadId, body, hashtags);
     }
 
     const previously = linkedMentions(post.content);
@@ -808,6 +828,28 @@ export class ForumService {
       manager,
     );
     return item;
+  }
+
+  async findEdits(
+    viewerId: number,
+    communityId: number,
+    postId: number,
+  ): Promise<EditHistory> {
+    const viewer = await contentViewer(this.prisma, viewerId);
+    const post = [communityId, postId].every((id) => id >= 1 && id <= MAX_INT)
+      ? await this.prisma.forumPost.findFirst({
+          where: {
+            id: postId,
+            communityId,
+            community: visibleCommunity(viewerId),
+            thread: visibleThreads(viewer),
+            ...visibleTo(viewer, 'forum_post'),
+          },
+          select: editHistorySelect,
+        })
+      : null;
+    if (!post) throw new NotFoundException('Post not found');
+    return editHistory(post);
   }
 
   async removeThread(userId: number, communityId: number, threadId: number) {

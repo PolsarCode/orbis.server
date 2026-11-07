@@ -1,10 +1,25 @@
-import { ForbiddenException, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { PrismaService } from '../prisma.service';
 import { LikesService } from '../likes/likes.service';
 import { NotificationsService } from '../notifications/notifications.service';
+import { requireViewAccess } from '../communities/require-membership';
+import { GUEST_USER_ID } from '../auth/allow-guest';
+import { editHistorySelect } from '../common/edit-history';
+import { unblockedFor, visibleTo } from '../moderation/visibility';
+import {
+  viewableActivity,
+  viewablePost,
+  viewablePosts,
+} from '../posts/posts.service';
+import { viewableProfiles } from '../posts/wall-access';
 
 jest.mock('../posts/wall-access', () => ({
+  ...jest.requireActual('../posts/wall-access'),
   targetOf: jest.fn(async () => ({
     type: 'post',
     id: 7,
@@ -16,6 +31,7 @@ jest.mock('../posts/wall-access', () => ({
   requireTargetAccess: jest.fn(),
 }));
 jest.mock('../communities/require-membership', () => ({
+  ...jest.requireActual('../communities/require-membership'),
   requireViewAccess: jest.fn(),
 }));
 jest.mock('../common/rich-text', () => ({
@@ -40,13 +56,20 @@ describe('Editing and deleting comments', () => {
     keywordFilter: { findMany: jest.fn().mockResolvedValue([]) },
     comment: {
       findUnique: jest.fn(),
+      findFirst: jest.fn(),
       findMany: jest.fn(),
       update: jest.fn(),
+      updateMany: jest.fn(),
+      findUniqueOrThrow: jest.fn(),
       delete: jest.fn(),
     },
     like: { deleteMany: jest.fn() },
-    post: { updateMany: jest.fn(), findMany: jest.fn() },
-    libraryActivity: { updateMany: jest.fn(), findMany: jest.fn() },
+    post: { updateMany: jest.fn(), findMany: jest.fn(), findFirst: jest.fn() },
+    libraryActivity: {
+      updateMany: jest.fn(),
+      findMany: jest.fn(),
+      findFirst: jest.fn(),
+    },
     user: { findMany: jest.fn().mockResolvedValue([]), findUnique: jest.fn() },
     contentReport: { findMany: jest.fn().mockResolvedValue([]) },
     membership: { findMany: jest.fn() },
@@ -56,7 +79,12 @@ describe('Editing and deleting comments', () => {
       ),
     },
     hashtagUsage: { createMany: jest.fn(), deleteMany: jest.fn() },
-    $transaction: jest.fn((operations: unknown[]) => Promise.all(operations)),
+    editVersion: { deleteMany: jest.fn(), create: jest.fn() },
+    $transaction: jest.fn((operations: unknown): unknown =>
+      typeof operations === 'function'
+        ? (operations as (tx: typeof prisma) => unknown)(prisma)
+        : Promise.all(operations as unknown[]),
+    ),
   };
   const likes = { likedBy: jest.fn().mockResolvedValue(new Set()) };
   const service = new CommentsService(
@@ -77,9 +105,22 @@ describe('Editing and deleting comments', () => {
     ...overrides,
   });
 
+  let written: Record<string, unknown>;
+  const returnsEdited = (row: (args: { data: object }) => object) =>
+    prisma.comment.findUniqueOrThrow.mockImplementation(() =>
+      row({ data: written }),
+    );
+
   beforeEach(() => {
     jest.clearAllMocks();
     prisma.membership.findMany.mockResolvedValue([]);
+    prisma.post.findFirst.mockResolvedValue({ id: 7 });
+    prisma.libraryActivity.findFirst.mockResolvedValue({ id: 8 });
+    written = {};
+    prisma.comment.updateMany.mockImplementation(({ data }) => {
+      written = data;
+      return { count: 1 };
+    });
   });
 
   it('removes a comment with no replies, its likes, and lowers the count', async () => {
@@ -97,7 +138,7 @@ describe('Editing and deleting comments', () => {
     });
   });
 
-  it('leaves a placeholder when the comment has replies', async () => {
+  it('leaves a placeholder without its edit history when the comment has replies', async () => {
     prisma.comment.findUnique.mockResolvedValue(
       comment({ _count: { replies: 2 } }),
     );
@@ -115,6 +156,9 @@ describe('Editing and deleting comments', () => {
       },
     });
     expect(prisma.hashtagUsage.deleteMany).toHaveBeenCalledWith({
+      where: { commentId: 11 },
+    });
+    expect(prisma.editVersion.deleteMany).toHaveBeenCalledWith({
       where: { commentId: 11 },
     });
   });
@@ -180,7 +224,7 @@ describe('Editing and deleting comments', () => {
 
   it('lets only the author edit, and marks it edited', async () => {
     prisma.comment.findUnique.mockResolvedValue(comment());
-    prisma.comment.update.mockImplementation(({ data }) => ({
+    returnsEdited(({ data }) => ({
       id: 11,
       parentId: null,
       likeCount: 1,
@@ -205,7 +249,7 @@ describe('Editing and deleting comments', () => {
 
   it('keeps a spoiler without a note as an empty note', async () => {
     prisma.comment.findUnique.mockResolvedValue(comment());
-    prisma.comment.update.mockImplementation(({ data }) => ({
+    returnsEdited(({ data }) => ({
       id: 11,
       parentId: null,
       likeCount: 0,
@@ -239,7 +283,7 @@ describe('Editing and deleting comments', () => {
     prisma.comment.findUnique.mockResolvedValue(
       comment({ commentableType: 'activity', commentableId: 8 }),
     );
-    prisma.comment.update.mockImplementation(({ data }) => ({
+    returnsEdited(({ data }) => ({
       id: 11,
       parentId: null,
       likeCount: 0,
@@ -347,5 +391,261 @@ describe('Editing and deleting comments', () => {
     ]);
     expect(found[0].comment).not.toHaveProperty('commentableType');
     expect(found[0].comment).not.toHaveProperty('communityId');
+  });
+
+  describe('Edit history', () => {
+    const posted = new Date('2026-11-05T09:00:00Z');
+    const firstEdit = new Date('2026-11-05T09:05:00Z');
+    const secondEdit = new Date('2026-11-05T10:00:00Z');
+    const viewer = (id: number) => ({
+      id,
+      reported: { post: [], comment: [], forum_post: [] },
+      siteAdmin: false,
+      manages: [],
+    });
+    const editable = (overrides: Record<string, unknown> = {}) =>
+      comment({
+        linkUrl: null,
+        spoiler: null,
+        createdAt: posted,
+        editedAt: null,
+        ...overrides,
+      });
+    const edited = ({ data }: { data: object }) => ({
+      id: 11,
+      parentId: null,
+      likeCount: 0,
+      hiddenAt: null,
+      deletedAt: null,
+      createdAt: posted,
+      author,
+      ...data,
+    });
+    const versions = [
+      {
+        content: '<p>second</p>',
+        linkUrl: null,
+        spoiler: null,
+        createdAt: firstEdit,
+      },
+      {
+        content: '<p>first</p>',
+        linkUrl: null,
+        spoiler: null,
+        createdAt: posted,
+      },
+    ];
+    const notFound = new NotFoundException('Comment not found');
+
+    beforeEach(() => {
+      prisma.comment.findUnique.mockResolvedValue({
+        commentableType: 'post',
+        commentableId: 7,
+      });
+      jest.useFakeTimers({
+        now: secondEdit,
+        doNotFake: ['nextTick', 'setImmediate', 'queueMicrotask'],
+      });
+    });
+    afterEach(() => jest.useRealTimers());
+
+    it('saves the previous version with the edit, dated by its last edit', async () => {
+      prisma.comment.findUnique.mockResolvedValue(
+        editable({ content: '<p>second</p>', editedAt: firstEdit }),
+      );
+      returnsEdited(edited);
+
+      await service.update(1, 11, { content: '<p>third</p>' });
+
+      expect(prisma.comment.updateMany).toHaveBeenCalledWith({
+        where: { id: 11, editedAt: firstEdit, deletedAt: null },
+        data: {
+          content: '<p>third</p>',
+          linkUrl: null,
+          spoiler: null,
+          editedAt: secondEdit,
+        },
+      });
+      expect(prisma.editVersion.create).toHaveBeenCalledWith({
+        data: {
+          commentId: 11,
+          content: '<p>second</p>',
+          linkUrl: null,
+          spoiler: null,
+          createdAt: firstEdit,
+        },
+      });
+    });
+
+    it('refuses an edit when the comment was edited or deleted after it was read, saving nothing', async () => {
+      prisma.comment.findUnique.mockResolvedValue(editable());
+      prisma.comment.updateMany.mockResolvedValueOnce({ count: 0 });
+
+      await expect(
+        service.update(1, 11, { content: '<p>second</p>' }),
+      ).rejects.toThrow(
+        new ConflictException(
+          'This was edited somewhere else. Reload and try again',
+        ),
+      );
+      expect(prisma.editVersion.create).not.toHaveBeenCalled();
+      expect(prisma.hashtagUsage.deleteMany).not.toHaveBeenCalled();
+    });
+
+    it('neither marks it edited nor saves a version when the body is the same', async () => {
+      prisma.comment.findUnique.mockResolvedValue(
+        editable({ spoiler: 'Finale' }),
+      );
+      returnsEdited(edited);
+
+      await expect(
+        service.update(1, 11, { content: '<p>first</p>', spoiler: ' Finale ' }),
+      ).resolves.toMatchObject({ id: 11, content: '<p>first</p>' });
+
+      expect(prisma.comment.updateMany.mock.calls[0][0].data).toEqual({
+        content: '<p>first</p>',
+        linkUrl: null,
+        spoiler: 'Finale',
+      });
+      expect(prisma.editVersion.create).not.toHaveBeenCalled();
+    });
+
+    it('lists every version newest first, starting with the current one', async () => {
+      prisma.comment.findFirst.mockResolvedValue({
+        content: '<p>third</p>',
+        linkUrl: 'https://frieren.example',
+        spoiler: null,
+        createdAt: posted,
+        editedAt: secondEdit,
+        editVersions: versions,
+      });
+
+      await expect(service.findEdits(1, 11)).resolves.toEqual([
+        {
+          content: '<p>third</p>',
+          linkUrl: 'https://frieren.example',
+          spoiler: null,
+          createdAt: secondEdit,
+        },
+        ...versions,
+      ]);
+      expect(prisma.comment.findFirst).toHaveBeenCalledWith({
+        where: { id: 11, deletedAt: null, ...visibleTo(viewer(1), 'comment') },
+        select: editHistorySelect,
+      });
+    });
+
+    it('answers 404 for a deleted or hidden comment, or one from someone blocked', async () => {
+      prisma.comment.findFirst.mockResolvedValue(null);
+
+      await expect(service.findEdits(1, 11)).rejects.toThrow(notFound);
+      const { where } = prisma.comment.findFirst.mock.calls[0][0];
+      expect(where.deletedAt).toBeNull();
+      expect(where.AND).toEqual(
+        expect.arrayContaining([
+          { OR: [{ hiddenAt: null }, { authorId: 1 }] },
+          unblockedFor(viewer(1)),
+        ]),
+      );
+    });
+
+    it('answers 404 when the viewer can’t see where the comment was left, like a private community', async () => {
+      jest
+        .mocked(requireViewAccess)
+        .mockRejectedValueOnce(
+          new ForbiddenException('You are not a member of this community'),
+        );
+
+      await expect(service.findEdits(1, 11)).rejects.toThrow(notFound);
+      expect(requireViewAccess).toHaveBeenCalledWith(prisma, 1, 3);
+      expect(prisma.comment.findFirst).not.toHaveBeenCalled();
+    });
+
+    it('answers 404 across a block with the post’s author', async () => {
+      prisma.block.count.mockResolvedValueOnce(1);
+
+      await expect(service.findEdits(1, 11)).rejects.toThrow(notFound);
+      expect(prisma.comment.findFirst).not.toHaveBeenCalled();
+    });
+
+    it('answers 404 for a missing comment or an id out of range', async () => {
+      prisma.comment.findUnique.mockResolvedValue(null);
+
+      await expect(service.findEdits(1, 12)).rejects.toThrow(notFound);
+      await expect(service.findEdits(1, 2 ** 31)).rejects.toThrow(notFound);
+      expect(prisma.comment.findUnique).toHaveBeenCalledTimes(1);
+    });
+
+    it('answers 404 when the post it was left on can’t be opened: hidden, by a suspended author, reported or 18+', async () => {
+      prisma.post.findFirst.mockResolvedValue(null);
+      prisma.comment.findFirst.mockResolvedValue({
+        content: '<p>first</p>',
+        linkUrl: null,
+        spoiler: null,
+        createdAt: posted,
+        editedAt: null,
+        editVersions: [],
+      });
+
+      await expect(service.findEdits(1, 11)).rejects.toThrow(notFound);
+      expect(prisma.post.findFirst).toHaveBeenCalledWith({
+        where: { id: 7, ...viewablePost(viewer(1), false) },
+        select: { id: true },
+      });
+      expect(viewablePost(viewer(1), false).AND).toEqual(
+        expect.arrayContaining([viewablePosts(viewer(1)), { isAdult: false }]),
+      );
+      expect(viewablePosts(viewer(1)).AND).toContainEqual(
+        visibleTo(viewer(1), 'post'),
+      );
+    });
+
+    it('answers 404 when the library update it was left on can’t be opened, like one on a private profile', async () => {
+      prisma.comment.findUnique.mockResolvedValue({
+        commentableType: 'activity',
+        commentableId: 8,
+      });
+      prisma.libraryActivity.findFirst.mockResolvedValue(null);
+      prisma.comment.findFirst.mockResolvedValue({
+        content: '<p>first</p>',
+        linkUrl: null,
+        spoiler: null,
+        createdAt: posted,
+        editedAt: null,
+        editVersions: [],
+      });
+
+      await expect(service.findEdits(1, 11)).rejects.toThrow(notFound);
+      expect(prisma.libraryActivity.findFirst).toHaveBeenCalledWith({
+        where: { id: 8, ...viewableActivity(viewer(1), false) },
+        select: { id: true },
+      });
+      expect(viewableActivity(viewer(1), false).entry).toMatchObject({
+        isAdult: false,
+        user: { AND: expect.arrayContaining([viewableProfiles(1)]) },
+      });
+      expect(prisma.post.findFirst).not.toHaveBeenCalled();
+    });
+
+    it('lets guests read the history of comments in public places', async () => {
+      prisma.comment.findFirst.mockResolvedValue({
+        content: '<p>first</p>',
+        linkUrl: null,
+        spoiler: null,
+        createdAt: posted,
+        editedAt: null,
+        editVersions: [],
+      });
+
+      await expect(service.findEdits(GUEST_USER_ID, 11)).resolves.toEqual([
+        {
+          content: '<p>first</p>',
+          linkUrl: null,
+          spoiler: null,
+          createdAt: posted,
+        },
+      ]);
+      expect(requireViewAccess).toHaveBeenCalledWith(prisma, GUEST_USER_ID, 3);
+    });
   });
 });

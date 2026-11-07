@@ -45,6 +45,7 @@ model Post {
   reposts              Repost[]
   hashtagUsages        HashtagUsage[]   @relation("PostHashtags")
   commentHashtagUsages HashtagUsage[]   @relation("PostCommentHashtags")
+  editVersions         EditVersion[]
 
   @@index([communityId, createdAt(sort: Desc)])
   @@index([wallUserId, createdAt(sort: Desc)])
@@ -94,9 +95,28 @@ model Comment {
   parent          Comment?        @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
   replies         Comment[]       @relation("CommentReplies")
   hashtagUsages   HashtagUsage[]
+  editVersions    EditVersion[]
 
   @@index([commentableType, commentableId, createdAt])
   @@index([parentId])
+}
+
+model EditVersion {
+  id          Int        @id @default(autoincrement())
+  postId      Int?
+  commentId   Int?
+  forumPostId Int?
+  content     String
+  linkUrl     String?
+  spoiler     String?
+  createdAt   DateTime
+  post        Post?      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  comment     Comment?   @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  forumPost   ForumPost? @relation(fields: [forumPostId], references: [id], onDelete: Cascade)
+
+  @@index([postId, createdAt(sort: Desc)])
+  @@index([commentId, createdAt(sort: Desc)])
+  @@index([forumPostId, createdAt(sort: Desc)])
 }
 
 model Like {

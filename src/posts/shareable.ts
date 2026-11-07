@@ -7,6 +7,7 @@ import { notBlockedWith, notMutedBy } from '../safety/blocks';
 import { publicActivity, publicPost } from '../tags/public-content';
 import { notSuspended } from '../users/suspension';
 import { viewableProfiles } from './wall-access';
+import { visibleCommunity } from '../communities/require-membership';
 
 export type ShareType = 'post' | 'activity';
 
@@ -87,14 +88,7 @@ export function visibleReposts(viewerId: number): Prisma.RepostWhereInput {
       {
         OR: [
           { communityId: null, user: viewableProfiles(viewerId) },
-          {
-            community: {
-              OR: [
-                { isPublic: true },
-                { memberships: { some: { userId: viewerId } } },
-              ],
-            },
-          },
+          { community: visibleCommunity(viewerId) },
         ],
       },
     ],

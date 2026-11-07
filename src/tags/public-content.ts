@@ -9,6 +9,15 @@ import {
 import { nsfwEntries } from '../users/nsfw';
 import { notSuspended } from '../users/suspension';
 
+export function visibleThreadAndWall(
+  viewer: ContentViewer,
+): Prisma.PostWhereInput[] {
+  return [
+    { OR: [{ forumThreadId: null }, { forumThread: visibleThreads(viewer) }] },
+    { OR: [{ wallUserId: null }, { wallUser: unblockedPeople(viewer) }] },
+  ];
+}
+
 export function publicPosts(
   viewer: ContentViewer,
   showNsfw: boolean,
@@ -23,10 +32,7 @@ export function publicPosts(
         ],
       },
       ...(showNsfw ? [] : [{ isAdult: false }]),
-      {
-        OR: [{ forumThreadId: null }, { forumThread: visibleThreads(viewer) }],
-      },
-      { OR: [{ wallUserId: null }, { wallUser: unblockedPeople(viewer) }] },
+      ...visibleThreadAndWall(viewer),
     ],
   };
 }

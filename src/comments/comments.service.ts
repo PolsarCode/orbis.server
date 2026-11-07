@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ForbiddenException,
+  HttpException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -42,6 +43,7 @@ import {
   unblockedFor,
   ViewerContext,
   viewerContext,
+  visibleTo,
 } from '../moderation/visibility';
 import { blockedWithAny } from '../safety/blocks';
 import { loadNicknames } from '../communities/nicknames';
@@ -55,6 +57,17 @@ import {
   NotificationsService,
 } from '../notifications/notifications.service';
 import { notSuspended } from '../users/suspension';
+import {
+  editableSelect,
+  EditHistory,
+  editHistory,
+  editHistorySelect,
+  recordEdit,
+  requireLatest,
+} from '../common/edit-history';
+import { MAX_INT } from '../communities/community-member.guard';
+import { viewableActivity, viewablePost } from '../posts/posts.service';
+import { showsNsfw } from '../users/nsfw';
 
 const MAX_COMMENTS = 1000;
 
@@ -137,25 +150,11 @@ export class CommentsService {
     }
 
     const commentableType = type as CommentableType;
-    const { communityId, wallUserId, ownerId } = await targetOf(
-      this.prisma,
+    const { viewer, communityId } = await this.viewableTarget(
       userId,
       commentableType,
       id,
     );
-    const viewer = await viewerContext(this.prisma, userId);
-    if (
-      await blockedWithAny(this.prisma, userId, [ownerId, wallUserId], {
-        theirs: !blockExempt(viewer, communityId),
-      })
-    ) {
-      throw new NotFoundException('Not found');
-    }
-    if (communityId !== null) {
-      await requireViewAccess(this.prisma, userId, communityId);
-    } else if (wallUserId !== null) {
-      await requireProfileView(this.prisma, userId, wallUserId);
-    }
 
     const comments = await this.prisma.comment.findMany({
       where: {
@@ -174,6 +173,74 @@ export class CommentsService {
       viewer,
       comments.map((comment) => ({ communityId, comment })),
     );
+  }
+
+  async findEdits(userId: number, commentId: number): Promise<EditHistory> {
+    const notFound = new NotFoundException('Comment not found');
+    if (commentId < 1 || commentId > MAX_INT) throw notFound;
+    const target = await this.prisma.comment.findUnique({
+      where: { id: commentId },
+      select: { commentableType: true, commentableId: true },
+    });
+    if (!target) throw notFound;
+    const { viewer } = await this.viewableTarget(
+      userId,
+      target.commentableType,
+      target.commentableId,
+    ).catch((error: unknown) => {
+      throw error instanceof HttpException ? notFound : error;
+    });
+    const comment = await this.prisma.comment.findFirst({
+      where: {
+        id: commentId,
+        deletedAt: null,
+        ...visibleTo(viewer, 'comment'),
+      },
+      select: editHistorySelect,
+    });
+    if (!comment) throw notFound;
+    return editHistory(comment);
+  }
+
+  private async viewableTarget(
+    userId: number,
+    type: CommentableType,
+    id: number,
+  ) {
+    const { communityId, wallUserId, ownerId } = await targetOf(
+      this.prisma,
+      userId,
+      type,
+      id,
+    );
+    const [viewer, showNsfw] = await Promise.all([
+      viewerContext(this.prisma, userId),
+      showsNsfw(this.prisma, userId),
+    ]);
+    if (
+      await blockedWithAny(this.prisma, userId, [ownerId, wallUserId], {
+        theirs: !blockExempt(viewer, communityId),
+      })
+    ) {
+      throw new NotFoundException('Not found');
+    }
+    if (communityId !== null) {
+      await requireViewAccess(this.prisma, userId, communityId);
+    } else if (wallUserId !== null) {
+      await requireProfileView(this.prisma, userId, wallUserId);
+    }
+    const parent =
+      type === 'post'
+        ? await this.prisma.post.findFirst({
+            where: { id, ...viewablePost(viewer, showNsfw) },
+            select: { id: true },
+          })
+        : await this.prisma.libraryActivity.findFirst({
+            where: { id, ...viewableActivity(viewer, showNsfw) },
+            select: { id: true },
+          });
+    if (!parent) throw new NotFoundException('Not found');
+    return { viewer, communityId };
   }
 
   async findForTags(
@@ -421,8 +488,8 @@ export class CommentsService {
     const comment = await this.prisma.comment.findUnique({
       where: { id: commentId },
       select: {
+        ...editableSelect,
         authorId: true,
-        content: true,
         deletedAt: true,
         commentableType: true,
         commentableId: true,
@@ -440,15 +507,30 @@ export class CommentsService {
       mentioned,
       hashtags,
     } = await this.commentBody(userId, unlinkMentions(content), linkUrl);
-    const updated = await this.prisma.comment.update({
-      where: { id: commentId },
-      data: {
-        content: linked,
-        linkUrl: linkUrl ?? null,
-        spoiler: spoilerOf(spoiler),
-        editedAt: new Date(),
-      },
-      select: commentSelect,
+    const body = {
+      content: linked,
+      linkUrl: linkUrl ?? null,
+      spoiler: spoilerOf(spoiler),
+    };
+    const { edited, version } = recordEdit(comment, body);
+    const updated = await this.prisma.$transaction(async (tx) => {
+      requireLatest(
+        await tx.comment.updateMany({
+          where: {
+            id: commentId,
+            editedAt: comment.editedAt,
+            deletedAt: null,
+          },
+          data: { ...body, ...edited },
+        }),
+      );
+      if (version) {
+        await tx.editVersion.create({ data: { commentId, ...version } });
+      }
+      return tx.comment.findUniqueOrThrow({
+        where: { id: commentId },
+        select: commentSelect,
+      });
     });
     await replaceHashtags(
       this.prisma,
@@ -525,6 +607,7 @@ export class CommentsService {
           },
         }),
         this.prisma.hashtagUsage.deleteMany({ where: { commentId } }),
+        this.prisma.editVersion.deleteMany({ where: { commentId } }),
         fewer,
       ]);
       return;

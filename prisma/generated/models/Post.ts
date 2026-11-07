@@ -378,6 +378,7 @@ export type PostWhereInput = {
   reposts?: Prisma.RepostListRelationFilter
   hashtagUsages?: Prisma.HashtagUsageListRelationFilter
   commentHashtagUsages?: Prisma.HashtagUsageListRelationFilter
+  editVersions?: Prisma.EditVersionListRelationFilter
 }
 
 export type PostOrderByWithRelationInput = {
@@ -411,6 +412,7 @@ export type PostOrderByWithRelationInput = {
   reposts?: Prisma.RepostOrderByRelationAggregateInput
   hashtagUsages?: Prisma.HashtagUsageOrderByRelationAggregateInput
   commentHashtagUsages?: Prisma.HashtagUsageOrderByRelationAggregateInput
+  editVersions?: Prisma.EditVersionOrderByRelationAggregateInput
 }
 
 export type PostWhereUniqueInput = Prisma.AtLeast<{
@@ -447,6 +449,7 @@ export type PostWhereUniqueInput = Prisma.AtLeast<{
   reposts?: Prisma.RepostListRelationFilter
   hashtagUsages?: Prisma.HashtagUsageListRelationFilter
   commentHashtagUsages?: Prisma.HashtagUsageListRelationFilter
+  editVersions?: Prisma.EditVersionListRelationFilter
 }, "id" | "forumThreadId">
 
 export type PostOrderByWithAggregationInput = {
@@ -527,6 +530,7 @@ export type PostCreateInput = {
   reposts?: Prisma.RepostCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutTargetPostInput
+  editVersions?: Prisma.EditVersionCreateNestedManyWithoutPostInput
 }
 
 export type PostUncheckedCreateInput = {
@@ -554,6 +558,7 @@ export type PostUncheckedCreateInput = {
   reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutTargetPostInput
+  editVersions?: Prisma.EditVersionUncheckedCreateNestedManyWithoutPostInput
 }
 
 export type PostUpdateInput = {
@@ -580,6 +585,7 @@ export type PostUpdateInput = {
   reposts?: Prisma.RepostUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutTargetPostNestedInput
+  editVersions?: Prisma.EditVersionUpdateManyWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateInput = {
@@ -607,6 +613,7 @@ export type PostUncheckedUpdateInput = {
   reposts?: Prisma.RepostUncheckedUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutTargetPostNestedInput
+  editVersions?: Prisma.EditVersionUncheckedUpdateManyWithoutPostNestedInput
 }
 
 export type PostCreateManyInput = {
@@ -899,6 +906,22 @@ export type PostUpdateOneWithoutRepostsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.PostUpdateToOneWithWhereWithoutRepostsInput, Prisma.PostUpdateWithoutRepostsInput>, Prisma.PostUncheckedUpdateWithoutRepostsInput>
 }
 
+export type PostCreateNestedOneWithoutEditVersionsInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutEditVersionsInput, Prisma.PostUncheckedCreateWithoutEditVersionsInput>
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutEditVersionsInput
+  connect?: Prisma.PostWhereUniqueInput
+}
+
+export type PostUpdateOneWithoutEditVersionsNestedInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutEditVersionsInput, Prisma.PostUncheckedCreateWithoutEditVersionsInput>
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutEditVersionsInput
+  upsert?: Prisma.PostUpsertWithoutEditVersionsInput
+  disconnect?: Prisma.PostWhereInput | boolean
+  delete?: Prisma.PostWhereInput | boolean
+  connect?: Prisma.PostWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PostUpdateToOneWithWhereWithoutEditVersionsInput, Prisma.PostUpdateWithoutEditVersionsInput>, Prisma.PostUncheckedUpdateWithoutEditVersionsInput>
+}
+
 export type PostCreateNestedOneWithoutForumThreadInput = {
   create?: Prisma.XOR<Prisma.PostCreateWithoutForumThreadInput, Prisma.PostUncheckedCreateWithoutForumThreadInput>
   connectOrCreate?: Prisma.PostCreateOrConnectWithoutForumThreadInput
@@ -1112,6 +1135,7 @@ export type PostCreateWithoutCommunityInput = {
   reposts?: Prisma.RepostCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutTargetPostInput
+  editVersions?: Prisma.EditVersionCreateNestedManyWithoutPostInput
 }
 
 export type PostUncheckedCreateWithoutCommunityInput = {
@@ -1138,6 +1162,7 @@ export type PostUncheckedCreateWithoutCommunityInput = {
   reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutTargetPostInput
+  editVersions?: Prisma.EditVersionUncheckedCreateNestedManyWithoutPostInput
 }
 
 export type PostCreateOrConnectWithoutCommunityInput = {
@@ -1215,6 +1240,7 @@ export type PostCreateWithoutQuotesInput = {
   reposts?: Prisma.RepostCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutTargetPostInput
+  editVersions?: Prisma.EditVersionCreateNestedManyWithoutPostInput
 }
 
 export type PostUncheckedCreateWithoutQuotesInput = {
@@ -1241,6 +1267,7 @@ export type PostUncheckedCreateWithoutQuotesInput = {
   reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutTargetPostInput
+  editVersions?: Prisma.EditVersionUncheckedCreateNestedManyWithoutPostInput
 }
 
 export type PostCreateOrConnectWithoutQuotesInput = {
@@ -1271,6 +1298,7 @@ export type PostCreateWithoutQuotePostInput = {
   reposts?: Prisma.RepostCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutTargetPostInput
+  editVersions?: Prisma.EditVersionCreateNestedManyWithoutPostInput
 }
 
 export type PostUncheckedCreateWithoutQuotePostInput = {
@@ -1297,6 +1325,7 @@ export type PostUncheckedCreateWithoutQuotePostInput = {
   reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutTargetPostInput
+  editVersions?: Prisma.EditVersionUncheckedCreateNestedManyWithoutPostInput
 }
 
 export type PostCreateOrConnectWithoutQuotePostInput = {
@@ -1343,6 +1372,7 @@ export type PostUpdateWithoutQuotesInput = {
   reposts?: Prisma.RepostUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutTargetPostNestedInput
+  editVersions?: Prisma.EditVersionUpdateManyWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateWithoutQuotesInput = {
@@ -1369,6 +1399,7 @@ export type PostUncheckedUpdateWithoutQuotesInput = {
   reposts?: Prisma.RepostUncheckedUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutTargetPostNestedInput
+  editVersions?: Prisma.EditVersionUncheckedUpdateManyWithoutPostNestedInput
 }
 
 export type PostUpsertWithWhereUniqueWithoutQuotePostInput = {
@@ -1410,6 +1441,7 @@ export type PostCreateWithoutRepostsInput = {
   quotes?: Prisma.PostCreateNestedManyWithoutQuotePostInput
   hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutTargetPostInput
+  editVersions?: Prisma.EditVersionCreateNestedManyWithoutPostInput
 }
 
 export type PostUncheckedCreateWithoutRepostsInput = {
@@ -1436,6 +1468,7 @@ export type PostUncheckedCreateWithoutRepostsInput = {
   quotes?: Prisma.PostUncheckedCreateNestedManyWithoutQuotePostInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutTargetPostInput
+  editVersions?: Prisma.EditVersionUncheckedCreateNestedManyWithoutPostInput
 }
 
 export type PostCreateOrConnectWithoutRepostsInput = {
@@ -1477,6 +1510,7 @@ export type PostUpdateWithoutRepostsInput = {
   quotes?: Prisma.PostUpdateManyWithoutQuotePostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutTargetPostNestedInput
+  editVersions?: Prisma.EditVersionUpdateManyWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateWithoutRepostsInput = {
@@ -1501,6 +1535,129 @@ export type PostUncheckedUpdateWithoutRepostsInput = {
   quoteActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   quotes?: Prisma.PostUncheckedUpdateManyWithoutQuotePostNestedInput
+  hashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutPostNestedInput
+  commentHashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutTargetPostNestedInput
+  editVersions?: Prisma.EditVersionUncheckedUpdateManyWithoutPostNestedInput
+}
+
+export type PostCreateWithoutEditVersionsInput = {
+  mediaType?: $Enums.MediaType | null
+  mediaSourceId?: string | null
+  isAdult?: boolean
+  content: string
+  linkUrl?: string | null
+  spoiler?: string | null
+  commentCount?: number
+  likeCount?: number
+  hiddenAt?: Date | string | null
+  editedAt?: Date | string | null
+  pinnedAt?: Date | string | null
+  isQuote?: boolean
+  createdAt?: Date | string
+  community?: Prisma.CommunityCreateNestedOneWithoutPostsInput
+  wallUser?: Prisma.UserCreateNestedOneWithoutWallPostsInput
+  author: Prisma.UserCreateNestedOneWithoutPostsInput
+  forumThread?: Prisma.ForumThreadCreateNestedOneWithoutFeedPostInput
+  quotePost?: Prisma.PostCreateNestedOneWithoutQuotesInput
+  quoteActivity?: Prisma.LibraryActivityCreateNestedOneWithoutQuotesInput
+  quotes?: Prisma.PostCreateNestedManyWithoutQuotePostInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutPostInput
+  hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutPostInput
+  commentHashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutTargetPostInput
+}
+
+export type PostUncheckedCreateWithoutEditVersionsInput = {
+  id?: number
+  communityId?: number | null
+  wallUserId?: number | null
+  mediaType?: $Enums.MediaType | null
+  mediaSourceId?: string | null
+  isAdult?: boolean
+  authorId: number
+  content: string
+  linkUrl?: string | null
+  spoiler?: string | null
+  commentCount?: number
+  likeCount?: number
+  hiddenAt?: Date | string | null
+  editedAt?: Date | string | null
+  pinnedAt?: Date | string | null
+  forumThreadId?: number | null
+  isQuote?: boolean
+  quotePostId?: number | null
+  quoteActivityId?: number | null
+  createdAt?: Date | string
+  quotes?: Prisma.PostUncheckedCreateNestedManyWithoutQuotePostInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutPostInput
+  hashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutPostInput
+  commentHashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutTargetPostInput
+}
+
+export type PostCreateOrConnectWithoutEditVersionsInput = {
+  where: Prisma.PostWhereUniqueInput
+  create: Prisma.XOR<Prisma.PostCreateWithoutEditVersionsInput, Prisma.PostUncheckedCreateWithoutEditVersionsInput>
+}
+
+export type PostUpsertWithoutEditVersionsInput = {
+  update: Prisma.XOR<Prisma.PostUpdateWithoutEditVersionsInput, Prisma.PostUncheckedUpdateWithoutEditVersionsInput>
+  create: Prisma.XOR<Prisma.PostCreateWithoutEditVersionsInput, Prisma.PostUncheckedCreateWithoutEditVersionsInput>
+  where?: Prisma.PostWhereInput
+}
+
+export type PostUpdateToOneWithWhereWithoutEditVersionsInput = {
+  where?: Prisma.PostWhereInput
+  data: Prisma.XOR<Prisma.PostUpdateWithoutEditVersionsInput, Prisma.PostUncheckedUpdateWithoutEditVersionsInput>
+}
+
+export type PostUpdateWithoutEditVersionsInput = {
+  mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
+  mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  commentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  likeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  community?: Prisma.CommunityUpdateOneWithoutPostsNestedInput
+  wallUser?: Prisma.UserUpdateOneWithoutWallPostsNestedInput
+  author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
+  forumThread?: Prisma.ForumThreadUpdateOneWithoutFeedPostNestedInput
+  quotePost?: Prisma.PostUpdateOneWithoutQuotesNestedInput
+  quoteActivity?: Prisma.LibraryActivityUpdateOneWithoutQuotesNestedInput
+  quotes?: Prisma.PostUpdateManyWithoutQuotePostNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutPostNestedInput
+  hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutPostNestedInput
+  commentHashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutTargetPostNestedInput
+}
+
+export type PostUncheckedUpdateWithoutEditVersionsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  communityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  wallUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mediaType?: Prisma.NullableEnumMediaTypeFieldUpdateOperationsInput | $Enums.MediaType | null
+  mediaSourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAdult?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  authorId?: Prisma.IntFieldUpdateOperationsInput | number
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  commentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  likeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  hiddenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pinnedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  forumThreadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isQuote?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quotePostId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quoteActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  quotes?: Prisma.PostUncheckedUpdateManyWithoutQuotePostNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutTargetPostNestedInput
 }
@@ -1528,6 +1685,7 @@ export type PostCreateWithoutForumThreadInput = {
   reposts?: Prisma.RepostCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutTargetPostInput
+  editVersions?: Prisma.EditVersionCreateNestedManyWithoutPostInput
 }
 
 export type PostUncheckedCreateWithoutForumThreadInput = {
@@ -1554,6 +1712,7 @@ export type PostUncheckedCreateWithoutForumThreadInput = {
   reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutTargetPostInput
+  editVersions?: Prisma.EditVersionUncheckedCreateNestedManyWithoutPostInput
 }
 
 export type PostCreateOrConnectWithoutForumThreadInput = {
@@ -1595,6 +1754,7 @@ export type PostUpdateWithoutForumThreadInput = {
   reposts?: Prisma.RepostUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutTargetPostNestedInput
+  editVersions?: Prisma.EditVersionUpdateManyWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateWithoutForumThreadInput = {
@@ -1621,6 +1781,7 @@ export type PostUncheckedUpdateWithoutForumThreadInput = {
   reposts?: Prisma.RepostUncheckedUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutTargetPostNestedInput
+  editVersions?: Prisma.EditVersionUncheckedUpdateManyWithoutPostNestedInput
 }
 
 export type PostCreateWithoutHashtagUsagesInput = {
@@ -1646,6 +1807,7 @@ export type PostCreateWithoutHashtagUsagesInput = {
   quotes?: Prisma.PostCreateNestedManyWithoutQuotePostInput
   reposts?: Prisma.RepostCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutTargetPostInput
+  editVersions?: Prisma.EditVersionCreateNestedManyWithoutPostInput
 }
 
 export type PostUncheckedCreateWithoutHashtagUsagesInput = {
@@ -1672,6 +1834,7 @@ export type PostUncheckedCreateWithoutHashtagUsagesInput = {
   quotes?: Prisma.PostUncheckedCreateNestedManyWithoutQuotePostInput
   reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutTargetPostInput
+  editVersions?: Prisma.EditVersionUncheckedCreateNestedManyWithoutPostInput
 }
 
 export type PostCreateOrConnectWithoutHashtagUsagesInput = {
@@ -1702,6 +1865,7 @@ export type PostCreateWithoutCommentHashtagUsagesInput = {
   quotes?: Prisma.PostCreateNestedManyWithoutQuotePostInput
   reposts?: Prisma.RepostCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutPostInput
+  editVersions?: Prisma.EditVersionCreateNestedManyWithoutPostInput
 }
 
 export type PostUncheckedCreateWithoutCommentHashtagUsagesInput = {
@@ -1728,6 +1892,7 @@ export type PostUncheckedCreateWithoutCommentHashtagUsagesInput = {
   quotes?: Prisma.PostUncheckedCreateNestedManyWithoutQuotePostInput
   reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutPostInput
+  editVersions?: Prisma.EditVersionUncheckedCreateNestedManyWithoutPostInput
 }
 
 export type PostCreateOrConnectWithoutCommentHashtagUsagesInput = {
@@ -1769,6 +1934,7 @@ export type PostUpdateWithoutHashtagUsagesInput = {
   quotes?: Prisma.PostUpdateManyWithoutQuotePostNestedInput
   reposts?: Prisma.RepostUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutTargetPostNestedInput
+  editVersions?: Prisma.EditVersionUpdateManyWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateWithoutHashtagUsagesInput = {
@@ -1795,6 +1961,7 @@ export type PostUncheckedUpdateWithoutHashtagUsagesInput = {
   quotes?: Prisma.PostUncheckedUpdateManyWithoutQuotePostNestedInput
   reposts?: Prisma.RepostUncheckedUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutTargetPostNestedInput
+  editVersions?: Prisma.EditVersionUncheckedUpdateManyWithoutPostNestedInput
 }
 
 export type PostUpsertWithoutCommentHashtagUsagesInput = {
@@ -1831,6 +1998,7 @@ export type PostUpdateWithoutCommentHashtagUsagesInput = {
   quotes?: Prisma.PostUpdateManyWithoutQuotePostNestedInput
   reposts?: Prisma.RepostUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutPostNestedInput
+  editVersions?: Prisma.EditVersionUpdateManyWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateWithoutCommentHashtagUsagesInput = {
@@ -1857,6 +2025,7 @@ export type PostUncheckedUpdateWithoutCommentHashtagUsagesInput = {
   quotes?: Prisma.PostUncheckedUpdateManyWithoutQuotePostNestedInput
   reposts?: Prisma.RepostUncheckedUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutPostNestedInput
+  editVersions?: Prisma.EditVersionUncheckedUpdateManyWithoutPostNestedInput
 }
 
 export type PostCreateWithoutQuoteActivityInput = {
@@ -1882,6 +2051,7 @@ export type PostCreateWithoutQuoteActivityInput = {
   reposts?: Prisma.RepostCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutTargetPostInput
+  editVersions?: Prisma.EditVersionCreateNestedManyWithoutPostInput
 }
 
 export type PostUncheckedCreateWithoutQuoteActivityInput = {
@@ -1908,6 +2078,7 @@ export type PostUncheckedCreateWithoutQuoteActivityInput = {
   reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutTargetPostInput
+  editVersions?: Prisma.EditVersionUncheckedCreateNestedManyWithoutPostInput
 }
 
 export type PostCreateOrConnectWithoutQuoteActivityInput = {
@@ -1959,6 +2130,7 @@ export type PostCreateWithoutAuthorInput = {
   reposts?: Prisma.RepostCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutTargetPostInput
+  editVersions?: Prisma.EditVersionCreateNestedManyWithoutPostInput
 }
 
 export type PostUncheckedCreateWithoutAuthorInput = {
@@ -1985,6 +2157,7 @@ export type PostUncheckedCreateWithoutAuthorInput = {
   reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutTargetPostInput
+  editVersions?: Prisma.EditVersionUncheckedCreateNestedManyWithoutPostInput
 }
 
 export type PostCreateOrConnectWithoutAuthorInput = {
@@ -2020,6 +2193,7 @@ export type PostCreateWithoutWallUserInput = {
   reposts?: Prisma.RepostCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutTargetPostInput
+  editVersions?: Prisma.EditVersionCreateNestedManyWithoutPostInput
 }
 
 export type PostUncheckedCreateWithoutWallUserInput = {
@@ -2046,6 +2220,7 @@ export type PostUncheckedCreateWithoutWallUserInput = {
   reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutPostInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutPostInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedCreateNestedManyWithoutTargetPostInput
+  editVersions?: Prisma.EditVersionUncheckedCreateNestedManyWithoutPostInput
 }
 
 export type PostCreateOrConnectWithoutWallUserInput = {
@@ -2135,6 +2310,7 @@ export type PostUpdateWithoutCommunityInput = {
   reposts?: Prisma.RepostUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutTargetPostNestedInput
+  editVersions?: Prisma.EditVersionUpdateManyWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateWithoutCommunityInput = {
@@ -2161,6 +2337,7 @@ export type PostUncheckedUpdateWithoutCommunityInput = {
   reposts?: Prisma.RepostUncheckedUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutTargetPostNestedInput
+  editVersions?: Prisma.EditVersionUncheckedUpdateManyWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateManyWithoutCommunityInput = {
@@ -2230,6 +2407,7 @@ export type PostUpdateWithoutQuotePostInput = {
   reposts?: Prisma.RepostUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutTargetPostNestedInput
+  editVersions?: Prisma.EditVersionUpdateManyWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateWithoutQuotePostInput = {
@@ -2256,6 +2434,7 @@ export type PostUncheckedUpdateWithoutQuotePostInput = {
   reposts?: Prisma.RepostUncheckedUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutTargetPostNestedInput
+  editVersions?: Prisma.EditVersionUncheckedUpdateManyWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateManyWithoutQuotePostInput = {
@@ -2325,6 +2504,7 @@ export type PostUpdateWithoutQuoteActivityInput = {
   reposts?: Prisma.RepostUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutTargetPostNestedInput
+  editVersions?: Prisma.EditVersionUpdateManyWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateWithoutQuoteActivityInput = {
@@ -2351,6 +2531,7 @@ export type PostUncheckedUpdateWithoutQuoteActivityInput = {
   reposts?: Prisma.RepostUncheckedUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutTargetPostNestedInput
+  editVersions?: Prisma.EditVersionUncheckedUpdateManyWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateManyWithoutQuoteActivityInput = {
@@ -2442,6 +2623,7 @@ export type PostUpdateWithoutAuthorInput = {
   reposts?: Prisma.RepostUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutTargetPostNestedInput
+  editVersions?: Prisma.EditVersionUpdateManyWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateWithoutAuthorInput = {
@@ -2468,6 +2650,7 @@ export type PostUncheckedUpdateWithoutAuthorInput = {
   reposts?: Prisma.RepostUncheckedUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutTargetPostNestedInput
+  editVersions?: Prisma.EditVersionUncheckedUpdateManyWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateManyWithoutAuthorInput = {
@@ -2515,6 +2698,7 @@ export type PostUpdateWithoutWallUserInput = {
   reposts?: Prisma.RepostUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutTargetPostNestedInput
+  editVersions?: Prisma.EditVersionUpdateManyWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateWithoutWallUserInput = {
@@ -2541,6 +2725,7 @@ export type PostUncheckedUpdateWithoutWallUserInput = {
   reposts?: Prisma.RepostUncheckedUpdateManyWithoutPostNestedInput
   hashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutPostNestedInput
   commentHashtagUsages?: Prisma.HashtagUsageUncheckedUpdateManyWithoutTargetPostNestedInput
+  editVersions?: Prisma.EditVersionUncheckedUpdateManyWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateManyWithoutWallUserInput = {
@@ -2575,6 +2760,7 @@ export type PostCountOutputType = {
   reposts: number
   hashtagUsages: number
   commentHashtagUsages: number
+  editVersions: number
 }
 
 export type PostCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2582,6 +2768,7 @@ export type PostCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   reposts?: boolean | PostCountOutputTypeCountRepostsArgs
   hashtagUsages?: boolean | PostCountOutputTypeCountHashtagUsagesArgs
   commentHashtagUsages?: boolean | PostCountOutputTypeCountCommentHashtagUsagesArgs
+  editVersions?: boolean | PostCountOutputTypeCountEditVersionsArgs
 }
 
 /**
@@ -2622,6 +2809,13 @@ export type PostCountOutputTypeCountCommentHashtagUsagesArgs<ExtArgs extends run
   where?: Prisma.HashtagUsageWhereInput
 }
 
+/**
+ * PostCountOutputType without action
+ */
+export type PostCountOutputTypeCountEditVersionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EditVersionWhereInput
+}
+
 
 export type PostSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2654,6 +2848,7 @@ export type PostSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   reposts?: boolean | Prisma.Post$repostsArgs<ExtArgs>
   hashtagUsages?: boolean | Prisma.Post$hashtagUsagesArgs<ExtArgs>
   commentHashtagUsages?: boolean | Prisma.Post$commentHashtagUsagesArgs<ExtArgs>
+  editVersions?: boolean | Prisma.Post$editVersionsArgs<ExtArgs>
   _count?: boolean | Prisma.PostCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["post"]>
 
@@ -2750,6 +2945,7 @@ export type PostInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   reposts?: boolean | Prisma.Post$repostsArgs<ExtArgs>
   hashtagUsages?: boolean | Prisma.Post$hashtagUsagesArgs<ExtArgs>
   commentHashtagUsages?: boolean | Prisma.Post$commentHashtagUsagesArgs<ExtArgs>
+  editVersions?: boolean | Prisma.Post$editVersionsArgs<ExtArgs>
   _count?: boolean | Prisma.PostCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PostIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2782,6 +2978,7 @@ export type $PostPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     reposts: Prisma.$RepostPayload<ExtArgs>[]
     hashtagUsages: Prisma.$HashtagUsagePayload<ExtArgs>[]
     commentHashtagUsages: Prisma.$HashtagUsagePayload<ExtArgs>[]
+    editVersions: Prisma.$EditVersionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -3208,6 +3405,7 @@ export interface Prisma__PostClient<T, Null = never, ExtArgs extends runtime.Typ
   reposts<T extends Prisma.Post$repostsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Post$repostsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RepostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   hashtagUsages<T extends Prisma.Post$hashtagUsagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Post$hashtagUsagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HashtagUsagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   commentHashtagUsages<T extends Prisma.Post$commentHashtagUsagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Post$commentHashtagUsagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HashtagUsagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  editVersions<T extends Prisma.Post$editVersionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Post$editVersionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EditVersionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3841,6 +4039,30 @@ export type Post$commentHashtagUsagesArgs<ExtArgs extends runtime.Types.Extensio
   take?: number
   skip?: number
   distinct?: Prisma.HashtagUsageScalarFieldEnum | Prisma.HashtagUsageScalarFieldEnum[]
+}
+
+/**
+ * Post.editVersions
+ */
+export type Post$editVersionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EditVersion
+   */
+  select?: Prisma.EditVersionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EditVersion
+   */
+  omit?: Prisma.EditVersionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EditVersionInclude<ExtArgs> | null
+  where?: Prisma.EditVersionWhereInput
+  orderBy?: Prisma.EditVersionOrderByWithRelationInput | Prisma.EditVersionOrderByWithRelationInput[]
+  cursor?: Prisma.EditVersionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EditVersionScalarFieldEnum | Prisma.EditVersionScalarFieldEnum[]
 }
 
 /**

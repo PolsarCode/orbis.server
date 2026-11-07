@@ -3,9 +3,22 @@ import { CommentsService } from './comments.service';
 import { PrismaService } from '../prisma.service';
 import { LikesService } from '../likes/likes.service';
 import { NotificationsService } from '../notifications/notifications.service';
-import { targetOf } from '../posts/wall-access';
+import {
+  requireProfileView,
+  targetOf,
+  viewableProfiles,
+} from '../posts/wall-access';
+import { requireViewAccess } from '../communities/require-membership';
+import {
+  viewableActivity,
+  viewablePost,
+  viewablePosts,
+} from '../posts/posts.service';
+import { visibleThreads } from '../forum/forum-helpers';
+import { visibleTo } from '../moderation/visibility';
 
 jest.mock('../posts/wall-access', () => ({
+  ...jest.requireActual('../posts/wall-access'),
   targetOf: jest.fn(async () => ({
     type: 'post',
     id: 7,
@@ -17,6 +30,7 @@ jest.mock('../posts/wall-access', () => ({
   requireTargetAccess: jest.fn(),
 }));
 jest.mock('../communities/require-membership', () => ({
+  ...jest.requireActual('../communities/require-membership'),
   requireViewAccess: jest.fn(),
 }));
 jest.mock('../common/rich-text', () => ({ sanitizeRichText: jest.fn() }));
@@ -52,6 +66,8 @@ describe('Blocked and muted people in comment threads', () => {
     comment: { findMany: jest.fn(), findUnique: jest.fn(), create: jest.fn() },
     membership: { findMany: jest.fn() },
     user: { findUnique: jest.fn() },
+    post: { findFirst: jest.fn() },
+    libraryActivity: { findFirst: jest.fn() },
   };
   const likes = { likedBy: jest.fn() };
   const service = new CommentsService(
@@ -70,6 +86,8 @@ describe('Blocked and muted people in comment threads', () => {
     prisma.contentReport.findMany.mockResolvedValue([]);
     prisma.comment.findMany.mockResolvedValue([]);
     prisma.membership.findMany.mockResolvedValue([]);
+    prisma.post.findFirst.mockResolvedValue({ id: 7 });
+    prisma.libraryActivity.findFirst.mockResolvedValue({ id: 8 });
     likes.likedBy.mockResolvedValue(new Set());
   });
 
@@ -292,5 +310,149 @@ describe('Blocked and muted people in comment threads', () => {
     ).rejects.toThrow(NotFoundException);
     expect(prisma.block.count).toHaveBeenLastCalledWith(ownerBlocks([2, 5]));
     expect(prisma.comment.create).not.toHaveBeenCalled();
+  });
+
+  describe('on something the viewer can’t open', () => {
+    const viewer = (reportedPosts: number[] = []) => ({
+      id: 1,
+      reported: { post: reportedPosts, comment: [], forum_post: [] },
+      siteAdmin: false,
+      manages: [],
+    });
+    const notFound = new NotFoundException('Not found');
+    const profilePost = {
+      type: 'post' as const,
+      id: 7,
+      communityId: null,
+      wallUserId: null,
+      ownerId: 2,
+      mediaType: null,
+      mediaSourceId: null,
+    };
+
+    beforeEach(() =>
+      jest.useFakeTimers({
+        now: new Date('2026-11-07T12:00:00Z'),
+        doNotFake: ['nextTick', 'setImmediate', 'queueMicrotask'],
+      }),
+    );
+    afterEach(() => jest.useRealTimers());
+
+    it('lists the comments as before when the viewer can open the post', async () => {
+      prisma.comment.findMany.mockResolvedValue([comment(1, 3)]);
+
+      await expect(service.list(1, 'post', 7)).resolves.toMatchObject([
+        { id: 1, hidden: null, hiddenBecause: null },
+      ]);
+      expect(prisma.post.findFirst).toHaveBeenCalledWith({
+        where: { id: 7, ...viewablePost(viewer(), false) },
+        select: { id: true },
+      });
+    });
+
+    it('answers 404 for a post that’s hidden, by a suspended author or reported by the viewer', async () => {
+      prisma.contentReport.findMany.mockResolvedValue([
+        { targetType: 'post', targetId: 7 },
+      ]);
+      prisma.post.findFirst.mockResolvedValue(null);
+
+      await expect(service.list(1, 'post', 7)).rejects.toThrow(notFound);
+      expect(prisma.post.findFirst).toHaveBeenCalledWith({
+        where: { id: 7, ...viewablePost(viewer([7]), false) },
+        select: { id: true },
+      });
+      expect(viewablePosts(viewer([7])).AND).toContainEqual(
+        visibleTo(viewer([7]), 'post'),
+      );
+      expect(visibleTo(viewer([7]), 'post').AND).toContainEqual({
+        id: { notIn: [7] },
+      });
+      expect(prisma.comment.findMany).not.toHaveBeenCalled();
+    });
+
+    it('leaves 18+ posts’ comments out unless the viewer shows 18+', async () => {
+      prisma.post.findFirst.mockResolvedValue(null);
+      await expect(service.list(1, 'post', 7)).rejects.toThrow(notFound);
+      expect(prisma.post.findFirst.mock.calls[0][0].where.AND).toContainEqual({
+        isAdult: false,
+      });
+
+      prisma.user.findUnique.mockResolvedValue({ showNsfw: true });
+      prisma.post.findFirst.mockResolvedValue({ id: 7 });
+      await expect(service.list(1, 'post', 7)).resolves.toEqual([]);
+      expect(
+        prisma.post.findFirst.mock.calls[1][0].where.AND,
+      ).not.toContainEqual({ isAdult: false });
+    });
+
+    it('answers 404 for a profile post when the author’s profile is private to the viewer', async () => {
+      jest.mocked(targetOf).mockResolvedValueOnce(profilePost);
+      prisma.post.findFirst.mockResolvedValue(null);
+
+      await expect(service.list(1, 'post', 7)).rejects.toThrow(notFound);
+      expect(requireViewAccess).not.toHaveBeenCalled();
+      expect(requireProfileView).not.toHaveBeenCalled();
+      expect(viewablePosts(viewer())).toEqual({
+        AND: expect.arrayContaining([
+          {
+            OR: expect.arrayContaining([
+              {
+                communityId: null,
+                mediaType: null,
+                author: viewableProfiles(1),
+              },
+            ]),
+          },
+        ]),
+      });
+      expect(prisma.comment.findMany).not.toHaveBeenCalled();
+    });
+
+    it('answers 404 across a block with the wall’s owner, or for a forum opener mirrored to the feed that the viewer can’t see', async () => {
+      prisma.post.findFirst.mockResolvedValue(null);
+
+      await expect(service.list(1, 'post', 7)).rejects.toThrow(notFound);
+      expect(prisma.post.findFirst.mock.calls[0][0].where.AND).toEqual(
+        expect.arrayContaining([
+          {
+            OR: [
+              { forumThreadId: null },
+              { forumThread: visibleThreads(viewer()) },
+            ],
+          },
+          {
+            OR: [
+              { wallUserId: null },
+              {
+                wallUser: {
+                  blocksMade: { none: { blockedId: 1 } },
+                  blocksReceived: { none: { blockerId: 1 } },
+                },
+              },
+            ],
+          },
+        ]),
+      );
+      expect(prisma.comment.findMany).not.toHaveBeenCalled();
+    });
+
+    it('answers 404 for a library update the viewer can’t open, like a public one on a private profile', async () => {
+      jest
+        .mocked(targetOf)
+        .mockResolvedValueOnce({ ...profilePost, type: 'activity', id: 8 });
+      prisma.libraryActivity.findFirst.mockResolvedValue(null);
+
+      await expect(service.list(1, 'activity', 8)).rejects.toThrow(notFound);
+      expect(prisma.libraryActivity.findFirst).toHaveBeenCalledWith({
+        where: { id: 8, ...viewableActivity(viewer(), false) },
+        select: { id: true },
+      });
+      expect(viewableActivity(viewer(), false).entry).toMatchObject({
+        isAdult: false,
+        user: { AND: expect.arrayContaining([viewableProfiles(1)]) },
+      });
+      expect(prisma.post.findFirst).not.toHaveBeenCalled();
+      expect(prisma.comment.findMany).not.toHaveBeenCalled();
+    });
   });
 });

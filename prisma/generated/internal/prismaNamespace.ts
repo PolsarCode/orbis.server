@@ -396,6 +396,7 @@ export const ModelName = {
   Post: 'Post',
   Repost: 'Repost',
   Comment: 'Comment',
+  EditVersion: 'EditVersion',
   Like: 'Like',
   Bookmark: 'Bookmark',
   ForumSection: 'ForumSection',
@@ -440,7 +441,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "community" | "membership" | "railFolder" | "role" | "membershipRole" | "invite" | "discordChannel" | "discordMessage" | "communityBan" | "post" | "repost" | "comment" | "like" | "bookmark" | "forumSection" | "forumCategory" | "forumThread" | "forumPost" | "friendship" | "suggestionDismissal" | "hashtag" | "hashtagUsage" | "hashtagFollow" | "libraryEntry" | "libraryActivity" | "conversation" | "conversationMember" | "message" | "messageReaction" | "notification" | "report" | "reportComment" | "contentReport" | "block" | "mute" | "keywordFilter" | "setting" | "steamAccount" | "steamGame" | "user" | "oAuthAccount"
+    modelProps: "community" | "membership" | "railFolder" | "role" | "membershipRole" | "invite" | "discordChannel" | "discordMessage" | "communityBan" | "post" | "repost" | "comment" | "editVersion" | "like" | "bookmark" | "forumSection" | "forumCategory" | "forumThread" | "forumPost" | "friendship" | "suggestionDismissal" | "hashtag" | "hashtagUsage" | "hashtagFollow" | "libraryEntry" | "libraryActivity" | "conversation" | "conversationMember" | "message" | "messageReaction" | "notification" | "report" | "reportComment" | "contentReport" | "block" | "mute" | "keywordFilter" | "setting" | "steamAccount" | "steamGame" | "user" | "oAuthAccount"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1329,6 +1330,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.CommentCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.CommentCountAggregateOutputType> | number
+        }
+      }
+    }
+    EditVersion: {
+      payload: Prisma.$EditVersionPayload<ExtArgs>
+      fields: Prisma.EditVersionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EditVersionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EditVersionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EditVersionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EditVersionPayload>
+        }
+        findFirst: {
+          args: Prisma.EditVersionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EditVersionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EditVersionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EditVersionPayload>
+        }
+        findMany: {
+          args: Prisma.EditVersionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EditVersionPayload>[]
+        }
+        create: {
+          args: Prisma.EditVersionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EditVersionPayload>
+        }
+        createMany: {
+          args: Prisma.EditVersionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EditVersionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EditVersionPayload>[]
+        }
+        delete: {
+          args: Prisma.EditVersionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EditVersionPayload>
+        }
+        update: {
+          args: Prisma.EditVersionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EditVersionPayload>
+        }
+        deleteMany: {
+          args: Prisma.EditVersionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EditVersionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EditVersionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EditVersionPayload>[]
+        }
+        upsert: {
+          args: Prisma.EditVersionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EditVersionPayload>
+        }
+        aggregate: {
+          args: Prisma.EditVersionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEditVersion>
+        }
+        groupBy: {
+          args: Prisma.EditVersionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EditVersionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EditVersionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EditVersionCountAggregateOutputType> | number
         }
       }
     }
@@ -3701,6 +3776,20 @@ export const CommentScalarFieldEnum = {
 export type CommentScalarFieldEnum = (typeof CommentScalarFieldEnum)[keyof typeof CommentScalarFieldEnum]
 
 
+export const EditVersionScalarFieldEnum = {
+  id: 'id',
+  postId: 'postId',
+  commentId: 'commentId',
+  forumPostId: 'forumPostId',
+  content: 'content',
+  linkUrl: 'linkUrl',
+  spoiler: 'spoiler',
+  createdAt: 'createdAt'
+} as const
+
+export type EditVersionScalarFieldEnum = (typeof EditVersionScalarFieldEnum)[keyof typeof EditVersionScalarFieldEnum]
+
+
 export const LikeScalarFieldEnum = {
   userId: 'userId',
   likeableType: 'likeableType',
@@ -4554,6 +4643,7 @@ export type GlobalOmitConfig = {
   post?: Prisma.PostOmit
   repost?: Prisma.RepostOmit
   comment?: Prisma.CommentOmit
+  editVersion?: Prisma.EditVersionOmit
   like?: Prisma.LikeOmit
   bookmark?: Prisma.BookmarkOmit
   forumSection?: Prisma.ForumSectionOmit

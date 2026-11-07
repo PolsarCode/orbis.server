@@ -98,6 +98,11 @@ export type Repost = Prisma.RepostModel
  */
 export type Comment = Prisma.CommentModel
 /**
+ * Model EditVersion
+ * 
+ */
+export type EditVersion = Prisma.EditVersionModel
+/**
  * Model Like
  * 
  */

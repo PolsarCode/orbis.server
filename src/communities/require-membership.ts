@@ -1,5 +1,12 @@
 import { ForbiddenException } from '@nestjs/common';
+import { Prisma } from '../../prisma/generated/client';
 import { PrismaService } from '../prisma.service';
+
+export function visibleCommunity(userId: number) {
+  return {
+    OR: [{ isPublic: true }, { memberships: { some: { userId } } }],
+  } satisfies Prisma.CommunityWhereInput;
+}
 
 export async function requireMembership(
   prisma: PrismaService,

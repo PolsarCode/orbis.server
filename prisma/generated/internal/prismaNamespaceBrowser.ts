@@ -63,6 +63,7 @@ export const ModelName = {
   Post: 'Post',
   Repost: 'Repost',
   Comment: 'Comment',
+  EditVersion: 'EditVersion',
   Like: 'Like',
   Bookmark: 'Bookmark',
   ForumSection: 'ForumSection',
@@ -292,6 +293,20 @@ export const CommentScalarFieldEnum = {
 } as const
 
 export type CommentScalarFieldEnum = (typeof CommentScalarFieldEnum)[keyof typeof CommentScalarFieldEnum]
+
+
+export const EditVersionScalarFieldEnum = {
+  id: 'id',
+  postId: 'postId',
+  commentId: 'commentId',
+  forumPostId: 'forumPostId',
+  content: 'content',
+  linkUrl: 'linkUrl',
+  spoiler: 'spoiler',
+  createdAt: 'createdAt'
+} as const
+
+export type EditVersionScalarFieldEnum = (typeof EditVersionScalarFieldEnum)[keyof typeof EditVersionScalarFieldEnum]
 
 
 export const LikeScalarFieldEnum = {

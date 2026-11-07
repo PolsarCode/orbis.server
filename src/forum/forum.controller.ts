@@ -33,6 +33,7 @@ import {
   UpdateForumThreadDto,
 } from './dto/forum-thread.dto';
 import { UserId } from '../common/user-id';
+import { EditHistory } from '../common/edit-history';
 
 const optionalInt = new ParseIntPipe({ optional: true });
 
@@ -279,6 +280,16 @@ export class ForumController {
     @Body() body: CreateForumPostDto,
   ) {
     return this.forum.reply(userId, communityId, threadId, body);
+  }
+
+  @Get('posts/:postId/edits')
+  @AllowGuest()
+  postEdits(
+    @UserId() userId: number,
+    @Param('communityId', ParseIntPipe) communityId: number,
+    @Param('postId', ParseIntPipe) postId: number,
+  ): Promise<EditHistory> {
+    return this.forum.findEdits(userId, communityId, postId);
   }
 
   @RateLimit(30, MINUTE)

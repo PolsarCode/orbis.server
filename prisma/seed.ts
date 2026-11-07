@@ -2606,6 +2606,106 @@ async function createHashtags(): Promise<number> {
   return count;
 }
 
+const editHistories: {
+  type: 'post' | 'comment' | 'forumPost';
+  author: UserKey;
+  contains: string;
+  versions: {
+    content: string;
+    spoiler?: string | null;
+    replacedAfter: number;
+  }[];
+}[] = [
+  {
+    type: 'post',
+    author: 'admin',
+    contains: 'Welcome to the <strong>Seasonal Anime Club</strong>',
+    versions: [
+      {
+        content: `<p>Welcome to the <strong>Seasonal Anime Club</strong>! 🎉</p><p>Post what you're watching this season and drop recommendations.</p>`,
+        replacedAfter: 30,
+      },
+    ],
+  },
+  {
+    type: 'post',
+    author: 'nami',
+    contains: 'I keep a ledger.',
+    versions: [
+      {
+        content: `<p>Reminder that the club's watch-party snacks are not free.</p>`,
+        replacedAfter: 4,
+      },
+      {
+        content: `<p>Reminder that the club's watch-party snacks are <strong>not free</strong>.</p>`,
+        replacedAfter: 25,
+      },
+    ],
+  },
+  {
+    type: 'comment',
+    author: 'spike',
+    contains: 'the last scene with the empty chair',
+    versions: [
+      {
+        content: `<p>And the last scene with the empty chair? That's the real ending.</p>`,
+        spoiler: null,
+        replacedAfter: 2,
+      },
+    ],
+  },
+  {
+    type: 'forumPost',
+    author: 'anya',
+    contains: 'Anya votes for the spy show.',
+    versions: [
+      {
+        content: `<p>Anya votes for the spy show.</p>`,
+        replacedAfter: 10,
+      },
+    ],
+  },
+];
+
+async function createEditHistories(): Promise<number> {
+  let count = 0;
+  for (const { type, author, contains, versions } of editHistories) {
+    const query = {
+      where: { authorId: userIds[author], content: { contains } },
+      select: { id: true, linkUrl: true, spoiler: true, createdAt: true },
+    };
+    const item =
+      type === 'post'
+        ? await prisma.post.findFirst(query)
+        : type === 'comment'
+          ? await prisma.comment.findFirst(query)
+          : await prisma.forumPost.findFirst(query);
+    if (!item) continue;
+
+    const replaced = (index: number) =>
+      sharedAfter(item.createdAt, versions[index].replacedAfter);
+    const where = { id: item.id };
+    const data = {
+      editedAt: replaced(versions.length - 1),
+      editVersions: {
+        create: versions.map(({ content, spoiler }, index) => ({
+          content,
+          linkUrl: item.linkUrl,
+          spoiler: spoiler === undefined ? item.spoiler : spoiler,
+          createdAt: index === 0 ? item.createdAt : replaced(index - 1),
+        })),
+      },
+    };
+    await (type === 'post'
+      ? prisma.post.update({ where, data })
+      : type === 'comment'
+        ? prisma.comment.update({ where, data })
+        : prisma.forumPost.update({ where, data }));
+    count += versions.length;
+  }
+  return count;
+}
+
 const earlierStatuses: Record<LibraryStatus, LibraryStatus[]> = {
   planned: [],
   current: ['planned'],
@@ -3212,6 +3312,7 @@ async function main() {
   console.log('🔖 Bookmarks created:', await createBookmarks());
   console.log('🔁 Reposts and quotes created:', await createReposts());
   console.log('#️⃣ Hashtag uses created:', await createHashtags());
+  console.log('✏️ Earlier versions created:', await createEditHistories());
   console.log('🔔 Notifications created:', await createNotifications());
   console.log('💬 Chats created:', await createChats());
 

@@ -18,6 +18,7 @@ import { JwtAuthGuard } from '../auth/jwt.guard';
 import { AllowGuest } from '../auth/allow-guest';
 import { RateLimit, MINUTE } from '../common/throttle';
 import { UserId } from '../common/user-id';
+import { EditHistory } from '../common/edit-history';
 
 @Controller('comments')
 @UseGuards(JwtAuthGuard)
@@ -32,6 +33,15 @@ export class CommentsController {
     @Query('id', ParseIntPipe) id: number,
   ): Promise<CommentView[]> {
     return this.commentsService.list(userId, type, id);
+  }
+
+  @Get(':commentId/edits')
+  @AllowGuest()
+  edits(
+    @UserId() userId: number,
+    @Param('commentId', ParseIntPipe) commentId: number,
+  ): Promise<EditHistory> {
+    return this.commentsService.findEdits(userId, commentId);
   }
 
   @RateLimit(20, MINUTE)

@@ -7,7 +7,8 @@ import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { CreatePostDto } from './dto/create-post.dto';
 import { RepostDto } from './dto/repost.dto';
-import { PostsService } from './posts.service';
+import { PostsService, viewablePost } from './posts.service';
+import { visibleThreads } from '../forum/forum-helpers';
 import {
   availableOriginals,
   shareableActivities,
@@ -1082,6 +1083,35 @@ describe('Who reposted and quoted', () => {
       service.findQuotes(1, { type: 'post', id: 7 }),
     ).rejects.toBeInstanceOf(NotFoundException);
     expect(prisma.repost.findMany).not.toHaveBeenCalled();
+  });
+
+  it('says a wall post across a block with the wall’s owner, or a forum opener the viewer can’t see, isn’t there', async () => {
+    const { prisma, service } = setup();
+    prisma.post.findFirst.mockResolvedValue(null);
+
+    await expect(
+      service.findReposters(1, { type: 'post', id: 7 }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+    await expect(
+      service.findQuotes(1, { type: 'post', id: 7 }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+    for (const [{ where }] of prisma.post.findFirst.mock.calls) {
+      expect(where).toEqual({ id: 7, ...viewablePost(viewer, false) });
+      expect(where.AND).toEqual(
+        expect.arrayContaining([
+          {
+            OR: [
+              { forumThreadId: null },
+              { forumThread: visibleThreads(viewer) },
+            ],
+          },
+          { OR: [{ wallUserId: null }, { wallUser: notBlocked(1) }] },
+        ]),
+      );
+    }
+    expect(prisma.post.findFirst).toHaveBeenCalledTimes(2);
+    expect(prisma.repost.findMany).not.toHaveBeenCalled();
+    expect(prisma.post.findMany).not.toHaveBeenCalled();
   });
 
   it('only lists for library updates the viewer could open on the profile', async () => {
