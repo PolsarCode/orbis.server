@@ -296,6 +296,7 @@ describe('Feed content filters', () => {
     expect(
       prisma.libraryActivity.findMany.mock.calls[0][0].where.entry.user,
     ).toEqual({
+      deleteAt: null,
       OR: [
         { suspendedAt: null },
         { suspendedUntil: { lte: expect.any(Date) } },
@@ -309,6 +310,7 @@ describe('Feed content filters', () => {
     await service.findForMember(1);
     expect(listed(prisma.libraryActivity.findMany)[1].where.entry.user).toEqual(
       {
+        deleteAt: null,
         OR: [
           { suspendedAt: null },
           { suspendedUntil: { lte: expect.any(Date) } },
@@ -497,6 +499,7 @@ describe('Opening a post or library update from a link', () => {
             isPublic: true,
             isAdult: false,
             user: {
+              deleteAt: null,
               OR: [
                 { suspendedAt: null },
                 { suspendedUntil: { lte: expect.any(Date) } },

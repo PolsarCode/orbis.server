@@ -393,6 +393,7 @@ describe('Public people list', () => {
       expect.objectContaining({
         where: {
           isPublic: true,
+          deleteAt: null,
           OR: [
             { suspendedAt: null },
             { suspendedUntil: { lte: expect.any(Date) } },

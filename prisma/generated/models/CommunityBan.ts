@@ -190,7 +190,7 @@ export type CommunityBanGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
 export type CommunityBanGroupByOutputType = {
   communityId: number
   userId: number
-  bannedById: number
+  bannedById: number | null
   reason: string | null
   createdAt: Date
   _count: CommunityBanCountAggregateOutputType | null
@@ -221,18 +221,18 @@ export type CommunityBanWhereInput = {
   NOT?: Prisma.CommunityBanWhereInput | Prisma.CommunityBanWhereInput[]
   communityId?: Prisma.IntFilter<"CommunityBan"> | number
   userId?: Prisma.IntFilter<"CommunityBan"> | number
-  bannedById?: Prisma.IntFilter<"CommunityBan"> | number
+  bannedById?: Prisma.IntNullableFilter<"CommunityBan"> | number | null
   reason?: Prisma.StringNullableFilter<"CommunityBan"> | string | null
   createdAt?: Prisma.DateTimeFilter<"CommunityBan"> | Date | string
   community?: Prisma.XOR<Prisma.CommunityScalarRelationFilter, Prisma.CommunityWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  bannedBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  bannedBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }
 
 export type CommunityBanOrderByWithRelationInput = {
   communityId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  bannedById?: Prisma.SortOrder
+  bannedById?: Prisma.SortOrderInput | Prisma.SortOrder
   reason?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   community?: Prisma.CommunityOrderByWithRelationInput
@@ -247,18 +247,18 @@ export type CommunityBanWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.CommunityBanWhereInput | Prisma.CommunityBanWhereInput[]
   communityId?: Prisma.IntFilter<"CommunityBan"> | number
   userId?: Prisma.IntFilter<"CommunityBan"> | number
-  bannedById?: Prisma.IntFilter<"CommunityBan"> | number
+  bannedById?: Prisma.IntNullableFilter<"CommunityBan"> | number | null
   reason?: Prisma.StringNullableFilter<"CommunityBan"> | string | null
   createdAt?: Prisma.DateTimeFilter<"CommunityBan"> | Date | string
   community?: Prisma.XOR<Prisma.CommunityScalarRelationFilter, Prisma.CommunityWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  bannedBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  bannedBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }, "communityId_userId">
 
 export type CommunityBanOrderByWithAggregationInput = {
   communityId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  bannedById?: Prisma.SortOrder
+  bannedById?: Prisma.SortOrderInput | Prisma.SortOrder
   reason?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.CommunityBanCountOrderByAggregateInput
@@ -274,7 +274,7 @@ export type CommunityBanScalarWhereWithAggregatesInput = {
   NOT?: Prisma.CommunityBanScalarWhereWithAggregatesInput | Prisma.CommunityBanScalarWhereWithAggregatesInput[]
   communityId?: Prisma.IntWithAggregatesFilter<"CommunityBan"> | number
   userId?: Prisma.IntWithAggregatesFilter<"CommunityBan"> | number
-  bannedById?: Prisma.IntWithAggregatesFilter<"CommunityBan"> | number
+  bannedById?: Prisma.IntNullableWithAggregatesFilter<"CommunityBan"> | number | null
   reason?: Prisma.StringNullableWithAggregatesFilter<"CommunityBan"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"CommunityBan"> | Date | string
 }
@@ -284,13 +284,13 @@ export type CommunityBanCreateInput = {
   createdAt?: Date | string
   community: Prisma.CommunityCreateNestedOneWithoutBansInput
   user: Prisma.UserCreateNestedOneWithoutCommunityBansInput
-  bannedBy: Prisma.UserCreateNestedOneWithoutIssuedCommunityBansInput
+  bannedBy?: Prisma.UserCreateNestedOneWithoutIssuedCommunityBansInput
 }
 
 export type CommunityBanUncheckedCreateInput = {
   communityId: number
   userId: number
-  bannedById: number
+  bannedById?: number | null
   reason?: string | null
   createdAt?: Date | string
 }
@@ -300,13 +300,13 @@ export type CommunityBanUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   community?: Prisma.CommunityUpdateOneRequiredWithoutBansNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutCommunityBansNestedInput
-  bannedBy?: Prisma.UserUpdateOneRequiredWithoutIssuedCommunityBansNestedInput
+  bannedBy?: Prisma.UserUpdateOneWithoutIssuedCommunityBansNestedInput
 }
 
 export type CommunityBanUncheckedUpdateInput = {
   communityId?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
-  bannedById?: Prisma.IntFieldUpdateOperationsInput | number
+  bannedById?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -314,7 +314,7 @@ export type CommunityBanUncheckedUpdateInput = {
 export type CommunityBanCreateManyInput = {
   communityId: number
   userId: number
-  bannedById: number
+  bannedById?: number | null
   reason?: string | null
   createdAt?: Date | string
 }
@@ -327,7 +327,7 @@ export type CommunityBanUpdateManyMutationInput = {
 export type CommunityBanUncheckedUpdateManyInput = {
   communityId?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
-  bannedById?: Prisma.IntFieldUpdateOperationsInput | number
+  bannedById?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -513,12 +513,12 @@ export type CommunityBanCreateWithoutCommunityInput = {
   reason?: string | null
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutCommunityBansInput
-  bannedBy: Prisma.UserCreateNestedOneWithoutIssuedCommunityBansInput
+  bannedBy?: Prisma.UserCreateNestedOneWithoutIssuedCommunityBansInput
 }
 
 export type CommunityBanUncheckedCreateWithoutCommunityInput = {
   userId: number
-  bannedById: number
+  bannedById?: number | null
   reason?: string | null
   createdAt?: Date | string
 }
@@ -555,7 +555,7 @@ export type CommunityBanScalarWhereInput = {
   NOT?: Prisma.CommunityBanScalarWhereInput | Prisma.CommunityBanScalarWhereInput[]
   communityId?: Prisma.IntFilter<"CommunityBan"> | number
   userId?: Prisma.IntFilter<"CommunityBan"> | number
-  bannedById?: Prisma.IntFilter<"CommunityBan"> | number
+  bannedById?: Prisma.IntNullableFilter<"CommunityBan"> | number | null
   reason?: Prisma.StringNullableFilter<"CommunityBan"> | string | null
   createdAt?: Prisma.DateTimeFilter<"CommunityBan"> | Date | string
 }
@@ -564,12 +564,12 @@ export type CommunityBanCreateWithoutUserInput = {
   reason?: string | null
   createdAt?: Date | string
   community: Prisma.CommunityCreateNestedOneWithoutBansInput
-  bannedBy: Prisma.UserCreateNestedOneWithoutIssuedCommunityBansInput
+  bannedBy?: Prisma.UserCreateNestedOneWithoutIssuedCommunityBansInput
 }
 
 export type CommunityBanUncheckedCreateWithoutUserInput = {
   communityId: number
-  bannedById: number
+  bannedById?: number | null
   reason?: string | null
   createdAt?: Date | string
 }
@@ -642,7 +642,7 @@ export type CommunityBanUpdateManyWithWhereWithoutBannedByInput = {
 
 export type CommunityBanCreateManyCommunityInput = {
   userId: number
-  bannedById: number
+  bannedById?: number | null
   reason?: string | null
   createdAt?: Date | string
 }
@@ -651,26 +651,26 @@ export type CommunityBanUpdateWithoutCommunityInput = {
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutCommunityBansNestedInput
-  bannedBy?: Prisma.UserUpdateOneRequiredWithoutIssuedCommunityBansNestedInput
+  bannedBy?: Prisma.UserUpdateOneWithoutIssuedCommunityBansNestedInput
 }
 
 export type CommunityBanUncheckedUpdateWithoutCommunityInput = {
   userId?: Prisma.IntFieldUpdateOperationsInput | number
-  bannedById?: Prisma.IntFieldUpdateOperationsInput | number
+  bannedById?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type CommunityBanUncheckedUpdateManyWithoutCommunityInput = {
   userId?: Prisma.IntFieldUpdateOperationsInput | number
-  bannedById?: Prisma.IntFieldUpdateOperationsInput | number
+  bannedById?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type CommunityBanCreateManyUserInput = {
   communityId: number
-  bannedById: number
+  bannedById?: number | null
   reason?: string | null
   createdAt?: Date | string
 }
@@ -686,19 +686,19 @@ export type CommunityBanUpdateWithoutUserInput = {
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   community?: Prisma.CommunityUpdateOneRequiredWithoutBansNestedInput
-  bannedBy?: Prisma.UserUpdateOneRequiredWithoutIssuedCommunityBansNestedInput
+  bannedBy?: Prisma.UserUpdateOneWithoutIssuedCommunityBansNestedInput
 }
 
 export type CommunityBanUncheckedUpdateWithoutUserInput = {
   communityId?: Prisma.IntFieldUpdateOperationsInput | number
-  bannedById?: Prisma.IntFieldUpdateOperationsInput | number
+  bannedById?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type CommunityBanUncheckedUpdateManyWithoutUserInput = {
   communityId?: Prisma.IntFieldUpdateOperationsInput | number
-  bannedById?: Prisma.IntFieldUpdateOperationsInput | number
+  bannedById?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -734,7 +734,7 @@ export type CommunityBanSelect<ExtArgs extends runtime.Types.Extensions.Internal
   createdAt?: boolean
   community?: boolean | Prisma.CommunityDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  bannedBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  bannedBy?: boolean | Prisma.CommunityBan$bannedByArgs<ExtArgs>
 }, ExtArgs["result"]["communityBan"]>
 
 export type CommunityBanSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -745,7 +745,7 @@ export type CommunityBanSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   createdAt?: boolean
   community?: boolean | Prisma.CommunityDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  bannedBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  bannedBy?: boolean | Prisma.CommunityBan$bannedByArgs<ExtArgs>
 }, ExtArgs["result"]["communityBan"]>
 
 export type CommunityBanSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -756,7 +756,7 @@ export type CommunityBanSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   createdAt?: boolean
   community?: boolean | Prisma.CommunityDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  bannedBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  bannedBy?: boolean | Prisma.CommunityBan$bannedByArgs<ExtArgs>
 }, ExtArgs["result"]["communityBan"]>
 
 export type CommunityBanSelectScalar = {
@@ -771,17 +771,17 @@ export type CommunityBanOmit<ExtArgs extends runtime.Types.Extensions.InternalAr
 export type CommunityBanInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   community?: boolean | Prisma.CommunityDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  bannedBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  bannedBy?: boolean | Prisma.CommunityBan$bannedByArgs<ExtArgs>
 }
 export type CommunityBanIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   community?: boolean | Prisma.CommunityDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  bannedBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  bannedBy?: boolean | Prisma.CommunityBan$bannedByArgs<ExtArgs>
 }
 export type CommunityBanIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   community?: boolean | Prisma.CommunityDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  bannedBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  bannedBy?: boolean | Prisma.CommunityBan$bannedByArgs<ExtArgs>
 }
 
 export type $CommunityBanPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -789,12 +789,12 @@ export type $CommunityBanPayload<ExtArgs extends runtime.Types.Extensions.Intern
   objects: {
     community: Prisma.$CommunityPayload<ExtArgs>
     user: Prisma.$UserPayload<ExtArgs>
-    bannedBy: Prisma.$UserPayload<ExtArgs>
+    bannedBy: Prisma.$UserPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     communityId: number
     userId: number
-    bannedById: number
+    bannedById: number | null
     reason: string | null
     createdAt: Date
   }, ExtArgs["result"]["communityBan"]>
@@ -1193,7 +1193,7 @@ export interface Prisma__CommunityBanClient<T, Null = never, ExtArgs extends run
   readonly [Symbol.toStringTag]: "PrismaPromise"
   community<T extends Prisma.CommunityDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CommunityDefaultArgs<ExtArgs>>): Prisma.Prisma__CommunityClient<runtime.Types.Result.GetResult<Prisma.$CommunityPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  bannedBy<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  bannedBy<T extends Prisma.CommunityBan$bannedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CommunityBan$bannedByArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1621,6 +1621,25 @@ export type CommunityBanDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.
    * Limit how many CommunityBans to delete.
    */
   limit?: number
+}
+
+/**
+ * CommunityBan.bannedBy
+ */
+export type CommunityBan$bannedByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
 }
 
 /**

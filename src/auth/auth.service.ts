@@ -10,6 +10,7 @@ import { normalizeUsername } from '../users/username';
 import { EmailConfirmationService } from './email-confirmation.service';
 import { PrismaService } from '../prisma.service';
 import { ensureNotSuspended } from '../users/suspension';
+import { cancelDeletion } from '../account/account-deletion';
 import {
   TICKET_LIFETIME,
   TWO_FACTOR_PURPOSE,
@@ -69,10 +70,12 @@ export class AuthService {
 
   async generateToken(userId: number, email: string) {
     await ensureNotSuspended(this.prisma, userId);
+    const restored = await cancelDeletion(this.prisma, userId);
     const payload = { sub: userId, email };
 
     return {
       access_token: this.jwtService.sign(payload),
+      ...(restored && { restored: true }),
     };
   }
 }

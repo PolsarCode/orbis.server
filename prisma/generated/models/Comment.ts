@@ -259,7 +259,7 @@ export type CommentGroupByOutputType = {
   commentableType: $Enums.CommentableType
   commentableId: number
   parentId: number | null
-  authorId: number
+  authorId: number | null
   content: string
   linkUrl: string | null
   spoiler: string | null
@@ -299,7 +299,7 @@ export type CommentWhereInput = {
   commentableType?: Prisma.EnumCommentableTypeFilter<"Comment"> | $Enums.CommentableType
   commentableId?: Prisma.IntFilter<"Comment"> | number
   parentId?: Prisma.IntNullableFilter<"Comment"> | number | null
-  authorId?: Prisma.IntFilter<"Comment"> | number
+  authorId?: Prisma.IntNullableFilter<"Comment"> | number | null
   content?: Prisma.StringFilter<"Comment"> | string
   linkUrl?: Prisma.StringNullableFilter<"Comment"> | string | null
   spoiler?: Prisma.StringNullableFilter<"Comment"> | string | null
@@ -309,7 +309,7 @@ export type CommentWhereInput = {
   deletedAt?: Prisma.DateTimeNullableFilter<"Comment"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Comment"> | Date | string
   community?: Prisma.XOR<Prisma.CommunityNullableScalarRelationFilter, Prisma.CommunityWhereInput> | null
-  author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  author?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   parent?: Prisma.XOR<Prisma.CommentNullableScalarRelationFilter, Prisma.CommentWhereInput> | null
   replies?: Prisma.CommentListRelationFilter
   hashtagUsages?: Prisma.HashtagUsageListRelationFilter
@@ -322,7 +322,7 @@ export type CommentOrderByWithRelationInput = {
   commentableType?: Prisma.SortOrder
   commentableId?: Prisma.SortOrder
   parentId?: Prisma.SortOrderInput | Prisma.SortOrder
-  authorId?: Prisma.SortOrder
+  authorId?: Prisma.SortOrderInput | Prisma.SortOrder
   content?: Prisma.SortOrder
   linkUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   spoiler?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -348,7 +348,7 @@ export type CommentWhereUniqueInput = Prisma.AtLeast<{
   commentableType?: Prisma.EnumCommentableTypeFilter<"Comment"> | $Enums.CommentableType
   commentableId?: Prisma.IntFilter<"Comment"> | number
   parentId?: Prisma.IntNullableFilter<"Comment"> | number | null
-  authorId?: Prisma.IntFilter<"Comment"> | number
+  authorId?: Prisma.IntNullableFilter<"Comment"> | number | null
   content?: Prisma.StringFilter<"Comment"> | string
   linkUrl?: Prisma.StringNullableFilter<"Comment"> | string | null
   spoiler?: Prisma.StringNullableFilter<"Comment"> | string | null
@@ -358,7 +358,7 @@ export type CommentWhereUniqueInput = Prisma.AtLeast<{
   deletedAt?: Prisma.DateTimeNullableFilter<"Comment"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Comment"> | Date | string
   community?: Prisma.XOR<Prisma.CommunityNullableScalarRelationFilter, Prisma.CommunityWhereInput> | null
-  author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  author?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   parent?: Prisma.XOR<Prisma.CommentNullableScalarRelationFilter, Prisma.CommentWhereInput> | null
   replies?: Prisma.CommentListRelationFilter
   hashtagUsages?: Prisma.HashtagUsageListRelationFilter
@@ -371,7 +371,7 @@ export type CommentOrderByWithAggregationInput = {
   commentableType?: Prisma.SortOrder
   commentableId?: Prisma.SortOrder
   parentId?: Prisma.SortOrderInput | Prisma.SortOrder
-  authorId?: Prisma.SortOrder
+  authorId?: Prisma.SortOrderInput | Prisma.SortOrder
   content?: Prisma.SortOrder
   linkUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   spoiler?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -396,7 +396,7 @@ export type CommentScalarWhereWithAggregatesInput = {
   commentableType?: Prisma.EnumCommentableTypeWithAggregatesFilter<"Comment"> | $Enums.CommentableType
   commentableId?: Prisma.IntWithAggregatesFilter<"Comment"> | number
   parentId?: Prisma.IntNullableWithAggregatesFilter<"Comment"> | number | null
-  authorId?: Prisma.IntWithAggregatesFilter<"Comment"> | number
+  authorId?: Prisma.IntNullableWithAggregatesFilter<"Comment"> | number | null
   content?: Prisma.StringWithAggregatesFilter<"Comment"> | string
   linkUrl?: Prisma.StringNullableWithAggregatesFilter<"Comment"> | string | null
   spoiler?: Prisma.StringNullableWithAggregatesFilter<"Comment"> | string | null
@@ -419,7 +419,7 @@ export type CommentCreateInput = {
   deletedAt?: Date | string | null
   createdAt?: Date | string
   community?: Prisma.CommunityCreateNestedOneWithoutCommentsInput
-  author: Prisma.UserCreateNestedOneWithoutCommentsInput
+  author?: Prisma.UserCreateNestedOneWithoutCommentsInput
   parent?: Prisma.CommentCreateNestedOneWithoutRepliesInput
   replies?: Prisma.CommentCreateNestedManyWithoutParentInput
   hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutCommentInput
@@ -432,7 +432,7 @@ export type CommentUncheckedCreateInput = {
   commentableType: $Enums.CommentableType
   commentableId: number
   parentId?: number | null
-  authorId: number
+  authorId?: number | null
   content: string
   linkUrl?: string | null
   spoiler?: string | null
@@ -458,7 +458,7 @@ export type CommentUpdateInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   community?: Prisma.CommunityUpdateOneWithoutCommentsNestedInput
-  author?: Prisma.UserUpdateOneRequiredWithoutCommentsNestedInput
+  author?: Prisma.UserUpdateOneWithoutCommentsNestedInput
   parent?: Prisma.CommentUpdateOneWithoutRepliesNestedInput
   replies?: Prisma.CommentUpdateManyWithoutParentNestedInput
   hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutCommentNestedInput
@@ -471,7 +471,7 @@ export type CommentUncheckedUpdateInput = {
   commentableType?: Prisma.EnumCommentableTypeFieldUpdateOperationsInput | $Enums.CommentableType
   commentableId?: Prisma.IntFieldUpdateOperationsInput | number
   parentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  authorId?: Prisma.IntFieldUpdateOperationsInput | number
+  authorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -491,7 +491,7 @@ export type CommentCreateManyInput = {
   commentableType: $Enums.CommentableType
   commentableId: number
   parentId?: number | null
-  authorId: number
+  authorId?: number | null
   content: string
   linkUrl?: string | null
   spoiler?: string | null
@@ -521,7 +521,7 @@ export type CommentUncheckedUpdateManyInput = {
   commentableType?: Prisma.EnumCommentableTypeFieldUpdateOperationsInput | $Enums.CommentableType
   commentableId?: Prisma.IntFieldUpdateOperationsInput | number
   parentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  authorId?: Prisma.IntFieldUpdateOperationsInput | number
+  authorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -801,7 +801,7 @@ export type CommentCreateWithoutCommunityInput = {
   editedAt?: Date | string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
-  author: Prisma.UserCreateNestedOneWithoutCommentsInput
+  author?: Prisma.UserCreateNestedOneWithoutCommentsInput
   parent?: Prisma.CommentCreateNestedOneWithoutRepliesInput
   replies?: Prisma.CommentCreateNestedManyWithoutParentInput
   hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutCommentInput
@@ -813,7 +813,7 @@ export type CommentUncheckedCreateWithoutCommunityInput = {
   commentableType: $Enums.CommentableType
   commentableId: number
   parentId?: number | null
-  authorId: number
+  authorId?: number | null
   content: string
   linkUrl?: string | null
   spoiler?: string | null
@@ -862,7 +862,7 @@ export type CommentScalarWhereInput = {
   commentableType?: Prisma.EnumCommentableTypeFilter<"Comment"> | $Enums.CommentableType
   commentableId?: Prisma.IntFilter<"Comment"> | number
   parentId?: Prisma.IntNullableFilter<"Comment"> | number | null
-  authorId?: Prisma.IntFilter<"Comment"> | number
+  authorId?: Prisma.IntNullableFilter<"Comment"> | number | null
   content?: Prisma.StringFilter<"Comment"> | string
   linkUrl?: Prisma.StringNullableFilter<"Comment"> | string | null
   spoiler?: Prisma.StringNullableFilter<"Comment"> | string | null
@@ -885,7 +885,7 @@ export type CommentCreateWithoutRepliesInput = {
   deletedAt?: Date | string | null
   createdAt?: Date | string
   community?: Prisma.CommunityCreateNestedOneWithoutCommentsInput
-  author: Prisma.UserCreateNestedOneWithoutCommentsInput
+  author?: Prisma.UserCreateNestedOneWithoutCommentsInput
   parent?: Prisma.CommentCreateNestedOneWithoutRepliesInput
   hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutCommentInput
   editVersions?: Prisma.EditVersionCreateNestedManyWithoutCommentInput
@@ -897,7 +897,7 @@ export type CommentUncheckedCreateWithoutRepliesInput = {
   commentableType: $Enums.CommentableType
   commentableId: number
   parentId?: number | null
-  authorId: number
+  authorId?: number | null
   content: string
   linkUrl?: string | null
   spoiler?: string | null
@@ -927,7 +927,7 @@ export type CommentCreateWithoutParentInput = {
   deletedAt?: Date | string | null
   createdAt?: Date | string
   community?: Prisma.CommunityCreateNestedOneWithoutCommentsInput
-  author: Prisma.UserCreateNestedOneWithoutCommentsInput
+  author?: Prisma.UserCreateNestedOneWithoutCommentsInput
   replies?: Prisma.CommentCreateNestedManyWithoutParentInput
   hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutCommentInput
   editVersions?: Prisma.EditVersionCreateNestedManyWithoutCommentInput
@@ -938,7 +938,7 @@ export type CommentUncheckedCreateWithoutParentInput = {
   communityId?: number | null
   commentableType: $Enums.CommentableType
   commentableId: number
-  authorId: number
+  authorId?: number | null
   content: string
   linkUrl?: string | null
   spoiler?: string | null
@@ -985,7 +985,7 @@ export type CommentUpdateWithoutRepliesInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   community?: Prisma.CommunityUpdateOneWithoutCommentsNestedInput
-  author?: Prisma.UserUpdateOneRequiredWithoutCommentsNestedInput
+  author?: Prisma.UserUpdateOneWithoutCommentsNestedInput
   parent?: Prisma.CommentUpdateOneWithoutRepliesNestedInput
   hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutCommentNestedInput
   editVersions?: Prisma.EditVersionUpdateManyWithoutCommentNestedInput
@@ -997,7 +997,7 @@ export type CommentUncheckedUpdateWithoutRepliesInput = {
   commentableType?: Prisma.EnumCommentableTypeFieldUpdateOperationsInput | $Enums.CommentableType
   commentableId?: Prisma.IntFieldUpdateOperationsInput | number
   parentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  authorId?: Prisma.IntFieldUpdateOperationsInput | number
+  authorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1038,7 +1038,7 @@ export type CommentCreateWithoutEditVersionsInput = {
   deletedAt?: Date | string | null
   createdAt?: Date | string
   community?: Prisma.CommunityCreateNestedOneWithoutCommentsInput
-  author: Prisma.UserCreateNestedOneWithoutCommentsInput
+  author?: Prisma.UserCreateNestedOneWithoutCommentsInput
   parent?: Prisma.CommentCreateNestedOneWithoutRepliesInput
   replies?: Prisma.CommentCreateNestedManyWithoutParentInput
   hashtagUsages?: Prisma.HashtagUsageCreateNestedManyWithoutCommentInput
@@ -1050,7 +1050,7 @@ export type CommentUncheckedCreateWithoutEditVersionsInput = {
   commentableType: $Enums.CommentableType
   commentableId: number
   parentId?: number | null
-  authorId: number
+  authorId?: number | null
   content: string
   linkUrl?: string | null
   spoiler?: string | null
@@ -1091,7 +1091,7 @@ export type CommentUpdateWithoutEditVersionsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   community?: Prisma.CommunityUpdateOneWithoutCommentsNestedInput
-  author?: Prisma.UserUpdateOneRequiredWithoutCommentsNestedInput
+  author?: Prisma.UserUpdateOneWithoutCommentsNestedInput
   parent?: Prisma.CommentUpdateOneWithoutRepliesNestedInput
   replies?: Prisma.CommentUpdateManyWithoutParentNestedInput
   hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutCommentNestedInput
@@ -1103,7 +1103,7 @@ export type CommentUncheckedUpdateWithoutEditVersionsInput = {
   commentableType?: Prisma.EnumCommentableTypeFieldUpdateOperationsInput | $Enums.CommentableType
   commentableId?: Prisma.IntFieldUpdateOperationsInput | number
   parentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  authorId?: Prisma.IntFieldUpdateOperationsInput | number
+  authorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1128,7 +1128,7 @@ export type CommentCreateWithoutHashtagUsagesInput = {
   deletedAt?: Date | string | null
   createdAt?: Date | string
   community?: Prisma.CommunityCreateNestedOneWithoutCommentsInput
-  author: Prisma.UserCreateNestedOneWithoutCommentsInput
+  author?: Prisma.UserCreateNestedOneWithoutCommentsInput
   parent?: Prisma.CommentCreateNestedOneWithoutRepliesInput
   replies?: Prisma.CommentCreateNestedManyWithoutParentInput
   editVersions?: Prisma.EditVersionCreateNestedManyWithoutCommentInput
@@ -1140,7 +1140,7 @@ export type CommentUncheckedCreateWithoutHashtagUsagesInput = {
   commentableType: $Enums.CommentableType
   commentableId: number
   parentId?: number | null
-  authorId: number
+  authorId?: number | null
   content: string
   linkUrl?: string | null
   spoiler?: string | null
@@ -1181,7 +1181,7 @@ export type CommentUpdateWithoutHashtagUsagesInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   community?: Prisma.CommunityUpdateOneWithoutCommentsNestedInput
-  author?: Prisma.UserUpdateOneRequiredWithoutCommentsNestedInput
+  author?: Prisma.UserUpdateOneWithoutCommentsNestedInput
   parent?: Prisma.CommentUpdateOneWithoutRepliesNestedInput
   replies?: Prisma.CommentUpdateManyWithoutParentNestedInput
   editVersions?: Prisma.EditVersionUpdateManyWithoutCommentNestedInput
@@ -1193,7 +1193,7 @@ export type CommentUncheckedUpdateWithoutHashtagUsagesInput = {
   commentableType?: Prisma.EnumCommentableTypeFieldUpdateOperationsInput | $Enums.CommentableType
   commentableId?: Prisma.IntFieldUpdateOperationsInput | number
   parentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  authorId?: Prisma.IntFieldUpdateOperationsInput | number
+  authorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1274,7 +1274,7 @@ export type CommentCreateManyCommunityInput = {
   commentableType: $Enums.CommentableType
   commentableId: number
   parentId?: number | null
-  authorId: number
+  authorId?: number | null
   content: string
   linkUrl?: string | null
   spoiler?: string | null
@@ -1296,7 +1296,7 @@ export type CommentUpdateWithoutCommunityInput = {
   editedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  author?: Prisma.UserUpdateOneRequiredWithoutCommentsNestedInput
+  author?: Prisma.UserUpdateOneWithoutCommentsNestedInput
   parent?: Prisma.CommentUpdateOneWithoutRepliesNestedInput
   replies?: Prisma.CommentUpdateManyWithoutParentNestedInput
   hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutCommentNestedInput
@@ -1308,7 +1308,7 @@ export type CommentUncheckedUpdateWithoutCommunityInput = {
   commentableType?: Prisma.EnumCommentableTypeFieldUpdateOperationsInput | $Enums.CommentableType
   commentableId?: Prisma.IntFieldUpdateOperationsInput | number
   parentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  authorId?: Prisma.IntFieldUpdateOperationsInput | number
+  authorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1327,7 +1327,7 @@ export type CommentUncheckedUpdateManyWithoutCommunityInput = {
   commentableType?: Prisma.EnumCommentableTypeFieldUpdateOperationsInput | $Enums.CommentableType
   commentableId?: Prisma.IntFieldUpdateOperationsInput | number
   parentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  authorId?: Prisma.IntFieldUpdateOperationsInput | number
+  authorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1343,7 +1343,7 @@ export type CommentCreateManyParentInput = {
   communityId?: number | null
   commentableType: $Enums.CommentableType
   commentableId: number
-  authorId: number
+  authorId?: number | null
   content: string
   linkUrl?: string | null
   spoiler?: string | null
@@ -1366,7 +1366,7 @@ export type CommentUpdateWithoutParentInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   community?: Prisma.CommunityUpdateOneWithoutCommentsNestedInput
-  author?: Prisma.UserUpdateOneRequiredWithoutCommentsNestedInput
+  author?: Prisma.UserUpdateOneWithoutCommentsNestedInput
   replies?: Prisma.CommentUpdateManyWithoutParentNestedInput
   hashtagUsages?: Prisma.HashtagUsageUpdateManyWithoutCommentNestedInput
   editVersions?: Prisma.EditVersionUpdateManyWithoutCommentNestedInput
@@ -1377,7 +1377,7 @@ export type CommentUncheckedUpdateWithoutParentInput = {
   communityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   commentableType?: Prisma.EnumCommentableTypeFieldUpdateOperationsInput | $Enums.CommentableType
   commentableId?: Prisma.IntFieldUpdateOperationsInput | number
-  authorId?: Prisma.IntFieldUpdateOperationsInput | number
+  authorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1396,7 +1396,7 @@ export type CommentUncheckedUpdateManyWithoutParentInput = {
   communityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   commentableType?: Prisma.EnumCommentableTypeFieldUpdateOperationsInput | $Enums.CommentableType
   commentableId?: Prisma.IntFieldUpdateOperationsInput | number
-  authorId?: Prisma.IntFieldUpdateOperationsInput | number
+  authorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spoiler?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1541,7 +1541,7 @@ export type CommentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   deletedAt?: boolean
   createdAt?: boolean
   community?: boolean | Prisma.Comment$communityArgs<ExtArgs>
-  author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  author?: boolean | Prisma.Comment$authorArgs<ExtArgs>
   parent?: boolean | Prisma.Comment$parentArgs<ExtArgs>
   replies?: boolean | Prisma.Comment$repliesArgs<ExtArgs>
   hashtagUsages?: boolean | Prisma.Comment$hashtagUsagesArgs<ExtArgs>
@@ -1565,7 +1565,7 @@ export type CommentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   deletedAt?: boolean
   createdAt?: boolean
   community?: boolean | Prisma.Comment$communityArgs<ExtArgs>
-  author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  author?: boolean | Prisma.Comment$authorArgs<ExtArgs>
   parent?: boolean | Prisma.Comment$parentArgs<ExtArgs>
 }, ExtArgs["result"]["comment"]>
 
@@ -1585,7 +1585,7 @@ export type CommentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   deletedAt?: boolean
   createdAt?: boolean
   community?: boolean | Prisma.Comment$communityArgs<ExtArgs>
-  author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  author?: boolean | Prisma.Comment$authorArgs<ExtArgs>
   parent?: boolean | Prisma.Comment$parentArgs<ExtArgs>
 }, ExtArgs["result"]["comment"]>
 
@@ -1609,7 +1609,7 @@ export type CommentSelectScalar = {
 export type CommentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "communityId" | "commentableType" | "commentableId" | "parentId" | "authorId" | "content" | "linkUrl" | "spoiler" | "likeCount" | "hiddenAt" | "editedAt" | "deletedAt" | "createdAt", ExtArgs["result"]["comment"]>
 export type CommentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   community?: boolean | Prisma.Comment$communityArgs<ExtArgs>
-  author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  author?: boolean | Prisma.Comment$authorArgs<ExtArgs>
   parent?: boolean | Prisma.Comment$parentArgs<ExtArgs>
   replies?: boolean | Prisma.Comment$repliesArgs<ExtArgs>
   hashtagUsages?: boolean | Prisma.Comment$hashtagUsagesArgs<ExtArgs>
@@ -1618,12 +1618,12 @@ export type CommentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
 }
 export type CommentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   community?: boolean | Prisma.Comment$communityArgs<ExtArgs>
-  author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  author?: boolean | Prisma.Comment$authorArgs<ExtArgs>
   parent?: boolean | Prisma.Comment$parentArgs<ExtArgs>
 }
 export type CommentIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   community?: boolean | Prisma.Comment$communityArgs<ExtArgs>
-  author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  author?: boolean | Prisma.Comment$authorArgs<ExtArgs>
   parent?: boolean | Prisma.Comment$parentArgs<ExtArgs>
 }
 
@@ -1631,7 +1631,7 @@ export type $CommentPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   name: "Comment"
   objects: {
     community: Prisma.$CommunityPayload<ExtArgs> | null
-    author: Prisma.$UserPayload<ExtArgs>
+    author: Prisma.$UserPayload<ExtArgs> | null
     parent: Prisma.$CommentPayload<ExtArgs> | null
     replies: Prisma.$CommentPayload<ExtArgs>[]
     hashtagUsages: Prisma.$HashtagUsagePayload<ExtArgs>[]
@@ -1643,7 +1643,7 @@ export type $CommentPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     commentableType: $Enums.CommentableType
     commentableId: number
     parentId: number | null
-    authorId: number
+    authorId: number | null
     content: string
     linkUrl: string | null
     spoiler: string | null
@@ -2047,7 +2047,7 @@ readonly fields: CommentFieldRefs;
 export interface Prisma__CommentClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   community<T extends Prisma.Comment$communityArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Comment$communityArgs<ExtArgs>>): Prisma.Prisma__CommunityClient<runtime.Types.Result.GetResult<Prisma.$CommunityPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  author<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  author<T extends Prisma.Comment$authorArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Comment$authorArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   parent<T extends Prisma.Comment$parentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Comment$parentArgs<ExtArgs>>): Prisma.Prisma__CommentClient<runtime.Types.Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   replies<T extends Prisma.Comment$repliesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Comment$repliesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   hashtagUsages<T extends Prisma.Comment$hashtagUsagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Comment$hashtagUsagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HashtagUsagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2507,6 +2507,25 @@ export type Comment$communityArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   include?: Prisma.CommunityInclude<ExtArgs> | null
   where?: Prisma.CommunityWhereInput
+}
+
+/**
+ * Comment.author
+ */
+export type Comment$authorArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
 }
 
 /**

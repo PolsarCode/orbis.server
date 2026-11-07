@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { bearerSubject } from '../common/bearer-token';
-import { ensureNotSuspended } from '../users/suspension';
+import { bearerClaims } from '../common/bearer-token';
+import { ensureActiveSession } from '../users/suspension';
 
 @Injectable()
 export class SuspendedAccountGuard implements CanActivate {
@@ -9,12 +9,12 @@ export class SuspendedAccountGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext) {
     if (context.getType() !== 'http') return true;
-    const userId = bearerSubject(
+    const claims = bearerClaims(
       context.switchToHttp().getRequest().headers?.authorization,
     );
-    if (userId === null) return true;
+    if (claims === null) return true;
 
-    await ensureNotSuspended(this.prisma, userId);
+    await ensureActiveSession(this.prisma, claims.sub, claims.iat);
     return true;
   }
 }

@@ -5,6 +5,9 @@ import { AuthService } from './auth.service';
 import { EmailConfirmationService } from './email-confirmation.service';
 import { UsersService } from '../users/users.service';
 import { PrismaService } from '../prisma.service';
+import { sendInBackground } from '../common/email';
+
+jest.mock('../common/email', () => ({ sendInBackground: jest.fn() }));
 
 describe('Logging in to a suspended account', () => {
   const users = { findByEmail: jest.fn(), findByUsername: jest.fn() };
@@ -115,5 +118,111 @@ describe('Logging in with two-factor sign-in on', () => {
     )) as { two_factor_ticket: string };
 
     expect(() => jwt.verify(two_factor_ticket)).toThrow();
+  });
+});
+
+describe('Signing in while the account is scheduled for deletion', () => {
+  const now = new Date('2026-11-07T12:00:00Z');
+  const users = { findByEmail: jest.fn(), findByUsername: jest.fn() };
+  const prisma = { user: { findUnique: jest.fn(), updateMany: jest.fn() } };
+  const jwt = { sign: jest.fn(() => 'signed-token') };
+  const service = new AuthService(
+    users as unknown as UsersService,
+    jwt as unknown as JwtService,
+    {} as EmailConfirmationService,
+    prisma as unknown as PrismaService,
+  );
+
+  function account(deleteAt: Date | null, emailVerifiedAt: Date | null = now) {
+    prisma.user.findUnique.mockResolvedValue({
+      suspendedAt: null,
+      suspendedUntil: null,
+      suspensionReason: null,
+      email: 'naruto@anime.test',
+      emailVerifiedAt,
+      deleteAt,
+    });
+  }
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.useFakeTimers({ now, doNotFake: ['nextTick', 'setImmediate'] });
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it('cancels the deletion, says so and emails the person', async () => {
+    account(new Date('2026-12-01T00:00:00Z'));
+    prisma.user.updateMany.mockResolvedValue({ count: 1 });
+
+    await expect(
+      service.generateToken(7, 'naruto@anime.test'),
+    ).resolves.toEqual({ access_token: 'signed-token', restored: true });
+    expect(prisma.user.updateMany).toHaveBeenCalledWith({
+      where: { id: 7, deleteAt: { gt: now } },
+      data: { deleteAt: null },
+    });
+    expect(sendInBackground).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: 'naruto@anime.test',
+        subject: 'Your Orbis account deletion was cancelled',
+      }),
+    );
+  });
+
+  it('leaves an account without a scheduled deletion alone', async () => {
+    account(null);
+
+    await expect(
+      service.generateToken(7, 'naruto@anime.test'),
+    ).resolves.toEqual({ access_token: 'signed-token' });
+    expect(prisma.user.updateMany).not.toHaveBeenCalled();
+    expect(sendInBackground).not.toHaveBeenCalled();
+  });
+
+  it('doesn’t email an address that was never confirmed', async () => {
+    account(new Date('2026-12-01T00:00:00Z'), null);
+    prisma.user.updateMany.mockResolvedValue({ count: 1 });
+
+    await expect(
+      service.generateToken(7, 'naruto@anime.test'),
+    ).resolves.toEqual({ access_token: 'signed-token', restored: true });
+    expect(sendInBackground).not.toHaveBeenCalled();
+  });
+
+  it('lets a second login at the same moment through once the first cancelled it', async () => {
+    account(new Date('2026-12-01T00:00:00Z'));
+    prisma.user.updateMany.mockResolvedValue({ count: 0 });
+    prisma.user.findUnique
+      .mockResolvedValueOnce({
+        suspendedAt: null,
+        suspendedUntil: null,
+        suspensionReason: null,
+      })
+      .mockResolvedValueOnce({
+        email: 'naruto@anime.test',
+        emailVerifiedAt: now,
+        deleteAt: new Date('2026-12-01T00:00:00Z'),
+      })
+      .mockResolvedValueOnce({ deleteAt: null });
+
+    await expect(
+      service.generateToken(7, 'naruto@anime.test'),
+    ).resolves.toEqual({ access_token: 'signed-token' });
+    expect(sendInBackground).not.toHaveBeenCalled();
+  });
+
+  it('says the account has been deleted once its grace period is over', async () => {
+    account(new Date('2026-11-07T11:00:00Z'));
+    prisma.user.updateMany.mockResolvedValue({ count: 0 });
+
+    const refusal = service.generateToken(7, 'naruto@anime.test');
+
+    await expect(refusal).rejects.toThrow(ForbiddenException);
+    await expect(refusal).rejects.toThrow('This account has been deleted');
+    expect(jwt.sign).not.toHaveBeenCalled();
+    expect(sendInBackground).not.toHaveBeenCalled();
   });
 });

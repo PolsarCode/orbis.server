@@ -10,6 +10,6 @@ import { DiscordChannelModule } from '../discord-channel/discord-channel.module'
   imports: [DiscordChannelModule],
   controllers: [LibraryController, PublicLibraryController],
   providers: [LibraryService, SteamSyncService, PrismaService],
-  exports: [SteamSyncService],
+  exports: [LibraryService, SteamSyncService],
 })
 export class LibraryModule {}

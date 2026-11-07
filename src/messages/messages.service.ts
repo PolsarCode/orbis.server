@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConversationStatus, Prisma } from '../../prisma/generated/client';
 import { PrismaService } from '../prisma.service';
-import { Author, author } from '../common/author';
+import { Author, author, deletedAuthor } from '../common/author';
 import { isUniqueViolation } from '../common/prisma-errors';
 import { MAX_INT } from '../communities/community-member.guard';
 import { PresenceGateway } from '../friends/presence.gateway';
@@ -18,6 +18,7 @@ import {
 } from './conversation';
 import { blockedWith, isBlocked } from '../safety/blocks';
 import { friendIdsAmong } from '../friends/friend-ids';
+import { notDeleting } from '../users/suspension';
 
 const conversationSelect = {
   id: true,
@@ -72,6 +73,7 @@ export type ChatPerson = {
   username: string;
   name: string | null;
   avatarUrl: string | null;
+  deleted?: true;
 };
 
 const BLOCKED = { kind: 'blocked' } as const;
@@ -128,7 +130,24 @@ export type ChatHistory = {
 };
 
 function toPerson({ id, username, name, avatarUrl }: Author): ChatPerson {
-  return { userId: id, username, name, avatarUrl };
+  return {
+    userId: id,
+    username,
+    name,
+    avatarUrl,
+    ...(id === deletedAuthor.id && { deleted: true }),
+  };
+}
+
+function canMessageIn(
+  conversation: LoadedConversation,
+  others: Author[],
+  blocked: ReadonlySet<number>,
+) {
+  return (
+    conversation.isGroup ||
+    !others.some(({ id }) => id === deletedAuthor.id || blocked.has(id))
+  );
 }
 
 function displayName({ name, username }: Author) {
@@ -190,7 +209,7 @@ function othersOf(conversation: LoadedConversation, userId: number) {
       conversation.userA?.id === userId
         ? conversation.userB
         : conversation.userA;
-    return other ? [other] : [];
+    return [other ?? deletedAuthor];
   }
   return conversation.members
     .filter((member) => member.userId !== userId)
@@ -224,8 +243,7 @@ function entryFor(
     unread: mine.unread,
     status: mine.status,
     muted: mine.mutedAt !== null,
-    canMessage:
-      conversation.isGroup || !others.some(({ id }) => blocked.has(id)),
+    canMessage: canMessageIn(conversation, others, blocked),
   };
 }
 
@@ -374,8 +392,7 @@ export class MessagesService {
       })),
       hasMore: page.length > MESSAGE_PAGE_SIZE,
       muted: mine.mutedAt !== null,
-      canMessage:
-        conversation.isGroup || !others.some(({ id }) => blocked.has(id)),
+      canMessage: canMessageIn(conversation, others, blocked),
     };
   }
 
@@ -649,6 +666,118 @@ export class MessagesService {
     await this.broadcast(id, message);
   }
 
+  async removeUser(userId: number) {
+    const conversations = await this.prisma.conversation.findMany({
+      where: {
+        OR: [
+          { userAId: userId },
+          { userBId: userId },
+          { creatorId: userId },
+          { members: { some: { userId } } },
+          { messages: { some: { senderId: userId } } },
+        ],
+      },
+      select: {
+        id: true,
+        isGroup: true,
+        creatorId: true,
+        userAId: true,
+        userBId: true,
+        members: {
+          where: { userId: { not: userId } },
+          orderBy: [{ status: 'asc' }, { joinedAt: 'asc' }, { userId: 'asc' }],
+          select: { userId: true, unread: true },
+        },
+      },
+    });
+    for (const conversation of conversations) {
+      await this.removeFrom(userId, conversation);
+    }
+  }
+
+  private async removeFrom(
+    userId: number,
+    conversation: {
+      id: number;
+      isGroup: boolean;
+      creatorId: number | null;
+      userAId: number | null;
+      userBId: number | null;
+      members: { userId: number; unread: number }[];
+    },
+  ) {
+    const { id, isGroup, creatorId, members } = conversation;
+    const others = members.map((member) => member.userId);
+    const kept = await this.prisma.$transaction(async (tx) => {
+      if (members.length === 0) {
+        await tx.conversation.delete({ where: { id } });
+        return false;
+      }
+      for (const member of members) {
+        if (member.unread === 0) continue;
+        const unread = await tx.message.findMany({
+          where: {
+            conversationId: id,
+            system: false,
+            senderId: { not: member.userId },
+          },
+          orderBy: { id: 'desc' },
+          take: member.unread,
+          select: { senderId: true },
+        });
+        const theirs = unread.filter(
+          ({ senderId }) => senderId === userId,
+        ).length;
+        if (theirs === 0) continue;
+        await tx.conversationMember.update({
+          where: {
+            conversationId_userId: {
+              conversationId: id,
+              userId: member.userId,
+            },
+          },
+          data: { unread: { decrement: theirs } },
+        });
+      }
+      await tx.message.deleteMany({
+        where: { conversationId: id, senderId: userId },
+      });
+      await tx.conversationMember.deleteMany({
+        where: { conversationId: id, userId },
+      });
+      const latest = await tx.message.findFirst({
+        where: { conversationId: id },
+        orderBy: { id: 'desc' },
+        select: { text: true, senderId: true, system: true, createdAt: true },
+      });
+      if (!isGroup && !latest) {
+        await tx.conversation.delete({ where: { id } });
+        return false;
+      }
+      await tx.conversation.update({
+        where: { id },
+        data: {
+          ...(isGroup && creatorId === userId && { creatorId: others[0] }),
+          ...(conversation.userAId === userId && { userAId: null }),
+          ...(conversation.userBId === userId && { userBId: null }),
+          ...(latest
+            ? {
+                lastText: latest.text,
+                lastSenderId: latest.senderId,
+                lastSystem: latest.system,
+                lastMessageAt: latest.createdAt,
+              }
+            : { lastText: '', lastSenderId: null, lastSystem: false }),
+        },
+      });
+      return true;
+    });
+    if (kept) await this.broadcast(id);
+    else if (others.length > 0) {
+      this.presence.notify(others, 'conversation:removed', { id });
+    }
+  }
+
   async typing(userId: number, id: number, typing: boolean) {
     if (id < 1 || id > MAX_INT) return;
     const conversation = await this.prisma.conversation.findUnique({
@@ -828,6 +957,9 @@ export class MessagesService {
     const other = conversation.isGroup
       ? null
       : (othersOf(conversation, userId)[0] ?? null);
+    if (other?.id === deletedAuthor.id) {
+      throw new ForbiddenException('You can’t message a deleted account');
+    }
     if (other && (await isBlocked(this.prisma, userId, other.id))) {
       throw new ForbiddenException('You can’t message this person');
     }
@@ -891,7 +1023,7 @@ export class MessagesService {
       throw new NotFoundException('User not found');
     }
     const people = await this.prisma.user.findMany({
-      where: { id: { in: userIds } },
+      where: { id: { in: userIds }, ...notDeleting },
       ...author,
     });
     if (people.length !== new Set(userIds).size) {

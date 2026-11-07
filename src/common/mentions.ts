@@ -84,11 +84,13 @@ export async function resolveMentions(
 
   const users = await prisma.user.findMany({
     where: { username: { in: usernames }, ...notBlockedWith(authorId) },
-    select: { id: true, username: true },
+    select: { id: true, username: true, deleteAt: true },
   });
   return {
     html: linkMentions(html, new Set(users.map(({ username }) => username))),
-    mentioned: users.filter(({ id }) => id !== authorId),
+    mentioned: users
+      .filter(({ id, deleteAt }) => id !== authorId && !deleteAt)
+      .map(({ id, username }) => ({ id, username })),
   };
 }
 

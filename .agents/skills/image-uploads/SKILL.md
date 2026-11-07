@@ -12,4 +12,4 @@ Every uploaded image goes through `StorageService.uploadImage` (`src/storage/sto
 1. Use `FileInterceptor('file', { limits: { fileSize: IMAGE_MAX_BYTES } })` on the route.
 2. Call `StorageService.uploadImage` with a `maxSize` that fits where the image is shown. Current sizes: avatars 384, community icons 512, covers 1600, backgrounds 1920.
 3. Use a folder named for the image's purpose, for example `avatars` or `user-covers`.
-4. When an image is replaced or removed, delete the old file with `StorageService.delete`, using `keyFor` to get its key.
+4. When an image is replaced or removed, delete the old file with `StorageService.deleteUrl`, which finds its key with `keyFor` and deletes it with `StorageService.delete`.

@@ -96,11 +96,27 @@ describe('Mentions', () => {
         blocksMade: { none: { blockedId: 1 } },
         blocksReceived: { none: { blockerId: 1 } },
       },
-      select: { id: true, username: true },
+      select: { id: true, username: true, deleteAt: true },
     });
     expect(html).toBe(
       '<p><a href="/users/naruto" class="mention">@naruto</a> @sasuke</p>',
     );
+    expect(mentioned).toEqual([{ id: 5, username: 'naruto' }]);
+  });
+
+  it('links but doesn’t notify someone whose account is waiting to be deleted', async () => {
+    prisma.user.findMany.mockResolvedValue([
+      { id: 5, username: 'naruto', deleteAt: null },
+      { id: 6, username: 'sasuke', deleteAt: new Date('2026-12-07T00:00:00Z') },
+    ]);
+
+    const { html, mentioned } = await resolveMentions(
+      prisma as unknown as PrismaService,
+      '<p>@naruto @sasuke</p>',
+      1,
+    );
+
+    expect(html).toContain('href="/users/sasuke"');
     expect(mentioned).toEqual([{ id: 5, username: 'naruto' }]);
   });
 

@@ -34,7 +34,7 @@ import {
 } from '../../discord-channel/discord-channel.service';
 
 export type OAuthResult =
-  | { access_token: string }
+  | { access_token: string; restored?: boolean }
   | { signup: { token: string; username: string; avatarUrl: string | null } }
   | { linked: AuthProvider; avatar?: { url: string; token: string } }
   | {

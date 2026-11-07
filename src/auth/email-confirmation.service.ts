@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma.service';
-import { sendEmail } from '../common/email';
+import { sendEmail, sendInBackground } from '../common/email';
 import { webUrl } from '../common/web-url';
 import { confirmationEmail } from './confirmation-email';
 
@@ -29,20 +29,22 @@ export class EmailConfirmationService {
     private jwt: JwtService,
   ) {}
 
-  async send(user: { id: number; email: string }) {
+  private email(user: { id: number; email: string }) {
     const claims: ConfirmClaims = { uid: user.id, email: user.email };
     const token = this.jwt.sign(claims, {
       secret: confirmSecret(),
       expiresIn: '24h',
     });
     const link = `${webUrl()}/confirm-email?token=${encodeURIComponent(token)}`;
-    await sendEmail({ to: user.email, ...confirmationEmail(link) });
+    return { to: user.email, ...confirmationEmail(link) };
+  }
+
+  async send(user: { id: number; email: string }) {
+    await sendEmail(this.email(user));
   }
 
   sendInBackground(user: { id: number; email: string }) {
-    this.send(user).catch((error: Error) =>
-      this.logger.error(`Couldn’t send a confirmation email: ${error.message}`),
-    );
+    sendInBackground(this.email(user));
   }
 
   async confirm(token: string) {

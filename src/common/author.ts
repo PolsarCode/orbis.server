@@ -6,6 +6,13 @@ export const author = {
 
 export type Author = Prisma.UserGetPayload<typeof author>;
 
+export const deletedAuthor: Author = {
+  id: 0,
+  username: '',
+  name: null,
+  avatarUrl: null,
+};
+
 export const presenceUser = {
   select: {
     id: true,

@@ -23,6 +23,7 @@ import { requireUserNamed } from './user-lookup';
 import { isHeadAdmin, isHeadAdminAccount, isSiteAdmin } from './head-admin';
 import {
   activeSuspension,
+  notDeleting,
   notSuspended,
   SUSPENSION_DAYS,
   suspensionFields,
@@ -327,9 +328,7 @@ export class UsersService {
       select: profile,
     });
 
-    const previousKey =
-      previous?.[field] && this.storage.keyFor(previous[field]);
-    if (previousKey) await this.storage.delete(previousKey).catch(() => {});
+    await this.storage.deleteUrl(previous?.[field] ?? null);
 
     return toProfile(user);
   }
@@ -372,51 +371,56 @@ export class UsersService {
       })[];
     }
   > {
-    const user = await requireUserNamed(this.prisma, username, {
-      id: true,
-      username: true,
-      name: true,
-      avatarUrl: true,
-      coverUrl: true,
-      backgroundUrl: true,
-      email: true,
-      isAdmin: true,
-      isVerified: true,
-      appearOffline: true,
-      status: true,
-      isPublic: true,
-      createdAt: true,
-      oauthAccounts: {
-        where: { provider: 'twitch' },
-        select: {
-          username: true,
-          providerAccountId: true,
-          showLive: true,
-          showClips: true,
+    const user = await requireUserNamed(
+      this.prisma,
+      username,
+      {
+        id: true,
+        username: true,
+        name: true,
+        avatarUrl: true,
+        coverUrl: true,
+        backgroundUrl: true,
+        email: true,
+        isAdmin: true,
+        isVerified: true,
+        appearOffline: true,
+        status: true,
+        isPublic: true,
+        createdAt: true,
+        oauthAccounts: {
+          where: { provider: 'twitch' },
+          select: {
+            username: true,
+            providerAccountId: true,
+            showLive: true,
+            showClips: true,
+          },
         },
-      },
-      memberships: {
-        orderBy: { joinedAt: 'asc' },
-        select: {
-          community: {
-            select: {
-              id: true,
-              name: true,
-              iconUrl: true,
-              coverUrl: true,
-              isVerified: true,
-              ownerId: true,
-              isPublic: true,
-              _count: { select: { memberships: true } },
-              memberships: {
-                where: { userId: viewerId },
-                select: { userId: true },
+        memberships: {
+          orderBy: { joinedAt: 'asc' },
+          select: {
+            community: {
+              select: {
+                id: true,
+                name: true,
+                iconUrl: true,
+                coverUrl: true,
+                isVerified: true,
+                ownerId: true,
+                isPublic: true,
+                _count: { select: { memberships: true } },
+                memberships: {
+                  where: { userId: viewerId },
+                  select: { userId: true },
+                },
               },
             },
           },
         },
       },
-    });
+      notDeleting,
+    );
 
     const { blocking, blockedBy } = await blockState(
       this.prisma,
@@ -468,8 +472,8 @@ export class UsersService {
         where: {
           status: 'accepted',
           OR: [{ requesterId: user.id }, { addresseeId: user.id }],
-          requester: notBlockedWith(viewerId),
-          addressee: notBlockedWith(viewerId),
+          requester: { ...notDeleting, ...notBlockedWith(viewerId) },
+          addressee: { ...notDeleting, ...notBlockedWith(viewerId) },
         },
         orderBy: { createdAt: 'desc' },
         select: { requester: presenceUser, addressee: presenceUser },

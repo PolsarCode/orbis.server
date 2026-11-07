@@ -81,7 +81,7 @@ model Comment {
   commentableType CommentableType
   commentableId   Int
   parentId        Int?
-  authorId        Int
+  authorId        Int?
   content         String
   linkUrl         String?
   spoiler         String?
@@ -91,7 +91,7 @@ model Comment {
   deletedAt       DateTime?
   createdAt       DateTime        @default(now())
   community       Community?      @relation(fields: [communityId], references: [id], onDelete: Cascade)
-  author          User            @relation(fields: [authorId], references: [id])
+  author          User?           @relation(fields: [authorId], references: [id], onDelete: SetNull)
   parent          Comment?        @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
   replies         Comment[]       @relation("CommentReplies")
   hashtagUsages   HashtagUsage[]

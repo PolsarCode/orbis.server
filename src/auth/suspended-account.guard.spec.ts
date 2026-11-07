@@ -1,4 +1,8 @@
-import { ExecutionContext, ForbiddenException } from '@nestjs/common';
+import {
+  ExecutionContext,
+  ForbiddenException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { SuspendedAccountGuard } from './suspended-account.guard';
 import { PrismaService } from '../prisma.service';
@@ -58,5 +62,40 @@ describe('SuspendedAccountGuard', () => {
       guard.canActivate(context('GET', 'Bearer not-a-token')),
     ).resolves.toBe(true);
     expect(prisma.user.findUnique).not.toHaveBeenCalled();
+  });
+
+  it('signs out an account waiting to be deleted, on every request', async () => {
+    prisma.user.findUnique.mockResolvedValue({
+      suspendedAt: null,
+      suspendedUntil: null,
+      suspensionReason: null,
+      deleteAt: new Date('2026-12-07T00:00:00Z'),
+      sessionsRevokedAt: new Date('2026-11-07T00:00:00Z'),
+    });
+
+    await expect(
+      guard.canActivate(context('GET', `Bearer ${token}`)),
+    ).rejects.toThrow(UnauthorizedException);
+  });
+
+  it('keeps old tokens out after a cancelled deletion but lets new sign-ins in', async () => {
+    const signer = new JwtService({ secret: 'test-secret' });
+    const revokedAt = new Date('2026-11-07T12:00:00Z');
+    prisma.user.findUnique.mockResolvedValue({
+      suspendedAt: null,
+      suspendedUntil: null,
+      suspensionReason: null,
+      deleteAt: null,
+      sessionsRevokedAt: revokedAt,
+    });
+    const issued = (time: number) =>
+      `Bearer ${signer.sign({ sub: 7, iat: Math.floor(time / 1000) })}`;
+
+    await expect(
+      guard.canActivate(context('GET', issued(revokedAt.getTime() - 60_000))),
+    ).rejects.toThrow(UnauthorizedException);
+    await expect(
+      guard.canActivate(context('GET', issued(revokedAt.getTime() + 60_000))),
+    ).resolves.toBe(true);
   });
 });

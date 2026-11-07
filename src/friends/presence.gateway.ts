@@ -12,7 +12,7 @@ import { Subject } from 'rxjs';
 import { Server, Socket } from 'socket.io';
 import type { UserStatus } from '../../prisma/generated/client';
 import { PrismaService } from '../prisma.service';
-import { isSuspended, suspensionFields } from '../users/suspension';
+import { isSuspended, sessionEnded, sessionFields } from '../users/suspension';
 import { notBlockedWith } from '../safety/blocks';
 
 const room = (userId: number) => `user:${userId}`;
@@ -45,8 +45,9 @@ export class PresenceGateway
 
   async handleConnection(client: Socket) {
     let userId: number;
+    let issuedAt: number | undefined;
     try {
-      ({ sub: userId } = await this.jwt.verifyAsync(
+      ({ sub: userId, iat: issuedAt } = await this.jwt.verifyAsync(
         client.handshake.auth?.token,
       ));
     } catch {
@@ -56,9 +57,9 @@ export class PresenceGateway
 
     const account = await this.prisma.user.findUnique({
       where: { id: userId },
-      select: suspensionFields,
+      select: sessionFields,
     });
-    if (account && isSuspended(account)) {
+    if (account && (isSuspended(account) || sessionEnded(account, issuedAt))) {
       client.disconnect(true);
       return;
     }

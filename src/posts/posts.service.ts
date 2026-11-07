@@ -79,7 +79,7 @@ import {
   recordEdit,
   requireLatest,
 } from '../common/edit-history';
-import { notSuspended } from '../users/suspension';
+import { notDeleting, notSuspended } from '../users/suspension';
 import { pinLimit, pinLimitMessage } from './pins';
 import {
   AuthorModeration,
@@ -1739,10 +1739,12 @@ export class PostsService {
   }
 
   private async viewableProfile(viewerId: number, username: string) {
-    const owner = await requireUserNamed(this.prisma, username, {
-      id: true,
-      isPublic: true,
-    });
+    const owner = await requireUserNamed(
+      this.prisma,
+      username,
+      { id: true, isPublic: true },
+      notDeleting,
+    );
     const { blocking, blockedBy } = await blockState(
       this.prisma,
       viewerId,
@@ -1761,10 +1763,12 @@ export class PostsService {
     authorId: number,
     body: CreatePostDto,
   ): Promise<PostItem> {
-    const owner = await requireUserNamed(this.prisma, username, {
-      id: true,
-      username: true,
-    });
+    const owner = await requireUserNamed(
+      this.prisma,
+      username,
+      { id: true, username: true },
+      notDeleting,
+    );
     await requireWallAccess(this.prisma, authorId, owner.id);
     if (body.quote && owner.id !== authorId) {
       throw new ForbiddenException('You can’t post there');

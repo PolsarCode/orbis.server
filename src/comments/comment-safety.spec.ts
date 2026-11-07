@@ -91,10 +91,38 @@ describe('Blocked and muted people in comment threads', () => {
     likes.likedBy.mockResolvedValue(new Set());
   });
 
+  it('keeps a deleted account’s placeholder so replies stay under it', async () => {
+    prisma.comment.findMany.mockResolvedValue([
+      comment(5, 0, {
+        author: null,
+        content: '',
+        deletedAt: new Date('2026-11-02T00:00:00Z'),
+      }),
+      comment(6, 2, { parentId: 5 }),
+    ]);
+
+    const comments = await service.list(1, 'post', 7);
+
+    expect(prisma.comment.findMany.mock.calls[0][0].where.OR[0]).toEqual({
+      authorId: null,
+      deletedAt: { not: null },
+    });
+    expect(comments[0]).toMatchObject({
+      id: 5,
+      deleted: true,
+      canDelete: false,
+      content: '',
+      author: { id: 0, username: '', name: null, avatarUrl: null },
+    });
+    expect(comments[1]).toMatchObject({ id: 6, parentId: 5, deleted: false });
+  });
+
   it('leaves out comments from people blocked either way', async () => {
     await service.list(1, 'post', 7);
 
-    expect(prisma.comment.findMany.mock.calls[0][0].where.AND).toContainEqual({
+    expect(
+      prisma.comment.findMany.mock.calls[0][0].where.OR[1].AND,
+    ).toContainEqual({
       OR: [
         {
           author: {
@@ -209,7 +237,9 @@ describe('Blocked and muted people in comment threads', () => {
     await service.list(1, 'post', 7);
 
     expect(prisma.block.count).toHaveBeenCalledWith(ownerBlocks([2], false));
-    expect(prisma.comment.findMany.mock.calls[0][0].where.AND).toContainEqual({
+    expect(
+      prisma.comment.findMany.mock.calls[0][0].where.OR[1].AND,
+    ).toContainEqual({
       OR: [
         { author: { blocksReceived: { none: { blockerId: 1 } } } },
         { authorId: 1 },
@@ -229,7 +259,9 @@ describe('Blocked and muted people in comment threads', () => {
     await service.list(1, 'post', 7);
 
     expect(prisma.block.count).toHaveBeenCalledWith(ownerBlocks([2], false));
-    expect(prisma.comment.findMany.mock.calls[0][0].where.AND).toContainEqual({
+    expect(
+      prisma.comment.findMany.mock.calls[0][0].where.OR[1].AND,
+    ).toContainEqual({
       OR: [
         {
           author: {

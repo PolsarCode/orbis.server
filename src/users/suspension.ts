@@ -1,4 +1,4 @@
-import { ForbiddenException } from '@nestjs/common';
+import { ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import type { Prisma } from '../../prisma/generated/client';
 import type { PrismaService } from '../prisma.service';
 
@@ -30,8 +30,11 @@ export function isSuspended(
   );
 }
 
+export const notDeleting = { deleteAt: null } satisfies Prisma.UserWhereInput;
+
 export function notSuspended(now = new Date()) {
   return {
+    ...notDeleting,
     OR: [{ suspendedAt: null }, { suspendedUntil: { lte: now } }],
   } satisfies Prisma.UserWhereInput;
 }
@@ -72,4 +75,35 @@ export async function ensureNotSuspended(
     select: suspensionFields,
   });
   if (user && isSuspended(user)) throw suspendedException(user);
+}
+
+export const sessionFields = {
+  ...suspensionFields,
+  deleteAt: true,
+  sessionsRevokedAt: true,
+} satisfies Prisma.UserSelect;
+
+export function sessionEnded(
+  user: { deleteAt: Date | null; sessionsRevokedAt: Date | null },
+  issuedAt = 0,
+) {
+  if (user.deleteAt) return true;
+  return (
+    Boolean(user.sessionsRevokedAt) &&
+    issuedAt < Math.floor(user.sessionsRevokedAt.getTime() / 1000)
+  );
+}
+
+export async function ensureActiveSession(
+  prisma: PrismaService,
+  userId: number,
+  issuedAt?: number,
+) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: sessionFields,
+  });
+  if (!user) return;
+  if (sessionEnded(user, issuedAt)) throw new UnauthorizedException();
+  if (isSuspended(user)) throw suspendedException(user);
 }

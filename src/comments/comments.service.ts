@@ -11,7 +11,12 @@ import {
   MediaType,
   Prisma,
 } from '../../prisma/generated/client';
-import { Author, author, communitySummary } from '../common/author';
+import {
+  Author,
+  author,
+  communitySummary,
+  deletedAuthor,
+} from '../common/author';
 import { sanitizeRichText } from '../common/rich-text';
 import {
   linkedMentions,
@@ -160,9 +165,14 @@ export class CommentsService {
       where: {
         commentableType,
         commentableId: id,
-        AND: [
-          { OR: [{ author: notSuspended() }, { authorId: userId }] },
-          unblockedFor(viewer),
+        OR: [
+          { authorId: null, deletedAt: { not: null } },
+          {
+            AND: [
+              { OR: [{ author: notSuspended() }, { authorId: userId }] },
+              unblockedFor(viewer),
+            ],
+          },
         ],
       },
       orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
@@ -349,7 +359,7 @@ export class CommentsService {
         this.prisma,
         rows.map(({ communityId, comment }) => ({
           communityId,
-          userId: comment.author.id,
+          userId: comment.author?.id ?? deletedAuthor.id,
         })),
       ),
       managedCommunities(
@@ -360,7 +370,8 @@ export class CommentsService {
     ]);
     const reportedIds = new Set(viewer.reported.comment);
 
-    return rows.map(({ communityId, comment }) => {
+    return rows.map(({ communityId, comment: row }) => {
+      const comment = { ...row, author: row.author ?? deletedAuthor };
       const own = comment.author.id === userId;
       const deleted = comment.deletedAt !== null;
       const hidden = deleted
@@ -421,7 +432,7 @@ export class CommentsService {
         where: { id: parentId },
         select: { commentableType: true, commentableId: true, authorId: true },
       });
-      parentAuthorId = parent?.authorId;
+      parentAuthorId = parent?.authorId ?? undefined;
       if (parent?.commentableType !== type || parent.commentableId !== id) {
         throw new BadRequestException('Invalid parent comment');
       }

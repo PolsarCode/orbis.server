@@ -127,6 +127,7 @@ describe('Who can see a saved post', () => {
           OR: [
             {
               author: {
+                deleteAt: null,
                 OR: [
                   { suspendedAt: null },
                   { suspendedUntil: { lte: expect.any(Date) } },

@@ -1,5 +1,10 @@
 import { ForbiddenException } from '@nestjs/common';
-import { isSuspended, suspendedException } from './suspension';
+import {
+  isSuspended,
+  notSuspended,
+  sessionEnded,
+  suspendedException,
+} from './suspension';
 
 describe('Account suspensions', () => {
   const now = new Date('2026-10-30T12:00:00Z');
@@ -42,5 +47,40 @@ describe('Account suspensions', () => {
       code: 'account_suspended',
       message: 'This account has been banned',
     });
+  });
+
+  it('hides accounts waiting to be deleted wherever suspended ones are hidden', () => {
+    expect(notSuspended(now)).toEqual({
+      deleteAt: null,
+      OR: [{ suspendedAt: null }, { suspendedUntil: { lte: now } }],
+    });
+  });
+});
+
+describe('Ended sessions', () => {
+  const revokedAt = new Date('2026-11-07T12:00:00.500Z');
+  const seconds = (iso: string) => new Date(iso).getTime() / 1000;
+
+  it('ends every session while the account waits to be deleted', () => {
+    expect(
+      sessionEnded(
+        { deleteAt: new Date('2026-12-07T12:00:00Z'), sessionsRevokedAt: null },
+        seconds('2026-11-08T00:00:00Z'),
+      ),
+    ).toBe(true);
+  });
+
+  it('keeps tokens from before a sign-out everywhere ended, even after the deletion is cancelled', () => {
+    const account = { deleteAt: null, sessionsRevokedAt: revokedAt };
+
+    expect(sessionEnded(account, seconds('2026-11-07T11:59:59Z'))).toBe(true);
+    expect(sessionEnded(account, seconds('2026-11-07T12:00:00Z'))).toBe(false);
+    expect(sessionEnded(account, seconds('2026-11-08T09:00:00Z'))).toBe(false);
+  });
+
+  it('leaves accounts that never signed out everywhere alone', () => {
+    expect(sessionEnded({ deleteAt: null, sessionsRevokedAt: null }, 0)).toBe(
+      false,
+    );
   });
 });

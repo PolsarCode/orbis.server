@@ -132,6 +132,7 @@ describe('Profiles across a block or mute', () => {
 
     expect(profile).toMatchObject({ blocked: false, muted: false });
     const notBlocked = {
+      deleteAt: null,
       blocksMade: { none: { blockedId: 1 } },
       blocksReceived: { none: { blockerId: 1 } },
     };

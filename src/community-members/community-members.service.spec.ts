@@ -212,4 +212,24 @@ describe('Banning', () => {
       ForbiddenException,
     );
   });
+
+  it('keeps listing a ban after the admin who issued it deleted their account', async () => {
+    const { prisma, service } = setup();
+    const ban = {
+      reason: 'Spam',
+      createdAt: new Date('2026-11-01T00:00:00Z'),
+      user: { id: STRANGER, username: 'stranger', name: null, avatarUrl: null },
+      bannedBy: null,
+    };
+    prisma.communityBan.findMany.mockResolvedValue([ban]);
+
+    await expect(service.bans(OWNER, 9)).resolves.toEqual([ban]);
+    expect(prisma.communityBan.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        select: expect.objectContaining({
+          bannedBy: { select: expect.objectContaining({ username: true }) },
+        }),
+      }),
+    );
+  });
 });

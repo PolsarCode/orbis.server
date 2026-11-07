@@ -870,9 +870,9 @@ export class CommunitiesService {
         token: channel.webhookToken,
       }).catch(() => {});
     }
-    await this.deleteStoredImage(community.iconUrl);
-    await this.deleteStoredImage(community.coverUrl);
-    await this.deleteStoredImage(community.backgroundUrl);
+    await this.storage.deleteUrl(community.iconUrl);
+    await this.storage.deleteUrl(community.coverUrl);
+    await this.storage.deleteUrl(community.backgroundUrl);
   }
 
   private async replaceImage(
@@ -890,14 +890,9 @@ export class CommunitiesService {
       where: { id: communityId },
       data: { [field]: url },
     });
-    await this.deleteStoredImage(previous?.[field] ?? null);
+    await this.storage.deleteUrl(previous?.[field] ?? null);
 
     return (await this.findOne(userId, communityId))!;
-  }
-
-  private async deleteStoredImage(url: string | null) {
-    const key = url && this.storage.keyFor(url);
-    if (key) await this.storage.delete(key).catch(() => {});
   }
 
   async setAdmin(

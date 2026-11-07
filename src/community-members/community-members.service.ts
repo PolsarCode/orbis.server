@@ -13,12 +13,9 @@ import { PresenceGateway } from '../friends/presence.gateway';
 import { MAX_INT } from '../communities/community-member.guard';
 import { canActOn } from '../communities/member-moderation';
 import { author } from '../common/author';
+import { ignoreMissing } from '../common/not-found';
 
 export const COMMUNITY_REMOVED_EVENT = 'community:removed';
-
-function ignoreMissing(error: unknown) {
-  if (!(error instanceof NotFoundException)) throw error;
-}
 
 @Injectable()
 export class CommunityMembersService {

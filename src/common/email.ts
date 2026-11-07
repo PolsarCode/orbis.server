@@ -68,3 +68,9 @@ export async function sendEmail(email: Email) {
     );
   }
 }
+
+export function sendInBackground(email: Email) {
+  sendEmail(email).catch((error: Error) =>
+    logger.error(`Couldn’t send “${email.subject}”: ${error.message}`),
+  );
+}

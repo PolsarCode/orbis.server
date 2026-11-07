@@ -140,12 +140,12 @@ model DiscordMessage {
 model CommunityBan {
   communityId Int
   userId      Int
-  bannedById  Int
+  bannedById  Int?
   reason      String?
   createdAt   DateTime  @default(now())
   community   Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
   user        User      @relation("CommunityBans", fields: [userId], references: [id], onDelete: Cascade)
-  bannedBy    User      @relation("CommunityBansIssued", fields: [bannedById], references: [id], onDelete: Cascade)
+  bannedBy    User?     @relation("CommunityBansIssued", fields: [bannedById], references: [id], onDelete: SetNull)
 
   @@id([communityId, userId])
   @@index([userId])

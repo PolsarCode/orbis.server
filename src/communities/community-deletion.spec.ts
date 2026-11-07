@@ -19,7 +19,7 @@ describe('Deleting a community', () => {
     community: { delete: jest.fn() },
     $transaction: jest.fn((operations: unknown[]) => Promise.all(operations)),
   };
-  const storage = { keyFor: jest.fn(() => null), delete: jest.fn() };
+  const storage = { deleteUrl: jest.fn() };
   const service = new CommunitiesService(
     prisma as unknown as PrismaService,
     storage as unknown as StorageService,

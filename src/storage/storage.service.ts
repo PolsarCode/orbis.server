@@ -48,6 +48,11 @@ export class StorageService {
     );
   }
 
+  async deleteUrl(url: string | null): Promise<void> {
+    const key = url && this.keyFor(url);
+    if (key) await this.delete(key).catch(() => {});
+  }
+
   urlFor(key: string): string {
     return `${this.publicUrl}/${key}`;
   }

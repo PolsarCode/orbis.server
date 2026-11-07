@@ -67,7 +67,7 @@ describe('ClipsService', () => {
     await expect(service.forUser(1, 'Naruto')).resolves.toBe(clips);
     expect(prisma.user.findUnique).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { username: 'naruto' },
+        where: { username: 'naruto', deleteAt: null },
         select: expect.objectContaining({
           oauthAccounts: expect.objectContaining({
             where: { provider: 'twitch', showClips: true },

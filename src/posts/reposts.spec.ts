@@ -213,6 +213,7 @@ describe('Who can repost or quote', () => {
         {
           hiddenAt: null,
           author: {
+            deleteAt: null,
             OR: [{ suspendedAt: null }, { suspendedUntil: { lte: date } }],
           },
         },
@@ -245,6 +246,7 @@ describe('Who can repost or quote', () => {
         isAdult: false,
         user: {
           isPublic: true,
+          deleteAt: null,
           OR: [{ suspendedAt: null }, { suspendedUntil: { lte: date } }],
           blocksMade: { none: { blockedId: 1 } },
           blocksReceived: { none: { blockerId: 1 } },
@@ -1128,7 +1130,10 @@ describe('Who reposted and quoted', () => {
         isAdult: false,
         user: {
           AND: [
-            { OR: [{ suspendedAt: null }, { suspendedUntil: { lte: date } }] },
+            {
+              deleteAt: null,
+              OR: [{ suspendedAt: null }, { suspendedUntil: { lte: date } }],
+            },
             notBlocked(1),
             viewableProfiles(1),
           ],

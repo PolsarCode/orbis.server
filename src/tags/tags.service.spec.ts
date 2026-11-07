@@ -107,6 +107,7 @@ describe('Which content counts on tag pages', () => {
         OR: [
           {
             author: {
+              deleteAt: null,
               OR: [
                 { suspendedAt: null },
                 { suspendedUntil: { lte: expect.any(Date) } },
@@ -197,6 +198,7 @@ describe('Which content counts on tag pages', () => {
           isAdult: false,
           user: {
             isPublic: true,
+            deleteAt: null,
             OR: [
               { suspendedAt: null },
               { suspendedUntil: { lte: expect.any(Date) } },

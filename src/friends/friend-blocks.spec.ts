@@ -151,3 +151,31 @@ describe('Friends across a block', () => {
     ).toEqual([{ userId: 12, reason: 'In Seasonal Anime Club' }]);
   });
 });
+
+describe('People waiting for their account to be deleted', () => {
+  it('leaves them out of friend lists, people search and friend requests', async () => {
+    const { prisma, service } = setup();
+
+    await service.list(1);
+    await service.search(1, 'user');
+    await service.add(1, { username: 'user6' });
+
+    expect(prisma.friendship.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          requester: { deleteAt: null },
+          addressee: { deleteAt: null },
+        }),
+      }),
+    );
+    expect(prisma.user.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ deleteAt: null }),
+      }),
+    );
+    expect(prisma.user.findUnique).toHaveBeenCalledWith({
+      where: { username: 'user6', deleteAt: null },
+      select: { id: true },
+    });
+  });
+});

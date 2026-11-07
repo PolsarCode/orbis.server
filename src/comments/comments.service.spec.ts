@@ -141,4 +141,29 @@ describe('CommentsService.create', () => {
       skipDuplicates: true,
     });
   });
+
+  it('replies under a deleted account’s placeholder without notifying anyone for it', async () => {
+    sanitize.mockReturnValue({
+      html: '<p>Still a good point</p>',
+      empty: false,
+    });
+    prisma.comment.findUnique.mockResolvedValue({
+      commentableType: 'post',
+      commentableId: 7,
+      authorId: null,
+    });
+
+    await service.create(1, {
+      type: 'post',
+      id: 7,
+      parentId: 5,
+      content: '<p>Still a good point</p>',
+    });
+
+    const sent = notifications.notify.mock.calls.flatMap(([list]) => list);
+    expect(sent.every(({ userId }) => typeof userId === 'number')).toBe(true);
+    expect(sent).toEqual([
+      expect.objectContaining({ userId: 2, type: 'post_comment' }),
+    ]);
+  });
 });

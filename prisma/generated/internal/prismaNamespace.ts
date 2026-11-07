@@ -3987,7 +3987,8 @@ export const ConversationMemberScalarFieldEnum = {
   status: 'status',
   unread: 'unread',
   readAt: 'readAt',
-  mutedAt: 'mutedAt'
+  mutedAt: 'mutedAt',
+  joinedAt: 'joinedAt'
 } as const
 
 export type ConversationMemberScalarFieldEnum = (typeof ConversationMemberScalarFieldEnum)[keyof typeof ConversationMemberScalarFieldEnum]
@@ -4167,6 +4168,10 @@ export const UserScalarFieldEnum = {
   suspendedAt: 'suspendedAt',
   suspendedUntil: 'suspendedUntil',
   suspensionReason: 'suspensionReason',
+  deleteAt: 'deleteAt',
+  deletionCode: 'deletionCode',
+  deletionCodeExpiresAt: 'deletionCodeExpiresAt',
+  sessionsRevokedAt: 'sessionsRevokedAt',
   suggestionSlots: 'suggestionSlots',
   suggestionSlotsAt: 'suggestionSlotsAt',
   tourCompletedAt: 'tourCompletedAt',

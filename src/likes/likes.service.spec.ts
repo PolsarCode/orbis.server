@@ -109,6 +109,7 @@ describe('Liking comments', () => {
               OR: [
                 {
                   author: {
+                    deleteAt: null,
                     OR: [
                       { suspendedAt: null },
                       { suspendedUntil: { lte: expect.any(Date) } },
@@ -227,5 +228,45 @@ describe('Liking forum posts', () => {
     await expect(
       service.setLike(1, { type: 'forum_post', id: 40, liked: true }),
     ).rejects.toBeInstanceOf(NotFoundException);
+  });
+});
+
+describe('Removing a deleted account’s likes', () => {
+  const prisma = {
+    like: { findMany: jest.fn(), deleteMany: jest.fn() },
+    post: { updateMany: jest.fn() },
+    libraryActivity: { updateMany: jest.fn() },
+    comment: { updateMany: jest.fn() },
+    forumPost: { updateMany: jest.fn() },
+    $transaction: jest.fn((operations: unknown[]) => Promise.all(operations)),
+  };
+  const service = new LikesService(prisma as unknown as PrismaService);
+
+  it('takes each like off the count it added to, then removes the likes', async () => {
+    prisma.like.findMany.mockResolvedValue([
+      { likeableType: 'post', likeableId: 3 },
+      { likeableType: 'post', likeableId: 4 },
+      { likeableType: 'comment', likeableId: 9 },
+      { likeableType: 'forum_post', likeableId: 12 },
+    ]);
+
+    await service.removeAllBy(7);
+
+    const fewer = (ids: number[]) => ({
+      where: { id: { in: ids } },
+      data: { likeCount: { decrement: 1 } },
+    });
+    expect(prisma.like.findMany).toHaveBeenCalledWith({
+      where: { userId: 7 },
+      select: { likeableType: true, likeableId: true },
+    });
+    expect(prisma.post.updateMany).toHaveBeenCalledWith(fewer([3, 4]));
+    expect(prisma.libraryActivity.updateMany).toHaveBeenCalledWith(fewer([]));
+    expect(prisma.comment.updateMany).toHaveBeenCalledWith(fewer([9]));
+    expect(prisma.forumPost.updateMany).toHaveBeenCalledWith(fewer([12]));
+    expect(prisma.like.deleteMany).toHaveBeenCalledWith({
+      where: { userId: 7 },
+    });
+    expect(prisma.$transaction).toHaveBeenCalledTimes(1);
   });
 });

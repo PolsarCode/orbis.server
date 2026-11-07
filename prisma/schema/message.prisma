@@ -16,8 +16,8 @@ model Conversation {
   lastMessageAt DateTime             @default(now())
   createdAt     DateTime             @default(now())
   creator       User?                @relation("ConversationCreator", fields: [creatorId], references: [id], onDelete: SetNull)
-  userA         User?                @relation("ConversationUserA", fields: [userAId], references: [id], onDelete: Cascade)
-  userB         User?                @relation("ConversationUserB", fields: [userBId], references: [id], onDelete: Cascade)
+  userA         User?                @relation("ConversationUserA", fields: [userAId], references: [id], onDelete: SetNull)
+  userB         User?                @relation("ConversationUserB", fields: [userBId], references: [id], onDelete: SetNull)
   members       ConversationMember[]
   messages      Message[]
 
@@ -33,6 +33,7 @@ model ConversationMember {
   unread         Int                @default(0)
   readAt         DateTime?
   mutedAt        DateTime?
+  joinedAt       DateTime           @default(now())
   conversation   Conversation       @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
 

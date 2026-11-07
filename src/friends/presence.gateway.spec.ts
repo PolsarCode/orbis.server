@@ -45,6 +45,32 @@ describe('PresenceGateway', () => {
     expect(gateway.statusOf(7, visible)).toBe('offline');
   });
 
+  it('turns away an account waiting to be deleted and tokens from before signing out everywhere', async () => {
+    const account = {
+      suspendedAt: null,
+      suspendedUntil: null,
+      suspensionReason: null,
+    };
+    prisma.user.findUnique.mockResolvedValueOnce({
+      ...account,
+      deleteAt: new Date('2026-12-07T00:00:00Z'),
+      sessionsRevokedAt: new Date('2026-11-07T00:00:00Z'),
+    });
+    expect((await connect()).disconnect).toHaveBeenCalledWith(true);
+
+    jwt.verifyAsync.mockResolvedValueOnce({
+      sub: 7,
+      iat: new Date('2026-11-06T00:00:00Z').getTime() / 1000,
+    });
+    prisma.user.findUnique.mockResolvedValueOnce({
+      ...account,
+      deleteAt: null,
+      sessionsRevokedAt: new Date('2026-11-07T00:00:00Z'),
+    });
+    expect((await connect()).disconnect).toHaveBeenCalledWith(true);
+    expect(gateway.statusOf(7, visible)).toBe('offline');
+  });
+
   it('is offline without a connection or when appearing offline', async () => {
     expect(gateway.statusOf(7, visible)).toBe('offline');
 

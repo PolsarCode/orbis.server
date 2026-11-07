@@ -14,7 +14,7 @@ import { friendshipBetween } from './friend-ids';
 import { NotificationsService } from '../notifications/notifications.service';
 import type { Prisma } from '../../prisma/generated/client';
 import { nsfwEntries, showsNsfw } from '../users/nsfw';
-import { notSuspended } from '../users/suspension';
+import { notDeleting, notSuspended } from '../users/suspension';
 import { blockedWith, isBlocked, notBlockedWith } from '../safety/blocks';
 import {
   MUTUAL_PREVIEW,
@@ -94,7 +94,11 @@ export class FriendsService {
 
   async list(userId: number): Promise<FriendList> {
     const friendships = await this.prisma.friendship.findMany({
-      where: { OR: [{ requesterId: userId }, { addresseeId: userId }] },
+      where: {
+        OR: [{ requesterId: userId }, { addresseeId: userId }],
+        requester: notDeleting,
+        addressee: notDeleting,
+      },
       orderBy: { createdAt: 'desc' },
       include: { requester: person, addressee: person },
     });
@@ -142,6 +146,7 @@ export class FriendsService {
     const users = await this.prisma.user.findMany({
       where: {
         id: { not: userId },
+        ...notDeleting,
         ...notBlockedWith(userId),
         OR: [
           { username: { contains: q, mode: 'insensitive' } },
@@ -384,10 +389,12 @@ export class FriendsService {
     { userId: targetId, username, fromSuggestion }: AddFriendDto,
   ) {
     const target = await this.prisma.user.findUnique({
-      where:
-        targetId !== undefined
+      where: {
+        ...(targetId !== undefined
           ? { id: targetId }
-          : { username: normalizeUsername(username!) },
+          : { username: normalizeUsername(username!) }),
+        ...notDeleting,
+      },
       select: { id: true },
     });
 

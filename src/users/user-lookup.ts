@@ -7,9 +7,10 @@ export async function requireUserNamed<S extends Prisma.UserSelect>(
   prisma: PrismaService,
   username: string,
   select: S,
+  where: Pick<Prisma.UserWhereInput, 'deleteAt'> = {},
 ) {
   const user = await prisma.user.findUnique({
-    where: { username: normalizeUsername(username) },
+    where: { username: normalizeUsername(username), ...where },
     select,
   });
   if (!user) throw new NotFoundException('User not found');

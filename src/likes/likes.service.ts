@@ -113,4 +113,28 @@ export class LikesService {
       return { likeCount, liked };
     });
   }
+
+  async removeAllBy(userId: number) {
+    const likes = await this.prisma.like.findMany({
+      where: { userId },
+      select: { likeableType: true, likeableId: true },
+    });
+    const fewer = (type: LikeableType) => ({
+      where: {
+        id: {
+          in: likes.flatMap((like) =>
+            like.likeableType === type ? [like.likeableId] : [],
+          ),
+        },
+      },
+      data: { likeCount: { decrement: 1 } },
+    });
+    await this.prisma.$transaction([
+      this.prisma.post.updateMany(fewer('post')),
+      this.prisma.libraryActivity.updateMany(fewer('activity')),
+      this.prisma.comment.updateMany(fewer('comment')),
+      this.prisma.forumPost.updateMany(fewer('forum_post')),
+      this.prisma.like.deleteMany({ where: { userId } }),
+    ]);
+  }
 }
