@@ -1,20 +1,16 @@
 import {
   IsBoolean,
-  IsInt,
   IsOptional,
   IsString,
   Matches,
-  Max,
-  Min,
   ValidateIf,
 } from 'class-validator';
+import { IsId } from '../../common/validators';
 import { USERNAME_MESSAGE, USERNAME_PATTERN } from '../../users/username';
 
 export class AddFriendDto {
   @ValidateIf((dto: AddFriendDto) => dto.username === undefined)
-  @IsInt()
-  @Min(1)
-  @Max(2147483647)
+  @IsId()
   userId?: number;
 
   @ValidateIf((dto: AddFriendDto) => dto.userId === undefined)

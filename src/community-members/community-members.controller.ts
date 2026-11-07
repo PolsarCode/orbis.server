@@ -7,7 +7,6 @@ import {
   Param,
   ParseIntPipe,
   Put,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt.guard';
@@ -15,6 +14,7 @@ import { CommunityMemberGuard } from '../communities/community-member.guard';
 import { RateLimit, MINUTE } from '../common/throttle';
 import { CommunityMembersService } from './community-members.service';
 import { BanMemberDto } from './dto/ban-member.dto';
+import { UserId } from '../common/user-id';
 
 @Controller('communities/:communityId')
 @UseGuards(JwtAuthGuard)
@@ -26,17 +26,20 @@ export class CommunityMembersController {
   @HttpCode(204)
   @UseGuards(CommunityMemberGuard)
   remove(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
-    @Param('userId', ParseIntPipe) userId: number,
+    @Param('userId', ParseIntPipe) targetId: number,
   ) {
-    return this.members.remove(req.user.userId, communityId, userId);
+    return this.members.remove(userId, communityId, targetId);
   }
 
   @Get('bans')
   @UseGuards(CommunityMemberGuard)
-  bans(@Req() req, @Param('communityId', ParseIntPipe) communityId: number) {
-    return this.members.bans(req.user.userId, communityId);
+  bans(
+    @UserId() userId: number,
+    @Param('communityId', ParseIntPipe) communityId: number,
+  ) {
+    return this.members.bans(userId, communityId);
   }
 
   @RateLimit(30, MINUTE)
@@ -44,12 +47,12 @@ export class CommunityMembersController {
   @HttpCode(204)
   @UseGuards(CommunityMemberGuard)
   ban(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
-    @Param('userId', ParseIntPipe) userId: number,
+    @Param('userId', ParseIntPipe) targetId: number,
     @Body() { reason }: BanMemberDto,
   ) {
-    return this.members.ban(req.user.userId, communityId, userId, reason);
+    return this.members.ban(userId, communityId, targetId, reason);
   }
 
   @RateLimit(30, MINUTE)
@@ -57,10 +60,10 @@ export class CommunityMembersController {
   @HttpCode(204)
   @UseGuards(CommunityMemberGuard)
   unban(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
-    @Param('userId', ParseIntPipe) userId: number,
+    @Param('userId', ParseIntPipe) targetId: number,
   ) {
-    return this.members.unban(req.user.userId, communityId, userId);
+    return this.members.unban(userId, communityId, targetId);
   }
 }

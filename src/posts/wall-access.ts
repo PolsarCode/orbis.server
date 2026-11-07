@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma.service';
 import { MediaType, Prisma } from '../../prisma/generated/client';
 import { requireMembership } from '../communities/require-membership';
 import { blockState } from '../safety/blocks';
+import { friendshipBetween } from '../friends/friend-ids';
 
 export function friendsOf(userId: number): Prisma.UserWhereInput {
   return {
@@ -23,6 +24,18 @@ export function viewableProfiles(viewerId: number): Prisma.UserWhereInput {
   return { OR: [{ isPublic: true }, { id: viewerId }, friendsOf(viewerId)] };
 }
 
+async function areFriends(
+  prisma: PrismaService,
+  userId: number,
+  otherId: number,
+) {
+  const friendship = await prisma.friendship.findFirst({
+    where: { status: 'accepted', ...friendshipBetween(userId, otherId) },
+    select: { requesterId: true },
+  });
+  return friendship !== null;
+}
+
 export async function requireWallAccess(
   prisma: PrismaService,
   userId: number,
@@ -30,18 +43,7 @@ export async function requireWallAccess(
 ) {
   if (userId === wallUserId) return;
 
-  const friendship = await prisma.friendship.findFirst({
-    where: {
-      status: 'accepted',
-      OR: [
-        { requesterId: userId, addresseeId: wallUserId },
-        { requesterId: wallUserId, addresseeId: userId },
-      ],
-    },
-    select: { requesterId: true },
-  });
-
-  if (!friendship) {
+  if (!(await areFriends(prisma, userId, wallUserId))) {
     throw new ForbiddenException('Only friends can join in on this wall');
   }
 }
@@ -56,18 +58,7 @@ export async function canViewProfile(
   if (blocking || blockedBy) return false;
   if (owner.isPublic) return true;
 
-  const friendship = await prisma.friendship.findFirst({
-    where: {
-      status: 'accepted',
-      OR: [
-        { requesterId: viewerId, addresseeId: owner.id },
-        { requesterId: owner.id, addresseeId: viewerId },
-      ],
-    },
-    select: { requesterId: true },
-  });
-
-  return friendship !== null;
+  return areFriends(prisma, viewerId, owner.id);
 }
 
 export async function requireProfileView(

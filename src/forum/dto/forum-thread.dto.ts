@@ -1,35 +1,27 @@
-import {
-  IsInt,
-  IsOptional,
-  IsString,
-  IsUrl,
-  Max,
-  MaxLength,
-  Min,
-} from 'class-validator';
-import { SPOILER_MAX } from '../../common/spoiler';
+import { IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsId, IsLinkUrl, IsSpoiler } from '../../common/validators';
 
 export const THREAD_TITLE_MAX = 120;
 export const FORUM_POST_MAX = 20000;
 
-export class CreateForumThreadDto {
-  @IsString()
-  @MaxLength(THREAD_TITLE_MAX)
-  title: string;
-
+export class UpdateForumPostDto {
   @IsString()
   @MaxLength(FORUM_POST_MAX)
   content: string;
 
   @IsOptional()
-  @MaxLength(2048)
-  @IsUrl({ protocols: ['http', 'https'], require_protocol: true })
+  @IsLinkUrl()
   linkUrl?: string;
 
   @IsOptional()
-  @IsString()
-  @MaxLength(SPOILER_MAX)
+  @IsSpoiler()
   spoiler?: string | null;
+}
+
+export class CreateForumThreadDto extends UpdateForumPostDto {
+  @IsString()
+  @MaxLength(THREAD_TITLE_MAX)
+  title: string;
 }
 
 export class UpdateForumThreadDto {
@@ -39,9 +31,7 @@ export class UpdateForumThreadDto {
   title?: string;
 
   @IsOptional()
-  @IsInt()
-  @Min(1)
-  @Max(2147483647)
+  @IsId()
   categoryId?: number;
 }
 
@@ -51,34 +41,14 @@ export class CreateForumPostDto {
   content: string;
 
   @IsOptional()
-  @IsInt()
-  @Min(1)
-  @Max(2147483647)
+  @IsId()
   quoteId?: number;
 
   @IsOptional()
-  @MaxLength(2048)
-  @IsUrl({ protocols: ['http', 'https'], require_protocol: true })
+  @IsLinkUrl()
   linkUrl?: string;
 
   @IsOptional()
-  @IsString()
-  @MaxLength(SPOILER_MAX)
-  spoiler?: string | null;
-}
-
-export class UpdateForumPostDto {
-  @IsString()
-  @MaxLength(FORUM_POST_MAX)
-  content: string;
-
-  @IsOptional()
-  @MaxLength(2048)
-  @IsUrl({ protocols: ['http', 'https'], require_protocol: true })
-  linkUrl?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(SPOILER_MAX)
+  @IsSpoiler()
   spoiler?: string | null;
 }

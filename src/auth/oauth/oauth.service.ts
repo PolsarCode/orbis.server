@@ -9,7 +9,8 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { createHash, randomInt } from 'node:crypto';
-import { AuthProvider, Prisma } from '../../../prisma/generated/client';
+import { AuthProvider } from '../../../prisma/generated/client';
+import { isUniqueViolation } from '../../common/prisma-errors';
 import { webUrl } from '../../common/web-url';
 import { CommunitiesService } from '../../communities/communities.service';
 import { PresenceGateway } from '../../friends/presence.gateway';
@@ -125,13 +126,6 @@ function incomingWebhook(webhook: unknown): IncomingWebhook | null {
     guildId: String(fields.guild_id),
     channelId: String(fields.channel_id),
   };
-}
-
-function isUniqueViolation(error: unknown) {
-  return (
-    error instanceof Prisma.PrismaClientKnownRequestError &&
-    error.code === 'P2002'
-  );
 }
 
 @Injectable()

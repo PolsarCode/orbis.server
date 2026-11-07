@@ -6,12 +6,12 @@ import {
   ParseIntPipe,
   Post,
   Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt.guard';
 import { AllowUnconfirmed } from '../auth/confirmed-email.guard';
 import { NotificationsService } from './notifications.service';
+import { UserId } from '../common/user-id';
 
 @Controller('notifications')
 @UseGuards(JwtAuthGuard)
@@ -21,13 +21,13 @@ export class NotificationsController {
 
   @Get()
   list(
-    @Req() req,
+    @UserId() userId: number,
     @Query('cursor', new ParseIntPipe({ optional: true })) cursor?: number,
     @Query('q') q?: string,
     @Query('filter') filter?: string,
     @Query('unread') unread?: string,
   ) {
-    return this.notificationsService.list(req.user.userId, {
+    return this.notificationsService.list(userId, {
       cursor,
       q,
       filter,
@@ -36,19 +36,22 @@ export class NotificationsController {
   }
 
   @Get('unread')
-  unreadCount(@Req() req) {
-    return this.notificationsService.unreadCount(req.user.userId);
+  unreadCount(@UserId() userId: number) {
+    return this.notificationsService.unreadCount(userId);
   }
 
   @Post('read')
   @HttpCode(204)
-  markAllRead(@Req() req): Promise<void> {
-    return this.notificationsService.markAllRead(req.user.userId);
+  markAllRead(@UserId() userId: number): Promise<void> {
+    return this.notificationsService.markAllRead(userId);
   }
 
   @Post(':id/read')
   @HttpCode(204)
-  markRead(@Req() req, @Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.notificationsService.markRead(req.user.userId, id);
+  markRead(
+    @UserId() userId: number,
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<void> {
+    return this.notificationsService.markRead(userId, id);
   }
 }

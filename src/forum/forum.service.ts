@@ -37,6 +37,7 @@ import {
   visibleTo,
 } from '../moderation/visibility';
 import { spoilerOf } from '../common/spoiler';
+import { searchContains } from '../common/search';
 import {
   CreateForumPostDto,
   CreateForumThreadDto,
@@ -92,6 +93,14 @@ const quoteSelect = {
   spoiler: true,
   createdAt: true,
   author,
+} as const;
+
+const categorySummary = {
+  select: {
+    id: true,
+    name: true,
+    section: { select: { id: true, name: true } },
+  },
 } as const;
 
 const oldestFirst = [{ createdAt: 'asc' as const }, { id: 'asc' as const }];
@@ -159,13 +168,7 @@ export class ForumService {
       select: {
         ...threadSelect,
         authorId: true,
-        category: {
-          select: {
-            id: true,
-            name: true,
-            section: { select: { id: true, name: true } },
-          },
-        },
+        category: categorySummary,
       },
     });
     if (!thread) throw new NotFoundException('Thread not found');
@@ -875,11 +878,10 @@ export class ForumService {
   }
 
   async search(viewerId: number, communityId: number, rawQuery: string) {
-    const query = rawQuery.trim().slice(0, 100);
-    if (query.length < 2) return [];
+    const contains = searchContains(rawQuery);
+    if (!contains) return [];
 
     const viewer = await contentViewer(this.prisma, viewerId);
-    const contains = { contains: query, mode: 'insensitive' as const };
     const threads = await this.prisma.forumThread.findMany({
       where: {
         communityId,
@@ -900,13 +902,7 @@ export class ForumService {
       take: SEARCH_LIMIT,
       select: {
         ...threadSelect,
-        category: {
-          select: {
-            id: true,
-            name: true,
-            section: { select: { id: true, name: true } },
-          },
-        },
+        category: categorySummary,
       },
     });
     const withNickname = await loadNicknames(

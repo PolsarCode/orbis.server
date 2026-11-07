@@ -8,7 +8,7 @@ import {
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Prisma } from '../../prisma/generated/client';
+import { isUniqueViolation } from '../common/prisma-errors';
 import { webUrl } from '../common/web-url';
 import { PresenceGateway } from '../friends/presence.gateway';
 import { SteamSyncService } from '../library/steam-sync.service';
@@ -154,10 +154,7 @@ export class SteamService {
         update: { personaName },
       });
     } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
+      if (isUniqueViolation(error)) {
         throw new ConflictException(
           'That Steam account is already connected to another Orbis account',
         );

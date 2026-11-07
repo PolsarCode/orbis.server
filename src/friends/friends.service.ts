@@ -9,6 +9,8 @@ import { PrismaService } from '../prisma.service';
 import { AddFriendDto } from './dto/add-friend.dto';
 import { PresenceGateway, PresenceStatus } from './presence.gateway';
 import { normalizeUsername } from '../users/username';
+import { MAX_INT } from '../communities/community-member.guard';
+import { friendshipBetween } from './friend-ids';
 import { NotificationsService } from '../notifications/notifications.service';
 import type { Prisma } from '../../prisma/generated/client';
 import { nsfwEntries, showsNsfw } from '../users/nsfw';
@@ -27,7 +29,6 @@ import {
   titleReason,
 } from './suggestions';
 
-const MAX_INT = 2147483647;
 const CANDIDATE_LIMIT = 50;
 
 export type FriendUser = {
@@ -81,15 +82,6 @@ function toFriendUser({
   ...user
 }: Prisma.UserGetPayload<{ select: typeof publicPerson }>): FriendUser {
   return { userId: id, ...user };
-}
-
-function between(userId: number, otherId: number) {
-  return {
-    OR: [
-      { requesterId: userId, addresseeId: otherId },
-      { requesterId: otherId, addresseeId: userId },
-    ],
-  };
 }
 
 @Injectable()
@@ -410,7 +402,7 @@ export class FriendsService {
     }
 
     const existing = await this.prisma.friendship.findFirst({
-      where: between(userId, target.id),
+      where: friendshipBetween(userId, target.id),
     });
 
     if (existing?.status === 'accepted') {
@@ -501,7 +493,7 @@ export class FriendsService {
     const { count } =
       otherId >= 1 && otherId <= MAX_INT
         ? await this.prisma.friendship.deleteMany({
-            where: between(userId, otherId),
+            where: friendshipBetween(userId, otherId),
           })
         : { count: 0 };
 

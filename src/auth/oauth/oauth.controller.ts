@@ -11,7 +11,6 @@ import {
   Patch,
   Post,
   Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { AuthProvider } from '../../../prisma/generated/client';
@@ -24,6 +23,7 @@ import { UseLinkedAvatarDto } from './dto/use-linked-avatar.dto';
 import { ConnectDiscordServerDto } from './dto/connect-discord-server.dto';
 import { UpdateConnectionDto } from './dto/update-connection.dto';
 import { OAuthConnections, OAuthResult, OAuthService } from './oauth.service';
+import { UserId } from '../../common/user-id';
 
 const provider = new ParseEnumPipe(AuthProvider);
 
@@ -38,18 +38,18 @@ export class OAuthController {
 
   @Get('connections')
   @UseGuards(JwtAuthGuard)
-  connections(@Req() req): Promise<OAuthConnections> {
-    return this.oauth.connections(req.user.userId);
+  connections(@UserId() userId: number): Promise<OAuthConnections> {
+    return this.oauth.connections(userId);
   }
 
   @Delete('connections/:provider')
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)
   disconnect(
-    @Req() req,
+    @UserId() userId: number,
     @Param('provider', provider) name: AuthProvider,
   ): Promise<void> {
-    return this.oauth.disconnect(req.user.userId, name);
+    return this.oauth.disconnect(userId, name);
   }
 
   @RateLimit(30, MINUTE)
@@ -57,11 +57,11 @@ export class OAuthController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)
   updateConnection(
-    @Req() req,
+    @UserId() userId: number,
     @Param('provider', provider) name: AuthProvider,
     @Body() { showLive, showClips }: UpdateConnectionDto,
   ): Promise<void> {
-    return this.oauth.updateConnection(req.user.userId, name, {
+    return this.oauth.updateConnection(userId, name, {
       showLive,
       showClips,
     });
@@ -89,7 +89,7 @@ export class OAuthController {
   @Get(':provider/community-url')
   @UseGuards(JwtAuthGuard)
   async communityUrl(
-    @Req() req,
+    @UserId() userId: number,
     @Param('provider', provider) name: AuthProvider,
     @Query('communityId', ParseIntPipe) communityId: number,
     @Query('nonce') nonce = '',
@@ -97,7 +97,7 @@ export class OAuthController {
   ) {
     return {
       url: await this.oauth.communityAuthorizeUrl(
-        req.user.userId,
+        userId,
         name,
         communityId,
         nonce,
@@ -110,7 +110,7 @@ export class OAuthController {
   @Get(':provider/link-url')
   @UseGuards(JwtAuthGuard)
   linkUrl(
-    @Req() req,
+    @UserId() userId: number,
     @Param('provider', provider) name: AuthProvider,
     @Query('nonce') nonce = '',
     @Query('client') client = 'web',
@@ -119,7 +119,7 @@ export class OAuthController {
       url: this.oauth.authorizeUrl(
         name,
         nonce,
-        req.user.userId,
+        userId,
         null,
         this.client(client),
       ),
@@ -145,20 +145,20 @@ export class OAuthController {
   @Post('community-server')
   @UseGuards(JwtAuthGuard)
   connectDiscordServer(
-    @Req() req,
+    @UserId() userId: number,
     @Body() { token, serverId }: ConnectDiscordServerDto,
   ) {
-    return this.oauth.connectDiscordServer(req.user.userId, token, serverId);
+    return this.oauth.connectDiscordServer(userId, token, serverId);
   }
 
   @RateLimit(10, MINUTE)
   @Post('avatar')
   @UseGuards(JwtAuthGuard)
   useLinkedAvatar(
-    @Req() req,
+    @UserId() userId: number,
     @Body() { token }: UseLinkedAvatarDto,
   ): Promise<{ avatarUrl: string }> {
-    return this.oauth.useLinkedAvatar(req.user.userId, token);
+    return this.oauth.useLinkedAvatar(userId, token);
   }
 
   @RateLimit(10, MINUTE)
@@ -166,10 +166,10 @@ export class OAuthController {
   @AllowGuest()
   @UseGuards(JwtAuthGuard)
   complete(
-    @Req() req,
+    @UserId() userId: number,
     @Param('provider', provider) name: AuthProvider,
     @Body() body: CompleteOAuthDto,
   ): Promise<OAuthResult> {
-    return this.oauth.complete(name, body, req.user.userId);
+    return this.oauth.complete(name, body, userId);
   }
 }

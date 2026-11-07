@@ -1,13 +1,12 @@
-import { IsBoolean, IsIn, IsInt, Max, Min } from 'class-validator';
+import { IsBoolean, IsIn } from 'class-validator';
+import { IsId } from '../../common/validators';
 import { BookmarkableType } from '../../../prisma/generated/client';
 
 export class BookmarkDto {
   @IsIn(Object.values(BookmarkableType))
   type: BookmarkableType;
 
-  @IsInt()
-  @Min(1)
-  @Max(2147483647)
+  @IsId()
   id: number;
 
   @IsBoolean()

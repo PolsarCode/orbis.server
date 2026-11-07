@@ -9,6 +9,7 @@ import { ConfirmEmailDto } from './dto/confirm-email.dto';
 import { HOUR, MINUTE, RateLimit } from '../common/throttle';
 import { clientIp } from '../common/client-ip';
 import { verifyTurnstile } from './turnstile';
+import { UserId } from '../common/user-id';
 
 @Controller('auth')
 @AllowUnconfirmed()
@@ -42,7 +43,7 @@ export class AuthController {
   @RateLimit(3, HOUR)
   @Post('confirm-email/resend')
   @UseGuards(JwtAuthGuard)
-  resendConfirmation(@Req() req) {
-    return this.emailConfirmation.resend(req.user.userId);
+  resendConfirmation(@UserId() userId: number) {
+    return this.emailConfirmation.resend(userId);
   }
 }

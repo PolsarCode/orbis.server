@@ -1,5 +1,5 @@
-import { IsOptional, IsString, IsUrl, MaxLength } from 'class-validator';
-import { SPOILER_MAX } from '../../common/spoiler';
+import { IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsLinkUrl, IsSpoiler } from '../../common/validators';
 
 export class UpdateCommentDto {
   @IsString()
@@ -7,12 +7,10 @@ export class UpdateCommentDto {
   content: string;
 
   @IsOptional()
-  @MaxLength(2048)
-  @IsUrl({ protocols: ['http', 'https'], require_protocol: true })
+  @IsLinkUrl()
   linkUrl?: string;
 
   @IsOptional()
-  @IsString()
-  @MaxLength(SPOILER_MAX)
+  @IsSpoiler()
   spoiler?: string | null;
 }

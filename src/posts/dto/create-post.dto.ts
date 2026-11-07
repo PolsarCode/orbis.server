@@ -1,25 +1,19 @@
 import { Type } from 'class-transformer';
 import {
   IsIn,
-  IsInt,
   IsOptional,
   IsString,
-  IsUrl,
-  Max,
   MaxLength,
-  Min,
   ValidateNested,
 } from 'class-validator';
-import { SPOILER_MAX } from '../../common/spoiler';
+import { IsId, IsLinkUrl, IsSpoiler } from '../../common/validators';
 import type { ShareType } from '../shareable';
 
 export class ShareTargetDto {
   @IsIn(['post', 'activity'])
   type: ShareType;
 
-  @IsInt()
-  @Min(1)
-  @Max(2147483647)
+  @IsId()
   id: number;
 }
 
@@ -29,13 +23,11 @@ export class CreatePostDto {
   content: string;
 
   @IsOptional()
-  @MaxLength(2048)
-  @IsUrl({ protocols: ['http', 'https'], require_protocol: true })
+  @IsLinkUrl()
   linkUrl?: string;
 
   @IsOptional()
-  @IsString()
-  @MaxLength(SPOILER_MAX)
+  @IsSpoiler()
   spoiler?: string | null;
 
   @IsOptional()

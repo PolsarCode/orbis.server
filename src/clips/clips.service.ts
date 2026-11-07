@@ -6,7 +6,7 @@ import {
 import { PrismaService } from '../prisma.service';
 import { TwitchLiveService, ClipPage } from '../friends/twitch-live.service';
 import { canViewProfile } from '../posts/wall-access';
-import { normalizeUsername } from '../users/username';
+import { requireUserNamed } from '../users/user-lookup';
 
 @Injectable()
 export class ClipsService {
@@ -34,18 +34,14 @@ export class ClipsService {
     username: string,
     cursor?: string,
   ): Promise<ClipPage> {
-    const user = await this.prisma.user.findUnique({
-      where: { username: normalizeUsername(username) },
-      select: {
-        id: true,
-        isPublic: true,
-        oauthAccounts: {
-          where: { provider: 'twitch', showClips: true },
-          select: { providerAccountId: true },
-        },
+    const user = await requireUserNamed(this.prisma, username, {
+      id: true,
+      isPublic: true,
+      oauthAccounts: {
+        where: { provider: 'twitch', showClips: true },
+        select: { providerAccountId: true },
       },
     });
-    if (!user) throw new NotFoundException('User not found');
     if (!(await canViewProfile(this.prisma, viewerId, user))) {
       throw new ForbiddenException('This profile is private');
     }

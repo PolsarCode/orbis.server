@@ -1,6 +1,7 @@
 import { PrismaService } from '../prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { notBlockedWith } from '../safety/blocks';
+import { friendIdsAmong } from '../friends/friend-ids';
 
 export const MAX_MENTIONS = 10;
 
@@ -123,21 +124,7 @@ async function whoCanSee(
     });
     if (!owner) return [];
     if (owner.isPublic) return userIds;
-    const friendships = await prisma.friendship.findMany({
-      where: {
-        status: 'accepted',
-        OR: [
-          { requesterId: wallUserId, addresseeId: { in: userIds } },
-          { addresseeId: wallUserId, requesterId: { in: userIds } },
-        ],
-      },
-      select: { requesterId: true, addresseeId: true },
-    });
-    const friends = new Set(
-      friendships.map(({ requesterId, addresseeId }) =>
-        requesterId === wallUserId ? addresseeId : requesterId,
-      ),
-    );
+    const friends = await friendIdsAmong(prisma, wallUserId, userIds);
     return userIds.filter((id) => id === wallUserId || friends.has(id));
   }
 

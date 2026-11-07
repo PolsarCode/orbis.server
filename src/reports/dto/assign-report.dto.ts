@@ -1,9 +1,8 @@
-import { IsInt, IsOptional, Max, Min } from 'class-validator';
+import { IsOptional } from 'class-validator';
+import { IsId } from '../../common/validators';
 
 export class AssignReportDto {
   @IsOptional()
-  @IsInt()
-  @Min(1)
-  @Max(2147483647)
+  @IsId()
   assigneeId: number | null;
 }

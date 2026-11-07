@@ -5,7 +5,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { isHeadAdmin } from '../users/head-admin';
+import { isSiteAdmin } from '../users/head-admin';
 
 @Injectable()
 export class SiteAdminGuard implements CanActivate {
@@ -13,12 +13,7 @@ export class SiteAdminGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const user = await this.prisma.user.findUnique({
-      where: { id: request.user.userId },
-      select: { isAdmin: true, email: true },
-    });
-
-    if (!user || !(user.isAdmin || isHeadAdmin(user.email))) {
+    if (!(await isSiteAdmin(this.prisma, request.user.userId))) {
       throw new ForbiddenException('Only site admins can do this');
     }
     return true;

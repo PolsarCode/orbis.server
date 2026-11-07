@@ -9,7 +9,6 @@ import {
   Post,
   Put,
   Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt.guard';
@@ -20,6 +19,7 @@ import { AssignReportDto } from './dto/assign-report.dto';
 import { CreateReportCommentDto } from './dto/create-report-comment.dto';
 import { ReportsService } from './reports.service';
 import { HOUR, MINUTE, RateLimit } from '../common/throttle';
+import { UserId } from '../common/user-id';
 
 @Controller('reports')
 @UseGuards(JwtAuthGuard)
@@ -28,91 +28,91 @@ export class ReportsController {
 
   @RateLimit(5, HOUR)
   @Post()
-  create(@Req() req, @Body() createReportDto: CreateReportDto) {
-    return this.reportsService.create(req.user.userId, createReportDto);
+  create(@UserId() userId: number, @Body() createReportDto: CreateReportDto) {
+    return this.reportsService.create(userId, createReportDto);
   }
 
   @Get('mine')
-  mine(@Req() req) {
-    return this.reportsService.mine(req.user.userId);
+  mine(@UserId() userId: number) {
+    return this.reportsService.mine(userId);
   }
 
   @Get()
-  findAll(@Req() req, @Query('hidden') hidden?: string) {
-    return this.reportsService.findAll(req.user.userId, hidden === 'true');
+  findAll(@UserId() userId: number, @Query('hidden') hidden?: string) {
+    return this.reportsService.findAll(userId, hidden === 'true');
   }
 
   @Get('webhook')
-  webhook(@Req() req) {
-    return this.reportsService.webhook(req.user.userId);
+  webhook(@UserId() userId: number) {
+    return this.reportsService.webhook(userId);
   }
 
   @Put('webhook')
-  setWebhook(@Req() req, @Body() { url }: SetWebhookDto) {
-    return this.reportsService.setWebhook(req.user.userId, url);
+  setWebhook(@UserId() userId: number, @Body() { url }: SetWebhookDto) {
+    return this.reportsService.setWebhook(userId, url);
   }
 
   @Delete('webhook')
-  removeWebhook(@Req() req) {
-    return this.reportsService.removeWebhook(req.user.userId);
+  removeWebhook(@UserId() userId: number) {
+    return this.reportsService.removeWebhook(userId);
   }
 
   @Get('admins')
-  admins(@Req() req) {
-    return this.reportsService.admins(req.user.userId);
+  admins(@UserId() userId: number) {
+    return this.reportsService.admins(userId);
   }
 
   @RateLimit(60, MINUTE)
   @Get('search')
-  search(@Req() req, @Query('q') q = '') {
-    return this.reportsService.search(req.user.userId, q);
+  search(@UserId() userId: number, @Query('q') q = '') {
+    return this.reportsService.search(userId, q);
   }
 
   @Get(':id')
-  findOne(@Req() req, @Param('id', ParseIntPipe) id: number) {
-    return this.reportsService.findOne(req.user.userId, id);
+  findOne(@UserId() userId: number, @Param('id', ParseIntPipe) id: number) {
+    return this.reportsService.findOne(userId, id);
   }
 
   @Put(':id/assignee')
   assign(
-    @Req() req,
+    @UserId() userId: number,
     @Param('id', ParseIntPipe) id: number,
     @Body() { assigneeId }: AssignReportDto,
   ) {
-    return this.reportsService.assign(req.user.userId, id, assigneeId ?? null);
+    return this.reportsService.assign(userId, id, assigneeId ?? null);
   }
 
   @Get(':id/comments')
-  comments(@Req() req, @Param('id', ParseIntPipe) id: number) {
-    return this.reportsService.comments(req.user.userId, id);
+  comments(@UserId() userId: number, @Param('id', ParseIntPipe) id: number) {
+    return this.reportsService.comments(userId, id);
   }
 
   @RateLimit(20, MINUTE)
   @Post(':id/comments')
   addComment(
-    @Req() req,
+    @UserId() userId: number,
     @Param('id', ParseIntPipe) id: number,
     @Body() { content }: CreateReportCommentDto,
   ) {
-    return this.reportsService.addComment(req.user.userId, id, content);
+    return this.reportsService.addComment(userId, id, content);
   }
 
   @Put(':id/hidden')
-  hide(@Req() req, @Param('id', ParseIntPipe) id: number) {
-    return this.reportsService.hide(req.user.userId, id);
+  hide(@UserId() userId: number, @Param('id', ParseIntPipe) id: number) {
+    return this.reportsService.hide(userId, id);
   }
 
   @Delete(':id/hidden')
-  restore(@Req() req, @Param('id', ParseIntPipe) id: number) {
-    return this.reportsService.restore(req.user.userId, id);
+  restore(@UserId() userId: number, @Param('id', ParseIntPipe) id: number) {
+    return this.reportsService.restore(userId, id);
   }
 
   @Patch(':id')
   update(
-    @Req() req,
+    @UserId() userId: number,
     @Param('id', ParseIntPipe) id: number,
     @Body() updateReportDto: UpdateReportDto,
   ) {
-    return this.reportsService.update(req.user.userId, id, updateReportDto);
+    return this.reportsService.update(userId, id, updateReportDto);
   }
 }

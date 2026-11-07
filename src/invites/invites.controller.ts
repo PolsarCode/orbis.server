@@ -8,7 +8,6 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  Req,
   StreamableFile,
   UseGuards,
 } from '@nestjs/common';
@@ -23,6 +22,7 @@ import { CommunityMemberGuard } from '../communities/community-member.guard';
 import { JwtAuthGuard } from '../auth/jwt.guard';
 import { Community as CommunityModel } from '../../prisma/generated/client';
 import { RateLimit, HOUR } from '../common/throttle';
+import { UserId } from '../common/user-id';
 
 @Controller()
 export class InvitesController {
@@ -32,55 +32,51 @@ export class InvitesController {
   @Post('communities/:communityId/invites')
   @UseGuards(JwtAuthGuard, CommunityMemberGuard)
   create(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Body() createInviteDto: CreateInviteDto,
   ): Promise<CommunityInvite> {
-    return this.invitesService.create(
-      req.user.userId,
-      communityId,
-      createInviteDto,
-    );
+    return this.invitesService.create(userId, communityId, createInviteDto);
   }
 
   @Get('communities/:communityId/invites')
   @UseGuards(JwtAuthGuard, CommunityMemberGuard)
   findForCommunity(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
   ): Promise<CommunityInvite[]> {
-    return this.invitesService.findForCommunity(req.user.userId, communityId);
+    return this.invitesService.findForCommunity(userId, communityId);
   }
 
   @Delete('communities/:communityId/invites/:code')
   @UseGuards(JwtAuthGuard, CommunityMemberGuard)
   @HttpCode(204)
   revoke(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Param('code') code: string,
   ): Promise<void> {
-    return this.invitesService.revoke(req.user.userId, communityId, code);
+    return this.invitesService.revoke(userId, communityId, code);
   }
 
   @RateLimit(200, HOUR)
   @Post('communities/:communityId/invites/permanent')
   @UseGuards(JwtAuthGuard, CommunityMemberGuard)
   createPermanent(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
   ): Promise<CommunityInvite> {
-    return this.invitesService.createPermanent(req.user.userId, communityId);
+    return this.invitesService.createPermanent(userId, communityId);
   }
 
   @RateLimit(30, HOUR)
   @Get('communities/:communityId/invites/permanent/card')
   @UseGuards(JwtAuthGuard, CommunityMemberGuard)
   async card(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
   ): Promise<StreamableFile> {
-    const pdf = await this.invitesService.card(req.user.userId, communityId);
+    const pdf = await this.invitesService.card(userId, communityId);
     return new StreamableFile(pdf, { type: 'application/pdf' });
   }
 
@@ -88,17 +84,12 @@ export class InvitesController {
   @Patch('communities/:communityId/invites/:code')
   @UseGuards(JwtAuthGuard, CommunityMemberGuard)
   setEnabled(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Param('code') code: string,
     @Body() { enabled }: SetInviteEnabledDto,
   ): Promise<CommunityInvite> {
-    return this.invitesService.setEnabled(
-      req.user.userId,
-      communityId,
-      code,
-      enabled,
-    );
+    return this.invitesService.setEnabled(userId, communityId, code, enabled);
   }
 
   @Get('invites/:code')
@@ -108,7 +99,10 @@ export class InvitesController {
 
   @Post('invites/:code')
   @UseGuards(JwtAuthGuard)
-  accept(@Req() req, @Param('code') code: string): Promise<CommunityModel> {
-    return this.invitesService.accept(req.user.userId, code);
+  accept(
+    @UserId() userId: number,
+    @Param('code') code: string,
+  ): Promise<CommunityModel> {
+    return this.invitesService.accept(userId, code);
   }
 }

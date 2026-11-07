@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { author } from '../common/author';
+import { Author, author } from '../common/author';
 import { ReportsService } from '../reports/reports.service';
 import { DiscordChannelService } from '../discord-channel/discord-channel.service';
 import { isHeadAdmin } from '../users/head-admin';
@@ -18,17 +18,10 @@ import { CreateContentReportDto } from './dto/create-content-report.dto';
 import { ResolveContentReportDto } from './dto/resolve-content-report.dto';
 import { forumPostLink } from '../forum/forum-helpers';
 
-type Person = {
-  id: number;
-  username: string;
-  name: string | null;
-  avatarUrl: string | null;
-};
-
 type Target = {
   title: string;
   excerpt: string | null;
-  author: Person | null;
+  author: Author | null;
   link: string;
 };
 
@@ -43,7 +36,7 @@ export type ReportedItem = {
     reason: ContentReportReason;
     details: string | null;
     createdAt: Date;
-    reporter: Person;
+    reporter: Author;
   }[];
   lastReportedAt: Date;
 };

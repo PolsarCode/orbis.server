@@ -10,6 +10,8 @@ import { CommunitiesService } from '../communities/communities.service';
 import { CreateInviteDto } from './dto/create-invite.dto';
 import { buildInviteCard } from './invite-card';
 import { webUrl } from '../common/web-url';
+import { author } from '../common/author';
+import { isUniqueViolation } from '../common/prisma-errors';
 import {
   Community as CommunityModel,
   Prisma,
@@ -21,10 +23,6 @@ const CODE_ALPHABET =
 const CODE_LENGTH = 8;
 const PERMANENT_CODE_LENGTH = 100;
 
-const creatorSelect = {
-  select: { id: true, username: true, name: true, avatarUrl: true },
-} as const;
-
 const inviteSelect = {
   code: true,
   maxUses: true,
@@ -33,7 +31,7 @@ const inviteSelect = {
   permanent: true,
   disabledAt: true,
   createdAt: true,
-  creator: creatorSelect,
+  creator: author,
 } as const;
 
 export type CommunityInvite = Prisma.InviteGetPayload<{
@@ -63,12 +61,6 @@ function generateCode(length = CODE_LENGTH) {
     { length },
     () => CODE_ALPHABET[randomInt(CODE_ALPHABET.length)],
   ).join('');
-}
-
-function isUniqueViolation(e: unknown) {
-  return (
-    e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002'
-  );
 }
 
 @Injectable()
@@ -218,7 +210,7 @@ export class InvitesService {
       select: {
         code: true,
         expiresAt: true,
-        creator: creatorSelect,
+        creator: author,
         community: {
           select: {
             id: true,

@@ -7,8 +7,10 @@ import {
 import { PrismaService } from '../prisma.service';
 import { Prisma } from '../../prisma/generated/client';
 import { PresenceGateway } from '../friends/presence.gateway';
-import { author } from '../common/author';
-import { normalizeUsername } from '../users/username';
+import { Author, author } from '../common/author';
+import { isUniqueViolation } from '../common/prisma-errors';
+import { requireUserNamed } from '../users/user-lookup';
+import { friendshipBetween } from '../friends/friend-ids';
 import {
   expiryOf,
   FilterDuration,
@@ -22,15 +24,8 @@ export const MAX_MUTES = 1000;
 
 const personSelect = author.select;
 
-type Person = {
-  id: number;
-  username: string;
-  name: string | null;
-  avatarUrl: string | null;
-};
-
-export type BlockedPerson = Person & { blockedAt: Date };
-export type MutedPerson = Person & { mutedAt: Date };
+export type BlockedPerson = Author & { blockedAt: Date };
+export type MutedPerson = Author & { mutedAt: Date };
 
 export type KeywordFilterView = {
   id: number;
@@ -45,22 +40,6 @@ const filterSelect = {
   expiresAt: true,
   createdAt: true,
 } as const;
-
-function isUniqueViolation(error: unknown) {
-  return (
-    error instanceof Prisma.PrismaClientKnownRequestError &&
-    error.code === 'P2002'
-  );
-}
-
-function between(userId: number, otherId: number) {
-  return {
-    OR: [
-      { requesterId: userId, addresseeId: otherId },
-      { requesterId: otherId, addresseeId: userId },
-    ],
-  };
-}
 
 function sharedFrom(userId: number, ownerId: number) {
   return {
@@ -80,11 +59,7 @@ export class SafetyService {
   ) {}
 
   private async target(userId: number, username: string, action: string) {
-    const target = await this.prisma.user.findUnique({
-      where: { username: normalizeUsername(username) },
-      select: { id: true },
-    });
-    if (!target) throw new NotFoundException('User not found');
+    const target = await requireUserNamed(this.prisma, username, { id: true });
     if (target.id === userId) {
       throw new BadRequestException(`You can’t ${action} yourself`);
     }
@@ -127,7 +102,9 @@ export class SafetyService {
         create: key,
         update: {},
       }),
-      this.prisma.friendship.deleteMany({ where: between(userId, target.id) }),
+      this.prisma.friendship.deleteMany({
+        where: friendshipBetween(userId, target.id),
+      }),
       this.prisma.repost.deleteMany({
         where: {
           OR: [sharedFrom(userId, target.id), sharedFrom(target.id, userId)],

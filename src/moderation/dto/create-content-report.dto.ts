@@ -1,12 +1,5 @@
-import {
-  IsIn,
-  IsInt,
-  IsOptional,
-  IsString,
-  Max,
-  MaxLength,
-  Min,
-} from 'class-validator';
+import { IsIn, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsId } from '../../common/validators';
 import {
   ContentReportReason,
   ContentReportTarget,
@@ -16,9 +9,7 @@ export class CreateContentReportDto {
   @IsIn(Object.values(ContentReportTarget))
   type: ContentReportTarget;
 
-  @IsInt()
-  @Min(1)
-  @Max(2147483647)
+  @IsId()
   id: number;
 
   @IsIn(Object.values(ContentReportReason))

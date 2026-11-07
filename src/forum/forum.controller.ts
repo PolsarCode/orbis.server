@@ -10,7 +10,6 @@ import {
   Post,
   Put,
   Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt.guard';
@@ -33,6 +32,7 @@ import {
   UpdateForumPostDto,
   UpdateForumThreadDto,
 } from './dto/forum-thread.dto';
+import { UserId } from '../common/user-id';
 
 const optionalInt = new ParseIntPipe({ optional: true });
 
@@ -47,19 +47,22 @@ export class ForumController {
   @Get()
   @AllowGuest()
   @UseGuards(CommunityViewerGuard)
-  index(@Req() req, @Param('communityId', ParseIntPipe) communityId: number) {
-    return this.categories.list(req.user.userId, communityId);
+  index(
+    @UserId() userId: number,
+    @Param('communityId', ParseIntPipe) communityId: number,
+  ) {
+    return this.categories.list(userId, communityId);
   }
 
   @RateLimit(30, MINUTE)
   @Post('sections')
   @UseGuards(CommunityMemberGuard)
   createSection(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Body() body: ForumSectionDto,
   ) {
-    return this.categories.createSection(req.user.userId, communityId, body);
+    return this.categories.createSection(userId, communityId, body);
   }
 
   @RateLimit(30, MINUTE)
@@ -67,28 +70,23 @@ export class ForumController {
   @HttpCode(204)
   @UseGuards(CommunityMemberGuard)
   reorderSections(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Body() body: ReorderForumCategoriesDto,
   ) {
-    return this.categories.reorderSections(req.user.userId, communityId, body);
+    return this.categories.reorderSections(userId, communityId, body);
   }
 
   @RateLimit(30, MINUTE)
   @Patch('sections/:sectionId')
   @UseGuards(CommunityMemberGuard)
   updateSection(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Param('sectionId', ParseIntPipe) sectionId: number,
     @Body() body: UpdateForumSectionDto,
   ) {
-    return this.categories.updateSection(
-      req.user.userId,
-      communityId,
-      sectionId,
-      body,
-    );
+    return this.categories.updateSection(userId, communityId, sectionId, body);
   }
 
   @RateLimit(30, MINUTE)
@@ -96,26 +94,22 @@ export class ForumController {
   @HttpCode(204)
   @UseGuards(CommunityMemberGuard)
   removeSection(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Param('sectionId', ParseIntPipe) sectionId: number,
   ) {
-    return this.categories.removeSection(
-      req.user.userId,
-      communityId,
-      sectionId,
-    );
+    return this.categories.removeSection(userId, communityId, sectionId);
   }
 
   @RateLimit(30, MINUTE)
   @Post('categories')
   @UseGuards(CommunityMemberGuard)
   createCategory(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Body() body: CreateForumCategoryDto,
   ) {
-    return this.categories.create(req.user.userId, communityId, body);
+    return this.categories.create(userId, communityId, body);
   }
 
   @RateLimit(30, MINUTE)
@@ -123,28 +117,23 @@ export class ForumController {
   @HttpCode(204)
   @UseGuards(CommunityMemberGuard)
   reorderCategories(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Body() body: ReorderForumCategoriesDto,
   ) {
-    return this.categories.reorder(req.user.userId, communityId, body);
+    return this.categories.reorder(userId, communityId, body);
   }
 
   @RateLimit(30, MINUTE)
   @Patch('categories/:categoryId')
   @UseGuards(CommunityMemberGuard)
   updateCategory(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Param('categoryId', ParseIntPipe) categoryId: number,
     @Body() body: UpdateForumCategoryDto,
   ) {
-    return this.categories.update(
-      req.user.userId,
-      communityId,
-      categoryId,
-      body,
-    );
+    return this.categories.update(userId, communityId, categoryId, body);
   }
 
   @RateLimit(30, MINUTE)
@@ -152,40 +141,35 @@ export class ForumController {
   @HttpCode(204)
   @UseGuards(CommunityMemberGuard)
   removeCategory(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Param('categoryId', ParseIntPipe) categoryId: number,
   ) {
-    return this.categories.remove(req.user.userId, communityId, categoryId);
+    return this.categories.remove(userId, communityId, categoryId);
   }
 
   @Get('categories/:categoryId/threads')
   @AllowGuest()
   @UseGuards(CommunityViewerGuard)
   listThreads(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Param('categoryId', ParseIntPipe) categoryId: number,
     @Query('page', optionalInt) page?: number,
   ) {
-    return this.forum.threads(req.user.userId, communityId, categoryId, page);
+    return this.forum.threads(userId, communityId, categoryId, page);
   }
 
   @RateLimit(10, MINUTE)
   @Post('categories/:categoryId/threads')
   @UseGuards(CommunityMemberGuard)
   createThread(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Param('categoryId', ParseIntPipe) categoryId: number,
     @Body() body: CreateForumThreadDto,
   ) {
-    return this.forum.createThread(
-      req.user.userId,
-      communityId,
-      categoryId,
-      body,
-    );
+    return this.forum.createThread(userId, communityId, categoryId, body);
   }
 
   @RateLimit(60, MINUTE)
@@ -193,47 +177,36 @@ export class ForumController {
   @AllowGuest()
   @UseGuards(CommunityViewerGuard)
   search(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Query('q') q = '',
   ) {
-    return this.forum.search(req.user.userId, communityId, q);
+    return this.forum.search(userId, communityId, q);
   }
 
   @Get('threads/:threadId')
   @AllowGuest()
   @UseGuards(CommunityViewerGuard)
   thread(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Param('threadId', ParseIntPipe) threadId: number,
     @Query('page', optionalInt) page?: number,
     @Query('post', optionalInt) post?: number,
   ) {
-    return this.forum.thread(
-      req.user.userId,
-      communityId,
-      threadId,
-      page,
-      post,
-    );
+    return this.forum.thread(userId, communityId, threadId, page, post);
   }
 
   @RateLimit(30, MINUTE)
   @Patch('threads/:threadId')
   @UseGuards(CommunityMemberGuard)
   updateThread(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Param('threadId', ParseIntPipe) threadId: number,
     @Body() body: UpdateForumThreadDto,
   ) {
-    return this.forum.updateThread(
-      req.user.userId,
-      communityId,
-      threadId,
-      body,
-    );
+    return this.forum.updateThread(userId, communityId, threadId, body);
   }
 
   @RateLimit(30, MINUTE)
@@ -241,17 +214,11 @@ export class ForumController {
   @HttpCode(204)
   @UseGuards(CommunityMemberGuard)
   pin(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Param('threadId', ParseIntPipe) threadId: number,
   ) {
-    return this.forum.setFlag(
-      req.user.userId,
-      communityId,
-      threadId,
-      'pinnedAt',
-      true,
-    );
+    return this.forum.setFlag(userId, communityId, threadId, 'pinnedAt', true);
   }
 
   @RateLimit(30, MINUTE)
@@ -259,17 +226,11 @@ export class ForumController {
   @HttpCode(204)
   @UseGuards(CommunityMemberGuard)
   unpin(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Param('threadId', ParseIntPipe) threadId: number,
   ) {
-    return this.forum.setFlag(
-      req.user.userId,
-      communityId,
-      threadId,
-      'pinnedAt',
-      false,
-    );
+    return this.forum.setFlag(userId, communityId, threadId, 'pinnedAt', false);
   }
 
   @RateLimit(30, MINUTE)
@@ -277,17 +238,11 @@ export class ForumController {
   @HttpCode(204)
   @UseGuards(CommunityMemberGuard)
   lock(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Param('threadId', ParseIntPipe) threadId: number,
   ) {
-    return this.forum.setFlag(
-      req.user.userId,
-      communityId,
-      threadId,
-      'lockedAt',
-      true,
-    );
+    return this.forum.setFlag(userId, communityId, threadId, 'lockedAt', true);
   }
 
   @RateLimit(30, MINUTE)
@@ -295,17 +250,11 @@ export class ForumController {
   @HttpCode(204)
   @UseGuards(CommunityMemberGuard)
   unlock(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Param('threadId', ParseIntPipe) threadId: number,
   ) {
-    return this.forum.setFlag(
-      req.user.userId,
-      communityId,
-      threadId,
-      'lockedAt',
-      false,
-    );
+    return this.forum.setFlag(userId, communityId, threadId, 'lockedAt', false);
   }
 
   @RateLimit(30, MINUTE)
@@ -313,35 +262,35 @@ export class ForumController {
   @HttpCode(204)
   @UseGuards(CommunityMemberGuard)
   removeThread(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Param('threadId', ParseIntPipe) threadId: number,
   ) {
-    return this.forum.removeThread(req.user.userId, communityId, threadId);
+    return this.forum.removeThread(userId, communityId, threadId);
   }
 
   @RateLimit(20, MINUTE)
   @Post('threads/:threadId/posts')
   @UseGuards(CommunityMemberGuard)
   reply(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Param('threadId', ParseIntPipe) threadId: number,
     @Body() body: CreateForumPostDto,
   ) {
-    return this.forum.reply(req.user.userId, communityId, threadId, body);
+    return this.forum.reply(userId, communityId, threadId, body);
   }
 
   @RateLimit(30, MINUTE)
   @Patch('posts/:postId')
   @UseGuards(CommunityMemberGuard)
   updatePost(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Param('postId', ParseIntPipe) postId: number,
     @Body() body: UpdateForumPostDto,
   ) {
-    return this.forum.updatePost(req.user.userId, communityId, postId, body);
+    return this.forum.updatePost(userId, communityId, postId, body);
   }
 
   @RateLimit(30, MINUTE)
@@ -349,10 +298,10 @@ export class ForumController {
   @HttpCode(204)
   @UseGuards(CommunityMemberGuard)
   removePost(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Param('postId', ParseIntPipe) postId: number,
   ) {
-    return this.forum.removePost(req.user.userId, communityId, postId);
+    return this.forum.removePost(userId, communityId, postId);
   }
 }

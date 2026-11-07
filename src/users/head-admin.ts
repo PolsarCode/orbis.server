@@ -5,6 +5,17 @@ export function isHeadAdmin(email: string) {
   return Boolean(headAdmin) && email.toLowerCase() === headAdmin;
 }
 
+export async function isHeadAdminAccount(
+  prisma: PrismaService,
+  userId: number,
+) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { email: true },
+  });
+  return Boolean(user && isHeadAdmin(user.email));
+}
+
 export async function isSiteAdmin(prisma: PrismaService, userId: number) {
   const user = await prisma.user.findUnique({
     where: { id: userId },

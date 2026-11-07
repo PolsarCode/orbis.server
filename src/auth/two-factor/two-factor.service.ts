@@ -3,7 +3,6 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -11,7 +10,7 @@ import * as QRCode from 'qrcode';
 import { PrismaService } from '../../prisma.service';
 import { AuthService } from '../auth.service';
 import { isHeadAdmin } from '../../users/head-admin';
-import { normalizeUsername } from '../../users/username';
+import { requireUserNamed } from '../../users/user-lookup';
 import { generateRecoveryCodes, hashRecoveryCode } from './recovery-codes';
 import { openSecret, sealSecret } from './secret-box';
 import { TWO_FACTOR_PURPOSE, ticketSecret } from './ticket';
@@ -124,11 +123,11 @@ export class TwoFactorService {
       );
     }
 
-    const user = await this.prisma.user.findUnique({
-      where: { username: normalizeUsername(username) },
-      select: { id: true, email: true, isAdmin: true },
+    const user = await requireUserNamed(this.prisma, username, {
+      id: true,
+      email: true,
+      isAdmin: true,
     });
-    if (!user) throw new NotFoundException('User not found');
     if (user.id === admin.id) {
       throw new BadRequestException(
         'Turn off your own two-factor sign-in in Settings',

@@ -30,6 +30,7 @@ import { AllowGuest } from '../auth/allow-guest';
 import { PresenceGateway } from '../friends/presence.gateway';
 import { SteamSyncService } from '../library/steam-sync.service';
 import { IMAGE_MAX_BYTES } from '../storage/storage.service';
+import { UserId } from '../common/user-id';
 
 @Controller('users')
 export class UsersController {
@@ -41,8 +42,8 @@ export class UsersController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async findProfile(@Req() req): Promise<Profile> {
-    const profile = await this.usersService.findProfile(req.user.userId);
+  async findProfile(@UserId() userId: number): Promise<Profile> {
+    const profile = await this.usersService.findProfile(userId);
     if (!profile) throw new UnauthorizedException();
     return profile;
   }
@@ -51,11 +52,11 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @AllowUnconfirmed()
   async updatePreferences(
-    @Req() req,
+    @UserId() userId: number,
     @Body() updatePreferencesDto: UpdatePreferencesDto,
   ): Promise<Profile> {
     const profile = await this.usersService.updatePreferences(
-      req.user.userId,
+      userId,
       updatePreferencesDto,
     );
 
@@ -63,7 +64,7 @@ export class UsersController {
       updatePreferencesDto.appearOffline !== undefined ||
       updatePreferencesDto.status !== undefined
     ) {
-      await this.presence.broadcastPresence(req.user.userId);
+      await this.presence.broadcastPresence(userId);
     }
 
     return profile;
@@ -75,17 +76,17 @@ export class UsersController {
     FileInterceptor('file', { limits: { fileSize: IMAGE_MAX_BYTES } }),
   )
   uploadAvatar(
-    @Req() req,
+    @UserId() userId: number,
     @UploadedFile() file?: Express.Multer.File,
   ): Promise<Profile> {
     if (!file) throw new BadRequestException('Choose an image to upload');
-    return this.usersService.updateAvatar(req.user.userId, file.buffer);
+    return this.usersService.updateAvatar(userId, file.buffer);
   }
 
   @Delete('me/avatar')
   @UseGuards(JwtAuthGuard)
-  removeAvatar(@Req() req): Promise<Profile> {
-    return this.usersService.removeAvatar(req.user.userId);
+  removeAvatar(@UserId() userId: number): Promise<Profile> {
+    return this.usersService.removeAvatar(userId);
   }
 
   @Post('me/cover')
@@ -94,17 +95,17 @@ export class UsersController {
     FileInterceptor('file', { limits: { fileSize: IMAGE_MAX_BYTES } }),
   )
   uploadCover(
-    @Req() req,
+    @UserId() userId: number,
     @UploadedFile() file?: Express.Multer.File,
   ): Promise<Profile> {
     if (!file) throw new BadRequestException('Choose an image to upload');
-    return this.usersService.updateCover(req.user.userId, file.buffer);
+    return this.usersService.updateCover(userId, file.buffer);
   }
 
   @Delete('me/cover')
   @UseGuards(JwtAuthGuard)
-  removeCover(@Req() req): Promise<Profile> {
-    return this.usersService.removeCover(req.user.userId);
+  removeCover(@UserId() userId: number): Promise<Profile> {
+    return this.usersService.removeCover(userId);
   }
 
   @Post('me/background')
@@ -113,65 +114,62 @@ export class UsersController {
     FileInterceptor('file', { limits: { fileSize: IMAGE_MAX_BYTES } }),
   )
   uploadBackground(
-    @Req() req,
+    @UserId() userId: number,
     @UploadedFile() file?: Express.Multer.File,
   ): Promise<Profile> {
     if (!file) throw new BadRequestException('Choose an image to upload');
-    return this.usersService.updateBackground(req.user.userId, file.buffer);
+    return this.usersService.updateBackground(userId, file.buffer);
   }
 
   @Delete('me/background')
   @UseGuards(JwtAuthGuard)
-  removeBackground(@Req() req): Promise<Profile> {
-    return this.usersService.removeBackground(req.user.userId);
+  removeBackground(@UserId() userId: number): Promise<Profile> {
+    return this.usersService.removeBackground(userId);
   }
 
   @Get('me/onboarding')
   @UseGuards(JwtAuthGuard)
-  onboarding(@Req() req): Promise<Onboarding> {
-    return this.usersService.onboarding(req.user.userId);
+  onboarding(@UserId() userId: number): Promise<Onboarding> {
+    return this.usersService.onboarding(userId);
   }
 
   @Patch('me/onboarding')
   @UseGuards(JwtAuthGuard)
   @AllowUnconfirmed()
   updateOnboarding(
-    @Req() req,
+    @UserId() userId: number,
     @Body() updateOnboardingDto: UpdateOnboardingDto,
   ): Promise<Onboarding> {
-    return this.usersService.updateOnboarding(
-      req.user.userId,
-      updateOnboardingDto,
-    );
+    return this.usersService.updateOnboarding(userId, updateOnboardingDto);
   }
 
   @Put(':username/admin')
   @UseGuards(JwtAuthGuard)
   addAdmin(
-    @Req() req,
+    @UserId() userId: number,
     @Param('username') username: string,
   ): Promise<{ isAdmin: boolean }> {
-    return this.usersService.setAdmin(req.user.userId, username, true);
+    return this.usersService.setAdmin(userId, username, true);
   }
 
   @Delete(':username/admin')
   @UseGuards(JwtAuthGuard)
   removeAdmin(
-    @Req() req,
+    @UserId() userId: number,
     @Param('username') username: string,
   ): Promise<{ isAdmin: boolean }> {
-    return this.usersService.setAdmin(req.user.userId, username, false);
+    return this.usersService.setAdmin(userId, username, false);
   }
 
   @Put(':username/suspension')
   @UseGuards(JwtAuthGuard)
   suspend(
-    @Req() req,
+    @UserId() userId: number,
     @Param('username') username: string,
     @Body() body: SuspendUserDto,
   ) {
     return this.usersService.setSuspension(
-      req.user.userId,
+      userId,
       username,
       body.duration,
       body.reason,
@@ -180,26 +178,29 @@ export class UsersController {
 
   @Delete(':username/suspension')
   @UseGuards(JwtAuthGuard)
-  liftSuspension(@Req() req, @Param('username') username: string) {
-    return this.usersService.setSuspension(req.user.userId, username, null);
+  liftSuspension(
+    @UserId() userId: number,
+    @Param('username') username: string,
+  ) {
+    return this.usersService.setSuspension(userId, username, null);
   }
 
   @Put(':username/verified')
   @UseGuards(JwtAuthGuard)
   verify(
-    @Req() req,
+    @UserId() userId: number,
     @Param('username') username: string,
   ): Promise<{ isVerified: boolean }> {
-    return this.usersService.setVerified(req.user.userId, username, true);
+    return this.usersService.setVerified(userId, username, true);
   }
 
   @Delete(':username/verified')
   @UseGuards(JwtAuthGuard)
   unverify(
-    @Req() req,
+    @UserId() userId: number,
     @Param('username') username: string,
   ): Promise<{ isVerified: boolean }> {
-    return this.usersService.setVerified(req.user.userId, username, false);
+    return this.usersService.setVerified(userId, username, false);
   }
 
   @Get(':username')

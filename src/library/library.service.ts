@@ -11,6 +11,7 @@ import {
   Prisma,
 } from '../../prisma/generated/client';
 import { author } from '../common/author';
+import { isUniqueViolation } from '../common/prisma-errors';
 import { AddLibraryEntryDto } from './dto/add-library-entry.dto';
 import { UpdateLibraryEntryDto } from './dto/update-library-entry.dto';
 import {
@@ -481,10 +482,7 @@ export class LibraryService {
       this.discordChannel.entryChanged(entry.id);
       return await this.toView(userId, entry);
     } catch (e) {
-      if (
-        e instanceof Prisma.PrismaClientKnownRequestError &&
-        e.code === 'P2002'
-      ) {
+      if (isUniqueViolation(e)) {
         throw new ConflictException('Already in your library');
       }
       throw e;

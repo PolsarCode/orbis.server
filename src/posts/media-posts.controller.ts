@@ -7,7 +7,6 @@ import {
   ParseIntPipe,
   Post,
   Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
@@ -16,6 +15,7 @@ import { JwtAuthGuard } from '../auth/jwt.guard';
 import { AllowGuest } from '../auth/allow-guest';
 import { MediaType } from '../../prisma/generated/client';
 import { RateLimit, MINUTE } from '../common/throttle';
+import { UserId } from '../common/user-id';
 
 @Controller('library/media/:type/:sourceId/posts')
 @UseGuards(JwtAuthGuard)
@@ -25,14 +25,14 @@ export class MediaPostsController {
   @AllowGuest()
   @Get()
   findForMedia(
-    @Req() req,
+    @UserId() userId: number,
     @Param('type', new ParseEnumPipe(MediaType)) type: MediaType,
     @Param('sourceId') sourceId: string,
     @Query('cursor') cursor?: string,
     @Query('exclude') exclude?: string,
   ) {
     return this.postsService.findForMedia(
-      req.user.userId,
+      userId,
       type,
       sourceId,
       cursor,
@@ -43,23 +43,18 @@ export class MediaPostsController {
   @AllowGuest()
   @Get(':postId')
   findOne(
-    @Req() req,
+    @UserId() userId: number,
     @Param('type', new ParseEnumPipe(MediaType)) type: MediaType,
     @Param('sourceId') sourceId: string,
     @Param('postId', ParseIntPipe) postId: number,
   ) {
-    return this.postsService.findOneForMedia(
-      req.user.userId,
-      type,
-      sourceId,
-      postId,
-    );
+    return this.postsService.findOneForMedia(userId, type, sourceId, postId);
   }
 
   @RateLimit(10, MINUTE)
   @Post()
   createOnMedia(
-    @Req() req,
+    @UserId() userId: number,
     @Param('type', new ParseEnumPipe(MediaType)) type: MediaType,
     @Param('sourceId') sourceId: string,
     @Body() createPostDto: CreatePostDto,
@@ -67,7 +62,7 @@ export class MediaPostsController {
     return this.postsService.createOnMedia(
       type,
       sourceId,
-      req.user.userId,
+      userId,
       createPostDto,
     );
   }

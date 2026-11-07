@@ -12,7 +12,11 @@ import { UpdateReportDto } from './dto/update-report.dto';
 import { NotificationsService } from '../notifications/notifications.service';
 import { ticketNumber } from './ticket';
 import { getReporterStatusLabel } from './status-labels';
-import { isHeadAdmin } from '../users/head-admin';
+import {
+  isHeadAdmin,
+  isHeadAdminAccount,
+  isSiteAdmin,
+} from '../users/head-admin';
 import { PresenceGateway } from '../friends/presence.gateway';
 import {
   ACTIVITY_COLOR,
@@ -23,6 +27,7 @@ import {
 } from './discord';
 import { ReportStatus } from '../../prisma/generated/client';
 import { webUrl } from '../common/web-url';
+import { searchContains } from '../common/search';
 
 const boardLabels: Record<ReportStatus, string> = {
   todo: 'To do',
@@ -189,11 +194,7 @@ export class ReportsService {
     if (!report) throw new NotFoundException('Report not found');
 
     if (assigneeId !== null) {
-      const assignee = await this.prisma.user.findUnique({
-        where: { id: assigneeId },
-        select: { isAdmin: true, email: true },
-      });
-      if (!assignee || !(assignee.isAdmin || isHeadAdmin(assignee.email))) {
+      if (!(await isSiteAdmin(this.prisma, assigneeId))) {
         throw new BadRequestException('Reports can only be assigned to admins');
       }
     }
@@ -342,21 +343,20 @@ export class ReportsService {
   }
 
   async search(userId: number, rawQuery: string) {
-    const query = rawQuery.trim().slice(0, 100);
-    if (query.length < 2) return [];
+    const filter = searchContains(rawQuery);
+    if (!filter) return [];
     await this.requireAdmin(userId);
 
-    const contains = { contains: query, mode: 'insensitive' as const };
-    const ticket = query.replace(/^#/, '');
+    const ticket = filter.contains.replace(/^#/, '');
     const id = /^\d{1,9}$/.test(ticket) ? Number(ticket) : null;
     const reports = await this.prisma.report.findMany({
       where: {
         OR: [
           ...(id ? [{ id }] : []),
-          { message: contains },
-          { resolutionNote: contains },
-          { author: { username: contains } },
-          { author: { name: contains } },
+          { message: filter },
+          { resolutionNote: filter },
+          { author: { username: filter } },
+          { author: { name: filter } },
         ],
       },
       orderBy: { createdAt: 'desc' },
@@ -467,21 +467,13 @@ export class ReportsService {
   }
 
   private async requireHeadAdmin(userId: number) {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: { email: true },
-    });
-    if (!user || !isHeadAdmin(user.email)) {
+    if (!(await isHeadAdminAccount(this.prisma, userId))) {
       throw new ForbiddenException('Only the head admin can do this');
     }
   }
 
   private async requireAdmin(userId: number) {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: { isAdmin: true, email: true },
-    });
-    if (!user || !(user.isAdmin || isHeadAdmin(user.email))) {
+    if (!(await isSiteAdmin(this.prisma, userId))) {
       throw new ForbiddenException('Only site admins can see reports');
     }
   }

@@ -1,5 +1,22 @@
+import type { Prisma } from '../../prisma/generated/client';
+
 export const author = {
   select: { id: true, username: true, name: true, avatarUrl: true },
+} as const;
+
+export type Author = Prisma.UserGetPayload<typeof author>;
+
+export const presenceUser = {
+  select: {
+    id: true,
+    username: true,
+    name: true,
+    avatarUrl: true,
+    coverUrl: true,
+    isVerified: true,
+    appearOffline: true,
+    status: true,
+  },
 } as const;
 
 export const communitySummary = {

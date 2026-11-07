@@ -1,10 +1,14 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Prisma } from '../../prisma/generated/client';
 import { PrismaService } from '../prisma.service';
-import { PAGE_SIZE } from '../common/pagination';
+import {
+  createdBefore,
+  cursorPage,
+  PAGE_SIZE,
+  parseTimeCursor,
+} from '../common/pagination';
 import { DAY } from '../common/throttle';
 import { hashtagName } from '../common/hashtags';
-import { MAX_INT } from '../communities/community-member.guard';
 import { contentViewer } from '../moderation/visibility';
 import { notMutedBy } from '../safety/blocks';
 import { showsNsfw } from '../users/nsfw';
@@ -37,30 +41,6 @@ export type TagItem =
       target: CommentTarget;
     }
   | ({ kind: 'forum_post'; createdAt: Date } & ForumTagItem);
-
-type TagCursor = { createdAt: Date; id: number };
-
-function parseCursor(raw?: string): TagCursor | undefined {
-  if (raw === undefined) return undefined;
-
-  const match = /^(\d{1,15})_(\d{1,10})$/.exec(raw);
-  const id = Number(match?.[2]);
-  if (!match || id < 1 || id > MAX_INT) {
-    throw new BadRequestException('Invalid cursor');
-  }
-
-  return { createdAt: new Date(Number(match[1])), id };
-}
-
-function before(cursor?: TagCursor): Prisma.HashtagUsageWhereInput {
-  if (!cursor) return {};
-  return {
-    OR: [
-      { createdAt: { lt: cursor.createdAt } },
-      { createdAt: cursor.createdAt, id: { lt: cursor.id } },
-    ],
-  };
-}
 
 function validName(raw: string) {
   const name = hashtagName(raw);
@@ -193,7 +173,7 @@ export class TagsService {
 
   async findOne(viewerId: number, rawName: string, rawCursor?: string) {
     const name = validName(rawName);
-    const cursor = parseCursor(rawCursor);
+    const cursor = parseTimeCursor(rawCursor);
     const [hashtag, where] = await Promise.all([
       this.prisma.hashtag.findUnique({
         where: { name },
@@ -219,7 +199,11 @@ export class TagsService {
     const [usages, people] = await Promise.all([
       this.prisma.hashtagUsage.findMany({
         where: {
-          AND: [scoped, before(cursor), { author: notMutedBy(viewerId) }],
+          AND: [
+            scoped,
+            createdBefore(cursor),
+            { author: notMutedBy(viewerId) },
+          ],
         },
         orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
         take: PAGE_SIZE + 1,
@@ -233,9 +217,8 @@ export class TagsService {
       }),
       current && (current.people ?? this.peopleByTag(scoped, current.since)),
     ]);
-    const page = usages.slice(0, PAGE_SIZE);
-    const items = await this.items(viewerId, page);
-    const last = page[page.length - 1];
+    const page = cursorPage(usages);
+    const items = await this.items(viewerId, page.items);
 
     return {
       tag: {
@@ -244,10 +227,7 @@ export class TagsService {
         people: people?.get(hashtag.id) ?? 0,
       },
       items,
-      nextCursor:
-        usages.length > PAGE_SIZE
-          ? `${last.createdAt.getTime()}_${last.id}`
-          : null,
+      nextCursor: page.nextCursor,
     };
   }
 

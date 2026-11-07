@@ -4,7 +4,6 @@ import {
   Param,
   ParseIntPipe,
   Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt.guard';
@@ -13,6 +12,7 @@ import { CommunityViewerGuard } from '../communities/community-viewer.guard';
 import { ClipPage } from '../friends/twitch-live.service';
 import { ClipsService } from './clips.service';
 import { ClipsQueryDto } from './dto/clips-query.dto';
+import { UserId } from '../common/user-id';
 
 @Controller()
 @UseGuards(JwtAuthGuard)
@@ -32,10 +32,10 @@ export class ClipsController {
   @Get('users/:username/clips')
   @AllowGuest()
   userClips(
-    @Req() req,
+    @UserId() userId: number,
     @Param('username') username: string,
     @Query() { cursor }: ClipsQueryDto,
   ): Promise<ClipPage> {
-    return this.clipsService.forUser(req.user.userId, username, cursor);
+    return this.clipsService.forUser(userId, username, cursor);
   }
 }

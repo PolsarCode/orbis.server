@@ -19,7 +19,8 @@ import {
   UserStatus,
 } from '../../prisma/generated/client';
 import { normalizeUsername } from './username';
-import { isHeadAdmin } from './head-admin';
+import { requireUserNamed } from './user-lookup';
+import { isHeadAdmin, isHeadAdminAccount, isSiteAdmin } from './head-admin';
 import {
   activeSuspension,
   notSuspended,
@@ -28,6 +29,7 @@ import {
   type SuspensionDuration,
 } from './suspension';
 import { DAY } from '../common/throttle';
+import { presenceUser } from '../common/author';
 import { StorageService } from '../storage/storage.service';
 import { canViewProfile } from '../posts/wall-access';
 import { blockState, notBlockedWith } from '../safety/blocks';
@@ -340,14 +342,7 @@ export class UsersService {
     const users = await this.prisma.user.findMany({
       where: { isPublic: true, ...notSuspended() },
       select: {
-        id: true,
-        username: true,
-        name: true,
-        avatarUrl: true,
-        coverUrl: true,
-        isVerified: true,
-        appearOffline: true,
-        status: true,
+        ...presenceUser.select,
         _count: {
           select: { posts: recent, comments: recent },
         },
@@ -377,55 +372,51 @@ export class UsersService {
       })[];
     }
   > {
-    const user = await this.prisma.user.findUnique({
-      where: { username: normalizeUsername(username) },
-      select: {
-        id: true,
-        username: true,
-        name: true,
-        avatarUrl: true,
-        coverUrl: true,
-        backgroundUrl: true,
-        email: true,
-        isAdmin: true,
-        isVerified: true,
-        appearOffline: true,
-        status: true,
-        isPublic: true,
-        createdAt: true,
-        oauthAccounts: {
-          where: { provider: 'twitch' },
-          select: {
-            username: true,
-            providerAccountId: true,
-            showLive: true,
-            showClips: true,
-          },
+    const user = await requireUserNamed(this.prisma, username, {
+      id: true,
+      username: true,
+      name: true,
+      avatarUrl: true,
+      coverUrl: true,
+      backgroundUrl: true,
+      email: true,
+      isAdmin: true,
+      isVerified: true,
+      appearOffline: true,
+      status: true,
+      isPublic: true,
+      createdAt: true,
+      oauthAccounts: {
+        where: { provider: 'twitch' },
+        select: {
+          username: true,
+          providerAccountId: true,
+          showLive: true,
+          showClips: true,
         },
-        memberships: {
-          orderBy: { joinedAt: 'asc' },
-          select: {
-            community: {
-              select: {
-                id: true,
-                name: true,
-                iconUrl: true,
-                coverUrl: true,
-                isVerified: true,
-                ownerId: true,
-                isPublic: true,
-                _count: { select: { memberships: true } },
-                memberships: {
-                  where: { userId: viewerId },
-                  select: { userId: true },
-                },
+      },
+      memberships: {
+        orderBy: { joinedAt: 'asc' },
+        select: {
+          community: {
+            select: {
+              id: true,
+              name: true,
+              iconUrl: true,
+              coverUrl: true,
+              isVerified: true,
+              ownerId: true,
+              isPublic: true,
+              _count: { select: { memberships: true } },
+              memberships: {
+                where: { userId: viewerId },
+                select: { userId: true },
               },
             },
           },
         },
       },
     });
-    if (!user) throw new NotFoundException('User not found');
 
     const { blocking, blockedBy } = await blockState(
       this.prisma,
@@ -470,18 +461,6 @@ export class UsersService {
       };
     }
 
-    const friendUser = {
-      select: {
-        id: true,
-        username: true,
-        name: true,
-        avatarUrl: true,
-        coverUrl: true,
-        isVerified: true,
-        appearOffline: true,
-        status: true,
-      },
-    } as const;
     const [twitch] = user.oauthAccounts;
     const liveChannel = twitch?.showLive ? twitch : null;
     const [friendships, posts, library, nextStream] = await Promise.all([
@@ -493,7 +472,7 @@ export class UsersService {
           addressee: notBlockedWith(viewerId),
         },
         orderBy: { createdAt: 'desc' },
-        select: { requester: friendUser, addressee: friendUser },
+        select: { requester: presenceUser, addressee: presenceUser },
       }),
       this.prisma.post.count({ where: { authorId: user.id } }),
       this.prisma.libraryEntry.findMany({
@@ -582,21 +561,16 @@ export class UsersService {
     username: string,
     isAdmin: boolean,
   ): Promise<{ isAdmin: boolean }> {
-    const headAdmin = await this.prisma.user.findUnique({
-      where: { id: headAdminId },
-      select: { email: true },
-    });
-    if (!headAdmin || !isHeadAdmin(headAdmin.email)) {
+    if (!(await isHeadAdminAccount(this.prisma, headAdminId))) {
       throw new ForbiddenException(
         'Only the head admin can change site admins',
       );
     }
 
-    const user = await this.prisma.user.findUnique({
-      where: { username: normalizeUsername(username) },
-      select: { id: true, email: true },
+    const user = await requireUserNamed(this.prisma, username, {
+      id: true,
+      email: true,
     });
-    if (!user) throw new NotFoundException('User not found');
     if (isHeadAdmin(user.email)) {
       throw new BadRequestException('The head admin is always an admin');
     }
@@ -612,11 +586,7 @@ export class UsersService {
     viewerId: number,
     userId: number,
   ): Promise<ProfileSuspension | null> {
-    const viewer = await this.prisma.user.findUnique({
-      where: { id: viewerId },
-      select: { isAdmin: true, email: true },
-    });
-    if (!viewer || !(viewer.isAdmin || isHeadAdmin(viewer.email))) return null;
+    if (!(await isSiteAdmin(this.prisma, viewerId))) return null;
 
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -626,11 +596,7 @@ export class UsersService {
   }
 
   async twoFactorFor(viewerId: number, userId: number) {
-    const viewer = await this.prisma.user.findUnique({
-      where: { id: viewerId },
-      select: { isAdmin: true, email: true },
-    });
-    if (!viewer || !(viewer.isAdmin || isHeadAdmin(viewer.email))) return null;
+    if (!(await isSiteAdmin(this.prisma, viewerId))) return null;
 
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -654,11 +620,11 @@ export class UsersService {
       throw new ForbiddenException('Only site admins can suspend accounts');
     }
 
-    const user = await this.prisma.user.findUnique({
-      where: { username: normalizeUsername(username) },
-      select: { id: true, email: true, isAdmin: true },
+    const user = await requireUserNamed(this.prisma, username, {
+      id: true,
+      email: true,
+      isAdmin: true,
     });
-    if (!user) throw new NotFoundException('User not found');
     if (user.id === admin.id) {
       throw new BadRequestException('You can’t suspend your own account');
     }
@@ -705,19 +671,11 @@ export class UsersService {
     username: string,
     isVerified: boolean,
   ): Promise<{ isVerified: boolean }> {
-    const headAdmin = await this.prisma.user.findUnique({
-      where: { id: headAdminId },
-      select: { email: true },
-    });
-    if (!headAdmin || !isHeadAdmin(headAdmin.email)) {
+    if (!(await isHeadAdminAccount(this.prisma, headAdminId))) {
       throw new ForbiddenException('Only the head admin can verify profiles');
     }
 
-    const user = await this.prisma.user.findUnique({
-      where: { username: normalizeUsername(username) },
-      select: { id: true },
-    });
-    if (!user) throw new NotFoundException('User not found');
+    const user = await requireUserNamed(this.prisma, username, { id: true });
 
     await this.prisma.user.update({
       where: { id: user.id },

@@ -1,42 +1,16 @@
-import {
-  IsIn,
-  IsInt,
-  IsOptional,
-  IsString,
-  IsUrl,
-  Max,
-  MaxLength,
-  Min,
-} from 'class-validator';
-import { SPOILER_MAX } from '../../common/spoiler';
+import { IsIn, IsOptional } from 'class-validator';
+import { IsId } from '../../common/validators';
 import { CommentableType } from '../../../prisma/generated/client';
+import { UpdateCommentDto } from './update-comment.dto';
 
-export class CreateCommentDto {
+export class CreateCommentDto extends UpdateCommentDto {
   @IsIn(Object.values(CommentableType))
   type: CommentableType;
 
-  @IsInt()
-  @Min(1)
-  @Max(2147483647)
+  @IsId()
   id: number;
 
   @IsOptional()
-  @IsInt()
-  @Min(1)
-  @Max(2147483647)
+  @IsId()
   parentId?: number;
-
-  @IsString()
-  @MaxLength(10000)
-  content: string;
-
-  @IsOptional()
-  @MaxLength(2048)
-  @IsUrl({ protocols: ['http', 'https'], require_protocol: true })
-  linkUrl?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(SPOILER_MAX)
-  spoiler?: string | null;
 }

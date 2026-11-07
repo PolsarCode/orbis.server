@@ -6,7 +6,6 @@ import {
   ParseIntPipe,
   Post,
   Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
@@ -14,6 +13,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { JwtAuthGuard } from '../auth/jwt.guard';
 import { AllowGuest } from '../auth/allow-guest';
 import { RateLimit, MINUTE } from '../common/throttle';
+import { UserId } from '../common/user-id';
 
 @Controller('users/:username/posts')
 @UseGuards(JwtAuthGuard)
@@ -23,35 +23,34 @@ export class UserPostsController {
   @Get()
   @AllowGuest()
   findForProfile(
-    @Req() req,
+    @UserId() userId: number,
     @Param('username') username: string,
     @Query('cursor') cursor?: string,
     @Query('exclude') exclude?: string,
   ) {
-    return this.postsService.findForProfile(
-      req.user.userId,
-      username,
-      cursor,
-      exclude,
-    );
+    return this.postsService.findForProfile(userId, username, cursor, exclude);
   }
 
   @RateLimit(60, MINUTE)
   @Get('search')
   @AllowGuest()
-  search(@Req() req, @Param('username') username: string, @Query('q') q = '') {
-    return this.postsService.searchProfile(req.user.userId, username, q);
+  search(
+    @UserId() userId: number,
+    @Param('username') username: string,
+    @Query('q') q = '',
+  ) {
+    return this.postsService.searchProfile(userId, username, q);
   }
 
   @Get('activities/:activityId')
   @AllowGuest()
   findActivity(
-    @Req() req,
+    @UserId() userId: number,
     @Param('username') username: string,
     @Param('activityId', ParseIntPipe) activityId: number,
   ) {
     return this.postsService.findActivityForProfile(
-      req.user.userId,
+      userId,
       username,
       activityId,
     );
@@ -60,28 +59,20 @@ export class UserPostsController {
   @Get(':postId')
   @AllowGuest()
   findOne(
-    @Req() req,
+    @UserId() userId: number,
     @Param('username') username: string,
     @Param('postId', ParseIntPipe) postId: number,
   ) {
-    return this.postsService.findOneForProfile(
-      req.user.userId,
-      username,
-      postId,
-    );
+    return this.postsService.findOneForProfile(userId, username, postId);
   }
 
   @RateLimit(10, MINUTE)
   @Post()
   createOnWall(
-    @Req() req,
+    @UserId() userId: number,
     @Param('username') username: string,
     @Body() createPostDto: CreatePostDto,
   ) {
-    return this.postsService.createOnWall(
-      username,
-      req.user.userId,
-      createPostDto,
-    );
+    return this.postsService.createOnWall(username, userId, createPostDto);
   }
 }

@@ -6,8 +6,8 @@ import {
   SetMetadata,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma.service';
+import { bearerSubject } from '../common/bearer-token';
 
 const ALLOW_UNCONFIRMED = 'allowUnconfirmed';
 const WRITE_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
@@ -18,8 +18,6 @@ export const AllowUnconfirmed = () => SetMetadata(ALLOW_UNCONFIRMED, true);
 
 @Injectable()
 export class ConfirmedEmailGuard implements CanActivate {
-  private readonly jwt = new JwtService({ secret: process.env.JWT_SECRET });
-
   constructor(
     private reflector: Reflector,
     private prisma: PrismaService,
@@ -38,16 +36,8 @@ export class ConfirmedEmailGuard implements CanActivate {
       return true;
     }
 
-    const header = request.headers?.authorization;
-    if (typeof header !== 'string' || !header.startsWith('Bearer ')) {
-      return true;
-    }
-    let userId: number;
-    try {
-      userId = this.jwt.verify<{ sub: number }>(header.slice(7)).sub;
-    } catch {
-      return true;
-    }
+    const userId = bearerSubject(request.headers?.authorization);
+    if (userId === null) return true;
 
     const user = await this.prisma.user.findUnique({
       where: { id: userId },

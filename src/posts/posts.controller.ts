@@ -10,7 +10,6 @@ import {
   Post,
   Put,
   Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
@@ -20,6 +19,7 @@ import { AllowGuest } from '../auth/allow-guest';
 import { CommunityMemberGuard } from '../communities/community-member.guard';
 import { CommunityViewerGuard } from '../communities/community-viewer.guard';
 import { RateLimit, MINUTE } from '../common/throttle';
+import { UserId } from '../common/user-id';
 
 @Controller('communities/:communityId/posts')
 @UseGuards(JwtAuthGuard)
@@ -30,13 +30,13 @@ export class PostsController {
   @AllowGuest()
   @UseGuards(CommunityViewerGuard)
   findAll(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Query('cursor') cursor?: string,
     @Query('exclude') exclude?: string,
   ) {
     return this.postsService.findForCommunity(
-      req.user.userId,
+      userId,
       communityId,
       cursor,
       exclude,
@@ -48,23 +48,23 @@ export class PostsController {
   @AllowGuest()
   @UseGuards(CommunityViewerGuard)
   search(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Query('q') q = '',
   ) {
-    return this.postsService.searchCommunity(req.user.userId, communityId, q);
+    return this.postsService.searchCommunity(userId, communityId, q);
   }
 
   @Get('activities/:activityId')
   @AllowGuest()
   @UseGuards(CommunityViewerGuard)
   findActivity(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Param('activityId', ParseIntPipe) activityId: number,
   ) {
     return this.postsService.findActivityInCommunity(
-      req.user.userId,
+      userId,
       communityId,
       activityId,
     );
@@ -74,30 +74,22 @@ export class PostsController {
   @AllowGuest()
   @UseGuards(CommunityViewerGuard)
   findOne(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Param('postId', ParseIntPipe) postId: number,
   ) {
-    return this.postsService.findOneInCommunity(
-      req.user.userId,
-      communityId,
-      postId,
-    );
+    return this.postsService.findOneInCommunity(userId, communityId, postId);
   }
 
   @RateLimit(10, MINUTE)
   @Post()
   @UseGuards(CommunityMemberGuard)
   create(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Body() createPostDto: CreatePostDto,
   ) {
-    return this.postsService.create(
-      communityId,
-      req.user.userId,
-      createPostDto,
-    );
+    return this.postsService.create(communityId, userId, createPostDto);
   }
 }
 
@@ -109,40 +101,40 @@ export class PostController {
   @RateLimit(30, MINUTE)
   @Patch(':postId')
   update(
-    @Req() req,
+    @UserId() userId: number,
     @Param('postId', ParseIntPipe) postId: number,
     @Body() updatePostDto: CreatePostDto,
   ) {
-    return this.postsService.update(req.user.userId, postId, updatePostDto);
+    return this.postsService.update(userId, postId, updatePostDto);
   }
 
   @RateLimit(30, MINUTE)
   @Put(':postId/pin')
   @HttpCode(204)
   pin(
-    @Req() req,
+    @UserId() userId: number,
     @Param('postId', ParseIntPipe) postId: number,
   ): Promise<void> {
-    return this.postsService.setPinned(req.user.userId, postId, true);
+    return this.postsService.setPinned(userId, postId, true);
   }
 
   @RateLimit(30, MINUTE)
   @Delete(':postId/pin')
   @HttpCode(204)
   unpin(
-    @Req() req,
+    @UserId() userId: number,
     @Param('postId', ParseIntPipe) postId: number,
   ): Promise<void> {
-    return this.postsService.setPinned(req.user.userId, postId, false);
+    return this.postsService.setPinned(userId, postId, false);
   }
 
   @RateLimit(30, MINUTE)
   @Delete(':postId')
   @HttpCode(204)
   remove(
-    @Req() req,
+    @UserId() userId: number,
     @Param('postId', ParseIntPipe) postId: number,
   ): Promise<void> {
-    return this.postsService.remove(req.user.userId, postId);
+    return this.postsService.remove(userId, postId);
   }
 }

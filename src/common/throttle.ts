@@ -1,6 +1,5 @@
 import { applyDecorators, Injectable, SetMetadata } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { JwtService } from '@nestjs/jwt';
 import {
   InjectThrottlerOptions,
   InjectThrottlerStorage,
@@ -13,6 +12,7 @@ import {
 import { PrismaService } from '../prisma.service';
 import { accountTimeLeft } from './new-account';
 import { clientIp } from './client-ip';
+import { bearerSubject } from './bearer-token';
 
 export const MINUTE = 60_000;
 export const HOUR = 60 * MINUTE;
@@ -50,19 +50,9 @@ export const RateLimit = (
     SetMetadata(NEW_ACCOUNT_LIMIT, newAccountLimit),
   );
 
-const jwt = new JwtService();
-
 function userOf(authorization: unknown) {
-  if (typeof authorization !== 'string') return null;
-  if (!authorization.startsWith('Bearer ')) return null;
-  try {
-    const { sub } = jwt.verify<{ sub: number }>(authorization.slice(7), {
-      secret: process.env.JWT_SECRET,
-    });
-    return typeof sub === 'number' ? sub : null;
-  } catch {
-    return null;
-  }
+  const sub = bearerSubject(authorization);
+  return typeof sub === 'number' ? sub : null;
 }
 
 @Injectable()

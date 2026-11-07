@@ -10,7 +10,7 @@ import {
   MediaType,
   Prisma,
 } from '../../prisma/generated/client';
-import { author, communitySummary } from '../common/author';
+import { Author, author, communitySummary } from '../common/author';
 import { sanitizeRichText } from '../common/rich-text';
 import {
   linkedMentions,
@@ -94,7 +94,7 @@ export type CommentView = RawComment & {
   hiddenBecause: HiddenBecause | null;
 };
 
-type CommentAuthor = Prisma.UserGetPayload<typeof author> & {
+type CommentAuthor = Author & {
   nickname?: string | null;
 };
 
@@ -106,6 +106,22 @@ export type CommentTarget = {
   media: { type: MediaType; sourceId: string } | null;
   wallUser: CommentAuthor | null;
 };
+
+function ownComment(
+  comment: RawComment,
+  author: CommentAuthor,
+  liked: boolean,
+): CommentView {
+  return {
+    ...comment,
+    author,
+    liked,
+    hidden: null,
+    deleted: false,
+    canDelete: true,
+    hiddenBecause: null,
+  };
+}
 
 @Injectable()
 export class CommentsService {
@@ -309,6 +325,22 @@ export class CommentsService {
     });
   }
 
+  private async commentBody(userId: number, content: string, linkUrl?: string) {
+    const { html, empty } = sanitizeRichText(unlinkHashtags(content));
+    if (empty && !linkUrl) {
+      throw new BadRequestException('Comment cannot be empty');
+    }
+    if (containsLink(html, linkUrl)) {
+      await requireEstablishedAccount(this.prisma, userId, 'post links');
+    }
+    const { html: mentions, mentioned } = await resolveMentions(
+      this.prisma,
+      empty ? '' : html,
+      userId,
+    );
+    return { ...resolveHashtags(mentions), mentioned };
+  }
+
   async create(
     userId: number,
     { type, id, parentId, content, linkUrl, spoiler }: CreateCommentDto,
@@ -337,19 +369,11 @@ export class CommentsService {
       throw new NotFoundException('Not found');
     }
 
-    const { html, empty } = sanitizeRichText(unlinkHashtags(content));
-    if (empty && !linkUrl) {
-      throw new BadRequestException('Comment cannot be empty');
-    }
-    if (containsLink(html, linkUrl)) {
-      await requireEstablishedAccount(this.prisma, userId, 'post links');
-    }
-    const { html: mentions, mentioned } = await resolveMentions(
-      this.prisma,
-      empty ? '' : html,
-      userId,
-    );
-    const { html: linked, hashtags } = resolveHashtags(mentions);
+    const {
+      html: linked,
+      mentioned,
+      hashtags,
+    } = await this.commentBody(userId, content, linkUrl);
 
     const increment = { commentCount: { increment: 1 } };
     const comment = await this.prisma.$transaction(async (tx) => {
@@ -382,15 +406,11 @@ export class CommentsService {
     const withNickname = await loadNicknames(this.prisma, [
       { communityId: home.communityId, userId },
     ]);
-    return {
-      ...comment,
-      author: withNickname(home.communityId, comment.author),
-      liked: false,
-      hidden: null,
-      deleted: false,
-      canDelete: true,
-      hiddenBecause: null,
-    };
+    return ownComment(
+      comment,
+      withNickname(home.communityId, comment.author),
+      false,
+    );
   }
 
   async update(
@@ -415,21 +435,11 @@ export class CommentsService {
       throw new ForbiddenException('You can only edit your own comments');
     }
 
-    const { html, empty } = sanitizeRichText(
-      unlinkHashtags(unlinkMentions(content)),
-    );
-    if (empty && !linkUrl) {
-      throw new BadRequestException('Comment cannot be empty');
-    }
-    if (containsLink(html, linkUrl)) {
-      await requireEstablishedAccount(this.prisma, userId, 'post links');
-    }
-    const { html: mentions, mentioned } = await resolveMentions(
-      this.prisma,
-      empty ? '' : html,
-      userId,
-    );
-    const { html: linked, hashtags } = resolveHashtags(mentions);
+    const {
+      html: linked,
+      mentioned,
+      hashtags,
+    } = await this.commentBody(userId, unlinkMentions(content), linkUrl);
     const updated = await this.prisma.comment.update({
       where: { id: commentId },
       data: {
@@ -468,15 +478,11 @@ export class CommentsService {
       this.likes.likedBy(userId, 'comment', [commentId]),
       loadNicknames(this.prisma, [{ communityId: home.communityId, userId }]),
     ]);
-    return {
-      ...updated,
-      author: withNickname(home.communityId, updated.author),
-      liked: liked.has(commentId),
-      hidden: null,
-      deleted: false,
-      canDelete: true,
-      hiddenBecause: null,
-    };
+    return ownComment(
+      updated,
+      withNickname(home.communityId, updated.author),
+      liked.has(commentId),
+    );
   }
 
   async remove(userId: number, commentId: number) {

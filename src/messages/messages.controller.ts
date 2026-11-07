@@ -9,7 +9,6 @@ import {
   Patch,
   Post,
   Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt.guard';
@@ -27,6 +26,7 @@ import {
   InboxEntry,
   MessagesService,
 } from './messages.service';
+import { UserId } from '../common/user-id';
 
 @Controller('messages')
 @UseGuards(JwtAuthGuard)
@@ -34,79 +34,85 @@ export class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}
 
   @Get()
-  inbox(@Req() req): Promise<InboxEntry[]> {
-    return this.messagesService.inbox(req.user.userId);
+  inbox(@UserId() userId: number): Promise<InboxEntry[]> {
+    return this.messagesService.inbox(userId);
   }
 
   @RateLimit(30, MINUTE)
   @Post('direct/:userId')
   direct(
-    @Req() req,
-    @Param('userId', ParseIntPipe) userId: number,
+    @UserId() userId: number,
+    @Param('userId', ParseIntPipe) otherId: number,
   ): Promise<InboxEntry> {
-    return this.messagesService.direct(req.user.userId, userId);
+    return this.messagesService.direct(userId, otherId);
   }
 
   @RateLimit(10, MINUTE)
   @Post('groups')
   createGroup(
-    @Req() req,
+    @UserId() userId: number,
     @Body() { userIds, name }: CreateGroupDto,
   ): Promise<InboxEntry> {
-    return this.messagesService.createGroup(req.user.userId, userIds, name);
+    return this.messagesService.createGroup(userId, userIds, name);
   }
 
   @Get(':id')
   history(
-    @Req() req,
+    @UserId() userId: number,
     @Param('id', ParseIntPipe) id: number,
     @Query('before', new ParseIntPipe({ optional: true })) before?: number,
   ): Promise<ChatHistory> {
-    return this.messagesService.history(req.user.userId, id, before);
+    return this.messagesService.history(userId, id, before);
   }
 
   @RateLimit(60, MINUTE)
   @Post(':id')
   send(
-    @Req() req,
+    @UserId() userId: number,
     @Param('id', ParseIntPipe) id: number,
     @Body() { text, replyToId }: SendMessageDto,
   ): Promise<ChatMessage> {
-    return this.messagesService.send(req.user.userId, id, text, replyToId);
+    return this.messagesService.send(userId, id, text, replyToId);
   }
 
   @RateLimit(60, MINUTE)
   @Patch(':id/messages/:messageId')
   edit(
-    @Req() req,
+    @UserId() userId: number,
     @Param('id', ParseIntPipe) id: number,
     @Param('messageId', ParseIntPipe) messageId: number,
     @Body() { text }: EditMessageDto,
   ): Promise<ChatMessage> {
-    return this.messagesService.edit(req.user.userId, id, messageId, text);
+    return this.messagesService.edit(userId, id, messageId, text);
   }
 
   @RateLimit(120, MINUTE)
   @Post(':id/messages/:messageId/reaction')
   react(
-    @Req() req,
+    @UserId() userId: number,
     @Param('id', ParseIntPipe) id: number,
     @Param('messageId', ParseIntPipe) messageId: number,
     @Body() { emoji }: ReactMessageDto,
   ): Promise<ChatMessage> {
-    return this.messagesService.react(req.user.userId, id, messageId, emoji);
+    return this.messagesService.react(userId, id, messageId, emoji);
   }
 
   @Post(':id/read')
   @HttpCode(204)
-  read(@Req() req, @Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.messagesService.read(req.user.userId, id);
+  read(
+    @UserId() userId: number,
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<void> {
+    return this.messagesService.read(userId, id);
   }
 
   @Post(':id/accept')
   @HttpCode(204)
-  accept(@Req() req, @Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.messagesService.accept(req.user.userId, id);
+  accept(
+    @UserId() userId: number,
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<void> {
+    return this.messagesService.accept(userId, id);
   }
 
   @RateLimit(60, MINUTE)
@@ -114,57 +120,60 @@ export class MessagesController {
   @HttpCode(200)
   @AllowUnconfirmed()
   mute(
-    @Req() req,
+    @UserId() userId: number,
     @Param('id', ParseIntPipe) id: number,
   ): Promise<{ muted: boolean }> {
-    return this.messagesService.setMuted(req.user.userId, id, true);
+    return this.messagesService.setMuted(userId, id, true);
   }
 
   @RateLimit(60, MINUTE)
   @Delete(':id/mute')
   @AllowUnconfirmed()
   unmute(
-    @Req() req,
+    @UserId() userId: number,
     @Param('id', ParseIntPipe) id: number,
   ): Promise<{ muted: boolean }> {
-    return this.messagesService.setMuted(req.user.userId, id, false);
+    return this.messagesService.setMuted(userId, id, false);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  decline(@Req() req, @Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.messagesService.decline(req.user.userId, id);
+  decline(
+    @UserId() userId: number,
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<void> {
+    return this.messagesService.decline(userId, id);
   }
 
   @RateLimit(20, MINUTE)
   @Patch(':id')
   @HttpCode(204)
   rename(
-    @Req() req,
+    @UserId() userId: number,
     @Param('id', ParseIntPipe) id: number,
     @Body() { name }: RenameGroupDto,
   ): Promise<void> {
-    return this.messagesService.rename(req.user.userId, id, name);
+    return this.messagesService.rename(userId, id, name);
   }
 
   @RateLimit(20, MINUTE)
   @Post(':id/members')
   @HttpCode(204)
   addMembers(
-    @Req() req,
+    @UserId() userId: number,
     @Param('id', ParseIntPipe) id: number,
     @Body() { userIds }: AddMembersDto,
   ): Promise<void> {
-    return this.messagesService.addMembers(req.user.userId, id, userIds);
+    return this.messagesService.addMembers(userId, id, userIds);
   }
 
   @Delete(':id/members/:userId')
   @HttpCode(204)
   removeMember(
-    @Req() req,
+    @UserId() userId: number,
     @Param('id', ParseIntPipe) id: number,
-    @Param('userId', ParseIntPipe) userId: number,
+    @Param('userId', ParseIntPipe) targetId: number,
   ): Promise<void> {
-    return this.messagesService.removeMember(req.user.userId, id, userId);
+    return this.messagesService.removeMember(userId, id, targetId);
   }
 }

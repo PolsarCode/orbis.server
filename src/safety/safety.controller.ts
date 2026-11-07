@@ -7,7 +7,6 @@ import {
   Param,
   ParseIntPipe,
   Post,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt.guard';
@@ -15,6 +14,7 @@ import { AllowUnconfirmed } from '../auth/confirmed-email.guard';
 import { MINUTE, RateLimit } from '../common/throttle';
 import { SafetyService } from './safety.service';
 import { CreateKeywordFilterDto } from './dto/create-keyword-filter.dto';
+import { UserId } from '../common/user-id';
 
 @Controller()
 @UseGuards(JwtAuthGuard)
@@ -23,56 +23,62 @@ export class SafetyController {
   constructor(private readonly safetyService: SafetyService) {}
 
   @Get('blocks')
-  blocks(@Req() req) {
-    return this.safetyService.blocks(req.user.userId);
+  blocks(@UserId() userId: number) {
+    return this.safetyService.blocks(userId);
   }
 
   @RateLimit(30, MINUTE)
   @Post('users/:username/block')
   @HttpCode(200)
-  block(@Req() req, @Param('username') username: string) {
-    return this.safetyService.block(req.user.userId, username);
+  block(@UserId() userId: number, @Param('username') username: string) {
+    return this.safetyService.block(userId, username);
   }
 
   @RateLimit(30, MINUTE)
   @Delete('users/:username/block')
-  unblock(@Req() req, @Param('username') username: string) {
-    return this.safetyService.unblock(req.user.userId, username);
+  unblock(@UserId() userId: number, @Param('username') username: string) {
+    return this.safetyService.unblock(userId, username);
   }
 
   @Get('mutes')
-  mutes(@Req() req) {
-    return this.safetyService.mutes(req.user.userId);
+  mutes(@UserId() userId: number) {
+    return this.safetyService.mutes(userId);
   }
 
   @RateLimit(30, MINUTE)
   @Post('users/:username/mute')
   @HttpCode(200)
-  mute(@Req() req, @Param('username') username: string) {
-    return this.safetyService.mute(req.user.userId, username);
+  mute(@UserId() userId: number, @Param('username') username: string) {
+    return this.safetyService.mute(userId, username);
   }
 
   @RateLimit(30, MINUTE)
   @Delete('users/:username/mute')
-  unmute(@Req() req, @Param('username') username: string) {
-    return this.safetyService.unmute(req.user.userId, username);
+  unmute(@UserId() userId: number, @Param('username') username: string) {
+    return this.safetyService.unmute(userId, username);
   }
 
   @Get('keyword-filters')
-  filters(@Req() req) {
-    return this.safetyService.filters(req.user.userId);
+  filters(@UserId() userId: number) {
+    return this.safetyService.filters(userId);
   }
 
   @RateLimit(30, MINUTE)
   @Post('keyword-filters')
-  addFilter(@Req() req, @Body() { phrase, duration }: CreateKeywordFilterDto) {
-    return this.safetyService.addFilter(req.user.userId, phrase, duration);
+  addFilter(
+    @UserId() userId: number,
+    @Body() { phrase, duration }: CreateKeywordFilterDto,
+  ) {
+    return this.safetyService.addFilter(userId, phrase, duration);
   }
 
   @RateLimit(30, MINUTE)
   @Delete('keyword-filters/:id')
   @HttpCode(204)
-  removeFilter(@Req() req, @Param('id', ParseIntPipe) id: number) {
-    return this.safetyService.removeFilter(req.user.userId, id);
+  removeFilter(
+    @UserId() userId: number,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.safetyService.removeFilter(userId, id);
   }
 }

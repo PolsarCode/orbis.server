@@ -6,6 +6,8 @@ import {
 } from '@nestjs/common';
 import { ConversationStatus, Prisma } from '../../prisma/generated/client';
 import { PrismaService } from '../prisma.service';
+import { Author, author } from '../common/author';
+import { isUniqueViolation } from '../common/prisma-errors';
 import { MAX_INT } from '../communities/community-member.guard';
 import { PresenceGateway } from '../friends/presence.gateway';
 import {
@@ -15,10 +17,7 @@ import {
   pair,
 } from './conversation';
 import { blockedWith, isBlocked } from '../safety/blocks';
-
-const person = {
-  select: { id: true, username: true, name: true, avatarUrl: true },
-} as const;
+import { friendIdsAmong } from '../friends/friend-ids';
 
 const conversationSelect = {
   id: true,
@@ -29,8 +28,8 @@ const conversationSelect = {
   lastSenderId: true,
   lastSystem: true,
   lastMessageAt: true,
-  userA: person,
-  userB: person,
+  userA: author,
+  userB: author,
   members: {
     select: {
       userId: true,
@@ -38,7 +37,7 @@ const conversationSelect = {
       status: true,
       readAt: true,
       mutedAt: true,
-      user: person,
+      user: author,
     },
   },
 } satisfies Prisma.ConversationSelect;
@@ -50,22 +49,15 @@ const messageSelect = {
   system: true,
   editedAt: true,
   createdAt: true,
-  sender: person,
+  sender: author,
   replyTo: {
-    select: { id: true, senderId: true, text: true, sender: person },
+    select: { id: true, senderId: true, text: true, sender: author },
   },
   reactions: {
     select: { userId: true, emoji: true },
     orderBy: { createdAt: 'asc' },
   },
 } satisfies Prisma.MessageSelect;
-
-type Person = {
-  id: number;
-  username: string;
-  name: string | null;
-  avatarUrl: string | null;
-};
 
 type LoadedConversation = Prisma.ConversationGetPayload<{
   select: typeof conversationSelect;
@@ -135,15 +127,15 @@ export type ChatHistory = {
   canMessage: boolean;
 };
 
-function toPerson({ id, username, name, avatarUrl }: Person): ChatPerson {
+function toPerson({ id, username, name, avatarUrl }: Author): ChatPerson {
   return { userId: id, username, name, avatarUrl };
 }
 
-function displayName({ name, username }: Person) {
+function displayName({ name, username }: Author) {
   return name ?? username;
 }
 
-function listNames(people: Person[]) {
+function listNames(people: Author[]) {
   const names = people.map(displayName);
   return names.length > 1
     ? `${names.slice(0, -1).join(', ')} and ${names.at(-1)}`
@@ -241,13 +233,6 @@ function cleanName(name?: string) {
   return name?.trim() || null;
 }
 
-function isUniqueViolation(error: unknown) {
-  return (
-    error instanceof Prisma.PrismaClientKnownRequestError &&
-    error.code === 'P2002'
-  );
-}
-
 @Injectable()
 export class MessagesService {
   constructor(
@@ -313,7 +298,7 @@ export class MessagesService {
     }
     await this.requireUsers(others);
     await this.requireUnblocked(userId, others);
-    const friends = await this.friendIdsOf(userId, others);
+    const friends = await friendIdsAmong(this.prisma, userId, others);
 
     const message = await this.prisma.$transaction(async (tx) => {
       const { id } = await tx.conversation.create({
@@ -415,7 +400,7 @@ export class MessagesService {
 
     const other = await this.requireMessageable(userId, conversation);
     const friends = other
-      ? await this.friendIdsOf(userId, [other.id])
+      ? await friendIdsAmong(this.prisma, userId, [other.id])
       : new Set<number>();
 
     const message = await this.prisma.$transaction(async (tx) => {
@@ -546,14 +531,7 @@ export class MessagesService {
       data: { unread: 0, ...(accepted && { readAt }) },
     });
 
-    const conversation = await this.load(id);
-    this.presence.notify([userId], 'conversation', {
-      conversation: entryFor(
-        conversation,
-        userId,
-        await this.blockedFor(conversation, userId),
-      ),
-    });
+    const conversation = await this.sendEntry(userId, id);
     if (accepted) {
       this.presence.notify(
         this.acceptedOthers(conversation, userId),
@@ -573,14 +551,7 @@ export class MessagesService {
       where: { conversationId_userId: { conversationId: id, userId } },
       data: { status: 'accepted' },
     });
-    const conversation = await this.load(id);
-    this.presence.notify([userId], 'conversation', {
-      conversation: entryFor(
-        conversation,
-        userId,
-        await this.blockedFor(conversation, userId),
-      ),
-    });
+    await this.sendEntry(userId, id);
   }
 
   async decline(userId: number, id: number) {
@@ -625,7 +596,7 @@ export class MessagesService {
     }
     const people = await this.requireUsers(added);
     await this.requireUnblocked(userId, added);
-    const friends = await this.friendIdsOf(userId, added);
+    const friends = await friendIdsAmong(this.prisma, userId, added);
 
     const message = await this.prisma.$transaction(async (tx) => {
       await tx.conversationMember.createMany({
@@ -825,6 +796,11 @@ export class MessagesService {
       where: { conversationId_userId: { conversationId: id, userId } },
       data: { mutedAt: muted ? new Date() : null },
     });
+    await this.sendEntry(userId, id);
+    return { muted };
+  }
+
+  private async sendEntry(userId: number, id: number) {
     const conversation = await this.load(id);
     this.presence.notify([userId], 'conversation', {
       conversation: entryFor(
@@ -833,7 +809,7 @@ export class MessagesService {
         await this.blockedFor(conversation, userId),
       ),
     });
-    return { muted };
+    return conversation;
   }
 
   private async blockedFor(conversation: LoadedConversation, userId: number) {
@@ -916,29 +892,11 @@ export class MessagesService {
     }
     const people = await this.prisma.user.findMany({
       where: { id: { in: userIds } },
-      ...person,
+      ...author,
     });
     if (people.length !== new Set(userIds).size) {
       throw new NotFoundException('User not found');
     }
     return people;
-  }
-
-  private async friendIdsOf(userId: number, candidates: number[]) {
-    const friendships = await this.prisma.friendship.findMany({
-      where: {
-        status: 'accepted',
-        OR: [
-          { requesterId: userId, addresseeId: { in: candidates } },
-          { addresseeId: userId, requesterId: { in: candidates } },
-        ],
-      },
-      select: { requesterId: true, addresseeId: true },
-    });
-    return new Set(
-      friendships.map(({ requesterId, addresseeId }) =>
-        requesterId === userId ? addresseeId : requesterId,
-      ),
-    );
   }
 }

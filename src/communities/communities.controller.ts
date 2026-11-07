@@ -11,7 +11,6 @@ import {
   Post,
   Put,
   Query,
-  Req,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -39,6 +38,7 @@ import { AllowGuest } from '../auth/allow-guest';
 import { Community as CommunityModel } from '../../prisma/generated/client';
 import { IMAGE_MAX_BYTES } from '../storage/storage.service';
 import { DAY, MINUTE, RateLimit } from '../common/throttle';
+import { UserId } from '../common/user-id';
 
 @Controller('communities')
 @UseGuards(JwtAuthGuard)
@@ -48,65 +48,62 @@ export class CommunitiesController {
   @RateLimit(3, DAY)
   @Post()
   create(
-    @Req() req,
+    @UserId() userId: number,
     @Body() createCommunityDto: CreateCommunityDto,
   ): Promise<CommunityModel> {
-    return this.communitiesService.create(req.user.userId, createCommunityDto);
+    return this.communitiesService.create(userId, createCommunityDto);
   }
 
   @Get()
   findMine(
-    @Req() req,
+    @UserId() userId: number,
   ): Promise<(CommunityModel & { live: boolean; role: CommunityRole })[]> {
-    return this.communitiesService.findForMember(req.user.userId);
+    return this.communitiesService.findForMember(userId);
   }
 
   @RateLimit(60, MINUTE)
   @Get('search')
   search(
-    @Req() req,
+    @UserId() userId: number,
     @Query() searchCommunitiesDto: SearchCommunitiesDto,
   ): Promise<CommunitySearchResult[]> {
-    return this.communitiesService.search(
-      req.user.userId,
-      searchCommunitiesDto,
-    );
+    return this.communitiesService.search(userId, searchCommunitiesDto);
   }
 
   @Post(':communityId/join')
   join(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
   ): Promise<CommunityModel> {
-    return this.communitiesService.join(req.user.userId, communityId);
+    return this.communitiesService.join(userId, communityId);
   }
 
   @Post(':communityId/leave')
   @HttpCode(204)
   leave(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
   ): Promise<void> {
-    return this.communitiesService.leave(req.user.userId, communityId);
+    return this.communitiesService.leave(userId, communityId);
   }
 
   @Get('layout')
-  railLayout(@Req() req): Promise<RailItem[]> {
-    return this.communitiesService.railLayout(req.user.userId);
+  railLayout(@UserId() userId: number): Promise<RailItem[]> {
+    return this.communitiesService.railLayout(userId);
   }
 
   @Get('discord-setup')
-  unfinishedDiscord(@Req() req) {
-    return this.communitiesService.unfinishedDiscord(req.user.userId);
+  unfinishedDiscord(@UserId() userId: number) {
+    return this.communitiesService.unfinishedDiscord(userId);
   }
 
   @Put('layout')
   updateRailLayout(
-    @Req() req,
+    @UserId() userId: number,
     @Body() updateRailLayoutDto: UpdateRailLayoutDto,
   ): Promise<RailItem[]> {
     return this.communitiesService.updateRailLayout(
-      req.user.userId,
+      userId,
       updateRailLayoutDto,
     );
   }
@@ -115,23 +112,23 @@ export class CommunitiesController {
   @AllowGuest()
   @UseGuards(CommunityViewerGuard)
   findMembers(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
   ): Promise<CommunityMember[]> {
-    return this.communitiesService.findMembers(req.user.userId, communityId);
+    return this.communitiesService.findMembers(userId, communityId);
   }
 
   @Put(':communityId/admins/:userId')
   @UseGuards(CommunityMemberGuard)
   addAdmin(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
-    @Param('userId', ParseIntPipe) userId: number,
+    @Param('userId', ParseIntPipe) targetId: number,
   ): Promise<CommunityMember[]> {
     return this.communitiesService.setAdmin(
-      req.user.userId,
-      communityId,
       userId,
+      communityId,
+      targetId,
       true,
     );
   }
@@ -139,52 +136,44 @@ export class CommunitiesController {
   @Delete(':communityId/admins/:userId')
   @UseGuards(CommunityMemberGuard)
   removeAdmin(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
-    @Param('userId', ParseIntPipe) userId: number,
+    @Param('userId', ParseIntPipe) targetId: number,
   ): Promise<CommunityMember[]> {
     return this.communitiesService.setAdmin(
-      req.user.userId,
-      communityId,
       userId,
+      communityId,
+      targetId,
       false,
     );
   }
 
   @Put(':communityId/verified')
   verify(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
   ): Promise<{ isVerified: boolean }> {
-    return this.communitiesService.setVerified(
-      req.user.userId,
-      communityId,
-      true,
-    );
+    return this.communitiesService.setVerified(userId, communityId, true);
   }
 
   @Delete(':communityId/verified')
   unverify(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
   ): Promise<{ isVerified: boolean }> {
-    return this.communitiesService.setVerified(
-      req.user.userId,
-      communityId,
-      false,
-    );
+    return this.communitiesService.setVerified(userId, communityId, false);
   }
 
   @RateLimit(20, MINUTE)
   @Patch(':communityId/nickname')
   @UseGuards(CommunityMemberGuard)
   setNickname(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Body() { nickname }: UpdateNicknameDto,
   ): Promise<{ nickname: string | null }> {
     return this.communitiesService.setNickname(
-      req.user.userId,
+      userId,
       communityId,
       nickname ?? null,
     );
@@ -194,12 +183,12 @@ export class CommunitiesController {
   @Patch(':communityId/library-updates')
   @UseGuards(CommunityMemberGuard)
   setShowLibraryUpdates(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Body() { show }: UpdateLibraryUpdatesDto,
   ): Promise<{ showLibraryUpdates: boolean }> {
     return this.communitiesService.setShowLibraryUpdates(
-      req.user.userId,
+      userId,
       communityId,
       show,
     );
@@ -208,21 +197,21 @@ export class CommunitiesController {
   @Get(':communityId')
   @AllowGuest()
   findOne(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
   ): Promise<CommunityWithRole | null> {
-    return this.communitiesService.findOne(req.user.userId, communityId);
+    return this.communitiesService.findOne(userId, communityId);
   }
 
   @Patch(':communityId')
   @UseGuards(CommunityMemberGuard)
   update(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Body() updateCommunityDto: UpdateCommunityDto,
   ): Promise<CommunityWithRole> {
     return this.communitiesService.update(
-      req.user.userId,
+      userId,
       communityId,
       updateCommunityDto,
     );
@@ -234,14 +223,14 @@ export class CommunitiesController {
     FileInterceptor('file', { limits: { fileSize: IMAGE_MAX_BYTES } }),
   )
   uploadImage(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Param('image') image: CommunityImage,
     @UploadedFile() file?: Express.Multer.File,
   ): Promise<CommunityWithRole> {
     if (!file) throw new BadRequestException('Choose an image to upload');
     return this.communitiesService.updateImage(
-      req.user.userId,
+      userId,
       communityId,
       image,
       file.buffer,
@@ -251,50 +240,40 @@ export class CommunitiesController {
   @Delete(':communityId/:image(icon|cover|background)')
   @UseGuards(CommunityMemberGuard)
   removeImage(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
     @Param('image') image: CommunityImage,
   ): Promise<CommunityWithRole> {
-    return this.communitiesService.removeImage(
-      req.user.userId,
-      communityId,
-      image,
-    );
+    return this.communitiesService.removeImage(userId, communityId, image);
   }
 
   @Delete(':communityId/twitch')
   @UseGuards(CommunityMemberGuard)
   @HttpCode(204)
   disconnectTwitch(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
   ): Promise<void> {
-    return this.communitiesService.disconnectTwitch(
-      req.user.userId,
-      communityId,
-    );
+    return this.communitiesService.disconnectTwitch(userId, communityId);
   }
 
   @Delete(':communityId/discord')
   @UseGuards(CommunityMemberGuard)
   @HttpCode(204)
   disconnectDiscord(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
   ): Promise<void> {
-    return this.communitiesService.disconnectDiscord(
-      req.user.userId,
-      communityId,
-    );
+    return this.communitiesService.disconnectDiscord(userId, communityId);
   }
 
   @Delete(':communityId')
   @UseGuards(CommunityMemberGuard)
   @HttpCode(204)
   remove(
-    @Req() req,
+    @UserId() userId: number,
     @Param('communityId', ParseIntPipe) communityId: number,
   ): Promise<void> {
-    return this.communitiesService.remove(req.user.userId, communityId);
+    return this.communitiesService.remove(userId, communityId);
   }
 }

@@ -12,10 +12,11 @@ import { UpdateCommunityDto } from './dto/update-community.dto';
 import { ADMINISTRATOR, CommunityRole, isAdministrator } from './permissions';
 import { MAX_INT } from './community-member.guard';
 import { Community as CommunityModel } from '../../prisma/generated/client';
+import { Author, author, presenceUser } from '../common/author';
 import { StorageService } from '../storage/storage.service';
 import { PresenceGateway, PresenceStatus } from '../friends/presence.gateway';
 import { NextStream, TwitchLiveService } from '../friends/twitch-live.service';
-import { isHeadAdmin } from '../users/head-admin';
+import { isHeadAdminAccount } from '../users/head-admin';
 import { DiscordWidget, discordWidget } from './discord-widget';
 import { deleteWebhook } from '../discord-channel/discord-webhook';
 import { discussionCleanup } from '../comments/discussion-cleanup';
@@ -64,13 +65,6 @@ const communityImages = {
 
 export type CommunityImage = keyof typeof communityImages;
 
-type Person = {
-  id: number;
-  username: string;
-  name: string | null;
-  avatarUrl: string | null;
-};
-
 export type CommunitySearchResult = {
   id: number;
   name: string;
@@ -80,8 +74,8 @@ export type CommunitySearchResult = {
   isVerified: boolean;
   memberCount: number;
   joined: boolean;
-  members: Person[];
-  mutuals: Person[];
+  members: Author[];
+  mutuals: Author[];
   mutualCount: number;
 };
 
@@ -90,9 +84,6 @@ export const MAX_JOINED_COMMUNITIES = 50;
 
 const MEMBER_PREVIEW = 5;
 const MUTUAL_PREVIEW = 3;
-const person = {
-  select: { id: true, username: true, name: true, avatarUrl: true },
-} as const;
 
 export type RailItem =
   | { type: 'community'; communityId: number }
@@ -223,7 +214,7 @@ export class CommunitiesService {
             where: { communityId },
             orderBy: { joinedAt: 'asc' },
             take: MEMBER_PREVIEW,
-            select: { user: person },
+            select: { user: author },
           }),
         ),
       ),
@@ -244,7 +235,7 @@ export class CommunitiesService {
         : await this.prisma.membership.findMany({
             where: { communityId: { in: ids }, userId: { in: friendIds } },
             orderBy: { joinedAt: 'asc' },
-            select: { communityId: true, user: person },
+            select: { communityId: true, user: author },
           });
 
     return communities.map(
@@ -617,19 +608,8 @@ export class CommunitiesService {
           select: {
             nickname: true,
             joinedAt: true,
-            user: {
-              select: {
-                id: true,
-                username: true,
-                name: true,
-                avatarUrl: true,
-                coverUrl: true,
-                isVerified: true,
-                appearOffline: true,
-                status: true,
-              },
-            },
-            roles: { select: { role: { select: { permissions: true } } } },
+            user: presenceUser,
+            roles: rolePermissions,
           },
         },
       },
@@ -787,11 +767,7 @@ export class CommunitiesService {
     communityId: number,
     isVerified: boolean,
   ): Promise<{ isVerified: boolean }> {
-    const headAdmin = await this.prisma.user.findUnique({
-      where: { id: headAdminId },
-      select: { email: true },
-    });
-    if (!headAdmin || !isHeadAdmin(headAdmin.email)) {
+    if (!(await isHeadAdminAccount(this.prisma, headAdminId))) {
       throw new ForbiddenException(
         'Only the head admin can verify communities',
       );

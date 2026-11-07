@@ -1,12 +1,5 @@
-import {
-  IsInt,
-  IsOptional,
-  IsString,
-  Max,
-  MaxLength,
-  Min,
-} from 'class-validator';
-import { MAX_INT } from '../../communities/community-member.guard';
+import { IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsId } from '../../common/validators';
 import { MESSAGE_MAX_LENGTH } from '../conversation';
 
 export class SendMessageDto {
@@ -15,8 +8,6 @@ export class SendMessageDto {
   text: string;
 
   @IsOptional()
-  @IsInt()
-  @Min(1)
-  @Max(MAX_INT)
+  @IsId()
   replyToId?: number;
 }

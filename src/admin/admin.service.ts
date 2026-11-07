@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { isHeadAdmin } from '../users/head-admin';
+import { author } from '../common/author';
 
 export const DIRECTORY_PAGE_SIZE = 20;
 
@@ -109,9 +110,7 @@ export class AdminService {
           isPublic: true,
           isVerified: true,
           createdAt: true,
-          owner: {
-            select: { id: true, username: true, name: true, avatarUrl: true },
-          },
+          owner: author,
           _count: { select: { memberships: true } },
         },
       }),

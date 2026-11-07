@@ -1,7 +1,6 @@
-import { IsUrl, MaxLength } from 'class-validator';
+import { IsLinkUrl } from '../../common/validators';
 
 export class PreviewLinkDto {
-  @MaxLength(2048)
-  @IsUrl({ protocols: ['http', 'https'], require_protocol: true })
+  @IsLinkUrl()
   url: string;
 }

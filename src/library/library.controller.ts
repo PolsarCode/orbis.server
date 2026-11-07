@@ -10,7 +10,6 @@ import {
   Patch,
   Post,
   Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt.guard';
@@ -21,6 +20,7 @@ import { LibraryService } from './library.service';
 import { SteamSyncService } from './steam-sync.service';
 import { MediaType } from '../../prisma/generated/client';
 import { RateLimit, MINUTE } from '../common/throttle';
+import { UserId } from '../common/user-id';
 
 @Controller('library')
 @UseGuards(JwtAuthGuard)
@@ -32,8 +32,8 @@ export class LibraryController {
 
   @RateLimit(60, MINUTE)
   @Get('search')
-  search(@Req() req, @Query('q') q?: string) {
-    return this.libraryService.search(req.user.userId, q);
+  search(@UserId() userId: number, @Query('q') q?: string) {
+    return this.libraryService.search(userId, q);
   }
 
   @AllowGuest()
@@ -54,50 +54,52 @@ export class LibraryController {
   @RateLimit(60, MINUTE)
   @Get('lists/:type/:list')
   mediaList(
-    @Req() req,
+    @UserId() userId: number,
     @Param('type', new ParseEnumPipe(MediaType)) type: MediaType,
     @Param('list') list: string,
   ) {
-    return this.libraryService.mediaList(req.user.userId, type, list);
+    return this.libraryService.mediaList(userId, type, list);
   }
 
   @AllowGuest()
   @Get('media/:type/:sourceId')
   media(
-    @Req() req,
+    @UserId() userId: number,
     @Param('type', new ParseEnumPipe(MediaType)) type: MediaType,
     @Param('sourceId') sourceId: string,
   ) {
-    return this.libraryService.media(req.user.userId, type, sourceId);
+    return this.libraryService.media(userId, type, sourceId);
   }
 
   @Get()
-  async list(@Req() req) {
-    await this.steamSync.refresh(req.user.userId, { waitMs: 2_000 });
-    return this.libraryService.list(req.user.userId);
+  async list(@UserId() userId: number) {
+    await this.steamSync.refresh(userId, { waitMs: 2_000 });
+    return this.libraryService.list(userId);
   }
 
   @Post()
-  add(@Req() req, @Body() addLibraryEntryDto: AddLibraryEntryDto) {
-    return this.libraryService.add(req.user.userId, addLibraryEntryDto);
+  add(
+    @UserId() userId: number,
+    @Body() addLibraryEntryDto: AddLibraryEntryDto,
+  ) {
+    return this.libraryService.add(userId, addLibraryEntryDto);
   }
 
   @Patch(':id')
   update(
-    @Req() req,
+    @UserId() userId: number,
     @Param('id', ParseIntPipe) id: number,
     @Body() updateLibraryEntryDto: UpdateLibraryEntryDto,
   ) {
-    return this.libraryService.update(
-      req.user.userId,
-      id,
-      updateLibraryEntryDto,
-    );
+    return this.libraryService.update(userId, id, updateLibraryEntryDto);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  remove(@Req() req, @Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.libraryService.remove(req.user.userId, id);
+  remove(
+    @UserId() userId: number,
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<void> {
+    return this.libraryService.remove(userId, id);
   }
 }

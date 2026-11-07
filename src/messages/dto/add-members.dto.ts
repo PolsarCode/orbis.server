@@ -1,19 +1,11 @@
-import {
-  ArrayMaxSize,
-  ArrayMinSize,
-  IsArray,
-  IsInt,
-  Max,
-  Min,
-} from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, IsArray } from 'class-validator';
+import { IsId } from '../../common/validators';
 import { GROUP_MAX_MEMBERS } from '../conversation';
 
 export class AddMembersDto {
   @IsArray()
   @ArrayMinSize(1)
   @ArrayMaxSize(GROUP_MAX_MEMBERS - 1)
-  @IsInt({ each: true })
-  @Min(1, { each: true })
-  @Max(2147483647, { each: true })
+  @IsId({ each: true })
   userIds: number[];
 }

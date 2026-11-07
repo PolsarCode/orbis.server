@@ -5,7 +5,6 @@ import {
   HttpCode,
   Post,
   Put,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { ModerationService } from './moderation.service';
@@ -14,6 +13,7 @@ import { ResolveContentReportDto } from './dto/resolve-content-report.dto';
 import { JwtAuthGuard } from '../auth/jwt.guard';
 import { SiteAdminGuard } from '../admin/site-admin.guard';
 import { HOUR, RateLimit } from '../common/throttle';
+import { UserId } from '../common/user-id';
 
 @Controller('content-reports')
 @UseGuards(JwtAuthGuard)
@@ -23,8 +23,11 @@ export class ModerationController {
   @Post()
   @RateLimit(10, HOUR)
   @HttpCode(204)
-  create(@Req() req, @Body() dto: CreateContentReportDto): Promise<void> {
-    return this.moderationService.create(req.user.userId, dto);
+  create(
+    @UserId() userId: number,
+    @Body() dto: CreateContentReportDto,
+  ): Promise<void> {
+    return this.moderationService.create(userId, dto);
   }
 
   @Get()
@@ -36,7 +39,10 @@ export class ModerationController {
   @Put('resolution')
   @UseGuards(SiteAdminGuard)
   @HttpCode(204)
-  resolve(@Req() req, @Body() dto: ResolveContentReportDto): Promise<void> {
-    return this.moderationService.resolve(req.user.userId, dto);
+  resolve(
+    @UserId() userId: number,
+    @Body() dto: ResolveContentReportDto,
+  ): Promise<void> {
+    return this.moderationService.resolve(userId, dto);
   }
 }
