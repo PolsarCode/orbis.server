@@ -47,7 +47,10 @@ describe('Profiles of blocked people for site admins', () => {
         { provide: UsersService, useValue: usersService },
         {
           provide: PresenceGateway,
-          useValue: { statusOf: jest.fn(() => 'offline') },
+          useValue: {
+            statusOf: jest.fn(() => 'offline'),
+            deviceOf: jest.fn(() => null),
+          },
         },
         { provide: SteamSyncService, useValue: steamSync },
       ],

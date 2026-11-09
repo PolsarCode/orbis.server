@@ -13,9 +13,9 @@ describe('PresenceGateway', () => {
   const visible = { appearOffline: false, status: 'online' as const };
   let gateway: PresenceGateway;
 
-  const connect = async () => {
+  const connect = async (platform?: unknown, idle?: unknown) => {
     const client = {
-      handshake: { auth: { token: 'token' } },
+      handshake: { auth: { token: 'token', platform, idle } },
       connected: true,
       data: {},
       join: jest.fn(),
@@ -31,6 +31,14 @@ describe('PresenceGateway', () => {
       prisma as unknown as PrismaService,
     );
   });
+
+  afterEach(() => jest.useRealTimers());
+
+  const atTime = (now: number) =>
+    jest.useFakeTimers({
+      now,
+      doNotFake: ['nextTick', 'setImmediate', 'queueMicrotask'],
+    });
 
   it('turns away a suspended account', async () => {
     prisma.user.findUnique.mockResolvedValueOnce({
@@ -195,8 +203,130 @@ describe('PresenceGateway', () => {
       userId: 7,
       online: true,
       status: 'online',
+      device: 'web',
       playing: 'NBA 2K26',
       twitchLogin: null,
     });
+  });
+
+  it.each([
+    ['desktop', 'desktop'],
+    ['mobile', 'mobile'],
+    ['tablet', 'web'],
+    [42, 'web'],
+    [undefined, 'web'],
+  ])(
+    'reads the platform %p from the handshake as %p',
+    async (platform, device) => {
+      await connect(platform);
+
+      expect(gateway.deviceOf(7, visible)).toBe(device);
+    },
+  );
+
+  it('shows the most recently active device, ranking idle connections lower', async () => {
+    atTime(1000);
+    const desktop = await connect('desktop');
+    jest.setSystemTime(2000);
+    const phone = await connect('mobile');
+    expect(gateway.deviceOf(7, visible)).toBe('mobile');
+
+    await gateway.setIdle(phone, true);
+    expect(gateway.deviceOf(7, visible)).toBe('desktop');
+
+    jest.setSystemTime(3000);
+    await gateway.setIdle(phone, false);
+    expect(gateway.deviceOf(7, visible)).toBe('mobile');
+
+    await gateway.setIdle(phone, true);
+    await gateway.setIdle(desktop, true);
+    expect(gateway.deviceOf(7, visible)).toBe('mobile');
+  });
+
+  it('counts a connection that is idle in the handshake as idle, without taking over the device', async () => {
+    atTime(1000);
+    await connect('mobile', true);
+    expect(gateway.statusOf(7, visible)).toBe('idle');
+    expect(gateway.deviceOf(7, visible)).toBe('mobile');
+
+    jest.setSystemTime(2000);
+    const desktop = await connect('desktop');
+    expect(gateway.statusOf(7, visible)).toBe('online');
+    expect(gateway.deviceOf(7, visible)).toBe('desktop');
+
+    jest.setSystemTime(3000);
+    await connect('mobile', true);
+    expect(gateway.deviceOf(7, visible)).toBe('desktop');
+
+    await gateway.setIdle(desktop, true);
+    jest.setSystemTime(4000);
+    await connect('mobile', true);
+    expect(gateway.statusOf(7, visible)).toBe('idle');
+    expect(gateway.deviceOf(7, visible)).toBe('desktop');
+  });
+
+  it('counts typing as activity on that device', async () => {
+    atTime(1000);
+    const desktop = await connect('desktop');
+    jest.setSystemTime(2000);
+    await connect('mobile');
+
+    jest.setSystemTime(3000);
+    await gateway.markActive(desktop);
+    expect(gateway.deviceOf(7, visible)).toBe('desktop');
+  });
+
+  it('tells friends when someone switches to another device', async () => {
+    atTime(1000);
+    await connect('desktop');
+    const emit = jest.fn();
+    gateway.server = { to: jest.fn(() => ({ emit })) } as unknown as Server;
+    prisma.user.findUnique
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce(visible);
+    prisma.friendship.findMany.mockResolvedValueOnce([
+      { requesterId: 7, addresseeId: 8 },
+    ]);
+
+    jest.setSystemTime(2000);
+    await connect('mobile');
+    expect(emit).toHaveBeenCalledWith('presence', {
+      userId: 7,
+      online: true,
+      status: 'online',
+      device: 'mobile',
+      playing: null,
+      twitchLogin: null,
+    });
+
+    jest.setSystemTime(3000);
+    await connect('mobile');
+    expect(emit).toHaveBeenCalledTimes(1);
+  });
+
+  it('shares no device while appearing offline or disconnected', async () => {
+    await gateway.updateLive(new Map([[7, 'naruto_live']]));
+    expect(gateway.deviceOf(7, visible)).toBeNull();
+
+    const client = await connect('desktop');
+    expect(gateway.deviceOf(7, { appearOffline: true })).toBeNull();
+
+    const emit = jest.fn();
+    gateway.server = { to: jest.fn(() => ({ emit })) } as unknown as Server;
+    prisma.user.findUnique.mockResolvedValueOnce({
+      ...visible,
+      appearOffline: true,
+    });
+    prisma.friendship.findMany.mockResolvedValueOnce([
+      { requesterId: 7, addresseeId: 8 },
+    ]);
+    await gateway.broadcastPresence(7);
+    expect(emit).toHaveBeenCalledWith(
+      'presence',
+      expect.objectContaining({ online: false, device: null }),
+    );
+
+    await gateway.handleDisconnect(client);
+    expect(gateway.deviceOf(7, visible)).toBeNull();
   });
 });

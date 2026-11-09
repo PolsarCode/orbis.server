@@ -24,6 +24,13 @@ export type PresenceStatus =
   | 'streaming'
   | 'offline';
 
+const DEVICES = ['web', 'desktop', 'mobile'] as const;
+
+export type Device = (typeof DEVICES)[number];
+
+const deviceFrom = (platform: unknown): Device =>
+  DEVICES.find((device) => device === platform) ?? 'web';
+
 @WebSocketGateway({ cors: true })
 export class PresenceGateway
   implements OnGatewayConnection, OnGatewayDisconnect
@@ -31,8 +38,7 @@ export class PresenceGateway
   @WebSocketServer()
   server: Server;
 
-  private connections = new Map<number, number>();
-  private idleConnections = new Map<number, number>();
+  private connections = new Map<number, Set<Socket>>();
   private live = new Map<number, string>();
   private playing = new Map<number, string>();
   private liveCommunities = new Set<number>();
@@ -67,13 +73,19 @@ export class PresenceGateway
     if (!client.connected) return;
 
     client.data.userId = userId;
+    client.data.platform = deviceFrom(client.handshake.auth?.platform);
+    client.data.idle = client.handshake.auth?.idle === true;
+    client.data.lastActiveAt = client.data.idle ? 0 : Date.now();
     await client.join(room(userId));
 
-    const wasIdle = this.isIdle(userId);
-    const count = (this.connections.get(userId) ?? 0) + 1;
-    this.connections.set(userId, count);
-    if (count === 1 || wasIdle) await this.broadcastPresence(userId);
-    if (count === 1) this.cameOnline.next(userId);
+    const first = !this.isOnline(userId);
+    await this.broadcastIfChanged(userId, () => {
+      this.connections.set(
+        userId,
+        (this.connections.get(userId) ?? new Set<Socket>()).add(client),
+      );
+    });
+    if (first) this.cameOnline.next(userId);
   }
 
   disconnectUser(userId: number) {
@@ -84,18 +96,11 @@ export class PresenceGateway
     const userId: number | undefined = client.data.userId;
     if (userId === undefined) return;
 
-    const wasIdle = this.isIdle(userId);
-    if (client.data.idle) this.adjustIdle(userId, -1);
-    const count = (this.connections.get(userId) ?? 1) - 1;
-    if (count > 0) {
-      this.connections.set(userId, count);
-      if (this.isIdle(userId) !== wasIdle) await this.broadcastPresence(userId);
-      return;
-    }
-
-    this.connections.delete(userId);
-    this.idleConnections.delete(userId);
-    await this.broadcastPresence(userId);
+    await this.broadcastIfChanged(userId, () => {
+      const sockets = this.connections.get(userId);
+      sockets?.delete(client);
+      if (!sockets?.size) this.connections.delete(userId);
+    });
   }
 
   @SubscribeMessage('idle')
@@ -104,13 +109,22 @@ export class PresenceGateway
     @MessageBody() idle: unknown,
   ) {
     const userId: number | undefined = client.data.userId;
-    const next = idle === true;
-    if (userId === undefined || Boolean(client.data.idle) === next) return;
+    if (userId === undefined) return;
 
-    const wasIdle = this.isIdle(userId);
-    client.data.idle = next;
-    this.adjustIdle(userId, next ? 1 : -1);
-    if (this.isIdle(userId) !== wasIdle) await this.broadcastPresence(userId);
+    const next = idle === true;
+    await this.broadcastIfChanged(userId, () => {
+      if (!next) client.data.lastActiveAt = Date.now();
+      client.data.idle = next;
+    });
+  }
+
+  async markActive(client: Socket) {
+    const userId: number | undefined = client.data.userId;
+    if (userId === undefined) return;
+
+    await this.broadcastIfChanged(userId, () => {
+      client.data.lastActiveAt = Date.now();
+    });
   }
 
   isOnline(userId: number) {
@@ -118,10 +132,8 @@ export class PresenceGateway
   }
 
   isIdle(userId: number) {
-    const connections = this.connections.get(userId) ?? 0;
-    return (
-      connections > 0 && (this.idleConnections.get(userId) ?? 0) >= connections
-    );
+    const sockets = [...(this.connections.get(userId) ?? [])];
+    return sockets.length > 0 && sockets.every((socket) => socket.data.idle);
   }
 
   statusOf(
@@ -133,6 +145,13 @@ export class PresenceGateway
     if (!this.isOnline(userId)) return 'offline';
     if (status === 'busy') return 'busy';
     return status === 'idle' || this.isIdle(userId) ? 'idle' : 'online';
+  }
+
+  deviceOf(
+    userId: number,
+    { appearOffline }: { appearOffline: boolean },
+  ): Device | null {
+    return appearOffline ? null : this.activeDevice(userId);
   }
 
   twitchOf(
@@ -212,10 +231,22 @@ export class PresenceGateway
     );
   }
 
-  private adjustIdle(userId: number, delta: number) {
-    const next = (this.idleConnections.get(userId) ?? 0) + delta;
-    if (next > 0) this.idleConnections.set(userId, next);
-    else this.idleConnections.delete(userId);
+  private activeDevice(userId: number): Device | null {
+    const [latest] = [...(this.connections.get(userId) ?? [])].sort(
+      (a, b) =>
+        Number(Boolean(a.data.idle)) - Number(Boolean(b.data.idle)) ||
+        b.data.lastActiveAt - a.data.lastActiveAt,
+    );
+    return latest?.data.platform ?? null;
+  }
+
+  private async broadcastIfChanged(userId: number, change: () => void) {
+    const idle = this.isIdle(userId);
+    const device = this.activeDevice(userId);
+    change();
+    if (this.isIdle(userId) !== idle || this.activeDevice(userId) !== device) {
+      await this.broadcastPresence(userId);
+    }
   }
 
   notify(userIds: number[], event: string, payload?: unknown) {
@@ -259,6 +290,7 @@ export class PresenceGateway
       userId,
       online: status !== 'offline',
       status,
+      device: this.deviceOf(userId, user),
       playing: this.playingOf(userId, user),
       twitchLogin: this.twitchOf(userId, user),
     });

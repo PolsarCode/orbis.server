@@ -17,8 +17,10 @@ export class PublicUsersController {
   @Header('Cache-Control', 'no-store')
   async findPublic(): Promise<PublicUserSummary[]> {
     const users = await this.usersService.activePublicUsers();
-    return rankPublicUsers(users, (user) =>
-      this.presence.statusOf(user.userId, user),
+    return rankPublicUsers(
+      users,
+      (user) => this.presence.statusOf(user.userId, user),
+      (user) => this.presence.deviceOf(user.userId, user),
     );
   }
 }

@@ -22,6 +22,7 @@ describe('rankPublicUsers', () => {
     const ranked = rankPublicUsers(
       [user(1, 50), user(2, 10), user(3, 1), user(4, 20)],
       ({ userId }) => (online.has(userId) ? 'online' : 'offline'),
+      () => null,
     );
 
     expect(ranked.map(({ userId }) => userId)).toEqual([4, 3, 1, 2]);
@@ -33,16 +34,17 @@ describe('rankPublicUsers', () => {
     ]);
   });
 
-  it('shows each person’s status, and treats appearing offline as offline', () => {
+  it('shows each person’s status and device, and treats appearing offline as offline', () => {
     const ranked = rankPublicUsers(
       [user(1, 5, true), { ...user(2, 1), status: 'busy' }, user(3, 0)],
       ({ appearOffline, status }) => (appearOffline ? 'offline' : status),
+      ({ appearOffline }) => (appearOffline ? null : 'desktop'),
     );
 
     expect(ranked).toMatchObject([
-      { userId: 2, online: true, status: 'busy' },
-      { userId: 3, online: true, status: 'online' },
-      { userId: 1, online: false, status: 'offline' },
+      { userId: 2, online: true, status: 'busy', device: 'desktop' },
+      { userId: 3, online: true, status: 'online', device: 'desktop' },
+      { userId: 1, online: false, status: 'offline', device: null },
     ]);
     expect(ranked[0]).not.toHaveProperty('appearOffline');
   });
@@ -56,6 +58,7 @@ describe('rankPublicUsers', () => {
         { ...user(4, 10), coverUrl: 'cover.webp' },
       ],
       ({ userId }) => (userId === 1 ? 'online' : 'offline'),
+      () => null,
     );
 
     expect(ranked.map(({ userId }) => userId)).toEqual([3, 4, 2, 1]);
@@ -65,6 +68,7 @@ describe('rankPublicUsers', () => {
     const ranked = rankPublicUsers(
       [user(1, 1), user(2, 2), user(3, 3)],
       () => 'offline',
+      () => null,
       2,
     );
 

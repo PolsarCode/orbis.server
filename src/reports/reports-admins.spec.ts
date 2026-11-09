@@ -10,6 +10,7 @@ describe('Admins list', () => {
   const presence = {
     isOnline: jest.fn(),
     statusOf: jest.fn(),
+    deviceOf: jest.fn(),
     twitchOf: jest.fn(),
   };
   const service = new ReportsService(
@@ -40,6 +41,7 @@ describe('Admins list', () => {
     ]);
     presence.isOnline.mockReturnValue(false);
     presence.statusOf.mockReturnValue('streaming');
+    presence.deviceOf.mockReturnValue(null);
     presence.twitchOf.mockReturnValue('kakashi_tv');
 
     const [admin] = await service.admins(1);
@@ -48,10 +50,12 @@ describe('Admins list', () => {
       appearOffline: false,
       status: 'online',
     });
+    expect(presence.deviceOf).toHaveBeenCalledWith(7, { appearOffline: false });
     expect(admin).toMatchObject({
       id: 7,
       online: false,
       status: 'streaming',
+      device: null,
       twitchLogin: 'kakashi_tv',
     });
     expect(admin).not.toHaveProperty('appearOffline');

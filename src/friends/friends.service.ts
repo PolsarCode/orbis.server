@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { AddFriendDto } from './dto/add-friend.dto';
-import { PresenceGateway, PresenceStatus } from './presence.gateway';
+import { Device, PresenceGateway, PresenceStatus } from './presence.gateway';
 import { normalizeUsername } from '../users/username';
 import { MAX_INT } from '../communities/community-member.guard';
 import { friendshipBetween } from './friend-ids';
@@ -42,6 +42,7 @@ export type FriendUser = {
 export type Friend = FriendUser & {
   online: boolean;
   status: PresenceStatus;
+  device: Device | null;
   playing: string | null;
   twitchLogin: string | null;
 };
@@ -123,6 +124,7 @@ export class FriendsService {
           ...user,
           online: status !== 'offline',
           status,
+          device: this.presence.deviceOf(other.id, other),
           playing: this.presence.playingOf(other.id, other),
           twitchLogin: this.presence.twitchOf(other.id, other),
         });

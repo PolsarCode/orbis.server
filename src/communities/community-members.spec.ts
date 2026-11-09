@@ -36,6 +36,8 @@ describe('Community member list across blocks', () => {
     isOnline: () => true,
     statusOf: (id: number, { appearOffline }: { appearOffline: boolean }) =>
       appearOffline ? 'offline' : live.has(id) ? 'streaming' : 'online',
+    deviceOf: (id: number, { appearOffline }: { appearOffline: boolean }) =>
+      appearOffline ? null : 'desktop',
     playingOf: (id: number, { appearOffline }: { appearOffline: boolean }) =>
       appearOffline ? null : 'Elden Ring',
     twitchOf: (id: number, { appearOffline }: { appearOffline: boolean }) =>
@@ -48,7 +50,7 @@ describe('Community member list across blocks', () => {
     {} as TwitchLiveService,
   );
 
-  it('shows someone blocked either way as offline, with nothing playing or streaming', async () => {
+  it('shows someone blocked either way as offline, with no device and nothing playing or streaming', async () => {
     const members = await service.findMembers(1, 7);
 
     expect(prisma.block.findMany).toHaveBeenCalledWith({
@@ -61,17 +63,20 @@ describe('Community member list across blocks', () => {
       select: { blockerId: true, blockedId: true },
     });
     expect(
-      members.map(({ userId, online, status, playing, twitchLogin }) => [
-        userId,
-        online,
-        status,
-        playing,
-        twitchLogin,
-      ]),
+      members.map(
+        ({ userId, online, status, device, playing, twitchLogin }) => [
+          userId,
+          online,
+          status,
+          device,
+          playing,
+          twitchLogin,
+        ],
+      ),
     ).toEqual([
-      [1, true, 'online', 'Elden Ring', null],
-      [2, true, 'streaming', 'Elden Ring', 'twitch2'],
-      [3, false, 'offline', null, null],
+      [1, true, 'online', 'desktop', 'Elden Ring', null],
+      [2, true, 'streaming', 'desktop', 'Elden Ring', 'twitch2'],
+      [3, false, 'offline', null, null, null],
     ]);
   });
 });

@@ -180,6 +180,7 @@ export class ReportsService {
       isHeadAdmin: isHeadAdmin(email),
       online: !appearOffline && this.presence.isOnline(admin.id),
       status: this.presence.statusOf(admin.id, { appearOffline, status }),
+      device: this.presence.deviceOf(admin.id, { appearOffline }),
       twitchLogin: this.presence.twitchOf(admin.id, { appearOffline, status }),
     }));
   }

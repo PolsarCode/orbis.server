@@ -14,7 +14,11 @@ import { MAX_INT } from './community-member.guard';
 import { Community as CommunityModel } from '../../prisma/generated/client';
 import { Author, author, presenceUser } from '../common/author';
 import { StorageService } from '../storage/storage.service';
-import { PresenceGateway, PresenceStatus } from '../friends/presence.gateway';
+import {
+  Device,
+  PresenceGateway,
+  PresenceStatus,
+} from '../friends/presence.gateway';
 import { NextStream, TwitchLiveService } from '../friends/twitch-live.service';
 import { isHeadAdminAccount } from '../users/head-admin';
 import { DiscordWidget, discordWidget } from './discord-widget';
@@ -33,6 +37,7 @@ export type CommunityMember = {
   isVerified: boolean;
   online: boolean;
   status: PresenceStatus;
+  device: Device | null;
   playing: string | null;
   twitchLogin: string | null;
   nickname: string | null;
@@ -637,6 +642,7 @@ export class CommunitiesService {
           isVerified: user.isVerified,
           online: !shown.appearOffline && this.presence.isOnline(user.id),
           status: this.presence.statusOf(user.id, shown),
+          device: this.presence.deviceOf(user.id, shown),
           playing: this.presence.playingOf(user.id, shown),
           twitchLogin: this.presence.twitchOf(user.id, shown),
           nickname,

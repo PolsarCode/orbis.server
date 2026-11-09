@@ -34,7 +34,11 @@ import { presenceUser } from '../common/author';
 import { StorageService } from '../storage/storage.service';
 import { canViewProfile } from '../posts/wall-access';
 import { blockState, notBlockedWith } from '../safety/blocks';
-import { PresenceGateway, PresenceStatus } from '../friends/presence.gateway';
+import {
+  Device,
+  PresenceGateway,
+  PresenceStatus,
+} from '../friends/presence.gateway';
 import { NextStream, TwitchLiveService } from '../friends/twitch-live.service';
 
 export type PublicUser = Omit<UserModel, 'password'>;
@@ -63,6 +67,7 @@ export type PublicProfile = {
   createdAt: Date;
   online: boolean;
   status: PresenceStatus;
+  device: Device | null;
   friendCount: number;
   postCount: number;
   communityCount: number;
@@ -84,6 +89,7 @@ export type PublicProfile = {
     isVerified: boolean;
     online: boolean;
     status: PresenceStatus;
+    device: Device | null;
     playing: string | null;
     twitchLogin: string | null;
   }[];
@@ -154,10 +160,14 @@ export type PublicUserSummary = {
   isVerified: boolean;
   online: boolean;
   status: PresenceStatus;
+  device: Device | null;
   activity: number;
 };
 
-export type ActiveUser = Omit<PublicUserSummary, 'online' | 'status'> & {
+export type ActiveUser = Omit<
+  PublicUserSummary,
+  'online' | 'status' | 'device'
+> & {
   appearOffline: boolean;
   status: UserStatus;
 };
@@ -176,13 +186,19 @@ function photoCount({
 export function rankPublicUsers(
   users: ActiveUser[],
   statusOf: (user: ActiveUser) => PresenceStatus,
+  deviceOf: (user: ActiveUser) => Device | null,
   limit = PUBLIC_USER_LIMIT,
 ): PublicUserSummary[] {
   return users
     .map((user) => {
       const { appearOffline, status, ...summary } = user;
       const presence = statusOf(user);
-      return { ...summary, online: presence !== 'offline', status: presence };
+      return {
+        ...summary,
+        online: presence !== 'offline',
+        status: presence,
+        device: deviceOf(user),
+      };
     })
     .sort(
       (a, b) =>
@@ -359,12 +375,12 @@ export class UsersService {
     viewerId: number,
     username: string,
   ): Promise<
-    Omit<PublicProfile, 'online' | 'status' | 'friends'> & {
+    Omit<PublicProfile, 'online' | 'status' | 'device' | 'friends'> & {
       appearOffline: boolean;
       status: UserStatus;
       friends: (Omit<
         PublicProfile['friends'][number],
-        'online' | 'status' | 'playing' | 'twitchLogin'
+        'online' | 'status' | 'device' | 'playing' | 'twitchLogin'
       > & {
         appearOffline: boolean;
         status: UserStatus;

@@ -233,6 +233,7 @@ export class UsersController {
       ),
       online: status !== 'offline',
       status,
+      device: this.presence.deviceOf(profile.userId, { appearOffline }),
       friends: friends.map(({ appearOffline, status, ...friend }) => {
         const friendStatus = this.presence.statusOf(friend.userId, {
           appearOffline,
@@ -242,6 +243,7 @@ export class UsersController {
           ...friend,
           online: friendStatus !== 'offline',
           status: friendStatus,
+          device: this.presence.deviceOf(friend.userId, { appearOffline }),
           playing: this.presence.playingOf(friend.userId, {
             appearOffline,
             status,
