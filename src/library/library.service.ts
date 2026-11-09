@@ -254,6 +254,7 @@ export class LibraryService {
 
     return items.map((media) => ({
       ...toResult(media),
+      synopsis: media.synopsis ?? null,
       bannerImage: media.bannerImage ?? null,
       releaseStatus: media.status ?? null,
       genres: media.genres ?? [],

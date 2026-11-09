@@ -21,6 +21,7 @@ function media(sourceId: string) {
     type: 'ANIME',
     sourceId,
     title: `Title ${sourceId}`,
+    synopsis: sourceId === '1' ? 'A short summary.' : undefined,
     coverImage: `${sourceId}.webp`,
     bannerImage: null,
     year: 2026,
@@ -99,10 +100,12 @@ describe('Media lists', () => {
     });
     expect(items[0]).toMatchObject({
       type: 'anime',
+      synopsis: 'A short summary.',
       genres: ['Action'],
       releaseStatus: 'RELEASING',
       details: { episodes: 12 },
     });
+    expect(items[1].synopsis).toBeNull();
 
     prisma.libraryEntry.findMany.mockClear();
     await library.mediaList(0, MediaType.anime, 'season');
