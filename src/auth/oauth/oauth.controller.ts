@@ -22,7 +22,13 @@ import { FinishOAuthSignupDto } from './dto/finish-oauth-signup.dto';
 import { UseLinkedAvatarDto } from './dto/use-linked-avatar.dto';
 import { ConnectDiscordServerDto } from './dto/connect-discord-server.dto';
 import { UpdateConnectionDto } from './dto/update-connection.dto';
-import { OAuthConnections, OAuthResult, OAuthService } from './oauth.service';
+import {
+  COMMUNITY_TARGETS,
+  CommunityTarget,
+  OAuthConnections,
+  OAuthResult,
+  OAuthService,
+} from './oauth.service';
 import { UserId } from '../../common/user-id';
 
 const provider = new ParseEnumPipe(AuthProvider);
@@ -101,7 +107,7 @@ export class OAuthController {
         name,
         communityId,
         nonce,
-        target === 'channel',
+        this.target(target),
       ),
     };
   }
@@ -139,6 +145,15 @@ export class OAuthController {
       throw new BadRequestException('Unsupported OAuth client.');
     }
     return value;
+  }
+
+  private target(value?: string): CommunityTarget | null {
+    if (value === undefined) return null;
+    const target = COMMUNITY_TARGETS.find((option) => option === value);
+    if (!target) {
+      throw new BadRequestException('Unsupported connection target.');
+    }
+    return target;
   }
 
   @RateLimit(10, MINUTE)

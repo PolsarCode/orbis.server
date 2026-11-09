@@ -2,6 +2,11 @@ import { Logger } from '@nestjs/common';
 import { renderReportCard } from './report-card';
 import { ReportCategory, ReportStatus } from '../../prisma/generated/client';
 import { ticketNumber } from './ticket';
+import {
+  DiscordError,
+  postToWebhook,
+  WebhookFile,
+} from '../discord-channel/discord-webhook';
 
 export const DISCORD_WEBHOOK =
   /^https:\/\/(?:(?:canary|ptb)\.)?discord(?:app)?\.com\/api\/webhooks\/\d{17,20}\/[\w-]{60,100}$/;
@@ -96,18 +101,18 @@ function payload(report: DiscordReport, siteUrl: string, withButton: boolean) {
   };
 }
 
-type ImageAttachment = { filename: string; data: Buffer };
 const logger = new Logger('DiscordTickets');
 
 async function imageFor(
   report?: DiscordReport,
   activity?: { title: string; description?: string },
-): Promise<ImageAttachment | undefined> {
+): Promise<WebhookFile | undefined> {
   if (!report) return undefined;
   try {
     return {
       filename: `ticket-${report.id}.png`,
       data: await renderReportCard(report, activity),
+      description: 'Ticket summary and latest activity',
     };
   } catch (error) {
     logger.warn(
@@ -117,47 +122,35 @@ async function imageFor(
   }
 }
 
-async function send(
-  url: string,
-  payload: { embeds: object[] },
-  image?: ImageAttachment,
+function send(url: string, payload: { embeds: object[] }, image?: WebhookFile) {
+  return postToWebhook(
+    url,
+    image
+      ? {
+          ...payload,
+          embeds: payload.embeds.map((embed, index) =>
+            index === 0
+              ? { ...embed, image: { url: `attachment://${image.filename}` } }
+              : embed,
+          ),
+        }
+      : payload,
+    image,
+  );
+}
+
+async function deliver(
+  webhookUrl: string,
+  withButton: { embeds: object[] },
+  plain: { embeds: object[] },
+  image?: WebhookFile,
 ) {
-  if (!image)
-    return fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-      signal: AbortSignal.timeout(10_000),
-    });
-  const form = new FormData();
-  form.append(
-    'payload_json',
-    JSON.stringify({
-      ...payload,
-      embeds: payload.embeds.map((embed, index) =>
-        index === 0
-          ? { ...embed, image: { url: `attachment://${image.filename}` } }
-          : embed,
-      ),
-      attachments: [
-        {
-          id: 0,
-          filename: image.filename,
-          description: 'Ticket summary and latest activity',
-        },
-      ],
-    }),
-  );
-  form.append(
-    'files[0]',
-    new Blob([new Uint8Array(image.data)], { type: 'image/png' }),
-    image.filename,
-  );
-  return fetch(url, {
-    method: 'POST',
-    body: form,
-    signal: AbortSignal.timeout(10_000),
-  });
+  try {
+    await send(`${webhookUrl}?with_components=true`, withButton, image);
+  } catch (error) {
+    if (!(error instanceof DiscordError)) throw error;
+    await send(webhookUrl, plain, image);
+  }
 }
 
 export type DiscordActivity = {
@@ -201,36 +194,17 @@ export async function postActivityToDiscord(
   const base = { ...sender(siteUrl), embeds: [embed] };
   const image = await imageFor(report, { title, description });
 
-  const withButton = await send(
-    `${webhookUrl}?with_components=true`,
-    {
-      ...base,
-      ...button,
-    },
-    image,
-  );
-  if (withButton.ok) return;
-
-  const plain = await send(webhookUrl, base, image);
-  if (!plain.ok) {
-    throw new Error(`Discord responded with ${plain.status}`);
-  }
+  await deliver(webhookUrl, { ...base, ...button }, base, image);
 }
 
 export async function postReportToDiscord(
   { webhookUrl, siteUrl }: DiscordTarget,
   report: DiscordReport,
 ) {
-  const image = await imageFor(report);
-  const withButton = await send(
-    `${webhookUrl}?with_components=true`,
+  await deliver(
+    webhookUrl,
     payload(report, siteUrl, true),
-    image,
+    payload(report, siteUrl, false),
+    await imageFor(report),
   );
-  if (withButton.ok) return;
-
-  const plain = await send(webhookUrl, payload(report, siteUrl, false), image);
-  if (!plain.ok) {
-    throw new Error(`Discord responded with ${plain.status}`);
-  }
 }

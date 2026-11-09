@@ -27,6 +27,7 @@ import {
   SentMessage,
   sendMessage,
   Webhook,
+  WebhookFile,
 } from './discord-webhook';
 
 export type IncomingWebhook = {
@@ -81,7 +82,7 @@ const rowSelect = {
   },
 } as const;
 
-type Channel = {
+export type Channel = {
   communityId: number;
   webhookId: string;
   webhookToken: string;
@@ -105,6 +106,42 @@ const webhookOf = (channel: Channel): Webhook => ({
   id: channel.webhookId,
   token: channel.webhookToken,
 });
+
+export type ChannelMessage = {
+  body: object;
+  identity: object;
+  threadName: string;
+};
+
+export async function sendToChannel(
+  channel: Channel,
+  message: ChannelMessage,
+  becameForum: () => Promise<unknown>,
+  file?: WebhookFile,
+) {
+  const webhook = webhookOf(channel);
+  const body = { ...message.body, ...message.identity };
+  const threadName = () => (channel.isForum ? message.threadName : undefined);
+  try {
+    return await sendMessage(webhook, body, threadName(), file);
+  } catch (error) {
+    if (!(error instanceof DiscordError)) throw error;
+    if (error.needsThread && !channel.isForum) {
+      channel.isForum = true;
+      await becameForum();
+      return sendMessage(webhook, body, threadName(), file);
+    }
+    if (error.invalidBody) {
+      return sendMessage(
+        webhook,
+        { ...message.body, username: 'Orbis' },
+        threadName(),
+        file,
+      );
+    }
+    throw error;
+  }
+}
 
 @Injectable()
 export class DiscordChannelService implements OnModuleDestroy {
@@ -494,34 +531,16 @@ export class DiscordChannelService implements OnModuleDestroy {
     });
   }
 
-  private async send(channel: Channel, message: RenderedMessage) {
-    const webhook = webhookOf(channel);
-    const body = { ...message.body, ...message.identity };
-    const threadName = () => (channel.isForum ? message.threadName : undefined);
-    try {
-      return await sendMessage(webhook, body, threadName());
-    } catch (error) {
-      if (!(error instanceof DiscordError)) throw error;
-      if (error.needsThread && !channel.isForum) {
-        channel.isForum = true;
-        await this.prisma.discordChannel.updateMany({
-          where: {
-            communityId: channel.communityId,
-            webhookId: channel.webhookId,
-          },
-          data: { isForum: true },
-        });
-        return sendMessage(webhook, body, threadName());
-      }
-      if (error.invalidBody) {
-        return sendMessage(
-          webhook,
-          { ...message.body, username: 'Orbis' },
-          threadName(),
-        );
-      }
-      throw error;
-    }
+  private send(channel: Channel, message: RenderedMessage) {
+    return sendToChannel(channel, message, () =>
+      this.prisma.discordChannel.updateMany({
+        where: {
+          communityId: channel.communityId,
+          webhookId: channel.webhookId,
+        },
+        data: { isForum: true },
+      }),
+    );
   }
 
   private async remove(targetType: CommentableType, ids: number[]) {

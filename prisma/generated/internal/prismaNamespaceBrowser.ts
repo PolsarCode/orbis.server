@@ -59,6 +59,8 @@ export const ModelName = {
   Invite: 'Invite',
   DiscordChannel: 'DiscordChannel',
   DiscordMessage: 'DiscordMessage',
+  DiscordChartChannel: 'DiscordChartChannel',
+  DiscordChartPost: 'DiscordChartPost',
   CommunityBan: 'CommunityBan',
   Post: 'Post',
   Repost: 'Repost',
@@ -77,6 +79,7 @@ export const ModelName = {
   HashtagFollow: 'HashtagFollow',
   LibraryEntry: 'LibraryEntry',
   LibraryActivity: 'LibraryActivity',
+  ChartDiscussion: 'ChartDiscussion',
   Conversation: 'Conversation',
   ConversationMember: 'ConversationMember',
   Message: 'Message',
@@ -224,6 +227,36 @@ export const DiscordMessageScalarFieldEnum = {
 } as const
 
 export type DiscordMessageScalarFieldEnum = (typeof DiscordMessageScalarFieldEnum)[keyof typeof DiscordMessageScalarFieldEnum]
+
+
+export const DiscordChartChannelScalarFieldEnum = {
+  communityId: 'communityId',
+  webhookId: 'webhookId',
+  webhookToken: 'webhookToken',
+  guildId: 'guildId',
+  guildName: 'guildName',
+  channelId: 'channelId',
+  isForum: 'isForum',
+  sendAnime: 'sendAnime',
+  sendManga: 'sendManga',
+  sendGames: 'sendGames',
+  message: 'message',
+  lostAt: 'lostAt',
+  createdAt: 'createdAt'
+} as const
+
+export type DiscordChartChannelScalarFieldEnum = (typeof DiscordChartChannelScalarFieldEnum)[keyof typeof DiscordChartChannelScalarFieldEnum]
+
+
+export const DiscordChartPostScalarFieldEnum = {
+  communityId: 'communityId',
+  mediaType: 'mediaType',
+  week: 'week',
+  messageId: 'messageId',
+  createdAt: 'createdAt'
+} as const
+
+export type DiscordChartPostScalarFieldEnum = (typeof DiscordChartPostScalarFieldEnum)[keyof typeof DiscordChartPostScalarFieldEnum]
 
 
 export const CommunityBanScalarFieldEnum = {
@@ -481,6 +514,17 @@ export const LibraryActivityScalarFieldEnum = {
 } as const
 
 export type LibraryActivityScalarFieldEnum = (typeof LibraryActivityScalarFieldEnum)[keyof typeof LibraryActivityScalarFieldEnum]
+
+
+export const ChartDiscussionScalarFieldEnum = {
+  id: 'id',
+  mediaType: 'mediaType',
+  week: 'week',
+  commentCount: 'commentCount',
+  createdAt: 'createdAt'
+} as const
+
+export type ChartDiscussionScalarFieldEnum = (typeof ChartDiscussionScalarFieldEnum)[keyof typeof ChartDiscussionScalarFieldEnum]
 
 
 export const ConversationScalarFieldEnum = {

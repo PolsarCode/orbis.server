@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma.service';
 
 export async function discussionCleanup(
   prisma: PrismaService,
-  type: CommentableType,
+  type: Exclude<CommentableType, 'chart'>,
   ids: number[],
 ) {
   const comments = await prisma.comment.findMany({

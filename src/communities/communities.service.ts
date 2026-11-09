@@ -818,10 +818,16 @@ export class CommunitiesService {
 
   async remove(userId: number, communityId: number): Promise<void> {
     await this.requireRole(userId, communityId, 'owner');
-    const channel = await this.prisma.discordChannel.findUnique({
+    const webhooks = {
       where: { communityId },
       select: { webhookId: true, webhookToken: true },
-    });
+    };
+    const channels = (
+      await Promise.all([
+        this.prisma.discordChannel.findUnique(webhooks),
+        this.prisma.discordChartChannel.findUnique(webhooks),
+      ])
+    ).filter((channel) => channel !== null);
     const postIds = (
       await this.prisma.post.findMany({
         where: { communityId },
@@ -870,7 +876,7 @@ export class CommunitiesService {
       this.prisma.community.delete({ where: { id: communityId } }),
       ...operations,
     ]);
-    if (channel) {
+    for (const channel of channels) {
       await deleteWebhook({
         id: channel.webhookId,
         token: channel.webhookToken,

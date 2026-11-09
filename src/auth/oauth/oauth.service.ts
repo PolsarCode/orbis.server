@@ -32,6 +32,7 @@ import {
   IncomingWebhook,
   PRIVATE_COMMUNITY,
 } from '../../discord-channel/discord-channel.service';
+import { DiscordChartService } from '../../discord-charts/discord-chart.service';
 
 export type OAuthResult =
   | { access_token: string; restored?: boolean }
@@ -54,13 +55,17 @@ export type OAuthConnections = {
   }[];
 };
 
+export type CommunityTarget = 'channel' | 'charts';
+
+export const COMMUNITY_TARGETS: CommunityTarget[] = ['channel', 'charts'];
+
 type StateClaims = {
   provider: AuthProvider;
   nonceHash: string;
   uid: number | null;
   client: 'web' | 'mobile';
   communityId?: number | null;
-  channel?: boolean;
+  target?: CommunityTarget;
 };
 
 function hashNonce(nonce: string) {
@@ -138,6 +143,7 @@ export class OAuthService {
     private communities: CommunitiesService,
     private storage: StorageService,
     private discordChannel: DiscordChannelService,
+    private discordCharts: DiscordChartService,
   ) {}
 
   enabled(): AuthProvider[] {
@@ -154,7 +160,7 @@ export class OAuthService {
     uid: number | null,
     communityId: number | null = null,
     client: 'web' | 'mobile' = 'web',
-    channel = false,
+    target: CommunityTarget | null = null,
   ) {
     const config = this.configured(provider);
     if (!NONCE_PATTERN.test(nonce)) throw new BadRequestException(EXPIRED);
@@ -165,7 +171,7 @@ export class OAuthService {
       uid,
       communityId,
       client,
-      ...(channel && { channel }),
+      ...(target && { target }),
     };
     const state = this.jwt.sign(claims, {
       secret: stateSecret(),
@@ -176,7 +182,7 @@ export class OAuthService {
       redirect_uri: redirectUri(provider),
       response_type: 'code',
       scope:
-        channel && config.channelScope
+        target && config.channelScope
           ? config.channelScope
           : communityId !== null
             ? (config.communityScope ?? config.scope)
@@ -191,18 +197,18 @@ export class OAuthService {
     provider: AuthProvider,
     communityId: number,
     nonce: string,
-    channel = false,
+    target: CommunityTarget | null = null,
   ) {
     if (provider !== 'twitch' && provider !== 'discord') {
       throw new BadRequestException(
         'Communities can only connect Twitch or Discord',
       );
     }
-    if (channel && provider !== 'discord') {
+    if (target && provider !== 'discord') {
       throw new BadRequestException('Only Discord channels can be connected');
     }
     await this.communities.assertCanManage(userId, communityId);
-    if (channel) {
+    if (target === 'channel') {
       const community = await this.prisma.community.findUnique({
         where: { id: communityId },
         select: { isPublic: true },
@@ -217,7 +223,7 @@ export class OAuthService {
       userId,
       communityId,
       'web',
-      channel,
+      target,
     );
   }
 
@@ -238,12 +244,13 @@ export class OAuthService {
           'Log in to the account you’re connecting, then try again.',
         );
       }
-      if (provider === 'discord' && claims.channel) {
+      if (provider === 'discord' && claims.target) {
         await this.connectChannel(
           viewerId,
           claims.communityId,
           accessToken,
           webhook,
+          claims.target,
         );
         return { linked: provider, communityId: claims.communityId };
       }
@@ -601,6 +608,7 @@ export class OAuthService {
     communityId: number,
     accessToken: string,
     webhook: IncomingWebhook | null,
+    target: CommunityTarget,
   ) {
     if (!webhook) {
       throw new BadGatewayException(
@@ -611,7 +619,9 @@ export class OAuthService {
       accessToken,
       webhook.guildId,
     ).catch(() => null);
-    await this.discordChannel.connect(userId, communityId, webhook, serverName);
+    const service =
+      target === 'charts' ? this.discordCharts : this.discordChannel;
+    await service.connect(userId, communityId, webhook, serverName);
   }
 
   private async serverChoice(

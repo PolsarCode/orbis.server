@@ -2,6 +2,12 @@ export type Webhook = { id: string; token: string };
 
 export type SentMessage = { messageId: string; threadId: string | null };
 
+export type WebhookFile = {
+  filename: string;
+  data: Buffer;
+  description?: string;
+};
+
 const API = 'https://discord.com/api/v10/webhooks';
 const TIMEOUT_MS = 10_000;
 const MAX_RETRY_MS = 10_000;
@@ -43,17 +49,18 @@ export class DiscordError extends Error {
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function request(
-  webhook: Webhook,
-  path: string,
+  url: string,
   init: { method: string; body?: object },
   retried = false,
 ): Promise<Response> {
-  const response = await fetch(`${API}/${webhook.id}/${webhook.token}${path}`, {
+  const response = await fetch(url, {
     method: init.method,
-    ...(init.body && {
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(init.body),
-    }),
+    ...(init.body instanceof FormData
+      ? { body: init.body }
+      : init.body && {
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(init.body),
+        }),
     signal: AbortSignal.timeout(TIMEOUT_MS),
   });
   if (response.ok) return response;
@@ -64,13 +71,16 @@ async function request(
     await wait(
       Math.min((Number.isFinite(seconds) ? seconds : 1) * 1000, MAX_RETRY_MS),
     );
-    return request(webhook, path, init, true);
+    return request(url, init, true);
   }
   throw new DiscordError(
     response.status,
     typeof error.code === 'number' ? error.code : null,
   );
 }
+
+const webhookUrl = (webhook: Webhook, path: string) =>
+  `${API}/${webhook.id}/${webhook.token}${path}`;
 
 function query(params: Record<string, string | null>) {
   const search = new URLSearchParams();
@@ -80,18 +90,46 @@ function query(params: Record<string, string | null>) {
   return search.size ? `?${search}` : '';
 }
 
+function withFile(body: object, file: WebhookFile) {
+  const form = new FormData();
+  form.append(
+    'payload_json',
+    JSON.stringify({
+      ...body,
+      attachments: [
+        {
+          id: 0,
+          filename: file.filename,
+          ...(file.description && { description: file.description }),
+        },
+      ],
+    }),
+  );
+  form.append(
+    'files[0]',
+    new Blob([new Uint8Array(file.data)], { type: 'image/png' }),
+    file.filename,
+  );
+  return form;
+}
+
+export function postToWebhook(url: string, body: object, file?: WebhookFile) {
+  return request(url, {
+    method: 'POST',
+    body: file ? withFile(body, file) : body,
+  });
+}
+
 export async function sendMessage(
   webhook: Webhook,
   body: object,
   threadName?: string,
+  file?: WebhookFile,
 ): Promise<SentMessage> {
-  const response = await request(
-    webhook,
-    query({ wait: 'true', with_components: 'true' }),
-    {
-      method: 'POST',
-      body: threadName ? { ...body, thread_name: threadName } : body,
-    },
+  const response = await postToWebhook(
+    webhookUrl(webhook, query({ wait: 'true', with_components: 'true' })),
+    threadName ? { ...body, thread_name: threadName } : body,
+    file,
   );
   const message = await response.json();
   return {
@@ -106,8 +144,10 @@ export async function editMessage(
   body: object,
 ) {
   await request(
-    webhook,
-    `/messages/${messageId}${query({ thread_id: threadId, with_components: 'true' })}`,
+    webhookUrl(
+      webhook,
+      `/messages/${messageId}${query({ thread_id: threadId, with_components: 'true' })}`,
+    ),
     { method: 'PATCH', body },
   );
 }
@@ -118,8 +158,10 @@ export async function deleteMessage(
 ) {
   try {
     await request(
-      webhook,
-      `/messages/${messageId}${query({ thread_id: threadId })}`,
+      webhookUrl(
+        webhook,
+        `/messages/${messageId}${query({ thread_id: threadId })}`,
+      ),
       { method: 'DELETE' },
     );
   } catch (error) {
@@ -129,7 +171,7 @@ export async function deleteMessage(
 
 export async function deleteWebhook(webhook: Webhook) {
   try {
-    await request(webhook, '', { method: 'DELETE' });
+    await request(webhookUrl(webhook, ''), { method: 'DELETE' });
   } catch (error) {
     if (!(error instanceof DiscordError && error.webhookGone)) throw error;
   }

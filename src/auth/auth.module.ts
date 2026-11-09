@@ -14,6 +14,7 @@ import { StorageModule } from '../storage/storage.module';
 import { PresenceModule } from '../friends/presence.module';
 import { CommunitiesModule } from '../communities/communities.module';
 import { DiscordChannelModule } from '../discord-channel/discord-channel.module';
+import { DiscordChartsModule } from '../discord-charts/discord-charts.module';
 import { TwoFactorController } from './two-factor/two-factor.controller';
 import { TwoFactorService } from './two-factor/two-factor.service';
 
@@ -24,6 +25,7 @@ import { TwoFactorService } from './two-factor/two-factor.service';
     PresenceModule,
     CommunitiesModule,
     DiscordChannelModule,
+    DiscordChartsModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '7d' },

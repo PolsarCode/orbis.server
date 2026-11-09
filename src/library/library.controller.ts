@@ -73,6 +73,17 @@ export class LibraryController {
   }
 
   @AllowGuest()
+  @RateLimit(60, MINUTE)
+  @Get('charts/:type/discussion')
+  chartDiscussion(
+    @UserId() userId: number,
+    @Param('type', new ParseEnumPipe(MediaType)) type: MediaType,
+    @Query('week') week?: string,
+  ) {
+    return this.libraryService.chartDiscussion(userId, type, week);
+  }
+
+  @AllowGuest()
   @Get('media/:type/:sourceId')
   media(
     @UserId() userId: number,

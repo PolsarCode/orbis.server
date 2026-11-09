@@ -94,7 +94,7 @@ describe('Which content counts on tag pages', () => {
   const where = publicUsages(viewer, false) as {
     OR: [
       { post: { AND: [{ AND: object[] }, object] } },
-      { AND: [{ comment: object }, { OR: [object, object] }] },
+      { AND: [{ comment: object }, { OR: [object, object, object] }] },
       { forumPost: { AND: object[] } },
     ];
   };
@@ -209,6 +209,11 @@ describe('Which content counts on tag pages', () => {
         },
       },
     });
+  });
+
+  it('shows comments in weekly chart discussions, which anyone can read', () => {
+    const [, target] = comments.AND;
+    expect(target.OR[2]).toEqual({ comment: { commentableType: 'chart' } });
   });
 
   it('shows 18+ library updates’ comments only to people who turned 18+ on', () => {

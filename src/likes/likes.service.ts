@@ -74,7 +74,10 @@ export class LikesService {
       await this.requireForumPostAccess(userId, id);
     } else {
       const target = await this.targetFor(userId, type, id);
-      if (await isBlocked(this.prisma, userId, target.ownerId)) {
+      if (
+        target.ownerId !== null &&
+        (await isBlocked(this.prisma, userId, target.ownerId))
+      ) {
         throw new NotFoundException('Not found');
       }
       await requireTargetAccess(this.prisma, userId, target);

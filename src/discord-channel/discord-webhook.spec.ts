@@ -50,6 +50,42 @@ describe('Discord webhooks', () => {
     expect(sent).toEqual({ messageId: '900', threadId: '77' });
   });
 
+  it('attaches a file and keeps it when retrying after a rate limit', async () => {
+    jest.useFakeTimers();
+    fetchMock
+      .mockResolvedValueOnce(reply(429, { retry_after: 0.5 }))
+      .mockResolvedValueOnce(reply(200, { id: '902', channel_id: '77' }));
+
+    const sending = sendMessage(webhook, { content: 'hi' }, 'Charts', {
+      filename: 'chart.png',
+      data: Buffer.from('png'),
+      description: 'Weekly chart',
+    });
+    await jest.advanceTimersByTimeAsync(500);
+
+    await expect(sending).resolves.toEqual({
+      messageId: '902',
+      threadId: '77',
+    });
+    const [url, init] = fetchMock.mock.calls[1];
+    expect(url).toBe(
+      'https://discord.com/api/v10/webhooks/111/secret-token?wait=true&with_components=true',
+    );
+    expect(init.headers).toBeUndefined();
+    const form = init.body as FormData;
+    expect(JSON.parse(form.get('payload_json') as string)).toEqual({
+      content: 'hi',
+      thread_name: 'Charts',
+      attachments: [
+        { id: 0, filename: 'chart.png', description: 'Weekly chart' },
+      ],
+    });
+    const file = form.get('files[0]') as File;
+    expect(file.name).toBe('chart.png');
+    expect(await file.text()).toBe('png');
+    jest.useRealTimers();
+  });
+
   it('waits and retries once when rate limited', async () => {
     jest.useFakeTimers();
     fetchMock

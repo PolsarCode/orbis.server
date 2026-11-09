@@ -55,7 +55,11 @@ describe('Discord ticket delivery', () => {
   });
 
   it('retains the file in the compatibility fallback and only renders once', async () => {
-    fetchMock.mockResolvedValueOnce({ ok: false, status: 400 });
+    fetchMock.mockResolvedValueOnce({
+      ok: false,
+      status: 400,
+      json: async () => ({ code: 50035 }),
+    });
     await postReportToDiscord(target, report);
     expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(render).toHaveBeenCalledTimes(1);

@@ -88,6 +88,7 @@ export function publicUsages(
             OR: [
               { targetPost: publicPost(viewer, showNsfw) },
               { targetActivity: publicActivity(viewer.id, showNsfw) },
+              { comment: { commentableType: 'chart' } },
             ],
           },
         ],

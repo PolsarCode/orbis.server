@@ -52,3 +52,13 @@ model LibraryActivity {
   @@index([createdAt(sort: Desc)])
   @@index([entryId])
 }
+
+model ChartDiscussion {
+  id           Int       @id @default(autoincrement())
+  mediaType    MediaType
+  week         String
+  commentCount Int       @default(0)
+  createdAt    DateTime  @default(now())
+
+  @@unique([mediaType, week])
+}

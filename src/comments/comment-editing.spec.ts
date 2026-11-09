@@ -70,6 +70,7 @@ describe('Editing and deleting comments', () => {
       findMany: jest.fn(),
       findFirst: jest.fn(),
     },
+    chartDiscussion: { findMany: jest.fn().mockResolvedValue([]) },
     user: { findMany: jest.fn().mockResolvedValue([]), findUnique: jest.fn() },
     contentReport: { findMany: jest.fn().mockResolvedValue([]) },
     membership: { findMany: jest.fn() },
@@ -375,6 +376,7 @@ describe('Editing and deleting comments', () => {
           community,
           media: { type: 'anime', sourceId: '52991' },
           wallUser: null,
+          chart: null,
         },
       },
       {
@@ -386,6 +388,7 @@ describe('Editing and deleting comments', () => {
           community: null,
           media: null,
           wallUser: null,
+          chart: null,
         },
       },
     ]);

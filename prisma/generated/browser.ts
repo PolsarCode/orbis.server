@@ -58,6 +58,16 @@ export type DiscordChannel = Prisma.DiscordChannelModel
  */
 export type DiscordMessage = Prisma.DiscordMessageModel
 /**
+ * Model DiscordChartChannel
+ * 
+ */
+export type DiscordChartChannel = Prisma.DiscordChartChannelModel
+/**
+ * Model DiscordChartPost
+ * 
+ */
+export type DiscordChartPost = Prisma.DiscordChartPostModel
+/**
  * Model CommunityBan
  * 
  */
@@ -147,6 +157,11 @@ export type LibraryEntry = Prisma.LibraryEntryModel
  * 
  */
 export type LibraryActivity = Prisma.LibraryActivityModel
+/**
+ * Model ChartDiscussion
+ * 
+ */
+export type ChartDiscussion = Prisma.ChartDiscussionModel
 /**
  * Model Conversation
  * 

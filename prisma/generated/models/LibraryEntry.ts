@@ -642,10 +642,6 @@ export type LibraryEntryOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type EnumMediaTypeFieldUpdateOperationsInput = {
-  set?: $Enums.MediaType
-}
-
 export type EnumLibraryStatusFieldUpdateOperationsInput = {
   set?: $Enums.LibraryStatus
 }

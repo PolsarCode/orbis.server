@@ -17,6 +17,7 @@ import {
 import { CreateContentReportDto } from './dto/create-content-report.dto';
 import { ResolveContentReportDto } from './dto/resolve-content-report.dto';
 import { forumPostLink } from '../forum/forum-helpers';
+import { chartPath } from '../library/chart-link';
 
 type Target = {
   title: string;
@@ -148,6 +149,12 @@ export class ModerationService {
           },
         });
         if (activity) link = `/users/${activity.entry.user.username}`;
+      } else {
+        const chart = await this.prisma.chartDiscussion.findUnique({
+          where: { id: comment.commentableId },
+          select: { mediaType: true, week: true },
+        });
+        if (chart) link = chartPath(chart.mediaType, chart.week);
       }
       return {
         title: 'Comment',

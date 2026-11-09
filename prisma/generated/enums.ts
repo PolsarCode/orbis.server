@@ -11,7 +11,8 @@
 
 export const CommentableType = {
   post: 'post',
-  activity: 'activity'
+  activity: 'activity',
+  chart: 'chart'
 } as const
 
 export type CommentableType = (typeof CommentableType)[keyof typeof CommentableType]

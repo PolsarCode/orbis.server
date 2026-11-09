@@ -73,6 +73,7 @@ import {
 import { MAX_INT } from '../communities/community-member.guard';
 import { viewableActivity, viewablePost } from '../posts/posts.service';
 import { showsNsfw } from '../users/nsfw';
+import { chartPath } from '../library/chart-link';
 
 const MAX_COMMENTS = 1000;
 
@@ -119,10 +120,11 @@ type CommentAuthor = Author & {
 export type CommentTarget = {
   type: CommentableType;
   id: number;
-  author: CommentAuthor;
+  author: CommentAuthor | null;
   community: Prisma.CommunityGetPayload<typeof communitySummary> | null;
   media: { type: MediaType; sourceId: string } | null;
   wallUser: CommentAuthor | null;
+  chart: { type: MediaType; week: string } | null;
 };
 
 function ownComment(
@@ -151,7 +153,7 @@ export class CommentsService {
 
   async list(userId: number, type: string, id: number): Promise<CommentView[]> {
     if (!Object.values(CommentableType).includes(type as CommentableType)) {
-      throw new BadRequestException('type must be post or activity');
+      throw new BadRequestException('type must be post, activity, or chart');
     }
 
     const commentableType = type as CommentableType;
@@ -245,10 +247,15 @@ export class CommentsService {
             where: { id, ...viewablePost(viewer, showNsfw) },
             select: { id: true },
           })
-        : await this.prisma.libraryActivity.findFirst({
-            where: { id, ...viewableActivity(viewer, showNsfw) },
-            select: { id: true },
-          });
+        : type === 'activity'
+          ? await this.prisma.libraryActivity.findFirst({
+              where: { id, ...viewableActivity(viewer, showNsfw) },
+              select: { id: true },
+            })
+          : await this.prisma.chartDiscussion.findUnique({
+              where: { id },
+              select: { id: true },
+            });
     if (!parent) throw new NotFoundException('Not found');
     return { viewer, communityId };
   }
@@ -271,7 +278,7 @@ export class CommentsService {
       rows.flatMap((row) =>
         row.commentableType === type ? [row.commentableId] : [],
       );
-    const [views, posts, activities] = await Promise.all([
+    const [views, posts, activities, charts] = await Promise.all([
       viewerContext(this.prisma, userId).then((viewer) =>
         this.present(
           viewer,
@@ -298,6 +305,10 @@ export class CommentsService {
         where: { id: { in: targetIds('activity') } },
         select: { id: true, entry: { select: { user: author } } },
       }),
+      this.prisma.chartDiscussion.findMany({
+        where: { id: { in: targetIds('chart') } },
+        select: { id: true, mediaType: true, week: true },
+      }),
     ]);
     const withNickname = await loadNicknames(
       this.prisma,
@@ -320,6 +331,7 @@ export class CommentsService {
                 ? { type: post.mediaType, sourceId: post.mediaSourceId }
                 : null,
             wallUser: post.wallUser,
+            chart: null,
           },
         ]),
       ),
@@ -333,6 +345,21 @@ export class CommentsService {
             community: null,
             media: null,
             wallUser: null,
+            chart: null,
+          },
+        ]),
+      ),
+      chart: new Map<number, CommentTarget>(
+        charts.map((chart) => [
+          chart.id,
+          {
+            type: 'chart',
+            id: chart.id,
+            author: null,
+            community: null,
+            media: null,
+            wallUser: null,
+            chart: { type: chart.mediaType, week: chart.week },
           },
         ]),
       ),
@@ -470,7 +497,9 @@ export class CommentsService {
       });
       await (type === 'post'
         ? tx.post.update({ where: { id }, data: increment })
-        : tx.libraryActivity.update({ where: { id }, data: increment }));
+        : type === 'activity'
+          ? tx.libraryActivity.update({ where: { id }, data: increment })
+          : tx.chartDiscussion.update({ where: { id }, data: increment }));
       return created;
     });
     await addHashtags(
@@ -657,10 +686,19 @@ export class CommentsService {
     };
     return type === 'post'
       ? this.prisma.post.updateMany(args)
-      : this.prisma.libraryActivity.updateMany(args);
+      : type === 'activity'
+        ? this.prisma.libraryActivity.updateMany(args)
+        : this.prisma.chartDiscussion.updateMany(args);
   }
 
   private async linkTo(target: EngagementTarget) {
+    if (target.type === 'chart') {
+      const chart = await this.prisma.chartDiscussion.findUniqueOrThrow({
+        where: { id: target.id },
+        select: { mediaType: true, week: true },
+      });
+      return chartPath(chart.mediaType, chart.week);
+    }
     const profileOwner =
       target.wallUserId ?? (target.type === 'activity' ? target.ownerId : null);
     const profile =
@@ -712,7 +750,7 @@ export class CommentsService {
         link,
       });
     }
-    if (target.ownerId !== parentAuthorId) {
+    if (target.ownerId !== null && target.ownerId !== parentAuthorId) {
       notifications.push({
         userId: target.ownerId,
         actorId: userId,

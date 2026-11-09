@@ -1,6 +1,7 @@
 enum CommentableType {
   post
   activity
+  chart
 }
 
 enum LikeableType {

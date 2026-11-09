@@ -14,6 +14,7 @@ import { ticketNumber } from '../src/reports/ticket';
 import { getReporterStatusLabel } from '../src/reports/status-labels';
 import { pair } from '../src/messages/conversation';
 import { resolveHashtags } from '../src/common/hashtags';
+import { chartPath } from '../src/library/chart-link';
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 const prisma = new PrismaClient({ adapter });
@@ -1099,7 +1100,7 @@ function participants(comments: SeedComment[] = []): UserKey[] {
 
 async function createComments(
   communityId: number | null,
-  commentableType: 'post' | 'activity',
+  commentableType: 'post' | 'activity' | 'chart',
   commentableId: number,
   comments: SeedComment[] = [],
   parentId?: number,
@@ -1725,7 +1726,7 @@ async function createNotifications() {
     readAt: Date | null;
   }[] = [];
 
-  const [posts, comments, activities] = await Promise.all([
+  const [posts, comments, activities, charts] = await Promise.all([
     prisma.post.findMany({
       select: {
         id: true,
@@ -1758,7 +1759,13 @@ async function createNotifications() {
         entry: { select: { user: { select: { id: true, username: true } } } },
       },
     }),
+    prisma.chartDiscussion.findMany({
+      select: { id: true, mediaType: true, week: true },
+    }),
   ]);
+  const chartLinks = new Map(
+    charts.map((chart) => [chart.id, chartPath(chart.mediaType, chart.week)]),
+  );
   const activityOwners = new Map(
     activities.map((activity) => [activity.id, activity.entry.user]),
   );
@@ -1817,19 +1824,25 @@ async function createNotifications() {
 
   for (const comment of comments) {
     const isActivity = comment.commentableType === 'activity';
+    const isPost = comment.commentableType === 'post';
     const activityOwner = isActivity
       ? activityOwners.get(comment.commentableId)
       : undefined;
     const ownerId = isActivity
       ? activityOwner?.id
-      : postAuthors.get(comment.commentableId);
+      : isPost
+        ? postAuthors.get(comment.commentableId)
+        : undefined;
     const wall = isActivity
       ? activityOwner?.username
-      : postWalls.get(comment.commentableId);
-    const titleLink =
-      comment.commentableType === 'post'
-        ? postTitles.get(comment.commentableId)
+      : isPost
+        ? postWalls.get(comment.commentableId)
         : undefined;
+    const titleLink = isPost
+      ? postTitles.get(comment.commentableId)
+      : isActivity
+        ? undefined
+        : chartLinks.get(comment.commentableId);
     const base = {
       actorId: comment.authorId,
       link:
@@ -2253,6 +2266,76 @@ const activityComments: {
     ],
   },
 ];
+
+const chartComments: SeedComment[] = [
+  {
+    author: 'tanjiro',
+    ago: 170,
+    content:
+      '<p>#Frieren on the chart again this week. Every episode feels like a warm cup of tea.</p>',
+    likes: ['nezuko', 'sakura', 'anya'],
+    replies: [
+      {
+        author: 'gojo',
+        ago: 150,
+        content:
+          '<p>Warm tea? It’s an elf outliving everyone she loves. Still the best thing airing, though.</p>',
+        likes: ['tanjiro'],
+      },
+    ],
+  },
+  {
+    author: 'itadori',
+    ago: 120,
+    content:
+      '<p>Jujutsu Kaisen climbing after that fight was the right call.</p>',
+    likes: ['gojo', 'naruto'],
+  },
+  {
+    author: 'anya',
+    ago: 75,
+    content:
+      '<p>Spy x Family deserves a higher spot. Anya demands a recount. Waku waku!</p>',
+    likes: ['nami', 'naruto', 'sakura', 'tanjiro'],
+  },
+  {
+    author: 'naruto',
+    ago: 30,
+    content:
+      '<p>Where’s my show? Believe it, it’ll be back on this chart next week!</p>',
+  },
+];
+
+function isoWeek(date: Date) {
+  const thursday = new Date(
+    Date.UTC(
+      date.getUTCFullYear(),
+      date.getUTCMonth(),
+      date.getUTCDate() + 3 - ((date.getUTCDay() + 6) % 7),
+    ),
+  );
+  const year = thursday.getUTCFullYear();
+  const week =
+    Math.floor((thursday.getTime() - Date.UTC(year, 0, 1)) / (7 * 864e5)) + 1;
+  return `${year}-W${String(week).padStart(2, '0')}`;
+}
+
+async function createChartDiscussion() {
+  const discussion = await prisma.chartDiscussion.create({
+    data: { mediaType: 'anime', week: isoWeek(new Date()) },
+  });
+  const commentCount = await createComments(
+    null,
+    'chart',
+    discussion.id,
+    chartComments,
+  );
+  await prisma.chartDiscussion.update({
+    where: { id: discussion.id },
+    data: { commentCount },
+  });
+  return commentCount;
+}
 
 async function createActivityComments() {
   for (const { owner, media: key, comments } of activityComments) {
@@ -2726,6 +2809,7 @@ async function main() {
   await prisma.community.deleteMany();
   await prisma.user.deleteMany();
   await prisma.hashtag.deleteMany();
+  await prisma.chartDiscussion.deleteMany();
 
   const characterPassword = await bcrypt.hash(CHARACTER_PASSWORD, 10);
 
@@ -3305,6 +3389,10 @@ async function main() {
 
   await createActivityComments();
   console.log('💬 Library update comments created:', activityComments.length);
+  console.log(
+    '📈 Chart discussion comments created:',
+    await createChartDiscussion(),
+  );
 
   console.log('❤️ Likes created:', await createLikes());
 

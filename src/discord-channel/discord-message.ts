@@ -270,26 +270,43 @@ export function activityMessage(
   );
 }
 
-export function connectedMessage(community: MessageCommunity): RenderedMessage {
-  const link = `${webUrl()}/communities/${community.id}`;
-  const icon = absoluteUrl(community.iconUrl) ?? `${webUrl()}/apple-icon`;
+export function communityIdentity(community: MessageCommunity) {
   return {
-    identity: {
-      username: allowedName(community.name) ?? 'Orbis',
-      avatar_url: icon,
-    },
+    username: allowedName(community.name) ?? 'Orbis',
+    avatar_url: absoluteUrl(community.iconUrl) ?? `${webUrl()}/apple-icon`,
+  };
+}
+
+function announcement(
+  community: MessageCommunity,
+  link: string,
+  description: string,
+): RenderedMessage {
+  return {
+    identity: communityIdentity(community),
     body: {
       embeds: [
-        {
-          title: 'Connected to Orbis',
-          url: link,
-          description: `New posts and library updates from **${escapeMarkdown(community.name)}** on Orbis will show up here.`,
-          color: COLOR,
-        },
+        { title: 'Connected to Orbis', url: link, description, color: COLOR },
       ],
       components: [button(link, 'View on Orbis')],
       allowed_mentions: { parse: [] },
     },
     threadName: 'Connected to Orbis',
   };
+}
+
+export function connectedMessage(community: MessageCommunity) {
+  return announcement(
+    community,
+    `${webUrl()}/communities/${community.id}`,
+    `New posts and library updates from **${escapeMarkdown(community.name)}** on Orbis will show up here.`,
+  );
+}
+
+export function chartsConnectedMessage(community: MessageCommunity) {
+  return announcement(
+    community,
+    `${webUrl()}/library?tab=charts`,
+    'Weekly charts from Orbis will be posted here every Monday.',
+  );
 }

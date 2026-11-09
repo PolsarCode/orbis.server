@@ -98,7 +98,7 @@ export async function requirePostAccess(
   }
 }
 
-export type EngagementType = 'post' | 'activity';
+export type EngagementType = 'post' | 'activity' | 'chart';
 
 export type EngagementTarget = {
   type: EngagementType;
@@ -107,7 +107,7 @@ export type EngagementTarget = {
   wallUserId: number | null;
   mediaType: MediaType | null;
   mediaSourceId: string | null;
-  ownerId: number;
+  ownerId: number | null;
 };
 
 export async function targetOf(
@@ -133,6 +133,24 @@ export async function targetOf(
     return { type, id, ...post, ownerId: post.authorId };
   }
 
+  const unowned = {
+    type,
+    id,
+    communityId: null,
+    wallUserId: null,
+    mediaType: null,
+    mediaSourceId: null,
+  };
+
+  if (type === 'chart') {
+    const chart = await prisma.chartDiscussion.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+    if (!chart) throw new NotFoundException('Not found');
+    return { ...unowned, ownerId: null };
+  }
+
   const activity = await prisma.libraryActivity.findUnique({
     where: { id },
     select: { entry: { select: { userId: true, isPublic: true } } },
@@ -143,15 +161,7 @@ export async function targetOf(
   ) {
     throw new NotFoundException('Not found');
   }
-  return {
-    type,
-    id,
-    communityId: null,
-    wallUserId: null,
-    mediaType: null,
-    mediaSourceId: null,
-    ownerId: activity.entry.userId,
-  };
+  return { ...unowned, ownerId: activity.entry.userId };
 }
 
 export async function requireTargetAccess(
@@ -159,6 +169,6 @@ export async function requireTargetAccess(
   userId: number,
   target: EngagementTarget,
 ) {
-  if (target.type === 'activity') return;
+  if (target.type !== 'post') return;
   await requirePostAccess(prisma, userId, target);
 }

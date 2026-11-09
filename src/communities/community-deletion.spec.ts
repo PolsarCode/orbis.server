@@ -4,11 +4,18 @@ import { PrismaService } from '../prisma.service';
 import { StorageService } from '../storage/storage.service';
 import { PresenceGateway } from '../friends/presence.gateway';
 import { TwitchLiveService } from '../friends/twitch-live.service';
+import { deleteWebhook } from '../discord-channel/discord-webhook';
+
+jest.mock('../discord-channel/discord-webhook', () => ({
+  ...jest.requireActual('../discord-channel/discord-webhook'),
+  deleteWebhook: jest.fn(() => Promise.resolve()),
+}));
 
 describe('Deleting a community', () => {
   const prisma = {
     membership: { findUnique: jest.fn() },
     discordChannel: { findUnique: jest.fn() },
+    discordChartChannel: { findUnique: jest.fn() },
     post: { findMany: jest.fn() },
     comment: { findMany: jest.fn(), deleteMany: jest.fn() },
     forumPost: { findMany: jest.fn() },
@@ -37,6 +44,7 @@ describe('Deleting a community', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     prisma.discordChannel.findUnique.mockResolvedValue(null);
+    prisma.discordChartChannel.findUnique.mockResolvedValue(null);
     prisma.post.findMany.mockResolvedValue([{ id: 10 }, { id: 11 }]);
     prisma.comment.findMany.mockResolvedValue([{ id: 20 }]);
     prisma.forumPost.findMany.mockResolvedValue([{ id: 30 }]);
@@ -45,6 +53,29 @@ describe('Deleting a community', () => {
       iconUrl: null,
       coverUrl: null,
       backgroundUrl: null,
+    });
+  });
+
+  it('removes both of its Discord webhooks', async () => {
+    ownedBy(1);
+    prisma.discordChannel.findUnique.mockResolvedValue({
+      webhookId: 'feed',
+      webhookToken: 'feed-token',
+    });
+    prisma.discordChartChannel.findUnique.mockResolvedValue({
+      webhookId: 'charts',
+      webhookToken: 'charts-token',
+    });
+
+    await service.remove(1, 3);
+
+    expect(deleteWebhook).toHaveBeenCalledWith({
+      id: 'feed',
+      token: 'feed-token',
+    });
+    expect(deleteWebhook).toHaveBeenCalledWith({
+      id: 'charts',
+      token: 'charts-token',
     });
   });
 

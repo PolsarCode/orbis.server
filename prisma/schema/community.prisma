@@ -25,6 +25,8 @@ model Community {
   comments          Comment[]
   invites           Invite[]
   discordChannel    DiscordChannel?
+  discordCharts     DiscordChartChannel?
+  discordChartPosts DiscordChartPost[]
   forumSections     ForumSection[]
   bans              CommunityBan[]
   forumCategories   ForumCategory[]
@@ -135,6 +137,34 @@ model DiscordMessage {
 
   @@unique([communityId, targetType, targetId])
   @@index([targetType, targetId])
+}
+
+model DiscordChartChannel {
+  communityId  Int       @id
+  webhookId    String
+  webhookToken String
+  guildId      String
+  guildName    String?
+  channelId    String
+  isForum      Boolean   @default(false)
+  sendAnime    Boolean   @default(false)
+  sendManga    Boolean   @default(false)
+  sendGames    Boolean   @default(false)
+  message      String?   @db.VarChar(500)
+  lostAt       DateTime?
+  createdAt    DateTime  @default(now())
+  community    Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+}
+
+model DiscordChartPost {
+  communityId Int
+  mediaType   MediaType
+  week        String
+  messageId   String?
+  createdAt   DateTime  @default(now())
+  community   Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+
+  @@id([communityId, mediaType, week])
 }
 
 model CommunityBan {

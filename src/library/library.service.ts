@@ -215,17 +215,21 @@ export class LibraryService {
     return this.listItems(userId, items);
   }
 
-  async chart(userId: number, type: MediaType, week?: string) {
+  private async loadChart(userId: number, type: MediaType, week?: string) {
     if (week && !/^\d{4}-W\d{2}$/.test(week)) {
       throw new NotFoundException('Chart not found');
     }
 
     const adult = await showsNsfw(this.prisma, userId);
-    const chart = await this.charts.get(
+    return this.charts.get(
       `${type}:${week || 'current'}:${adult}`,
       () => getChart(type, week, adult),
       chartLifetime,
     );
+  }
+
+  async chart(userId: number, type: MediaType, week?: string) {
+    const chart = await this.loadChart(userId, type, week);
     const items = await this.listItems(
       userId,
       chart.entries.map(({ media }) => media),
@@ -238,6 +242,18 @@ export class LibraryService {
         media: items[index],
       })),
     };
+  }
+
+  async chartDiscussion(userId: number, type: MediaType, week?: string) {
+    if (!week) throw new NotFoundException('Chart not found');
+    const chart = await this.loadChart(userId, type, week);
+    const key = { mediaType: type, week: chart.week };
+    return this.prisma.chartDiscussion.upsert({
+      where: { mediaType_week: key },
+      create: key,
+      update: {},
+      select: { id: true, commentCount: true },
+    });
   }
 
   private async listItems(userId: number, items: Media[]) {

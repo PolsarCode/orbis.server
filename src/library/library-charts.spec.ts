@@ -1,5 +1,7 @@
 import { BadGatewayException, NotFoundException } from '@nestjs/common';
 import { LibraryService } from './library.service';
+import { LibraryController } from './library.controller';
+import { ALLOW_GUEST } from '../auth/allow-guest';
 import { PrismaService } from '../prisma.service';
 import { DiscordChannelService } from '../discord-channel/discord-channel.service';
 import { MediaType } from '../../prisma/generated/client';
@@ -51,6 +53,7 @@ describe('Weekly charts', () => {
   const prisma = {
     user: { findUnique: jest.fn() },
     libraryEntry: { findMany: jest.fn() },
+    chartDiscussion: { upsert: jest.fn() },
   };
   let fetchMock: jest.SpyInstance;
   let library: LibraryService;
@@ -259,6 +262,73 @@ describe('Weekly charts', () => {
       await expect(library.chart(5, MediaType.manga)).rejects.toBeInstanceOf(
         BadGatewayException,
       );
+    });
+  });
+
+  describe('discussion', () => {
+    beforeEach(() => {
+      prisma.chartDiscussion.upsert.mockResolvedValue({
+        id: 4,
+        commentCount: 2,
+      });
+    });
+
+    it('opens one thread per media type and week, returning its id and comment count', async () => {
+      respond(200, chart);
+
+      const first = await library.chartDiscussion(
+        0,
+        MediaType.anime,
+        '2026-W45',
+      );
+      const second = await library.chartDiscussion(
+        5,
+        MediaType.anime,
+        '2026-W45',
+      );
+
+      expect(first).toEqual({ id: 4, commentCount: 2 });
+      expect(second).toEqual(first);
+      const key = { mediaType: 'anime', week: '2026-W45' };
+      expect(prisma.chartDiscussion.upsert).toHaveBeenNthCalledWith(1, {
+        where: { mediaType_week: key },
+        create: key,
+        update: {},
+        select: { id: true, commentCount: true },
+      });
+      expect(prisma.chartDiscussion.upsert.mock.calls[1]).toEqual(
+        prisma.chartDiscussion.upsert.mock.calls[0],
+      );
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(prisma.libraryEntry.findMany).not.toHaveBeenCalled();
+    });
+
+    it('lets guests open it', () => {
+      expect(
+        Reflect.getMetadata(
+          ALLOW_GUEST,
+          LibraryController.prototype.chartDiscussion,
+        ),
+      ).toBe(true);
+    });
+
+    it('won’t open a thread for a week the library doesn’t have', async () => {
+      respond(404, { error: 'Not found' });
+
+      await expect(
+        library.chartDiscussion(5, MediaType.manga, '2020-W01'),
+      ).rejects.toThrow(new NotFoundException('Chart not found'));
+      expect(prisma.chartDiscussion.upsert).not.toHaveBeenCalled();
+    });
+
+    it('needs a well-formed week and doesn’t ask the library otherwise', async () => {
+      for (const week of [undefined, '', '2026-45', '2026-W45&adult=true']) {
+        await expect(
+          library.chartDiscussion(5, MediaType.anime, week),
+        ).rejects.toThrow(new NotFoundException('Chart not found'));
+      }
+      expect(fetchMock).not.toHaveBeenCalled();
+      expect(prisma.chartDiscussion.upsert).not.toHaveBeenCalled();
     });
   });
 });

@@ -12,6 +12,7 @@ import { CommunitiesService } from '../../communities/communities.service';
 import { PresenceGateway } from '../../friends/presence.gateway';
 import { StorageService } from '../../storage/storage.service';
 import { DiscordChannelService } from '../../discord-channel/discord-channel.service';
+import { DiscordChartService } from '../../discord-charts/discord-chart.service';
 import { AuthService } from '../auth.service';
 import { oauthProviders } from './oauth-providers';
 import { OAuthService } from './oauth.service';
@@ -46,6 +47,7 @@ describe('OAuthService', () => {
   };
   const storage = { uploadImage: jest.fn(), delete: jest.fn() };
   const discordChannel = { connect: jest.fn() };
+  const discordCharts = { connect: jest.fn() };
   const service = new OAuthService(
     prisma as unknown as PrismaService,
     jwt,
@@ -54,6 +56,7 @@ describe('OAuthService', () => {
     communities as unknown as CommunitiesService,
     storage as unknown as StorageService,
     discordChannel as unknown as DiscordChannelService,
+    discordCharts as unknown as DiscordChartService,
   );
   const fetchMock = jest.fn();
 
@@ -588,13 +591,16 @@ describe('OAuthService', () => {
       });
     }
 
-    async function connectChannel(viewer = 5) {
+    async function connectChannel(
+      viewer = 5,
+      target: 'channel' | 'charts' = 'channel',
+    ) {
       const url = await service.communityAuthorizeUrl(
         5,
         'discord',
         12,
         NONCE,
-        true,
+        target,
       );
       const state = new URL(url).searchParams.get('state')!;
       return service.complete(
@@ -606,7 +612,7 @@ describe('OAuthService', () => {
 
     it('asks Discord to add a webhook to a channel the admin picks', async () => {
       const url = new URL(
-        await service.communityAuthorizeUrl(5, 'discord', 12, NONCE, true),
+        await service.communityAuthorizeUrl(5, 'discord', 12, NONCE, 'channel'),
       );
 
       expect(url.searchParams.get('scope')).toBe(
@@ -619,13 +625,13 @@ describe('OAuthService', () => {
       prisma.community.findUnique.mockResolvedValue({ isPublic: false });
 
       await expect(
-        service.communityAuthorizeUrl(5, 'discord', 12, NONCE, true),
+        service.communityAuthorizeUrl(5, 'discord', 12, NONCE, 'channel'),
       ).rejects.toThrow(BadRequestException);
     });
 
     it('only connects Discord channels', async () => {
       await expect(
-        service.communityAuthorizeUrl(5, 'twitch', 12, NONCE, true),
+        service.communityAuthorizeUrl(5, 'twitch', 12, NONCE, 'channel'),
       ).rejects.toThrow(BadRequestException);
     });
 
@@ -642,7 +648,49 @@ describe('OAuthService', () => {
         { id: '111', token: 'hook-token', guildId: '900', channelId: '66' },
         'Seasonal Club',
       );
+      expect(discordCharts.connect).not.toHaveBeenCalled();
       expect(communities.connectDiscord).not.toHaveBeenCalled();
+    });
+
+    it('asks for a webhook for weekly charts, even in a private community', async () => {
+      prisma.community.findUnique.mockResolvedValue({ isPublic: false });
+
+      const url = new URL(
+        await service.communityAuthorizeUrl(5, 'discord', 12, NONCE, 'charts'),
+      );
+
+      expect(url.searchParams.get('scope')).toBe(
+        'identify guilds webhook.incoming',
+      );
+      expect(communities.assertCanManage).toHaveBeenCalledWith(5, 12);
+      expect(
+        jwt.verify(url.searchParams.get('state')!, {
+          secret: 'test-secret:oauth-state',
+        }),
+      ).toMatchObject({ communityId: 12, target: 'charts' });
+    });
+
+    it('sends a charts webhook to weekly charts, not the feed', async () => {
+      discordWithWebhook();
+      discordServer();
+
+      const result = await connectChannel(5, 'charts');
+
+      expect(result).toEqual({ linked: 'discord', communityId: 12 });
+      expect(discordCharts.connect).toHaveBeenCalledWith(
+        5,
+        12,
+        { id: '111', token: 'hook-token', guildId: '900', channelId: '66' },
+        'Seasonal Club',
+      );
+      expect(discordChannel.connect).not.toHaveBeenCalled();
+      expect(communities.connectDiscord).not.toHaveBeenCalled();
+    });
+
+    it('only sets up weekly charts in Discord', async () => {
+      await expect(
+        service.communityAuthorizeUrl(5, 'twitch', 12, NONCE, 'charts'),
+      ).rejects.toThrow(BadRequestException);
     });
 
     it('explains when Discord didn’t add a webhook', async () => {

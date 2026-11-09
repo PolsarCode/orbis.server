@@ -392,6 +392,8 @@ export const ModelName = {
   Invite: 'Invite',
   DiscordChannel: 'DiscordChannel',
   DiscordMessage: 'DiscordMessage',
+  DiscordChartChannel: 'DiscordChartChannel',
+  DiscordChartPost: 'DiscordChartPost',
   CommunityBan: 'CommunityBan',
   Post: 'Post',
   Repost: 'Repost',
@@ -410,6 +412,7 @@ export const ModelName = {
   HashtagFollow: 'HashtagFollow',
   LibraryEntry: 'LibraryEntry',
   LibraryActivity: 'LibraryActivity',
+  ChartDiscussion: 'ChartDiscussion',
   Conversation: 'Conversation',
   ConversationMember: 'ConversationMember',
   Message: 'Message',
@@ -441,7 +444,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "community" | "membership" | "railFolder" | "role" | "membershipRole" | "invite" | "discordChannel" | "discordMessage" | "communityBan" | "post" | "repost" | "comment" | "editVersion" | "like" | "bookmark" | "forumSection" | "forumCategory" | "forumThread" | "forumPost" | "friendship" | "suggestionDismissal" | "hashtag" | "hashtagUsage" | "hashtagFollow" | "libraryEntry" | "libraryActivity" | "conversation" | "conversationMember" | "message" | "messageReaction" | "notification" | "report" | "reportComment" | "contentReport" | "block" | "mute" | "keywordFilter" | "setting" | "steamAccount" | "steamGame" | "user" | "oAuthAccount"
+    modelProps: "community" | "membership" | "railFolder" | "role" | "membershipRole" | "invite" | "discordChannel" | "discordMessage" | "discordChartChannel" | "discordChartPost" | "communityBan" | "post" | "repost" | "comment" | "editVersion" | "like" | "bookmark" | "forumSection" | "forumCategory" | "forumThread" | "forumPost" | "friendship" | "suggestionDismissal" | "hashtag" | "hashtagUsage" | "hashtagFollow" | "libraryEntry" | "libraryActivity" | "chartDiscussion" | "conversation" | "conversationMember" | "message" | "messageReaction" | "notification" | "report" | "reportComment" | "contentReport" | "block" | "mute" | "keywordFilter" | "setting" | "steamAccount" | "steamGame" | "user" | "oAuthAccount"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1034,6 +1037,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.DiscordMessageCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.DiscordMessageCountAggregateOutputType> | number
+        }
+      }
+    }
+    DiscordChartChannel: {
+      payload: Prisma.$DiscordChartChannelPayload<ExtArgs>
+      fields: Prisma.DiscordChartChannelFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DiscordChartChannelFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscordChartChannelPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DiscordChartChannelFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscordChartChannelPayload>
+        }
+        findFirst: {
+          args: Prisma.DiscordChartChannelFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscordChartChannelPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DiscordChartChannelFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscordChartChannelPayload>
+        }
+        findMany: {
+          args: Prisma.DiscordChartChannelFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscordChartChannelPayload>[]
+        }
+        create: {
+          args: Prisma.DiscordChartChannelCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscordChartChannelPayload>
+        }
+        createMany: {
+          args: Prisma.DiscordChartChannelCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.DiscordChartChannelCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscordChartChannelPayload>[]
+        }
+        delete: {
+          args: Prisma.DiscordChartChannelDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscordChartChannelPayload>
+        }
+        update: {
+          args: Prisma.DiscordChartChannelUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscordChartChannelPayload>
+        }
+        deleteMany: {
+          args: Prisma.DiscordChartChannelDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DiscordChartChannelUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.DiscordChartChannelUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscordChartChannelPayload>[]
+        }
+        upsert: {
+          args: Prisma.DiscordChartChannelUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscordChartChannelPayload>
+        }
+        aggregate: {
+          args: Prisma.DiscordChartChannelAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDiscordChartChannel>
+        }
+        groupBy: {
+          args: Prisma.DiscordChartChannelGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DiscordChartChannelGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DiscordChartChannelCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DiscordChartChannelCountAggregateOutputType> | number
+        }
+      }
+    }
+    DiscordChartPost: {
+      payload: Prisma.$DiscordChartPostPayload<ExtArgs>
+      fields: Prisma.DiscordChartPostFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DiscordChartPostFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscordChartPostPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DiscordChartPostFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscordChartPostPayload>
+        }
+        findFirst: {
+          args: Prisma.DiscordChartPostFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscordChartPostPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DiscordChartPostFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscordChartPostPayload>
+        }
+        findMany: {
+          args: Prisma.DiscordChartPostFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscordChartPostPayload>[]
+        }
+        create: {
+          args: Prisma.DiscordChartPostCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscordChartPostPayload>
+        }
+        createMany: {
+          args: Prisma.DiscordChartPostCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.DiscordChartPostCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscordChartPostPayload>[]
+        }
+        delete: {
+          args: Prisma.DiscordChartPostDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscordChartPostPayload>
+        }
+        update: {
+          args: Prisma.DiscordChartPostUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscordChartPostPayload>
+        }
+        deleteMany: {
+          args: Prisma.DiscordChartPostDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DiscordChartPostUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.DiscordChartPostUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscordChartPostPayload>[]
+        }
+        upsert: {
+          args: Prisma.DiscordChartPostUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscordChartPostPayload>
+        }
+        aggregate: {
+          args: Prisma.DiscordChartPostAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDiscordChartPost>
+        }
+        groupBy: {
+          args: Prisma.DiscordChartPostGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DiscordChartPostGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DiscordChartPostCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DiscordChartPostCountAggregateOutputType> | number
         }
       }
     }
@@ -2366,6 +2517,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.LibraryActivityCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.LibraryActivityCountAggregateOutputType> | number
+        }
+      }
+    }
+    ChartDiscussion: {
+      payload: Prisma.$ChartDiscussionPayload<ExtArgs>
+      fields: Prisma.ChartDiscussionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ChartDiscussionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChartDiscussionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ChartDiscussionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChartDiscussionPayload>
+        }
+        findFirst: {
+          args: Prisma.ChartDiscussionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChartDiscussionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ChartDiscussionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChartDiscussionPayload>
+        }
+        findMany: {
+          args: Prisma.ChartDiscussionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChartDiscussionPayload>[]
+        }
+        create: {
+          args: Prisma.ChartDiscussionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChartDiscussionPayload>
+        }
+        createMany: {
+          args: Prisma.ChartDiscussionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ChartDiscussionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChartDiscussionPayload>[]
+        }
+        delete: {
+          args: Prisma.ChartDiscussionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChartDiscussionPayload>
+        }
+        update: {
+          args: Prisma.ChartDiscussionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChartDiscussionPayload>
+        }
+        deleteMany: {
+          args: Prisma.ChartDiscussionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ChartDiscussionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ChartDiscussionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChartDiscussionPayload>[]
+        }
+        upsert: {
+          args: Prisma.ChartDiscussionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChartDiscussionPayload>
+        }
+        aggregate: {
+          args: Prisma.ChartDiscussionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateChartDiscussion>
+        }
+        groupBy: {
+          args: Prisma.ChartDiscussionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChartDiscussionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ChartDiscussionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChartDiscussionCountAggregateOutputType> | number
         }
       }
     }
@@ -3707,6 +3932,36 @@ export const DiscordMessageScalarFieldEnum = {
 export type DiscordMessageScalarFieldEnum = (typeof DiscordMessageScalarFieldEnum)[keyof typeof DiscordMessageScalarFieldEnum]
 
 
+export const DiscordChartChannelScalarFieldEnum = {
+  communityId: 'communityId',
+  webhookId: 'webhookId',
+  webhookToken: 'webhookToken',
+  guildId: 'guildId',
+  guildName: 'guildName',
+  channelId: 'channelId',
+  isForum: 'isForum',
+  sendAnime: 'sendAnime',
+  sendManga: 'sendManga',
+  sendGames: 'sendGames',
+  message: 'message',
+  lostAt: 'lostAt',
+  createdAt: 'createdAt'
+} as const
+
+export type DiscordChartChannelScalarFieldEnum = (typeof DiscordChartChannelScalarFieldEnum)[keyof typeof DiscordChartChannelScalarFieldEnum]
+
+
+export const DiscordChartPostScalarFieldEnum = {
+  communityId: 'communityId',
+  mediaType: 'mediaType',
+  week: 'week',
+  messageId: 'messageId',
+  createdAt: 'createdAt'
+} as const
+
+export type DiscordChartPostScalarFieldEnum = (typeof DiscordChartPostScalarFieldEnum)[keyof typeof DiscordChartPostScalarFieldEnum]
+
+
 export const CommunityBanScalarFieldEnum = {
   communityId: 'communityId',
   userId: 'userId',
@@ -3962,6 +4217,17 @@ export const LibraryActivityScalarFieldEnum = {
 } as const
 
 export type LibraryActivityScalarFieldEnum = (typeof LibraryActivityScalarFieldEnum)[keyof typeof LibraryActivityScalarFieldEnum]
+
+
+export const ChartDiscussionScalarFieldEnum = {
+  id: 'id',
+  mediaType: 'mediaType',
+  week: 'week',
+  commentCount: 'commentCount',
+  createdAt: 'createdAt'
+} as const
+
+export type ChartDiscussionScalarFieldEnum = (typeof ChartDiscussionScalarFieldEnum)[keyof typeof ChartDiscussionScalarFieldEnum]
 
 
 export const ConversationScalarFieldEnum = {
@@ -4644,6 +4910,8 @@ export type GlobalOmitConfig = {
   invite?: Prisma.InviteOmit
   discordChannel?: Prisma.DiscordChannelOmit
   discordMessage?: Prisma.DiscordMessageOmit
+  discordChartChannel?: Prisma.DiscordChartChannelOmit
+  discordChartPost?: Prisma.DiscordChartPostOmit
   communityBan?: Prisma.CommunityBanOmit
   post?: Prisma.PostOmit
   repost?: Prisma.RepostOmit
@@ -4662,6 +4930,7 @@ export type GlobalOmitConfig = {
   hashtagFollow?: Prisma.HashtagFollowOmit
   libraryEntry?: Prisma.LibraryEntryOmit
   libraryActivity?: Prisma.LibraryActivityOmit
+  chartDiscussion?: Prisma.ChartDiscussionOmit
   conversation?: Prisma.ConversationOmit
   conversationMember?: Prisma.ConversationMemberOmit
   message?: Prisma.MessageOmit
