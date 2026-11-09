@@ -117,26 +117,26 @@ export async function sendToChannel(
   channel: Channel,
   message: ChannelMessage,
   becameForum: () => Promise<unknown>,
-  file?: WebhookFile,
+  files?: WebhookFile[],
 ) {
   const webhook = webhookOf(channel);
   const body = { ...message.body, ...message.identity };
   const threadName = () => (channel.isForum ? message.threadName : undefined);
   try {
-    return await sendMessage(webhook, body, threadName(), file);
+    return await sendMessage(webhook, body, threadName(), files);
   } catch (error) {
     if (!(error instanceof DiscordError)) throw error;
     if (error.needsThread && !channel.isForum) {
       channel.isForum = true;
       await becameForum();
-      return sendMessage(webhook, body, threadName(), file);
+      return sendMessage(webhook, body, threadName(), files);
     }
     if (error.invalidBody) {
       return sendMessage(
         webhook,
         { ...message.body, username: 'Orbis' },
         threadName(),
-        file,
+        files,
       );
     }
     throw error;

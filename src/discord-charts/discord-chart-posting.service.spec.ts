@@ -25,10 +25,11 @@ type Row = {
   community: { id: number; name: string; iconUrl: string | null };
 };
 
-type Where = Record<string, unknown> & {
-  community?: {
-    discordChartPosts: { none: { mediaType: string; week: string } };
-  };
+type Where = Record<string, unknown> & { OR?: Partial<Row>[] };
+type PostKey = { mediaType: string; week: string };
+type PostWhere = {
+  communityId: number | { in: number[] };
+  OR: PostKey[];
 };
 
 const STARTS_AT = Date.parse('2026-11-09T00:00:00.000Z');
@@ -85,24 +86,28 @@ describe('Posting weekly charts to Discord', () => {
     week: string;
   }) => `${key.communityId}:${key.mediaType}:${key.week}`;
 
-  const matches = (row: Row, where: Where) =>
-    Object.entries(where).every(([field, value]) => {
-      if (field === 'community') {
-        const { mediaType, week } = where.community!.discordChartPosts.none;
-        return !posts.has(
-          keyOf({ communityId: row.communityId, mediaType, week }),
-        );
-      }
-      return row[field as keyof Row] === value;
+  const matches = (row: Row, where: Where): boolean =>
+    Object.entries(where).every(([field, value]) =>
+      field === 'OR'
+        ? (value as Where[]).some((option) => matches(row, option))
+        : row[field as keyof Row] === value,
+    );
+  const postsMatching = ({ communityId, OR }: PostWhere) =>
+    [...posts.keys()].filter((key) => {
+      const [id, mediaType, week] = key.split(':');
+      const ids =
+        typeof communityId === 'number' ? [communityId] : communityId.in;
+      return (
+        ids.includes(Number(id)) &&
+        OR.some(
+          (option) => option.mediaType === mediaType && option.week === week,
+        )
+      );
     });
 
   const lock = { $queryRaw: jest.fn() };
   const prisma = {
     discordChartChannel: {
-      count: jest.fn(
-        async ({ where }: { where: Where }) =>
-          rows.filter((row) => matches(row, where)).length,
-      ),
       findUnique: jest.fn(
         async ({ where }: { where: { communityId: number } }) => {
           const row = rows.find(
@@ -146,32 +151,26 @@ describe('Posting weekly charts to Discord', () => {
           posts.set(keyOf(data), { messageId: null });
         },
       ),
-      update: jest.fn(
+      findMany: jest.fn(async ({ where }: { where: PostWhere }) =>
+        postsMatching(where).map((key) => {
+          const [communityId, mediaType] = key.split(':');
+          return { communityId: Number(communityId), mediaType };
+        }),
+      ),
+      updateMany: jest.fn(
         async ({
           where,
           data,
         }: {
-          where: {
-            communityId_mediaType_week: {
-              communityId: number;
-              mediaType: string;
-              week: string;
-            };
-          };
+          where: PostWhere;
           data: { messageId: string };
         }) => {
-          posts.set(keyOf(where.communityId_mediaType_week), data);
+          for (const key of postsMatching(where)) posts.set(key, data);
         },
       ),
-      deleteMany: jest.fn(
-        async ({
-          where,
-        }: {
-          where: { communityId: number; mediaType: string; week: string };
-        }) => {
-          posts.delete(keyOf(where));
-        },
-      ),
+      deleteMany: jest.fn(async ({ where }: { where: PostWhere }) => {
+        for (const key of postsMatching(where)) posts.delete(key);
+      }),
     },
     $transaction: jest.fn((work: (tx: typeof lock) => Promise<unknown>) =>
       work(lock),
@@ -269,7 +268,6 @@ describe('Posting weekly charts to Discord', () => {
     expect(discordCalls().map(([url]) => url)).toEqual([
       'https://discord.com/api/v10/webhooks/hook-7/token-7?wait=true&with_components=true',
       'https://discord.com/api/v10/webhooks/hook-8/token-8?wait=true&with_components=true',
-      'https://discord.com/api/v10/webhooks/hook-8/token-8?wait=true&with_components=true',
     ]);
     expect([...posts.entries()]).toEqual([
       ['7:anime:2026-W46', { messageId: '900' }],
@@ -331,6 +329,74 @@ describe('Posting weekly charts to Discord', () => {
       'Join the discussion at https://orbis.test/library?tab=charts&type=game&week=2026-W46#discussion',
     );
     expect(payload().file.name).toBe('orbis-game-chart-2026-11-09.png');
+  });
+
+  it('puts every turned-on chart in one post and lists them in {type}', async () => {
+    rows = [
+      connection({
+        sendManga: true,
+        sendGames: true,
+        message: 'Hello, @everyone! Trending {type} of {dates} is here!',
+      }),
+    ];
+
+    await service.run();
+
+    expect(discordCalls()).toHaveLength(1);
+    const { body } = payload();
+    expect(body.content).toBe(
+      'Hello, @everyone! Trending Anime, Manga and Games of Nov 9 – Nov 15, 2026 is here!\n\n' +
+        'Join the discussion: ' +
+        '[Anime](https://orbis.test/library?tab=charts&week=2026-W46#discussion) · ' +
+        '[Manga](https://orbis.test/library?tab=charts&type=manga&week=2026-W46#discussion) · ' +
+        '[Games](https://orbis.test/library?tab=charts&type=game&week=2026-W46#discussion)',
+    );
+    expect(
+      body.attachments.map(({ filename }: { filename: string }) => filename),
+    ).toEqual([
+      'orbis-anime-chart-2026-11-09.png',
+      'orbis-manga-chart-2026-11-09.png',
+      'orbis-game-chart-2026-11-09.png',
+    ]);
+    const form = discordCalls()[0][1].body as FormData;
+    expect((form.get('files[2]') as File).name).toBe(
+      'orbis-game-chart-2026-11-09.png',
+    );
+    expect([...posts.values()]).toEqual([
+      { messageId: '900' },
+      { messageId: '900' },
+      { messageId: '900' },
+    ]);
+  });
+
+  it('lists two charts with “and”', async () => {
+    rows = [
+      connection({
+        sendManga: true,
+        isForum: true,
+        message: 'Trending {type}',
+      }),
+    ];
+
+    await service.run();
+
+    expect(payload().body.content).toMatch(/^Trending Anime and Manga\n\n/);
+    expect(payload().body.thread_name).toBe(
+      'Anime and Manga · Nov 9 – Nov 15, 2026',
+    );
+  });
+
+  it('sends a chart turned on later that day as its own post', async () => {
+    rows = [connection({ message: 'Trending {type}' })];
+    await service.run();
+
+    rows[0].sendManga = true;
+    await service.run();
+    await service.run();
+
+    expect(discordCalls()).toHaveLength(2);
+    expect(payload(1).body.content).toMatch(/^Trending Manga\n\n/);
+    expect(payload(1).body.attachments).toHaveLength(1);
   });
 
   it('starts a titled post in forum channels', async () => {
@@ -442,19 +508,27 @@ describe('Posting weekly charts to Discord', () => {
     expect(discordCalls()).toHaveLength(1);
   });
 
-  it('skips a chart the library can’t load and still posts the others', async () => {
-    rows = [connection({ sendManga: true })];
-    library.chart.mockImplementation(async (_user: number, type: string) => {
-      if (type === 'anime') throw new Error('Library unavailable');
-      return chart(type);
+  it('waits for every chart in a post to load, and still sends the others', async () => {
+    rows = [
+      connection({ communityId: 7, sendManga: true }),
+      connection({ communityId: 8, sendAnime: false, sendManga: true }),
+    ];
+    library.chart.mockImplementationOnce(async () => {
+      throw new Error('Library unavailable');
     });
 
     await service.run();
 
-    expect(imageCalls().map(([url]) => url)).toEqual([
-      'https://orbis.test/charts/manga/image?week=2026-W46',
+    expect(discordCalls().map(([url]) => url)).toEqual([
+      'https://discord.com/api/v10/webhooks/hook-8/token-8?wait=true&with_components=true',
     ]);
-    expect(discordCalls()).toHaveLength(1);
+    expect([...posts.keys()]).toEqual(['8:manga:2026-W46']);
+
+    await service.run();
+
+    expect(discordCalls()).toHaveLength(2);
+    expect(payload(1).body.attachments).toHaveLength(2);
+    expect(posts.size).toBe(3);
   });
 
   it('leaves a chart another server already claimed', async () => {
@@ -477,7 +551,7 @@ describe('Posting weekly charts to Discord', () => {
 
     await service.run();
 
-    expect(prisma.discordChartChannel.count).not.toHaveBeenCalled();
+    expect(prisma.discordChartChannel.findMany).not.toHaveBeenCalled();
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -495,16 +569,19 @@ describe('Posting weekly charts to Discord', () => {
         'https://orbis.test/charts/anime/image?week=2026-W46',
         'https://orbis.test/charts/game/image?week=2026-W46',
       ]);
+      expect(discordCalls()).toHaveLength(1);
       expect(payload(0).body.content).toBe(
-        'Testing the Anime chart\n\nJoin the discussion at https://orbis.test/library?tab=charts&week=2026-W46#discussion',
+        'Testing the Anime and Games chart\n\nJoin the discussion: ' +
+          '[Anime](https://orbis.test/library?tab=charts&week=2026-W46#discussion) · ' +
+          '[Games](https://orbis.test/library?tab=charts&type=game&week=2026-W46#discussion)',
       );
-      expect(payload(1).body.content).toMatch(/^Testing the Games chart\n\n/);
+      expect(payload(0).body.attachments).toHaveLength(2);
       expect(posts.size).toBe(0);
 
       jest.spyOn(Date, 'now').mockReturnValue(STARTS_AT + 8 * HOUR);
       await service.run();
 
-      expect(discordCalls()).toHaveLength(4);
+      expect(discordCalls()).toHaveLength(2);
       expect(posts.size).toBe(2);
     });
 

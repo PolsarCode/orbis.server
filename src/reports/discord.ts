@@ -135,7 +135,7 @@ function send(url: string, payload: { embeds: object[] }, image?: WebhookFile) {
           ),
         }
       : payload,
-    image,
+    image && [image],
   );
 }
 

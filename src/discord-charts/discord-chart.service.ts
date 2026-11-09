@@ -51,6 +51,14 @@ export const chartChannelSelect = {
   community: { select: { id: true, name: true, iconUrl: true } },
 } as const;
 
+export const sendingSelect = {
+  ...chartChannelSelect,
+  sendAnime: true,
+  sendManga: true,
+  sendGames: true,
+  lostAt: true,
+} as const;
+
 const NOT_CONNECTED = 'No Discord channel is connected for charts';
 
 @Injectable()
@@ -74,13 +82,7 @@ export class DiscordChartService {
     await this.communities.assertCanManage(userId, communityId);
     const channel = await this.prisma.discordChartChannel.findUnique({
       where: { communityId },
-      select: {
-        ...chartChannelSelect,
-        sendAnime: true,
-        sendManga: true,
-        sendGames: true,
-        lostAt: true,
-      },
+      select: sendingSelect,
     });
     if (!channel) throw new NotFoundException(NOT_CONNECTED);
     return channel;
@@ -163,7 +165,7 @@ export class DiscordChartService {
     }
   }
 
-  send(channel: Channel, message: ChannelMessage, file?: WebhookFile) {
+  send(channel: Channel, message: ChannelMessage, files?: WebhookFile[]) {
     return sendToChannel(
       channel,
       message,
@@ -175,7 +177,7 @@ export class DiscordChartService {
           },
           data: { isForum: true },
         }),
-      file,
+      files,
     );
   }
 

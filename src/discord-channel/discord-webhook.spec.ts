@@ -56,11 +56,13 @@ describe('Discord webhooks', () => {
       .mockResolvedValueOnce(reply(429, { retry_after: 0.5 }))
       .mockResolvedValueOnce(reply(200, { id: '902', channel_id: '77' }));
 
-    const sending = sendMessage(webhook, { content: 'hi' }, 'Charts', {
-      filename: 'chart.png',
-      data: Buffer.from('png'),
-      description: 'Weekly chart',
-    });
+    const sending = sendMessage(webhook, { content: 'hi' }, 'Charts', [
+      {
+        filename: 'chart.png',
+        data: Buffer.from('png'),
+        description: 'Weekly chart',
+      },
+    ]);
     await jest.advanceTimersByTimeAsync(500);
 
     await expect(sending).resolves.toEqual({
@@ -84,6 +86,26 @@ describe('Discord webhooks', () => {
     expect(file.name).toBe('chart.png');
     expect(await file.text()).toBe('png');
     jest.useRealTimers();
+  });
+
+  it('attaches several files to one message', async () => {
+    fetchMock.mockResolvedValueOnce(reply(200, { id: '903', channel_id: '5' }));
+
+    await sendMessage(webhook, { content: 'hi' }, undefined, [
+      { filename: 'anime.png', data: Buffer.from('a'), description: 'Anime' },
+      { filename: 'manga.png', data: Buffer.from('m') },
+    ]);
+
+    const form = fetchMock.mock.calls[0][1].body as FormData;
+    expect(JSON.parse(form.get('payload_json') as string)).toEqual({
+      content: 'hi',
+      attachments: [
+        { id: 0, filename: 'anime.png', description: 'Anime' },
+        { id: 1, filename: 'manga.png' },
+      ],
+    });
+    expect((form.get('files[0]') as File).name).toBe('anime.png');
+    expect(await (form.get('files[1]') as File).text()).toBe('m');
   });
 
   it('waits and retries once when rate limited', async () => {

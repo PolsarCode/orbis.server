@@ -25,8 +25,8 @@ import { LibraryService } from '../library/library.service';
 import { PrismaService } from '../prisma.service';
 import {
   ChartChannel,
-  chartChannelSelect,
   DiscordChartService,
+  sendingSelect,
 } from './discord-chart.service';
 
 const POST_MS = 10 * MINUTE;
@@ -49,6 +49,8 @@ const LABELS: Record<MediaType, string> = {
   game: 'Games',
 };
 
+const TYPES = Object.values(MediaType);
+
 const day = new Intl.DateTimeFormat('en-US', {
   month: 'short',
   day: 'numeric',
@@ -62,6 +64,12 @@ const dayWithYear = new Intl.DateTimeFormat('en-US', {
 });
 
 type Week = { week: string; startsAt: string; endsAt: string };
+type Chart = { type: MediaType; chart: Week };
+type Attached = Chart & { file: WebhookFile };
+type Switches = Record<(typeof SWITCHES)[MediaType], boolean>;
+
+const switchedOn = (channel: Switches) =>
+  TYPES.filter((type) => channel[SWITCHES[type]]);
 
 function weekRange({ startsAt, endsAt }: Week) {
   const start = new Date(startsAt);
@@ -70,9 +78,15 @@ function weekRange({ startsAt, endsAt }: Week) {
   return `${(sameYear ? day : dayWithYear).format(start)} – ${dayWithYear.format(end)}`;
 }
 
-export function fillMessage(message: string, type: MediaType, chart: Week) {
+function typeList(types: MediaType[]) {
+  const labels = types.map((type) => LABELS[type]);
+  const last = labels.pop();
+  return labels.length ? `${labels.join(', ')} and ${last}` : (last ?? '');
+}
+
+export function fillMessage(message: string, types: MediaType[], chart: Week) {
   const values: Record<string, string> = {
-    type: LABELS[type],
+    type: typeList(types),
     date: dayWithYear.format(new Date(chart.startsAt)),
     dates: weekRange(chart),
     week: String(Number(chart.week.slice(6))),
@@ -84,17 +98,29 @@ export function fillMessage(message: string, type: MediaType, chart: Week) {
   );
 }
 
-function chartMessage(type: MediaType, chart: Week, channel: ChartChannel) {
-  const link = absoluteUrl(chartPath(type, chart.week));
-  const message = channel.message && fillMessage(channel.message, type, chart);
+function discussionLinks(charts: Chart[]) {
+  const links = charts.map(({ type, chart }) => ({
+    label: LABELS[type],
+    url: absoluteUrl(chartPath(type, chart.week)),
+  }));
+  if (links.length === 1) return `Join the discussion at ${links[0].url}`;
+  return `Join the discussion: ${links
+    .map(({ label, url }) => `[${label}](${url})`)
+    .join(' · ')}`;
+}
+
+function chartMessage(charts: Chart[], channel: ChartChannel) {
+  const types = charts.map(({ type }) => type);
+  const { chart } = charts[0];
+  const message = channel.message && fillMessage(channel.message, types, chart);
   return {
     identity: communityIdentity(channel.community),
     body: {
-      content: `${message ? `${message}\n\n` : ''}Join the discussion at ${link}`,
+      content: `${message ? `${message}\n\n` : ''}${discussionLinks(charts)}`,
       allowed_mentions: { parse: ['everyone'] },
       flags: SUPPRESS_EMBEDS,
     },
-    threadName: `${LABELS[type]} · ${weekRange(chart)}`,
+    threadName: `${typeList(types)} · ${weekRange(chart)}`,
   };
 }
 
@@ -146,44 +172,96 @@ export class DiscordChartPostingService
   }
 
   private async postDue() {
-    for (const type of Object.values(MediaType)) {
+    const channels = await this.prisma.discordChartChannel.findMany({
+      where: {
+        lostAt: null,
+        OR: TYPES.map((type) => ({ [SWITCHES[type]]: true })),
+      },
+      orderBy: { createdAt: 'asc' },
+      select: sendingSelect,
+    });
+    if (channels.length === 0) return;
+
+    const charts = await this.dueCharts(
+      TYPES.filter((type) =>
+        channels.some((channel) => channel[SWITCHES[type]]),
+      ),
+    );
+    if (charts.size === 0) return;
+
+    const posted = await this.prisma.discordChartPost.findMany({
+      where: {
+        communityId: { in: channels.map(({ communityId }) => communityId) },
+        OR: [...charts].flatMap(([type, chart]) =>
+          chart ? [{ mediaType: type, week: chart.week }] : [],
+        ),
+      },
+      select: { communityId: true, mediaType: true },
+    });
+    const done = new Set(
+      posted.map(({ communityId, mediaType }) => `${communityId}:${mediaType}`),
+    );
+
+    const files = new Map<MediaType, Promise<WebhookFile>>();
+    const fileFor = ({ type, chart }: Chart) => {
+      if (!files.has(type)) {
+        const file = this.chartFile(type, chart);
+        file.catch((error: Error) =>
+          this.logger.warn(
+            `Couldn’t load the ${type} chart image: ${error.message}`,
+          ),
+        );
+        files.set(type, file);
+      }
+      return files.get(type)!;
+    };
+
+    for (const channel of channels) {
+      const due = switchedOn(channel).filter(
+        (type) =>
+          charts.has(type) && !done.has(`${channel.communityId}:${type}`),
+      );
+      if (due.length === 0 || due.some((type) => !charts.get(type))) continue;
+
+      const dueCharts = due.map((type) => ({ type, chart: charts.get(type)! }));
+      let attached: Attached[];
       try {
-        await this.postChart(type);
+        attached = await Promise.all(
+          dueCharts.map(async (chart) => ({
+            ...chart,
+            file: await fileFor(chart),
+          })),
+        );
+      } catch {
+        continue;
+      }
+      try {
+        await this.post(channel, attached);
       } catch (error) {
         this.logger.warn(
-          `Couldn’t post the ${type} chart to Discord: ${(error as Error).message}`,
+          `Couldn’t post the weekly charts for community ${channel.communityId}: ${(error as Error).message}`,
         );
       }
     }
   }
 
-  private async postChart(type: MediaType) {
-    const enabled = { lostAt: null, [SWITCHES[type]]: true };
-    const connected = await this.prisma.discordChartChannel.count({
-      where: enabled,
-    });
-    if (connected === 0) return;
-
-    const chart = await this.library.chart(GUEST_USER_ID, type);
-    const sinceStart = Date.now() - Date.parse(chart.startsAt);
-    if (!(sinceStart >= 0 && sinceStart < POST_WINDOW_MS)) return;
-
-    const channels = await this.prisma.discordChartChannel.findMany({
-      where: {
-        ...enabled,
-        community: {
-          discordChartPosts: { none: { mediaType: type, week: chart.week } },
-        },
-      },
-      orderBy: { createdAt: 'asc' },
-      select: chartChannelSelect,
-    });
-    if (channels.length === 0) return;
-
-    const file = await this.chartFile(type, chart);
-    for (const channel of channels) {
-      await this.post(channel, type, chart, file);
+  private async dueCharts(types: MediaType[]) {
+    const charts = new Map<MediaType, Week | null>();
+    for (const type of types) {
+      try {
+        const chart = await this.library.chart(GUEST_USER_ID, type);
+        const sinceStart = Date.now() - Date.parse(chart.startsAt);
+        if (sinceStart >= 0 && sinceStart < POST_WINDOW_MS) {
+          charts.set(type, chart);
+        }
+      } catch (error) {
+        this.logger.warn(
+          `Couldn’t load the ${type} chart: ${(error as Error).message}`,
+        );
+        charts.set(type, null);
+      }
     }
+    return charts;
   }
 
   async sendNow(userId: number, communityId: number, message?: string | null) {
@@ -195,13 +273,12 @@ export class DiscordChartPostingService
     if (channel.lostAt) {
       throw new BadRequestException(CHANNEL_LOST);
     }
-    const types = Object.values(MediaType).filter(
-      (type) => channel[SWITCHES[type]],
-    );
+    const types = switchedOn(channel);
     if (types.length === 0) {
       throw new BadRequestException('Turn on at least one chart first.');
     }
 
+    const attached: Attached[] = [];
     for (const type of types) {
       const chart = await this.library.chart(GUEST_USER_ID, type);
       const file = await this.chartFile(type, chart).catch((error: Error) => {
@@ -212,21 +289,23 @@ export class DiscordChartPostingService
           'Couldn’t make the chart image. Try again in a moment.',
         );
       });
-      try {
-        await this.discordCharts.send(
-          channel,
-          chartMessage(type, chart, channel),
-          file,
-        );
-      } catch (error) {
-        await this.discordCharts.failed(channel, error);
-        if (error instanceof DiscordError && error.webhookGone) {
-          throw new BadRequestException(CHANNEL_LOST);
-        }
-        throw new BadGatewayException(
-          'Discord didn’t accept the post. Try again in a moment.',
-        );
+      attached.push({ type, chart, file });
+    }
+
+    try {
+      await this.discordCharts.send(
+        channel,
+        chartMessage(attached, channel),
+        attached.map(({ file }) => file),
+      );
+    } catch (error) {
+      await this.discordCharts.failed(channel, error);
+      if (error instanceof DiscordError && error.webhookGone) {
+        throw new BadRequestException(CHANNEL_LOST);
       }
+      throw new BadGatewayException(
+        'Discord didn’t accept the post. Try again in a moment.',
+      );
     }
   }
 
@@ -257,40 +336,45 @@ export class DiscordChartPostingService
     return data;
   }
 
-  private async post(
-    channel: ChartChannel,
-    type: MediaType,
-    chart: Week,
-    file: WebhookFile,
-  ) {
-    const key = {
-      communityId: channel.communityId,
+  private async post(channel: ChartChannel, charts: Attached[]) {
+    const keyOf = ({ type, chart }: Chart) => ({
       mediaType: type,
       week: chart.week,
-    };
-    try {
-      await this.prisma.discordChartPost.create({ data: key });
-    } catch (error) {
-      if (isUniqueViolation(error)) return;
-      throw error;
+    });
+    const claimed: Attached[] = [];
+    const release = () =>
+      this.prisma.discordChartPost.deleteMany({
+        where: { communityId: channel.communityId, OR: claimed.map(keyOf) },
+      });
+
+    for (const chart of charts) {
+      try {
+        await this.prisma.discordChartPost.create({
+          data: { communityId: channel.communityId, ...keyOf(chart) },
+        });
+        claimed.push(chart);
+      } catch (error) {
+        if (isUniqueViolation(error)) continue;
+        if (claimed.length) await release();
+        throw error;
+      }
     }
+    if (claimed.length === 0) return;
 
     let sent: SentMessage;
     try {
       sent = await this.discordCharts.send(
         channel,
-        chartMessage(type, chart, channel),
-        file,
+        chartMessage(claimed, channel),
+        claimed.map(({ file }) => file),
       );
     } catch (error) {
-      if (canRetry(error)) {
-        await this.prisma.discordChartPost.deleteMany({ where: key });
-      }
+      if (canRetry(error)) await release();
       await this.discordCharts.failed(channel, error);
       return;
     }
-    await this.prisma.discordChartPost.update({
-      where: { communityId_mediaType_week: key },
+    await this.prisma.discordChartPost.updateMany({
+      where: { communityId: channel.communityId, OR: claimed.map(keyOf) },
       data: { messageId: sent.messageId },
     });
   }

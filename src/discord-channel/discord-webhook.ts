@@ -90,33 +90,37 @@ function query(params: Record<string, string | null>) {
   return search.size ? `?${search}` : '';
 }
 
-function withFile(body: object, file: WebhookFile) {
+function withFiles(body: object, files: WebhookFile[]) {
   const form = new FormData();
   form.append(
     'payload_json',
     JSON.stringify({
       ...body,
-      attachments: [
-        {
-          id: 0,
-          filename: file.filename,
-          ...(file.description && { description: file.description }),
-        },
-      ],
+      attachments: files.map(({ filename, description }, id) => ({
+        id,
+        filename,
+        ...(description && { description }),
+      })),
     }),
   );
-  form.append(
-    'files[0]',
-    new Blob([new Uint8Array(file.data)], { type: 'image/png' }),
-    file.filename,
+  files.forEach(({ filename, data }, index) =>
+    form.append(
+      `files[${index}]`,
+      new Blob([new Uint8Array(data)], { type: 'image/png' }),
+      filename,
+    ),
   );
   return form;
 }
 
-export function postToWebhook(url: string, body: object, file?: WebhookFile) {
+export function postToWebhook(
+  url: string,
+  body: object,
+  files: WebhookFile[] = [],
+) {
   return request(url, {
     method: 'POST',
-    body: file ? withFile(body, file) : body,
+    body: files.length ? withFiles(body, files) : body,
   });
 }
 
@@ -124,12 +128,12 @@ export async function sendMessage(
   webhook: Webhook,
   body: object,
   threadName?: string,
-  file?: WebhookFile,
+  files?: WebhookFile[],
 ): Promise<SentMessage> {
   const response = await postToWebhook(
     webhookUrl(webhook, query({ wait: 'true', with_components: 'true' })),
     threadName ? { ...body, thread_name: threadName } : body,
-    file,
+    files,
   );
   const message = await response.json();
   return {
