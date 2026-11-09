@@ -5,9 +5,12 @@ import { validate } from 'class-validator';
 import { JwtAuthGuard } from '../auth/jwt.guard';
 import { CommunitiesService } from '../communities/communities.service';
 import { CommunityMemberGuard } from '../communities/community-member.guard';
+import { LibraryService } from '../library/library.service';
 import { PrismaService } from '../prisma.service';
+import { DiscordChartPostingService } from './discord-chart-posting.service';
 import { DiscordChartService } from './discord-chart.service';
 import { DiscordChartsController } from './discord-charts.controller';
+import { SendDiscordChartsDto } from './dto/send-discord-charts.dto';
 import { UpdateDiscordChartsDto } from './dto/update-discord-charts.dto';
 
 const webhook = {
@@ -42,8 +45,11 @@ function channel(overrides: Record<string, unknown> = {}) {
   };
 }
 
-async function errors(body: Record<string, unknown>) {
-  const found = await validate(plainToInstance(UpdateDiscordChartsDto, body), {
+async function errors(
+  body: Record<string, unknown>,
+  dto: new () => object = UpdateDiscordChartsDto,
+) {
+  const found = await validate(plainToInstance(dto, body), {
     whitelist: true,
   });
   return found.map(({ property }) => property);
@@ -64,7 +70,15 @@ describe('Weekly charts in a Discord channel', () => {
     prisma as unknown as PrismaService,
     communities as unknown as CommunitiesService,
   );
-  const controller = new DiscordChartsController(service);
+  const library = { chart: jest.fn() };
+  const controller = new DiscordChartsController(
+    service,
+    new DiscordChartPostingService(
+      prisma as unknown as PrismaService,
+      library as unknown as LibraryService,
+      service,
+    ),
+  );
 
   const fetchMock = jest.fn();
   const originalFetch = global.fetch;
@@ -281,6 +295,9 @@ describe('Weekly charts in a Discord channel', () => {
       await expect(controller.disconnect(2, 7)).rejects.toBeInstanceOf(
         ForbiddenException,
       );
+      await expect(controller.send(2, 7, {})).rejects.toBeInstanceOf(
+        ForbiddenException,
+      );
       await expect(service.connect(2, 7, webhook, null)).rejects.toBeInstanceOf(
         ForbiddenException,
       );
@@ -290,6 +307,7 @@ describe('Weekly charts in a Discord channel', () => {
       expect(prisma.discordChartChannel.updateMany).not.toHaveBeenCalled();
       expect(prisma.discordChartChannel.upsert).not.toHaveBeenCalled();
       expect(prisma.discordChartChannel.delete).not.toHaveBeenCalled();
+      expect(library.chart).not.toHaveBeenCalled();
       expect(fetchMock).not.toHaveBeenCalled();
     });
 
@@ -320,6 +338,16 @@ describe('Weekly charts in a Discord channel', () => {
       await expect(
         errors({ sendAnime: 'yes', sendManga: 1, sendGames: null }),
       ).resolves.toEqual(['sendAnime', 'sendManga']);
+    });
+
+    it('sends now with an optional message up to 500 characters', async () => {
+      await expect(errors({}, SendDiscordChartsDto)).resolves.toEqual([]);
+      await expect(
+        errors({ message: 'a'.repeat(500) }, SendDiscordChartsDto),
+      ).resolves.toEqual([]);
+      await expect(
+        errors({ message: 'a'.repeat(501) }, SendDiscordChartsDto),
+      ).resolves.toEqual(['message']);
     });
   });
 });

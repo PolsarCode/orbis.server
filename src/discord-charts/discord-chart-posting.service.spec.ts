@@ -1,3 +1,9 @@
+import {
+  BadGatewayException,
+  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma } from '../../prisma/generated/client';
 import { CommunitiesService } from '../communities/communities.service';
 import { LibraryService } from '../library/library.service';
@@ -96,6 +102,14 @@ describe('Posting weekly charts to Discord', () => {
       count: jest.fn(
         async ({ where }: { where: Where }) =>
           rows.filter((row) => matches(row, where)).length,
+      ),
+      findUnique: jest.fn(
+        async ({ where }: { where: { communityId: number } }) => {
+          const row = rows.find(
+            ({ communityId }) => communityId === where.communityId,
+          );
+          return row ? { ...row, community: { ...row.community } } : null;
+        },
       ),
       findMany: jest.fn(async ({ where }: { where: Where }) =>
         rows
@@ -465,5 +479,108 @@ describe('Posting weekly charts to Discord', () => {
 
     expect(prisma.discordChartChannel.count).not.toHaveBeenCalled();
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  describe('sending right away', () => {
+    it('posts this week’s turned-on charts now without using up Monday’s post', async () => {
+      rows = [
+        connection({ sendGames: true, message: 'Testing the {type} chart' }),
+      ];
+      jest.spyOn(Date, 'now').mockReturnValue(STARTS_AT + 3 * 24 * HOUR);
+
+      await service.sendNow(1, 7);
+
+      expect(communities.assertCanManage).toHaveBeenCalledWith(1, 7);
+      expect(imageCalls().map(([url]) => url)).toEqual([
+        'https://orbis.test/charts/anime/image?week=2026-W46',
+        'https://orbis.test/charts/game/image?week=2026-W46',
+      ]);
+      expect(payload(0).body.content).toBe(
+        'Testing the Anime chart\n\nJoin the discussion at https://orbis.test/library?tab=charts&week=2026-W46#discussion',
+      );
+      expect(payload(1).body.content).toMatch(/^Testing the Games chart\n\n/);
+      expect(posts.size).toBe(0);
+
+      jest.spyOn(Date, 'now').mockReturnValue(STARTS_AT + 8 * HOUR);
+      await service.run();
+
+      expect(discordCalls()).toHaveLength(4);
+      expect(posts.size).toBe(2);
+    });
+
+    it('sends the message being edited without saving it', async () => {
+      rows = [connection({ message: 'Saved message' })];
+
+      await service.sendNow(1, 7, '  Draft for the {type} chart  ');
+      await service.sendNow(1, 7, '');
+
+      expect(payload(0).body.content).toMatch(
+        /^Draft for the Anime chart\n\nJoin the discussion at /,
+      );
+      expect(payload(1).body.content).toMatch(/^Join the discussion at /);
+      expect(rows[0].message).toBe('Saved message');
+    });
+
+    it('explains when nothing can be sent', async () => {
+      rows = [connection({ sendAnime: false })];
+      await expect(service.sendNow(1, 7)).rejects.toThrow(
+        new BadRequestException('Turn on at least one chart first.'),
+      );
+
+      rows = [connection({ lostAt: new Date() })];
+      await expect(service.sendNow(1, 7)).rejects.toBeInstanceOf(
+        BadRequestException,
+      );
+
+      rows = [];
+      await expect(service.sendNow(1, 7)).rejects.toBeInstanceOf(
+        NotFoundException,
+      );
+
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it('marks the connection as lost when the webhook was deleted in Discord', async () => {
+      fetchMock
+        .mockResolvedValueOnce(png())
+        .mockResolvedValueOnce(discord(404, { code: 10015 }));
+
+      await expect(service.sendNow(1, 7)).rejects.toThrow(
+        'This channel was disconnected in Discord. Connect it again first.',
+      );
+      expect(rows[0].lostAt).toBeInstanceOf(Date);
+    });
+
+    it('says so when the image or Discord fails', async () => {
+      fetchMock.mockResolvedValueOnce(png(502));
+      await expect(service.sendNow(1, 7)).rejects.toThrow(
+        new BadGatewayException(
+          'Couldn’t make the chart image. Try again in a moment.',
+        ),
+      );
+      expect(discordCalls()).toHaveLength(0);
+
+      fetchMock
+        .mockResolvedValueOnce(png())
+        .mockResolvedValueOnce(discord(403, { code: 50013 }));
+      await expect(service.sendNow(1, 7)).rejects.toThrow(
+        new BadGatewayException(
+          'Discord didn’t accept the post. Try again in a moment.',
+        ),
+      );
+      expect(rows[0].lostAt).toBeNull();
+    });
+
+    it('is only for owners and admins', async () => {
+      communities.assertCanManage.mockRejectedValueOnce(
+        new ForbiddenException(),
+      );
+
+      await expect(service.sendNow(2, 7)).rejects.toBeInstanceOf(
+        ForbiddenException,
+      );
+      expect(prisma.discordChartChannel.findUnique).not.toHaveBeenCalled();
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
   });
 });

@@ -70,6 +70,22 @@ export class DiscordChartService {
     });
   }
 
+  async findForSending(userId: number, communityId: number) {
+    await this.communities.assertCanManage(userId, communityId);
+    const channel = await this.prisma.discordChartChannel.findUnique({
+      where: { communityId },
+      select: {
+        ...chartChannelSelect,
+        sendAnime: true,
+        sendManga: true,
+        sendGames: true,
+        lostAt: true,
+      },
+    });
+    if (!channel) throw new NotFoundException(NOT_CONNECTED);
+    return channel;
+  }
+
   async update(
     userId: number,
     communityId: number,

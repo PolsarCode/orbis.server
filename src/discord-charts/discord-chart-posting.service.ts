@@ -1,10 +1,12 @@
 import {
+  BadGatewayException,
+  BadRequestException,
   Injectable,
   Logger,
   OnModuleDestroy,
   OnModuleInit,
 } from '@nestjs/common';
-import { MediaType, Prisma } from '../../prisma/generated/client';
+import { MediaType } from '../../prisma/generated/client';
 import { GUEST_USER_ID } from '../auth/allow-guest';
 import { isUniqueViolation } from '../common/prisma-errors';
 import { DAY, MINUTE } from '../common/throttle';
@@ -32,12 +34,14 @@ const POST_LOCK = 727_012_051;
 const POST_WINDOW_MS = DAY;
 const IMAGE_TIMEOUT_MS = 30_000;
 const SUPPRESS_EMBEDS = 1 << 2;
+const CHANNEL_LOST =
+  'This channel was disconnected in Discord. Connect it again first.';
 
-const ENABLED: Record<MediaType, Prisma.DiscordChartChannelWhereInput> = {
-  anime: { sendAnime: true },
-  manga: { sendManga: true },
-  game: { sendGames: true },
-};
+const SWITCHES = {
+  anime: 'sendAnime',
+  manga: 'sendManga',
+  game: 'sendGames',
+} as const satisfies Record<MediaType, string>;
 
 const LABELS: Record<MediaType, string> = {
   anime: 'Anime',
@@ -154,7 +158,7 @@ export class DiscordChartPostingService
   }
 
   private async postChart(type: MediaType) {
-    const enabled = { lostAt: null, ...ENABLED[type] };
+    const enabled = { lostAt: null, [SWITCHES[type]]: true };
     const connected = await this.prisma.discordChartChannel.count({
       where: enabled,
     });
@@ -176,14 +180,62 @@ export class DiscordChartPostingService
     });
     if (channels.length === 0) return;
 
-    const file = {
+    const file = await this.chartFile(type, chart);
+    for (const channel of channels) {
+      await this.post(channel, type, chart, file);
+    }
+  }
+
+  async sendNow(userId: number, communityId: number, message?: string | null) {
+    const saved = await this.discordCharts.findForSending(userId, communityId);
+    const channel =
+      message === undefined
+        ? saved
+        : { ...saved, message: message?.trim() || null };
+    if (channel.lostAt) {
+      throw new BadRequestException(CHANNEL_LOST);
+    }
+    const types = Object.values(MediaType).filter(
+      (type) => channel[SWITCHES[type]],
+    );
+    if (types.length === 0) {
+      throw new BadRequestException('Turn on at least one chart first.');
+    }
+
+    for (const type of types) {
+      const chart = await this.library.chart(GUEST_USER_ID, type);
+      const file = await this.chartFile(type, chart).catch((error: Error) => {
+        this.logger.warn(
+          `Couldn’t load the ${type} chart image: ${error.message}`,
+        );
+        throw new BadGatewayException(
+          'Couldn’t make the chart image. Try again in a moment.',
+        );
+      });
+      try {
+        await this.discordCharts.send(
+          channel,
+          chartMessage(type, chart, channel),
+          file,
+        );
+      } catch (error) {
+        await this.discordCharts.failed(channel, error);
+        if (error instanceof DiscordError && error.webhookGone) {
+          throw new BadRequestException(CHANNEL_LOST);
+        }
+        throw new BadGatewayException(
+          'Discord didn’t accept the post. Try again in a moment.',
+        );
+      }
+    }
+  }
+
+  private async chartFile(type: MediaType, chart: Week): Promise<WebhookFile> {
+    return {
       filename: `orbis-${type}-chart-${chart.startsAt.slice(0, 10)}.png`,
       data: await this.image(type, chart.week),
       description: `${LABELS[type]} chart · ${weekRange(chart)}`,
     };
-    for (const channel of channels) {
-      await this.post(channel, type, chart, file);
-    }
   }
 
   private async image(type: MediaType, week: string) {
