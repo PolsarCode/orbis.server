@@ -284,7 +284,7 @@ describe('Posting weekly charts to Discord', () => {
     const { body, file } = payload();
     expect(body).toMatchObject({
       content:
-        '@everyone New chart is out!\n\nJoin the discussion at https://orbis.test/library?tab=charts&week=2026-W46#discussion',
+        '@everyone New chart is out!\n\n[Join the discussion](https://orbis.test/library?tab=charts&week=2026-W46#discussion)',
       allowed_mentions: { parse: ['everyone'] },
       flags: 4,
       username: 'Hidden Leaf Village',
@@ -315,7 +315,7 @@ describe('Posting weekly charts to Discord', () => {
     await service.run();
 
     expect(payload().body.content).toBe(
-      '@here The Anime chart for week 46 of 2026 is out: Nov 9 – Nov 15, 2026 (from Nov 9, 2026) {other}\n\nJoin the discussion at https://orbis.test/library?tab=charts&week=2026-W46#discussion',
+      '@here The Anime chart for week 46 of 2026 is out: Nov 9 – Nov 15, 2026 (from Nov 9, 2026) {other}\n\n[Join the discussion](https://orbis.test/library?tab=charts&week=2026-W46#discussion)',
     );
     expect(payload().body.allowed_mentions).toEqual({ parse: ['everyone'] });
   });
@@ -326,7 +326,7 @@ describe('Posting weekly charts to Discord', () => {
     await service.run();
 
     expect(payload().body.content).toBe(
-      'Join the discussion at https://orbis.test/library?tab=charts&type=game&week=2026-W46#discussion',
+      '[Join the discussion](https://orbis.test/library?tab=charts&type=game&week=2026-W46#discussion)',
     );
     expect(payload().file.name).toBe('orbis-game-chart-2026-11-09.png');
   });
@@ -592,9 +592,11 @@ describe('Posting weekly charts to Discord', () => {
       await service.sendNow(1, 7, '');
 
       expect(payload(0).body.content).toMatch(
-        /^Draft for the Anime chart\n\nJoin the discussion at /,
+        /^Draft for the Anime chart\n\n\[Join the discussion\]\(https:/,
       );
-      expect(payload(1).body.content).toMatch(/^Join the discussion at /);
+      expect(payload(1).body.content).toMatch(
+        /^\[Join the discussion\]\(https:/,
+      );
       expect(rows[0].message).toBe('Saved message');
     });
 

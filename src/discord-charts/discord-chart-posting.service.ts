@@ -103,7 +103,7 @@ function discussionLinks(charts: Chart[]) {
     label: LABELS[type],
     url: absoluteUrl(chartPath(type, chart.week)),
   }));
-  if (links.length === 1) return `Join the discussion at ${links[0].url}`;
+  if (links.length === 1) return `[Join the discussion](${links[0].url})`;
   return `Join the discussion: ${links
     .map(({ label, url }) => `[${label}](${url})`)
     .join(' · ')}`;
