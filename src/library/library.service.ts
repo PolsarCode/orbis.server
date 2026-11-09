@@ -16,12 +16,13 @@ import { AddLibraryEntryDto } from './dto/add-library-entry.dto';
 import { UpdateLibraryEntryDto } from './dto/update-library-entry.dto';
 import {
   coverUrl,
+  Chart,
+  getChart,
   getMedia,
   getMediaList,
   imageUrl,
   Media,
   MEDIA_LISTS,
-  MediaList,
   searchMedia,
 } from './library-api';
 import { GUEST_USER_ID } from '../auth/allow-guest';
@@ -40,6 +41,7 @@ const SPOTLIGHT_RETRY_MS = 60 * 60 * 1000;
 const PUBLIC_UPDATES = 6;
 const LIST_LIFETIME_MS = 60 * 60 * 1000;
 const LIST_RETRY_MS = 5 * 60 * 1000;
+const PAST_CHART_LIFETIME_MS = 7 * 24 * 60 * 60 * 1000;
 
 export type Spotlight = {
   type: 'anime';
@@ -109,9 +111,43 @@ const toResult = (media: Media) => ({
   score: media.score,
 });
 
+function chartLifetime(chart: Chart, now: number) {
+  const endsIn = Date.parse(chart.endsAt) - now;
+  if (endsIn > 0) return Math.min(endsIn, LIST_LIFETIME_MS);
+  return chart.nextWeek ? PAST_CHART_LIFETIME_MS : LIST_LIFETIME_MS;
+}
+
+class ExpiringCache<T> {
+  private entries = new Map<string, { value: T; expiresAt: number }>();
+
+  async get(
+    key: string,
+    load: () => Promise<T>,
+    lifetime: (value: T, now: number) => number,
+  ) {
+    const now = Date.now();
+    const cached = this.entries.get(key);
+    if (cached && cached.expiresAt > now) return cached.value;
+
+    try {
+      const value = await load();
+      this.entries.set(key, { value, expiresAt: now + lifetime(value, now) });
+      return value;
+    } catch (error) {
+      if (!cached) throw error;
+      this.entries.set(key, {
+        value: cached.value,
+        expiresAt: now + LIST_RETRY_MS,
+      });
+      return cached.value;
+    }
+  }
+}
+
 @Injectable()
 export class LibraryService {
-  private lists = new Map<string, { items: Media[]; expiresAt: number }>();
+  private lists = new ExpiringCache<Media[]>();
+  private charts = new ExpiringCache<Chart>();
 
   constructor(
     private prisma: PrismaService,
@@ -170,11 +206,41 @@ export class LibraryService {
     const name = MEDIA_LISTS.find((value) => value === list);
     if (!name) throw new NotFoundException('List not found');
 
-    const items = await this.cachedList(
-      type,
-      name,
-      await showsNsfw(this.prisma, userId),
+    const adult = await showsNsfw(this.prisma, userId);
+    const items = await this.lists.get(
+      `${type}:${name}:${adult}`,
+      () => getMediaList(type, name, adult),
+      () => LIST_LIFETIME_MS,
     );
+    return this.listItems(userId, items);
+  }
+
+  async chart(userId: number, type: MediaType, week?: string) {
+    if (week && !/^\d{4}-W\d{2}$/.test(week)) {
+      throw new NotFoundException('Chart not found');
+    }
+
+    const adult = await showsNsfw(this.prisma, userId);
+    const chart = await this.charts.get(
+      `${type}:${week || 'current'}:${adult}`,
+      () => getChart(type, week, adult),
+      chartLifetime,
+    );
+    const items = await this.listItems(
+      userId,
+      chart.entries.map(({ media }) => media),
+    );
+
+    return {
+      ...chart,
+      entries: chart.entries.map((entry, index) => ({
+        ...entry,
+        media: items[index],
+      })),
+    };
+  }
+
+  private async listItems(userId: number, items: Media[]) {
     const saved =
       userId === GUEST_USER_ID
         ? []
@@ -195,26 +261,6 @@ export class LibraryService {
       inLibrary: entries.has(media.id),
       entry: entries.get(media.id) ?? null,
     }));
-  }
-
-  private async cachedList(type: MediaType, list: MediaList, adult: boolean) {
-    const key = `${type}:${list}:${adult}`;
-    const now = Date.now();
-    const cached = this.lists.get(key);
-    if (cached && cached.expiresAt > now) return cached.items;
-
-    try {
-      const items = await getMediaList(type, list, adult);
-      this.lists.set(key, { items, expiresAt: now + LIST_LIFETIME_MS });
-      return items;
-    } catch (error) {
-      if (!cached) throw error;
-      this.lists.set(key, {
-        items: cached.items,
-        expiresAt: now + LIST_RETRY_MS,
-      });
-      return cached.items;
-    }
   }
 
   async spotlight(): Promise<Spotlight | null> {

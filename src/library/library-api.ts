@@ -52,7 +52,10 @@ export function coverUrl(entry: {
     : null;
 }
 
-async function request<T>(path: string): Promise<T> {
+async function request<T>(
+  path: string,
+  notFound = 'Title not found',
+): Promise<T> {
   let res: Response;
   try {
     res = await fetch(`${baseUrl()}${path}`, {
@@ -61,7 +64,7 @@ async function request<T>(path: string): Promise<T> {
   } catch {
     throw new BadGatewayException('The library service is unavailable');
   }
-  if (res.status === 404) throw new NotFoundException('Title not found');
+  if (res.status === 404) throw new NotFoundException(notFound);
   if (res.status === 403) throw new ForbiddenException(ADULT_CONTENT);
   if (!res.ok) {
     throw new BadGatewayException('The library service is unavailable');
@@ -107,6 +110,41 @@ export async function getMediaList(
     `/api/lists/${type}/${list}${adult ? '?adult=true' : ''}`,
   );
   return items;
+}
+
+export type ChartEntry = {
+  rank: number;
+  previousRank: number | null;
+  movement: 'up' | 'down' | 'same' | 'new';
+  weeksOnChart: number;
+  peak: number;
+  media: Media;
+};
+
+export type Chart = {
+  type: Media['type'];
+  week: string;
+  startsAt: string;
+  endsAt: string;
+  previousWeek: string | null;
+  nextWeek: string | null;
+  entries: ChartEntry[];
+  updatedAt: string;
+};
+
+export function getChart(
+  type: MediaType,
+  week: string | undefined,
+  adult: boolean,
+) {
+  const query = new URLSearchParams();
+  if (week) query.set('week', week);
+  if (adult) query.set('adult', 'true');
+  const search = query.toString();
+  return request<Chart>(
+    `/api/charts/${type}${search && `?${search}`}`,
+    'Chart not found',
+  );
 }
 
 export function getMedia(type: MediaType, sourceId: string, adult: boolean) {

@@ -62,6 +62,17 @@ export class LibraryController {
   }
 
   @AllowGuest()
+  @RateLimit(60, MINUTE)
+  @Get('charts/:type')
+  chart(
+    @UserId() userId: number,
+    @Param('type', new ParseEnumPipe(MediaType)) type: MediaType,
+    @Query('week') week?: string,
+  ) {
+    return this.libraryService.chart(userId, type, week);
+  }
+
+  @AllowGuest()
   @Get('media/:type/:sourceId')
   media(
     @UserId() userId: number,
