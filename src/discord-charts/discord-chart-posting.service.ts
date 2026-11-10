@@ -18,7 +18,7 @@ import {
   SentMessage,
   WebhookFile,
 } from '../discord-channel/discord-webhook';
-import { chartPath } from '../library/chart-link';
+import { chartShortPath } from '../library/chart-link';
 import {
   CHART_LABELS,
   CHART_TYPES,
@@ -76,7 +76,7 @@ export function fillMessage(
 function discussionLinks(charts: Chart[]) {
   const links = charts.map(({ type, chart }) => ({
     label: CHART_LABELS[type],
-    url: absoluteUrl(chartPath(type, chart.week)),
+    url: absoluteUrl(chartShortPath(type, chart.week)),
   }));
   if (links.length === 1) return `[Join the discussion](${links[0].url})`;
   return `Join the discussion: ${links

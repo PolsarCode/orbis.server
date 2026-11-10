@@ -11,7 +11,7 @@ import { runLocked } from '../common/locked-job';
 import { isUniqueViolation } from '../common/prisma-errors';
 import { MINUTE } from '../common/throttle';
 import { webUrl } from '../common/web-url';
-import { chartPath } from '../library/chart-link';
+import { chartShortPath } from '../library/chart-link';
 import {
   CHART_LABELS,
   CHART_TYPES,
@@ -44,7 +44,7 @@ export type FacebookChartsStatus = {
 };
 
 export function chartCaption(type: MediaType, chart: ChartWeek) {
-  return `Trending ${CHART_LABELS[type]} of ${weekRange(chart)} on Orbis!\n\nJoin the discussion: ${webUrl()}${chartPath(type, chart.week)}`;
+  return `Trending ${CHART_LABELS[type]} of ${weekRange(chart)} on Orbis!\n\nJoin the discussion: ${webUrl()}${chartShortPath(type, chart.week)}`;
 }
 
 @Injectable()

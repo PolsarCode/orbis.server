@@ -285,7 +285,7 @@ describe('Posting weekly charts to Discord', () => {
     const { body, file } = payload();
     expect(body).toMatchObject({
       content:
-        '@everyone New chart is out!\n\n[Join the discussion](https://orbis.test/library?tab=charts&week=2026-W46#discussion)',
+        '@everyone New chart is out!\n\n[Join the discussion](https://orbis.test/c/loc)',
       allowed_mentions: { parse: ['everyone'] },
       flags: 4,
       username: 'Hidden Leaf Village',
@@ -316,7 +316,7 @@ describe('Posting weekly charts to Discord', () => {
     await service.run();
 
     expect(payload().body.content).toBe(
-      '@here The Anime chart for week 46 of 2026 is out: Nov 9 – Nov 15, 2026 (from Nov 9, 2026) {other}\n\n[Join the discussion](https://orbis.test/library?tab=charts&week=2026-W46#discussion)',
+      '@here The Anime chart for week 46 of 2026 is out: Nov 9 – Nov 15, 2026 (from Nov 9, 2026) {other}\n\n[Join the discussion](https://orbis.test/c/loc)',
     );
     expect(payload().body.allowed_mentions).toEqual({ parse: ['everyone'] });
   });
@@ -327,7 +327,7 @@ describe('Posting weekly charts to Discord', () => {
     await service.run();
 
     expect(payload().body.content).toBe(
-      '[Join the discussion](https://orbis.test/library?tab=charts&type=game&week=2026-W46#discussion)',
+      '[Join the discussion](https://orbis.test/c/y6h)',
     );
     expect(payload().file.name).toBe('orbis-game-chart-2026-11-09.png');
   });
@@ -348,9 +348,9 @@ describe('Posting weekly charts to Discord', () => {
     expect(body.content).toBe(
       'Hello, @everyone! Trending Anime, Manga and Games of Nov 9 – Nov 15, 2026 is here!\n\n' +
         'Join the discussion: ' +
-        '[Anime](https://orbis.test/library?tab=charts&week=2026-W46#discussion) · ' +
-        '[Manga](https://orbis.test/library?tab=charts&type=manga&week=2026-W46#discussion) · ' +
-        '[Games](https://orbis.test/library?tab=charts&type=game&week=2026-W46#discussion)',
+        '[Anime](https://orbis.test/c/loc) · ' +
+        '[Manga](https://orbis.test/c/775) · ' +
+        '[Games](https://orbis.test/c/y6h)',
     );
     expect(
       body.attachments.map(({ filename }: { filename: string }) => filename),
@@ -573,8 +573,8 @@ describe('Posting weekly charts to Discord', () => {
       expect(discordCalls()).toHaveLength(1);
       expect(payload(0).body.content).toBe(
         'Testing the Anime and Games chart\n\nJoin the discussion: ' +
-          '[Anime](https://orbis.test/library?tab=charts&week=2026-W46#discussion) · ' +
-          '[Games](https://orbis.test/library?tab=charts&type=game&week=2026-W46#discussion)',
+          '[Anime](https://orbis.test/c/loc) · ' +
+          '[Games](https://orbis.test/c/y6h)',
       );
       expect(payload(0).body.attachments).toHaveLength(2);
       expect(posts.size).toBe(0);

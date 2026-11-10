@@ -191,11 +191,11 @@ describe('Posting weekly charts to Facebook', () => {
 
     expect([0, 1, 2].map((index) => photoForm(index).get('message'))).toEqual([
       'Trending Anime of Nov 9 – Nov 15, 2026 on Orbis!\n\n' +
-        'Join the discussion: https://orbis.test/library?tab=charts&week=2026-W46#discussion',
+        'Join the discussion: https://orbis.test/c/loc',
       'Trending Manga of Nov 9 – Nov 15, 2026 on Orbis!\n\n' +
-        'Join the discussion: https://orbis.test/library?tab=charts&type=manga&week=2026-W46#discussion',
+        'Join the discussion: https://orbis.test/c/775',
       'Trending Games of Nov 9 – Nov 15, 2026 on Orbis!\n\n' +
-        'Join the discussion: https://orbis.test/library?tab=charts&type=game&week=2026-W46#discussion',
+        'Join the discussion: https://orbis.test/c/y6h',
     ]);
   });
 
