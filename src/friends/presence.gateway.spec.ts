@@ -1,5 +1,7 @@
+import { Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Server, Socket } from 'socket.io';
+import { Prisma } from '../../prisma/generated/client';
 import { PrismaService } from '../prisma.service';
 import { PresenceGateway } from './presence.gateway';
 
@@ -77,6 +79,45 @@ describe('PresenceGateway', () => {
     });
     expect((await connect()).disconnect).toHaveBeenCalledWith(true);
     expect(gateway.statusOf(7, visible)).toBe('offline');
+  });
+
+  describe('when the database is unreachable', () => {
+    const unreachable = () =>
+      new Prisma.PrismaClientKnownRequestError('Can’t reach database server', {
+        code: 'ECONNREFUSED',
+        clientVersion: 'test',
+      });
+    let warning: jest.SpyInstance;
+
+    beforeEach(() => {
+      warning = jest
+        .spyOn(Logger.prototype, 'warn')
+        .mockImplementation(() => undefined);
+    });
+
+    afterEach(() => warning.mockRestore());
+
+    it('turns the connection away with a warning instead of crashing', async () => {
+      prisma.user.findUnique.mockRejectedValueOnce(unreachable());
+      const client = await connect();
+      expect(client.disconnect).toHaveBeenCalledWith(true);
+      expect(gateway.statusOf(7, visible)).toBe('offline');
+
+      prisma.user.findUnique
+        .mockResolvedValueOnce(null)
+        .mockRejectedValueOnce(unreachable());
+      expect((await connect()).disconnect).toHaveBeenCalledWith(true);
+      expect(warning).toHaveBeenCalledTimes(2);
+    });
+
+    it('still lets a connection go with a warning', async () => {
+      const client = await connect();
+      prisma.user.findUnique.mockRejectedValueOnce(unreachable());
+
+      await expect(gateway.handleDisconnect(client)).resolves.toBeUndefined();
+      expect(gateway.statusOf(7, visible)).toBe('offline');
+      expect(warning).toHaveBeenCalledTimes(1);
+    });
   });
 
   it('is offline without a connection or when appearing offline', async () => {

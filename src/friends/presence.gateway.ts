@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import {
   ConnectedSocket,
@@ -38,6 +39,7 @@ export class PresenceGateway
   @WebSocketServer()
   server: Server;
 
+  private readonly logger = new Logger(PresenceGateway.name);
   private connections = new Map<number, Set<Socket>>();
   private live = new Map<number, string>();
   private playing = new Map<number, string>();
@@ -61,6 +63,17 @@ export class PresenceGateway
       return;
     }
 
+    try {
+      await this.admit(client, userId, issuedAt);
+    } catch (error) {
+      this.logger.warn(
+        `Couldn’t connect socket for user ${userId}: ${error instanceof Error ? error.message : error}`,
+      );
+      client.disconnect(true);
+    }
+  }
+
+  private async admit(client: Socket, userId: number, issuedAt?: number) {
     const account = await this.prisma.user.findUnique({
       where: { id: userId },
       select: sessionFields,
@@ -100,7 +113,11 @@ export class PresenceGateway
       const sockets = this.connections.get(userId);
       sockets?.delete(client);
       if (!sockets?.size) this.connections.delete(userId);
-    });
+    }).catch((error) =>
+      this.logger.warn(
+        `Couldn’t share presence after user ${userId} disconnected: ${error instanceof Error ? error.message : error}`,
+      ),
+    );
   }
 
   @SubscribeMessage('idle')
