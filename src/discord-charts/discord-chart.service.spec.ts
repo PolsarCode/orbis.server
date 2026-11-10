@@ -5,6 +5,7 @@ import { validate } from 'class-validator';
 import { JwtAuthGuard } from '../auth/jwt.guard';
 import { CommunitiesService } from '../communities/communities.service';
 import { CommunityMemberGuard } from '../communities/community-member.guard';
+import { ChartShareService } from '../library/chart-share.service';
 import { LibraryService } from '../library/library.service';
 import { PrismaService } from '../prisma.service';
 import { DiscordChartPostingService } from './discord-chart-posting.service';
@@ -75,7 +76,7 @@ describe('Weekly charts in a Discord channel', () => {
     service,
     new DiscordChartPostingService(
       prisma as unknown as PrismaService,
-      library as unknown as LibraryService,
+      new ChartShareService(library as unknown as LibraryService),
       service,
     ),
   );

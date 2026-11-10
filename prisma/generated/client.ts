@@ -183,6 +183,11 @@ export type LibraryActivity = Prisma.LibraryActivityModel
  */
 export type ChartDiscussion = Prisma.ChartDiscussionModel
 /**
+ * Model FacebookChartPost
+ * 
+ */
+export type FacebookChartPost = Prisma.FacebookChartPostModel
+/**
  * Model Conversation
  * 
  */

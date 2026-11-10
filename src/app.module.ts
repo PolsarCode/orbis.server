@@ -26,6 +26,7 @@ import { LinksModule } from './links/links.module';
 import { ClipsModule } from './clips/clips.module';
 import { DiscordChannelModule } from './discord-channel/discord-channel.module';
 import { DiscordChartsModule } from './discord-charts/discord-charts.module';
+import { FacebookModule } from './facebook/facebook.module';
 import { TagsModule } from './tags/tags.module';
 import { SafetyModule } from './safety/safety.module';
 import { AccountModule } from './account/account.module';
@@ -58,6 +59,7 @@ import { PrismaService } from './prisma.service';
     ClipsModule,
     DiscordChannelModule,
     DiscordChartsModule,
+    FacebookModule,
     TagsModule,
     SafetyModule,
     AccountModule,

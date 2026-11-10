@@ -5,6 +5,7 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
+import { runLocked } from '../common/locked-job';
 import { StorageService } from '../storage/storage.service';
 import { CommunitiesService } from '../communities/communities.service';
 import { communitySuccessor } from '../communities/successor';
@@ -54,14 +55,8 @@ export class AccountSweepService implements OnModuleInit, OnModuleDestroy {
     if (this.running) return;
     this.running = true;
     try {
-      await this.prisma.$transaction(
-        async (tx) => {
-          const [{ locked }] = await tx.$queryRaw<{ locked: boolean }[]>`
-            SELECT pg_try_advisory_xact_lock(${SWEEP_LOCK}::bigint) AS locked
-          `;
-          if (locked) await this.deleteDue();
-        },
-        { timeout: SWEEP_MS },
+      await runLocked(this.prisma, SWEEP_LOCK, SWEEP_MS, () =>
+        this.deleteDue(),
       );
     } catch (error) {
       this.logger.warn(

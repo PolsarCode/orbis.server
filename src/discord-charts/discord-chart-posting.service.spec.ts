@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { Prisma } from '../../prisma/generated/client';
 import { CommunitiesService } from '../communities/communities.service';
+import { ChartShareService } from '../library/chart-share.service';
 import { LibraryService } from '../library/library.service';
 import { PrismaService } from '../prisma.service';
 import { DiscordChartPostingService } from './discord-chart-posting.service';
@@ -232,7 +233,7 @@ describe('Posting weekly charts to Discord', () => {
     posts.clear();
     service = new DiscordChartPostingService(
       prisma as unknown as PrismaService,
-      library as unknown as LibraryService,
+      new ChartShareService(library as unknown as LibraryService),
       charts,
     );
     jest.spyOn(Date, 'now').mockReturnValue(STARTS_AT + 8 * HOUR);
@@ -603,7 +604,7 @@ describe('Posting weekly charts to Discord', () => {
     it('explains when nothing can be sent', async () => {
       rows = [connection({ sendAnime: false })];
       await expect(service.sendNow(1, 7)).rejects.toThrow(
-        new BadRequestException('Turn on at least one chart first.'),
+        new BadRequestException('Turn on at least one chart first'),
       );
 
       rows = [connection({ lostAt: new Date() })];
@@ -625,7 +626,7 @@ describe('Posting weekly charts to Discord', () => {
         .mockResolvedValueOnce(discord(404, { code: 10015 }));
 
       await expect(service.sendNow(1, 7)).rejects.toThrow(
-        'This channel was disconnected in Discord. Connect it again first.',
+        'This channel was disconnected in Discord. Connect it again first',
       );
       expect(rows[0].lostAt).toBeInstanceOf(Date);
     });
@@ -634,7 +635,7 @@ describe('Posting weekly charts to Discord', () => {
       fetchMock.mockResolvedValueOnce(png(502));
       await expect(service.sendNow(1, 7)).rejects.toThrow(
         new BadGatewayException(
-          'Couldn’t make the chart image. Try again in a moment.',
+          'Couldn’t make the chart image. Try again in a moment',
         ),
       );
       expect(discordCalls()).toHaveLength(0);
@@ -644,7 +645,7 @@ describe('Posting weekly charts to Discord', () => {
         .mockResolvedValueOnce(discord(403, { code: 50013 }));
       await expect(service.sendNow(1, 7)).rejects.toThrow(
         new BadGatewayException(
-          'Discord didn’t accept the post. Try again in a moment.',
+          'Discord didn’t accept the post. Try again in a moment',
         ),
       );
       expect(rows[0].lostAt).toBeNull();

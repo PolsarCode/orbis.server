@@ -413,6 +413,7 @@ export const ModelName = {
   LibraryEntry: 'LibraryEntry',
   LibraryActivity: 'LibraryActivity',
   ChartDiscussion: 'ChartDiscussion',
+  FacebookChartPost: 'FacebookChartPost',
   Conversation: 'Conversation',
   ConversationMember: 'ConversationMember',
   Message: 'Message',
@@ -444,7 +445,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "community" | "membership" | "railFolder" | "role" | "membershipRole" | "invite" | "discordChannel" | "discordMessage" | "discordChartChannel" | "discordChartPost" | "communityBan" | "post" | "repost" | "comment" | "editVersion" | "like" | "bookmark" | "forumSection" | "forumCategory" | "forumThread" | "forumPost" | "friendship" | "suggestionDismissal" | "hashtag" | "hashtagUsage" | "hashtagFollow" | "libraryEntry" | "libraryActivity" | "chartDiscussion" | "conversation" | "conversationMember" | "message" | "messageReaction" | "notification" | "report" | "reportComment" | "contentReport" | "block" | "mute" | "keywordFilter" | "setting" | "steamAccount" | "steamGame" | "user" | "oAuthAccount"
+    modelProps: "community" | "membership" | "railFolder" | "role" | "membershipRole" | "invite" | "discordChannel" | "discordMessage" | "discordChartChannel" | "discordChartPost" | "communityBan" | "post" | "repost" | "comment" | "editVersion" | "like" | "bookmark" | "forumSection" | "forumCategory" | "forumThread" | "forumPost" | "friendship" | "suggestionDismissal" | "hashtag" | "hashtagUsage" | "hashtagFollow" | "libraryEntry" | "libraryActivity" | "chartDiscussion" | "facebookChartPost" | "conversation" | "conversationMember" | "message" | "messageReaction" | "notification" | "report" | "reportComment" | "contentReport" | "block" | "mute" | "keywordFilter" | "setting" | "steamAccount" | "steamGame" | "user" | "oAuthAccount"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2594,6 +2595,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    FacebookChartPost: {
+      payload: Prisma.$FacebookChartPostPayload<ExtArgs>
+      fields: Prisma.FacebookChartPostFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.FacebookChartPostFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FacebookChartPostPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.FacebookChartPostFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FacebookChartPostPayload>
+        }
+        findFirst: {
+          args: Prisma.FacebookChartPostFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FacebookChartPostPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.FacebookChartPostFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FacebookChartPostPayload>
+        }
+        findMany: {
+          args: Prisma.FacebookChartPostFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FacebookChartPostPayload>[]
+        }
+        create: {
+          args: Prisma.FacebookChartPostCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FacebookChartPostPayload>
+        }
+        createMany: {
+          args: Prisma.FacebookChartPostCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.FacebookChartPostCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FacebookChartPostPayload>[]
+        }
+        delete: {
+          args: Prisma.FacebookChartPostDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FacebookChartPostPayload>
+        }
+        update: {
+          args: Prisma.FacebookChartPostUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FacebookChartPostPayload>
+        }
+        deleteMany: {
+          args: Prisma.FacebookChartPostDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.FacebookChartPostUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.FacebookChartPostUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FacebookChartPostPayload>[]
+        }
+        upsert: {
+          args: Prisma.FacebookChartPostUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FacebookChartPostPayload>
+        }
+        aggregate: {
+          args: Prisma.FacebookChartPostAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFacebookChartPost>
+        }
+        groupBy: {
+          args: Prisma.FacebookChartPostGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FacebookChartPostGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.FacebookChartPostCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FacebookChartPostCountAggregateOutputType> | number
+        }
+      }
+    }
     Conversation: {
       payload: Prisma.$ConversationPayload<ExtArgs>
       fields: Prisma.ConversationFieldRefs
@@ -4230,6 +4305,16 @@ export const ChartDiscussionScalarFieldEnum = {
 export type ChartDiscussionScalarFieldEnum = (typeof ChartDiscussionScalarFieldEnum)[keyof typeof ChartDiscussionScalarFieldEnum]
 
 
+export const FacebookChartPostScalarFieldEnum = {
+  mediaType: 'mediaType',
+  week: 'week',
+  postId: 'postId',
+  createdAt: 'createdAt'
+} as const
+
+export type FacebookChartPostScalarFieldEnum = (typeof FacebookChartPostScalarFieldEnum)[keyof typeof FacebookChartPostScalarFieldEnum]
+
+
 export const ConversationScalarFieldEnum = {
   id: 'id',
   isGroup: 'isGroup',
@@ -4931,6 +5016,7 @@ export type GlobalOmitConfig = {
   libraryEntry?: Prisma.LibraryEntryOmit
   libraryActivity?: Prisma.LibraryActivityOmit
   chartDiscussion?: Prisma.ChartDiscussionOmit
+  facebookChartPost?: Prisma.FacebookChartPostOmit
   conversation?: Prisma.ConversationOmit
   conversationMember?: Prisma.ConversationMemberOmit
   message?: Prisma.MessageOmit

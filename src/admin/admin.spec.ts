@@ -1,6 +1,7 @@
 import { ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { AdminController } from './admin.controller';
 import { AdminService, DIRECTORY_PAGE_SIZE } from './admin.service';
+import { HeadAdminGuard } from './head-admin.guard';
 import { SiteAdminGuard } from './site-admin.guard';
 import { PrismaService } from '../prisma.service';
 import { MAX_INT } from '../communities/community-member.guard';
@@ -14,6 +15,7 @@ describe('Admin directory', () => {
   };
   const service = new AdminService(prisma as unknown as PrismaService);
   const guard = new SiteAdminGuard(prisma as unknown as PrismaService);
+  const headAdminGuard = new HeadAdminGuard(prisma as unknown as PrismaService);
   const context = {
     switchToHttp: () => ({ getRequest: () => ({ user: { userId: 7 } }) }),
   } as ExecutionContext;
@@ -50,6 +52,25 @@ describe('Admin directory', () => {
     },
   );
 
+  it('lets only the head admin past the head-admin guard', async () => {
+    prisma.user.findUnique.mockResolvedValue({ email: 'HEAD@example.test' });
+    expect(await headAdminGuard.canActivate(context)).toBe(true);
+    expect(prisma.user.findUnique).toHaveBeenCalledWith({
+      where: { id: 7 },
+      select: { email: true },
+    });
+  });
+
+  it.each([null, { email: 'admin@example.test', isAdmin: true }])(
+    'keeps site admins and missing users out of head-admin tools: %j',
+    async (user) => {
+      prisma.user.findUnique.mockResolvedValue(user);
+      await expect(headAdminGuard.canActivate(context)).rejects.toThrow(
+        new ForbiddenException('Only the head admin can do this'),
+      );
+    },
+  );
+
   it('returns the requested user page with counts and head-admin status', async () => {
     prisma.user.count.mockResolvedValue(30);
     prisma.user.findMany.mockResolvedValue([
@@ -59,6 +80,8 @@ describe('Admin directory', () => {
         isAdmin: false,
         username: 'head',
         _count: { memberships: 4 },
+        oauthAccounts: [],
+        steamAccount: null,
       },
     ]);
     expect(await service.users(2)).toMatchObject({
@@ -75,6 +98,36 @@ describe('Admin directory', () => {
     expect(query.orderBy).toEqual([{ createdAt: 'desc' }, { id: 'desc' }]);
     expect(query.select.password).toBeUndefined();
     expect(query.select.emailVerifiedAt).toBe(true);
+  });
+
+  it('lists each user’s connected accounts in a fixed order', async () => {
+    prisma.user.count.mockResolvedValue(2);
+    prisma.user.findMany.mockResolvedValue([
+      {
+        id: 8,
+        email: 'all@example.test',
+        _count: { memberships: 0 },
+        oauthAccounts: [{ provider: 'twitch' }, { provider: 'discord' }],
+        steamAccount: { userId: 8 },
+      },
+      {
+        id: 9,
+        email: 'steam@example.test',
+        _count: { memberships: 0 },
+        oauthAccounts: [],
+        steamAccount: { userId: 9 },
+      },
+    ]);
+    const { items } = await service.users(1);
+    expect(items.map(({ connections }) => connections)).toEqual([
+      ['discord', 'twitch', 'steam'],
+      ['steam'],
+    ]);
+    expect(items[0]).not.toHaveProperty('oauthAccounts');
+    expect(items[0]).not.toHaveProperty('steamAccount');
+    const { select } = prisma.user.findMany.mock.calls[0][0];
+    expect(select.oauthAccounts).toEqual({ select: { provider: true } });
+    expect(select.steamAccount).toEqual({ select: { userId: true } });
   });
 
   it('includes private communities with owner and membership counts', async () => {

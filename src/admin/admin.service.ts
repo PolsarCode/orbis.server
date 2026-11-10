@@ -5,6 +5,8 @@ import { author } from '../common/author';
 
 export const DIRECTORY_PAGE_SIZE = 20;
 
+const CONNECTIONS = ['discord', 'twitch', 'steam'] as const;
+
 export type DirectoryPage<T> = {
   items: T[];
   total: number;
@@ -24,6 +26,7 @@ export type DirectoryUser = {
   isHeadAdmin: boolean;
   isVerified: boolean;
   communityCount: number;
+  connections: Array<(typeof CONNECTIONS)[number]>;
   createdAt: Date;
 };
 
@@ -75,21 +78,30 @@ export class AdminService {
           isVerified: true,
           createdAt: true,
           _count: { select: { memberships: true } },
+          oauthAccounts: { select: { provider: true } },
+          steamAccount: { select: { userId: true } },
         },
       }),
     ]);
 
     return {
-      items: users.map(({ id, _count, ...user }) => {
-        const headAdmin = isHeadAdmin(user.email);
-        return {
-          ...user,
-          userId: id,
-          isAdmin: user.isAdmin || headAdmin,
-          isHeadAdmin: headAdmin,
-          communityCount: _count.memberships,
-        };
-      }),
+      items: users.map(
+        ({ id, _count, oauthAccounts, steamAccount, ...user }) => {
+          const headAdmin = isHeadAdmin(user.email);
+          return {
+            ...user,
+            userId: id,
+            isAdmin: user.isAdmin || headAdmin,
+            isHeadAdmin: headAdmin,
+            communityCount: _count.memberships,
+            connections: CONNECTIONS.filter((connection) =>
+              connection === 'steam'
+                ? steamAccount !== null
+                : oauthAccounts.some(({ provider }) => provider === connection),
+            ),
+          };
+        },
+      ),
       total,
       page,
       pageSize: DIRECTORY_PAGE_SIZE,

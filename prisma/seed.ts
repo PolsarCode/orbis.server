@@ -2810,6 +2810,7 @@ async function main() {
   await prisma.user.deleteMany();
   await prisma.hashtag.deleteMany();
   await prisma.chartDiscussion.deleteMany();
+  await prisma.facebookChartPost.deleteMany();
 
   const characterPassword = await bcrypt.hash(CHARACTER_PASSWORD, 10);
 

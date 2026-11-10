@@ -7,10 +7,8 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { MediaType } from '../../prisma/generated/client';
-import { GUEST_USER_ID } from '../auth/allow-guest';
 import { isUniqueViolation } from '../common/prisma-errors';
-import { DAY, MINUTE } from '../common/throttle';
-import { webUrl } from '../common/web-url';
+import { MINUTE } from '../common/throttle';
 import {
   absoluteUrl,
   communityIdentity,
@@ -21,8 +19,17 @@ import {
   WebhookFile,
 } from '../discord-channel/discord-webhook';
 import { chartPath } from '../library/chart-link';
-import { LibraryService } from '../library/library.service';
+import {
+  CHART_LABELS,
+  CHART_TYPES,
+  ChartShareService,
+  ChartWeek,
+  fullDate,
+  typeList,
+  weekRange,
+} from '../library/chart-share.service';
 import { PrismaService } from '../prisma.service';
+import { runLocked } from '../common/locked-job';
 import {
   ChartChannel,
   DiscordChartService,
@@ -31,11 +38,9 @@ import {
 
 const POST_MS = 10 * MINUTE;
 const POST_LOCK = 727_012_051;
-const POST_WINDOW_MS = DAY;
-const IMAGE_TIMEOUT_MS = 30_000;
 const SUPPRESS_EMBEDS = 1 << 2;
 const CHANNEL_LOST =
-  'This channel was disconnected in Discord. Connect it again first.';
+  'This channel was disconnected in Discord. Connect it again first';
 
 const SWITCHES = {
   anime: 'sendAnime',
@@ -43,51 +48,21 @@ const SWITCHES = {
   game: 'sendGames',
 } as const satisfies Record<MediaType, string>;
 
-const LABELS: Record<MediaType, string> = {
-  anime: 'Anime',
-  manga: 'Manga',
-  game: 'Games',
-};
-
-const TYPES = Object.values(MediaType);
-
-const day = new Intl.DateTimeFormat('en-US', {
-  month: 'short',
-  day: 'numeric',
-  timeZone: 'UTC',
-});
-const dayWithYear = new Intl.DateTimeFormat('en-US', {
-  month: 'short',
-  day: 'numeric',
-  year: 'numeric',
-  timeZone: 'UTC',
-});
-
-type Week = { week: string; startsAt: string; endsAt: string };
-type Chart = { type: MediaType; chart: Week };
+type Chart = { type: MediaType; chart: ChartWeek };
 type Attached = Chart & { file: WebhookFile };
 type Switches = Record<(typeof SWITCHES)[MediaType], boolean>;
 
 const switchedOn = (channel: Switches) =>
-  TYPES.filter((type) => channel[SWITCHES[type]]);
+  CHART_TYPES.filter((type) => channel[SWITCHES[type]]);
 
-function weekRange({ startsAt, endsAt }: Week) {
-  const start = new Date(startsAt);
-  const end = new Date(Date.parse(endsAt) - 1);
-  const sameYear = start.getUTCFullYear() === end.getUTCFullYear();
-  return `${(sameYear ? day : dayWithYear).format(start)} – ${dayWithYear.format(end)}`;
-}
-
-function typeList(types: MediaType[]) {
-  const labels = types.map((type) => LABELS[type]);
-  const last = labels.pop();
-  return labels.length ? `${labels.join(', ')} and ${last}` : (last ?? '');
-}
-
-export function fillMessage(message: string, types: MediaType[], chart: Week) {
+export function fillMessage(
+  message: string,
+  types: MediaType[],
+  chart: ChartWeek,
+) {
   const values: Record<string, string> = {
     type: typeList(types),
-    date: dayWithYear.format(new Date(chart.startsAt)),
+    date: fullDate(chart.startsAt),
     dates: weekRange(chart),
     week: String(Number(chart.week.slice(6))),
     year: chart.week.slice(0, 4),
@@ -100,7 +75,7 @@ export function fillMessage(message: string, types: MediaType[], chart: Week) {
 
 function discussionLinks(charts: Chart[]) {
   const links = charts.map(({ type, chart }) => ({
-    label: LABELS[type],
+    label: CHART_LABELS[type],
     url: absoluteUrl(chartPath(type, chart.week)),
   }));
   if (links.length === 1) return `[Join the discussion](${links[0].url})`;
@@ -131,11 +106,10 @@ export class DiscordChartPostingService
   private readonly logger = new Logger(DiscordChartPostingService.name);
   private timer?: NodeJS.Timeout;
   private running = false;
-  private images = new Map<MediaType, { week: string; data: Buffer }>();
 
   constructor(
     private prisma: PrismaService,
-    private library: LibraryService,
+    private charts: ChartShareService,
     private discordCharts: DiscordChartService,
   ) {}
 
@@ -153,15 +127,7 @@ export class DiscordChartPostingService
     if (this.running) return;
     this.running = true;
     try {
-      await this.prisma.$transaction(
-        async (tx) => {
-          const [{ locked }] = await tx.$queryRaw<{ locked: boolean }[]>`
-            SELECT pg_try_advisory_xact_lock(${POST_LOCK}::bigint) AS locked
-          `;
-          if (locked) await this.postDue();
-        },
-        { timeout: POST_MS },
-      );
+      await runLocked(this.prisma, POST_LOCK, POST_MS, () => this.postDue());
     } catch (error) {
       this.logger.warn(
         `Posting weekly charts to Discord failed: ${(error as Error).message}`,
@@ -175,15 +141,15 @@ export class DiscordChartPostingService
     const channels = await this.prisma.discordChartChannel.findMany({
       where: {
         lostAt: null,
-        OR: TYPES.map((type) => ({ [SWITCHES[type]]: true })),
+        OR: CHART_TYPES.map((type) => ({ [SWITCHES[type]]: true })),
       },
       orderBy: { createdAt: 'asc' },
       select: sendingSelect,
     });
     if (channels.length === 0) return;
 
-    const charts = await this.dueCharts(
-      TYPES.filter((type) =>
+    const charts = await this.charts.startedToday(
+      CHART_TYPES.filter((type) =>
         channels.some((channel) => channel[SWITCHES[type]]),
       ),
     );
@@ -205,7 +171,7 @@ export class DiscordChartPostingService
     const files = new Map<MediaType, Promise<WebhookFile>>();
     const fileFor = ({ type, chart }: Chart) => {
       if (!files.has(type)) {
-        const file = this.chartFile(type, chart);
+        const file = this.charts.image(type, chart);
         file.catch((error: Error) =>
           this.logger.warn(
             `Couldn’t load the ${type} chart image: ${error.message}`,
@@ -245,25 +211,6 @@ export class DiscordChartPostingService
     }
   }
 
-  private async dueCharts(types: MediaType[]) {
-    const charts = new Map<MediaType, Week | null>();
-    for (const type of types) {
-      try {
-        const chart = await this.library.chart(GUEST_USER_ID, type);
-        const sinceStart = Date.now() - Date.parse(chart.startsAt);
-        if (sinceStart >= 0 && sinceStart < POST_WINDOW_MS) {
-          charts.set(type, chart);
-        }
-      } catch (error) {
-        this.logger.warn(
-          `Couldn’t load the ${type} chart: ${(error as Error).message}`,
-        );
-        charts.set(type, null);
-      }
-    }
-    return charts;
-  }
-
   async sendNow(userId: number, communityId: number, message?: string | null) {
     const saved = await this.discordCharts.findForSending(userId, communityId);
     const channel =
@@ -275,20 +222,22 @@ export class DiscordChartPostingService
     }
     const types = switchedOn(channel);
     if (types.length === 0) {
-      throw new BadRequestException('Turn on at least one chart first.');
+      throw new BadRequestException('Turn on at least one chart first');
     }
 
     const attached: Attached[] = [];
     for (const type of types) {
-      const chart = await this.library.chart(GUEST_USER_ID, type);
-      const file = await this.chartFile(type, chart).catch((error: Error) => {
-        this.logger.warn(
-          `Couldn’t load the ${type} chart image: ${error.message}`,
-        );
-        throw new BadGatewayException(
-          'Couldn’t make the chart image. Try again in a moment.',
-        );
-      });
+      const chart = await this.charts.current(type);
+      const file = await this.charts
+        .image(type, chart)
+        .catch((error: Error) => {
+          this.logger.warn(
+            `Couldn’t load the ${type} chart image: ${error.message}`,
+          );
+          throw new BadGatewayException(
+            'Couldn’t make the chart image. Try again in a moment',
+          );
+        });
       attached.push({ type, chart, file });
     }
 
@@ -304,36 +253,9 @@ export class DiscordChartPostingService
         throw new BadRequestException(CHANNEL_LOST);
       }
       throw new BadGatewayException(
-        'Discord didn’t accept the post. Try again in a moment.',
+        'Discord didn’t accept the post. Try again in a moment',
       );
     }
-  }
-
-  private async chartFile(type: MediaType, chart: Week): Promise<WebhookFile> {
-    return {
-      filename: `orbis-${type}-chart-${chart.startsAt.slice(0, 10)}.png`,
-      data: await this.image(type, chart.week),
-      description: `${LABELS[type]} chart · ${weekRange(chart)}`,
-    };
-  }
-
-  private async image(type: MediaType, week: string) {
-    const cached = this.images.get(type);
-    if (cached?.week === week) return cached.data;
-
-    const response = await fetch(
-      `${webUrl()}/charts/${type}/image?${new URLSearchParams({ week })}`,
-      { signal: AbortSignal.timeout(IMAGE_TIMEOUT_MS) },
-    );
-    if (
-      !response.ok ||
-      !response.headers.get('content-type')?.startsWith('image/')
-    ) {
-      throw new Error(`Chart image request failed with ${response.status}`);
-    }
-    const data = Buffer.from(await response.arrayBuffer());
-    this.images.set(type, { week, data });
-    return data;
   }
 
   private async post(channel: ChartChannel, charts: Attached[]) {

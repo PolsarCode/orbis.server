@@ -62,3 +62,12 @@ model ChartDiscussion {
 
   @@unique([mediaType, week])
 }
+
+model FacebookChartPost {
+  mediaType MediaType
+  week      String
+  postId    String?
+  createdAt DateTime  @default(now())
+
+  @@id([mediaType, week])
+}
