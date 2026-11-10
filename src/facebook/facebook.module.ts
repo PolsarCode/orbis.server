@@ -4,10 +4,17 @@ import { LibraryModule } from '../library/library.module';
 import { PrismaService } from '../prisma.service';
 import { FacebookChartPostingService } from './facebook-chart-posting.service';
 import { FacebookChartsController } from './facebook-charts.controller';
+import { FacebookReleasePostingService } from './facebook-release-posting.service';
+import { FacebookReleasesController } from './facebook-releases.controller';
 
 @Module({
   imports: [LibraryModule],
-  controllers: [FacebookChartsController],
-  providers: [FacebookChartPostingService, HeadAdminGuard, PrismaService],
+  controllers: [FacebookChartsController, FacebookReleasesController],
+  providers: [
+    FacebookChartPostingService,
+    FacebookReleasePostingService,
+    HeadAdminGuard,
+    PrismaService,
+  ],
 })
 export class FacebookModule {}

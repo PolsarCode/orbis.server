@@ -25,6 +25,7 @@ import {
   FacebookError,
   FacebookPage,
   facebookPage,
+  NOT_SET_UP,
   pageName,
   postPhoto,
 } from './facebook-page';
@@ -32,8 +33,6 @@ import {
 const POST_MS = 10 * MINUTE;
 const POST_LOCK = 727_012_052;
 const ENABLED_KEY = 'facebook.charts';
-const NOT_SET_UP =
-  'Facebook isn’t set up. Add FACEBOOK_PAGE_ID and FACEBOOK_PAGE_TOKEN to the server’s settings';
 
 export type FacebookChartsStatus = {
   configured: boolean;

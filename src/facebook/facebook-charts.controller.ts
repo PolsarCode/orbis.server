@@ -2,7 +2,7 @@ import { Body, Controller, Get, Patch, Post, UseGuards } from '@nestjs/common';
 import { HeadAdminGuard } from '../admin/head-admin.guard';
 import { JwtAuthGuard } from '../auth/jwt.guard';
 import { MINUTE, RateLimit } from '../common/throttle';
-import { UpdateFacebookChartsDto } from './dto/update-facebook-charts.dto';
+import { UpdateFacebookPostingDto } from './dto/update-facebook-posting.dto';
 import {
   FacebookChartPostingService,
   FacebookChartsStatus,
@@ -21,7 +21,7 @@ export class FacebookChartsController {
   @RateLimit(30, MINUTE)
   @Patch()
   update(
-    @Body() { enabled }: UpdateFacebookChartsDto,
+    @Body() { enabled }: UpdateFacebookPostingDto,
   ): Promise<FacebookChartsStatus> {
     return this.posting.setEnabled(enabled);
   }

@@ -2811,6 +2811,7 @@ async function main() {
   await prisma.hashtag.deleteMany();
   await prisma.chartDiscussion.deleteMany();
   await prisma.facebookChartPost.deleteMany();
+  await prisma.facebookReleasePost.deleteMany();
 
   const characterPassword = await bcrypt.hash(CHARACTER_PASSWORD, 10);
 

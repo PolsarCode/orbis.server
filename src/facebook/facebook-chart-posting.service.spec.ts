@@ -8,7 +8,7 @@ import { JwtAuthGuard } from '../auth/jwt.guard';
 import { ChartShareService } from '../library/chart-share.service';
 import { LibraryService } from '../library/library.service';
 import { PrismaService } from '../prisma.service';
-import { UpdateFacebookChartsDto } from './dto/update-facebook-charts.dto';
+import { UpdateFacebookPostingDto } from './dto/update-facebook-posting.dto';
 import { FacebookChartPostingService } from './facebook-chart-posting.service';
 import { FacebookChartsController } from './facebook-charts.controller';
 
@@ -499,7 +499,7 @@ describe('Posting weekly charts to Facebook', () => {
 
     it('only takes a yes or no for the switch', async () => {
       const invalid = async (body: object) =>
-        (await validate(plainToInstance(UpdateFacebookChartsDto, body))).map(
+        (await validate(plainToInstance(UpdateFacebookPostingDto, body))).map(
           ({ property }) => property,
         );
 

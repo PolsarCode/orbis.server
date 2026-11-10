@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { MediaType } from '../../prisma/generated/client';
 import { GUEST_USER_ID } from '../auth/allow-guest';
+import { fetchImage } from '../common/fetch-image';
 import { DAY } from '../common/throttle';
 import { webUrl } from '../common/web-url';
 import { LibraryService } from './library.service';
@@ -94,17 +95,10 @@ export class ChartShareService {
     const cached = this.images.get(type);
     if (cached?.week === week) return cached.data;
 
-    const response = await fetch(
+    const data = await fetchImage(
       `${webUrl()}/charts/${type}/image?${new URLSearchParams({ week })}`,
-      { signal: AbortSignal.timeout(IMAGE_TIMEOUT_MS) },
+      IMAGE_TIMEOUT_MS,
     );
-    if (
-      !response.ok ||
-      !response.headers.get('content-type')?.startsWith('image/')
-    ) {
-      throw new Error(`Chart image request failed with ${response.status}`);
-    }
-    const data = Buffer.from(await response.arrayBuffer());
     this.images.set(type, { week, data });
     return data;
   }

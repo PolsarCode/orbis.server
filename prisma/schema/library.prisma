@@ -71,3 +71,10 @@ model FacebookChartPost {
 
   @@id([mediaType, week])
 }
+
+model FacebookReleasePost {
+  date      String   @id
+  version   String?
+  postId    String?
+  createdAt DateTime @default(now())
+}

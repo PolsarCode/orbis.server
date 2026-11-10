@@ -1,6 +1,6 @@
 import { IsBoolean } from 'class-validator';
 
-export class UpdateFacebookChartsDto {
+export class UpdateFacebookPostingDto {
   @IsBoolean()
   enabled: boolean;
 }

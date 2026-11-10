@@ -6,6 +6,9 @@ const LOOKUP_TIMEOUT_MS = 10_000;
 
 export type FacebookPage = { id: string; token: string };
 
+export const NOT_SET_UP =
+  'Facebook isn’t set up. Add FACEBOOK_PAGE_ID and FACEBOOK_PAGE_TOKEN to the server’s settings';
+
 export function facebookPage(): FacebookPage | null {
   const id = process.env.FACEBOOK_PAGE_ID?.trim();
   const token = process.env.FACEBOOK_PAGE_TOKEN?.trim();
@@ -38,7 +41,7 @@ export async function pageName(page: FacebookPage) {
 
 export async function postPhoto(
   page: FacebookPage,
-  image: ChartImage,
+  image: Pick<ChartImage, 'filename' | 'data'>,
   message: string,
 ) {
   const form = new FormData();

@@ -81,6 +81,7 @@ export const ModelName = {
   LibraryActivity: 'LibraryActivity',
   ChartDiscussion: 'ChartDiscussion',
   FacebookChartPost: 'FacebookChartPost',
+  FacebookReleasePost: 'FacebookReleasePost',
   Conversation: 'Conversation',
   ConversationMember: 'ConversationMember',
   Message: 'Message',
@@ -536,6 +537,16 @@ export const FacebookChartPostScalarFieldEnum = {
 } as const
 
 export type FacebookChartPostScalarFieldEnum = (typeof FacebookChartPostScalarFieldEnum)[keyof typeof FacebookChartPostScalarFieldEnum]
+
+
+export const FacebookReleasePostScalarFieldEnum = {
+  date: 'date',
+  version: 'version',
+  postId: 'postId',
+  createdAt: 'createdAt'
+} as const
+
+export type FacebookReleasePostScalarFieldEnum = (typeof FacebookReleasePostScalarFieldEnum)[keyof typeof FacebookReleasePostScalarFieldEnum]
 
 
 export const ConversationScalarFieldEnum = {

@@ -168,6 +168,11 @@ export type ChartDiscussion = Prisma.ChartDiscussionModel
  */
 export type FacebookChartPost = Prisma.FacebookChartPostModel
 /**
+ * Model FacebookReleasePost
+ * 
+ */
+export type FacebookReleasePost = Prisma.FacebookReleasePostModel
+/**
  * Model Conversation
  * 
  */
