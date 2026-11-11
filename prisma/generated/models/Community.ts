@@ -343,6 +343,7 @@ export type CommunityWhereInput = {
   forumThreads?: Prisma.ForumThreadListRelationFilter
   forumPosts?: Prisma.ForumPostListRelationFilter
   reposts?: Prisma.RepostListRelationFilter
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostListRelationFilter
 }
 
 export type CommunityOrderByWithRelationInput = {
@@ -380,6 +381,7 @@ export type CommunityOrderByWithRelationInput = {
   forumThreads?: Prisma.ForumThreadOrderByRelationAggregateInput
   forumPosts?: Prisma.ForumPostOrderByRelationAggregateInput
   reposts?: Prisma.RepostOrderByRelationAggregateInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostOrderByRelationAggregateInput
 }
 
 export type CommunityWhereUniqueInput = Prisma.AtLeast<{
@@ -420,6 +422,7 @@ export type CommunityWhereUniqueInput = Prisma.AtLeast<{
   forumThreads?: Prisma.ForumThreadListRelationFilter
   forumPosts?: Prisma.ForumPostListRelationFilter
   reposts?: Prisma.RepostListRelationFilter
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostListRelationFilter
 }, "id">
 
 export type CommunityOrderByWithAggregationInput = {
@@ -507,6 +510,7 @@ export type CommunityCreateInput = {
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateInput = {
@@ -543,6 +547,7 @@ export type CommunityUncheckedCreateInput = {
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUpdateInput = {
@@ -578,6 +583,7 @@ export type CommunityUpdateInput = {
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateInput = {
@@ -614,6 +620,7 @@ export type CommunityUncheckedUpdateInput = {
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUncheckedUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateManyInput = {
@@ -1000,6 +1007,22 @@ export type CommunityUpdateOneRequiredWithoutForumPostsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CommunityUpdateToOneWithWhereWithoutForumPostsInput, Prisma.CommunityUpdateWithoutForumPostsInput>, Prisma.CommunityUncheckedUpdateWithoutForumPostsInput>
 }
 
+export type CommunityCreateNestedOneWithoutFacebookMilestonePostsInput = {
+  create?: Prisma.XOR<Prisma.CommunityCreateWithoutFacebookMilestonePostsInput, Prisma.CommunityUncheckedCreateWithoutFacebookMilestonePostsInput>
+  connectOrCreate?: Prisma.CommunityCreateOrConnectWithoutFacebookMilestonePostsInput
+  connect?: Prisma.CommunityWhereUniqueInput
+}
+
+export type CommunityUpdateOneWithoutFacebookMilestonePostsNestedInput = {
+  create?: Prisma.XOR<Prisma.CommunityCreateWithoutFacebookMilestonePostsInput, Prisma.CommunityUncheckedCreateWithoutFacebookMilestonePostsInput>
+  connectOrCreate?: Prisma.CommunityCreateOrConnectWithoutFacebookMilestonePostsInput
+  upsert?: Prisma.CommunityUpsertWithoutFacebookMilestonePostsInput
+  disconnect?: Prisma.CommunityWhereInput | boolean
+  delete?: Prisma.CommunityWhereInput | boolean
+  connect?: Prisma.CommunityWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CommunityUpdateToOneWithWhereWithoutFacebookMilestonePostsInput, Prisma.CommunityUpdateWithoutFacebookMilestonePostsInput>, Prisma.CommunityUncheckedUpdateWithoutFacebookMilestonePostsInput>
+}
+
 export type CommunityCreateNestedManyWithoutOwnerInput = {
   create?: Prisma.XOR<Prisma.CommunityCreateWithoutOwnerInput, Prisma.CommunityUncheckedCreateWithoutOwnerInput> | Prisma.CommunityCreateWithoutOwnerInput[] | Prisma.CommunityUncheckedCreateWithoutOwnerInput[]
   connectOrCreate?: Prisma.CommunityCreateOrConnectWithoutOwnerInput | Prisma.CommunityCreateOrConnectWithoutOwnerInput[]
@@ -1074,6 +1097,7 @@ export type CommunityCreateWithoutMembershipsInput = {
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutMembershipsInput = {
@@ -1109,6 +1133,7 @@ export type CommunityUncheckedCreateWithoutMembershipsInput = {
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutMembershipsInput = {
@@ -1159,6 +1184,7 @@ export type CommunityUpdateWithoutMembershipsInput = {
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutMembershipsInput = {
@@ -1194,6 +1220,7 @@ export type CommunityUncheckedUpdateWithoutMembershipsInput = {
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUncheckedUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutRolesInput = {
@@ -1228,6 +1255,7 @@ export type CommunityCreateWithoutRolesInput = {
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutRolesInput = {
@@ -1263,6 +1291,7 @@ export type CommunityUncheckedCreateWithoutRolesInput = {
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutRolesInput = {
@@ -1313,6 +1342,7 @@ export type CommunityUpdateWithoutRolesInput = {
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutRolesInput = {
@@ -1348,6 +1378,7 @@ export type CommunityUncheckedUpdateWithoutRolesInput = {
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUncheckedUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutInvitesInput = {
@@ -1382,6 +1413,7 @@ export type CommunityCreateWithoutInvitesInput = {
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutInvitesInput = {
@@ -1417,6 +1449,7 @@ export type CommunityUncheckedCreateWithoutInvitesInput = {
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutInvitesInput = {
@@ -1467,6 +1500,7 @@ export type CommunityUpdateWithoutInvitesInput = {
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutInvitesInput = {
@@ -1502,6 +1536,7 @@ export type CommunityUncheckedUpdateWithoutInvitesInput = {
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUncheckedUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutDiscordChannelInput = {
@@ -1536,6 +1571,7 @@ export type CommunityCreateWithoutDiscordChannelInput = {
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutDiscordChannelInput = {
@@ -1571,6 +1607,7 @@ export type CommunityUncheckedCreateWithoutDiscordChannelInput = {
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutDiscordChannelInput = {
@@ -1621,6 +1658,7 @@ export type CommunityUpdateWithoutDiscordChannelInput = {
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutDiscordChannelInput = {
@@ -1656,6 +1694,7 @@ export type CommunityUncheckedUpdateWithoutDiscordChannelInput = {
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUncheckedUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutDiscordChartsInput = {
@@ -1690,6 +1729,7 @@ export type CommunityCreateWithoutDiscordChartsInput = {
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutDiscordChartsInput = {
@@ -1725,6 +1765,7 @@ export type CommunityUncheckedCreateWithoutDiscordChartsInput = {
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutDiscordChartsInput = {
@@ -1775,6 +1816,7 @@ export type CommunityUpdateWithoutDiscordChartsInput = {
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutDiscordChartsInput = {
@@ -1810,6 +1852,7 @@ export type CommunityUncheckedUpdateWithoutDiscordChartsInput = {
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUncheckedUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutDiscordChartPostsInput = {
@@ -1844,6 +1887,7 @@ export type CommunityCreateWithoutDiscordChartPostsInput = {
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutDiscordChartPostsInput = {
@@ -1879,6 +1923,7 @@ export type CommunityUncheckedCreateWithoutDiscordChartPostsInput = {
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutDiscordChartPostsInput = {
@@ -1929,6 +1974,7 @@ export type CommunityUpdateWithoutDiscordChartPostsInput = {
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutDiscordChartPostsInput = {
@@ -1964,6 +2010,7 @@ export type CommunityUncheckedUpdateWithoutDiscordChartPostsInput = {
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUncheckedUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutBansInput = {
@@ -1998,6 +2045,7 @@ export type CommunityCreateWithoutBansInput = {
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutBansInput = {
@@ -2033,6 +2081,7 @@ export type CommunityUncheckedCreateWithoutBansInput = {
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutBansInput = {
@@ -2083,6 +2132,7 @@ export type CommunityUpdateWithoutBansInput = {
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutBansInput = {
@@ -2118,6 +2168,7 @@ export type CommunityUncheckedUpdateWithoutBansInput = {
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUncheckedUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutPostsInput = {
@@ -2152,6 +2203,7 @@ export type CommunityCreateWithoutPostsInput = {
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutPostsInput = {
@@ -2187,6 +2239,7 @@ export type CommunityUncheckedCreateWithoutPostsInput = {
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutPostsInput = {
@@ -2237,6 +2290,7 @@ export type CommunityUpdateWithoutPostsInput = {
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutPostsInput = {
@@ -2272,6 +2326,7 @@ export type CommunityUncheckedUpdateWithoutPostsInput = {
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUncheckedUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutRepostsInput = {
@@ -2306,6 +2361,7 @@ export type CommunityCreateWithoutRepostsInput = {
   forumCategories?: Prisma.ForumCategoryCreateNestedManyWithoutCommunityInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutRepostsInput = {
@@ -2341,6 +2397,7 @@ export type CommunityUncheckedCreateWithoutRepostsInput = {
   forumCategories?: Prisma.ForumCategoryUncheckedCreateNestedManyWithoutCommunityInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutRepostsInput = {
@@ -2391,6 +2448,7 @@ export type CommunityUpdateWithoutRepostsInput = {
   forumCategories?: Prisma.ForumCategoryUpdateManyWithoutCommunityNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutRepostsInput = {
@@ -2426,6 +2484,7 @@ export type CommunityUncheckedUpdateWithoutRepostsInput = {
   forumCategories?: Prisma.ForumCategoryUncheckedUpdateManyWithoutCommunityNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutCommentsInput = {
@@ -2460,6 +2519,7 @@ export type CommunityCreateWithoutCommentsInput = {
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutCommentsInput = {
@@ -2495,6 +2555,7 @@ export type CommunityUncheckedCreateWithoutCommentsInput = {
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutCommentsInput = {
@@ -2545,6 +2606,7 @@ export type CommunityUpdateWithoutCommentsInput = {
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutCommentsInput = {
@@ -2580,6 +2642,7 @@ export type CommunityUncheckedUpdateWithoutCommentsInput = {
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUncheckedUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutForumSectionsInput = {
@@ -2614,6 +2677,7 @@ export type CommunityCreateWithoutForumSectionsInput = {
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutForumSectionsInput = {
@@ -2649,6 +2713,7 @@ export type CommunityUncheckedCreateWithoutForumSectionsInput = {
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutForumSectionsInput = {
@@ -2699,6 +2764,7 @@ export type CommunityUpdateWithoutForumSectionsInput = {
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutForumSectionsInput = {
@@ -2734,6 +2800,7 @@ export type CommunityUncheckedUpdateWithoutForumSectionsInput = {
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUncheckedUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutForumCategoriesInput = {
@@ -2768,6 +2835,7 @@ export type CommunityCreateWithoutForumCategoriesInput = {
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutForumCategoriesInput = {
@@ -2803,6 +2871,7 @@ export type CommunityUncheckedCreateWithoutForumCategoriesInput = {
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutForumCategoriesInput = {
@@ -2853,6 +2922,7 @@ export type CommunityUpdateWithoutForumCategoriesInput = {
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutForumCategoriesInput = {
@@ -2888,6 +2958,7 @@ export type CommunityUncheckedUpdateWithoutForumCategoriesInput = {
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUncheckedUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutForumThreadsInput = {
@@ -2922,6 +2993,7 @@ export type CommunityCreateWithoutForumThreadsInput = {
   forumCategories?: Prisma.ForumCategoryCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutForumThreadsInput = {
@@ -2957,6 +3029,7 @@ export type CommunityUncheckedCreateWithoutForumThreadsInput = {
   forumCategories?: Prisma.ForumCategoryUncheckedCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutForumThreadsInput = {
@@ -3007,6 +3080,7 @@ export type CommunityUpdateWithoutForumThreadsInput = {
   forumCategories?: Prisma.ForumCategoryUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutForumThreadsInput = {
@@ -3042,6 +3116,7 @@ export type CommunityUncheckedUpdateWithoutForumThreadsInput = {
   forumCategories?: Prisma.ForumCategoryUncheckedUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUncheckedUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutForumPostsInput = {
@@ -3076,6 +3151,7 @@ export type CommunityCreateWithoutForumPostsInput = {
   forumCategories?: Prisma.ForumCategoryCreateNestedManyWithoutCommunityInput
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutForumPostsInput = {
@@ -3111,6 +3187,7 @@ export type CommunityUncheckedCreateWithoutForumPostsInput = {
   forumCategories?: Prisma.ForumCategoryUncheckedCreateNestedManyWithoutCommunityInput
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutForumPostsInput = {
@@ -3161,6 +3238,7 @@ export type CommunityUpdateWithoutForumPostsInput = {
   forumCategories?: Prisma.ForumCategoryUpdateManyWithoutCommunityNestedInput
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutForumPostsInput = {
@@ -3196,6 +3274,165 @@ export type CommunityUncheckedUpdateWithoutForumPostsInput = {
   forumCategories?: Prisma.ForumCategoryUncheckedUpdateManyWithoutCommunityNestedInput
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUncheckedUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedUpdateManyWithoutCommunityNestedInput
+}
+
+export type CommunityCreateWithoutFacebookMilestonePostsInput = {
+  name: string
+  description?: string | null
+  iconUrl?: string | null
+  coverUrl?: string | null
+  backgroundUrl?: string | null
+  twitchUserId?: string | null
+  twitchLogin?: string | null
+  showTwitchLive?: boolean
+  showTwitchClips?: boolean
+  discordGuildId?: string | null
+  discordGuildName?: string | null
+  showDiscordOnline?: boolean
+  showDiscordInvite?: boolean
+  links?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  isPublic?: boolean
+  isVerified?: boolean
+  createdAt?: Date | string
+  owner: Prisma.UserCreateNestedOneWithoutOwnedCommunitiesInput
+  memberships?: Prisma.MembershipCreateNestedManyWithoutCommunityInput
+  roles?: Prisma.RoleCreateNestedManyWithoutCommunityInput
+  posts?: Prisma.PostCreateNestedManyWithoutCommunityInput
+  comments?: Prisma.CommentCreateNestedManyWithoutCommunityInput
+  invites?: Prisma.InviteCreateNestedManyWithoutCommunityInput
+  discordChannel?: Prisma.DiscordChannelCreateNestedOneWithoutCommunityInput
+  discordCharts?: Prisma.DiscordChartChannelCreateNestedOneWithoutCommunityInput
+  discordChartPosts?: Prisma.DiscordChartPostCreateNestedManyWithoutCommunityInput
+  forumSections?: Prisma.ForumSectionCreateNestedManyWithoutCommunityInput
+  bans?: Prisma.CommunityBanCreateNestedManyWithoutCommunityInput
+  forumCategories?: Prisma.ForumCategoryCreateNestedManyWithoutCommunityInput
+  forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutCommunityInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutCommunityInput
+  reposts?: Prisma.RepostCreateNestedManyWithoutCommunityInput
+}
+
+export type CommunityUncheckedCreateWithoutFacebookMilestonePostsInput = {
+  id?: number
+  name: string
+  description?: string | null
+  iconUrl?: string | null
+  coverUrl?: string | null
+  backgroundUrl?: string | null
+  twitchUserId?: string | null
+  twitchLogin?: string | null
+  showTwitchLive?: boolean
+  showTwitchClips?: boolean
+  discordGuildId?: string | null
+  discordGuildName?: string | null
+  showDiscordOnline?: boolean
+  showDiscordInvite?: boolean
+  links?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  ownerId: number
+  isPublic?: boolean
+  isVerified?: boolean
+  createdAt?: Date | string
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutCommunityInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutCommunityInput
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutCommunityInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutCommunityInput
+  invites?: Prisma.InviteUncheckedCreateNestedManyWithoutCommunityInput
+  discordChannel?: Prisma.DiscordChannelUncheckedCreateNestedOneWithoutCommunityInput
+  discordCharts?: Prisma.DiscordChartChannelUncheckedCreateNestedOneWithoutCommunityInput
+  discordChartPosts?: Prisma.DiscordChartPostUncheckedCreateNestedManyWithoutCommunityInput
+  forumSections?: Prisma.ForumSectionUncheckedCreateNestedManyWithoutCommunityInput
+  bans?: Prisma.CommunityBanUncheckedCreateNestedManyWithoutCommunityInput
+  forumCategories?: Prisma.ForumCategoryUncheckedCreateNestedManyWithoutCommunityInput
+  forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCommunityInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutCommunityInput
+  reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutCommunityInput
+}
+
+export type CommunityCreateOrConnectWithoutFacebookMilestonePostsInput = {
+  where: Prisma.CommunityWhereUniqueInput
+  create: Prisma.XOR<Prisma.CommunityCreateWithoutFacebookMilestonePostsInput, Prisma.CommunityUncheckedCreateWithoutFacebookMilestonePostsInput>
+}
+
+export type CommunityUpsertWithoutFacebookMilestonePostsInput = {
+  update: Prisma.XOR<Prisma.CommunityUpdateWithoutFacebookMilestonePostsInput, Prisma.CommunityUncheckedUpdateWithoutFacebookMilestonePostsInput>
+  create: Prisma.XOR<Prisma.CommunityCreateWithoutFacebookMilestonePostsInput, Prisma.CommunityUncheckedCreateWithoutFacebookMilestonePostsInput>
+  where?: Prisma.CommunityWhereInput
+}
+
+export type CommunityUpdateToOneWithWhereWithoutFacebookMilestonePostsInput = {
+  where?: Prisma.CommunityWhereInput
+  data: Prisma.XOR<Prisma.CommunityUpdateWithoutFacebookMilestonePostsInput, Prisma.CommunityUncheckedUpdateWithoutFacebookMilestonePostsInput>
+}
+
+export type CommunityUpdateWithoutFacebookMilestonePostsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  iconUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twitchUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twitchLogin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showTwitchLive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showTwitchClips?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  discordGuildId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discordGuildName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showDiscordOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showDiscordInvite?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  links?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  owner?: Prisma.UserUpdateOneRequiredWithoutOwnedCommunitiesNestedInput
+  memberships?: Prisma.MembershipUpdateManyWithoutCommunityNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutCommunityNestedInput
+  posts?: Prisma.PostUpdateManyWithoutCommunityNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutCommunityNestedInput
+  invites?: Prisma.InviteUpdateManyWithoutCommunityNestedInput
+  discordChannel?: Prisma.DiscordChannelUpdateOneWithoutCommunityNestedInput
+  discordCharts?: Prisma.DiscordChartChannelUpdateOneWithoutCommunityNestedInput
+  discordChartPosts?: Prisma.DiscordChartPostUpdateManyWithoutCommunityNestedInput
+  forumSections?: Prisma.ForumSectionUpdateManyWithoutCommunityNestedInput
+  bans?: Prisma.CommunityBanUpdateManyWithoutCommunityNestedInput
+  forumCategories?: Prisma.ForumCategoryUpdateManyWithoutCommunityNestedInput
+  forumThreads?: Prisma.ForumThreadUpdateManyWithoutCommunityNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutCommunityNestedInput
+  reposts?: Prisma.RepostUpdateManyWithoutCommunityNestedInput
+}
+
+export type CommunityUncheckedUpdateWithoutFacebookMilestonePostsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  iconUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  backgroundUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twitchUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twitchLogin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showTwitchLive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showTwitchClips?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  discordGuildId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discordGuildName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showDiscordOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showDiscordInvite?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  links?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  ownerId?: Prisma.IntFieldUpdateOperationsInput | number
+  isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutCommunityNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutCommunityNestedInput
+  posts?: Prisma.PostUncheckedUpdateManyWithoutCommunityNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutCommunityNestedInput
+  invites?: Prisma.InviteUncheckedUpdateManyWithoutCommunityNestedInput
+  discordChannel?: Prisma.DiscordChannelUncheckedUpdateOneWithoutCommunityNestedInput
+  discordCharts?: Prisma.DiscordChartChannelUncheckedUpdateOneWithoutCommunityNestedInput
+  discordChartPosts?: Prisma.DiscordChartPostUncheckedUpdateManyWithoutCommunityNestedInput
+  forumSections?: Prisma.ForumSectionUncheckedUpdateManyWithoutCommunityNestedInput
+  bans?: Prisma.CommunityBanUncheckedUpdateManyWithoutCommunityNestedInput
+  forumCategories?: Prisma.ForumCategoryUncheckedUpdateManyWithoutCommunityNestedInput
+  forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCommunityNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutCommunityNestedInput
+  reposts?: Prisma.RepostUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutOwnerInput = {
@@ -3230,6 +3467,7 @@ export type CommunityCreateWithoutOwnerInput = {
   forumThreads?: Prisma.ForumThreadCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutOwnerInput = {
@@ -3265,6 +3503,7 @@ export type CommunityUncheckedCreateWithoutOwnerInput = {
   forumThreads?: Prisma.ForumThreadUncheckedCreateNestedManyWithoutCommunityInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutCommunityInput
   reposts?: Prisma.RepostUncheckedCreateNestedManyWithoutCommunityInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutOwnerInput = {
@@ -3371,6 +3610,7 @@ export type CommunityUpdateWithoutOwnerInput = {
   forumThreads?: Prisma.ForumThreadUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutOwnerInput = {
@@ -3406,6 +3646,7 @@ export type CommunityUncheckedUpdateWithoutOwnerInput = {
   forumThreads?: Prisma.ForumThreadUncheckedUpdateManyWithoutCommunityNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutCommunityNestedInput
   reposts?: Prisma.RepostUncheckedUpdateManyWithoutCommunityNestedInput
+  facebookMilestonePosts?: Prisma.FacebookMilestonePostUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateManyWithoutOwnerInput = {
@@ -3447,6 +3688,7 @@ export type CommunityCountOutputType = {
   forumThreads: number
   forumPosts: number
   reposts: number
+  facebookMilestonePosts: number
 }
 
 export type CommunityCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3462,6 +3704,7 @@ export type CommunityCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensi
   forumThreads?: boolean | CommunityCountOutputTypeCountForumThreadsArgs
   forumPosts?: boolean | CommunityCountOutputTypeCountForumPostsArgs
   reposts?: boolean | CommunityCountOutputTypeCountRepostsArgs
+  facebookMilestonePosts?: boolean | CommunityCountOutputTypeCountFacebookMilestonePostsArgs
 }
 
 /**
@@ -3558,6 +3801,13 @@ export type CommunityCountOutputTypeCountRepostsArgs<ExtArgs extends runtime.Typ
   where?: Prisma.RepostWhereInput
 }
 
+/**
+ * CommunityCountOutputType without action
+ */
+export type CommunityCountOutputTypeCountFacebookMilestonePostsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FacebookMilestonePostWhereInput
+}
+
 
 export type CommunitySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -3594,6 +3844,7 @@ export type CommunitySelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   forumThreads?: boolean | Prisma.Community$forumThreadsArgs<ExtArgs>
   forumPosts?: boolean | Prisma.Community$forumPostsArgs<ExtArgs>
   reposts?: boolean | Prisma.Community$repostsArgs<ExtArgs>
+  facebookMilestonePosts?: boolean | Prisma.Community$facebookMilestonePostsArgs<ExtArgs>
   _count?: boolean | Prisma.CommunityCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["community"]>
 
@@ -3682,6 +3933,7 @@ export type CommunityInclude<ExtArgs extends runtime.Types.Extensions.InternalAr
   forumThreads?: boolean | Prisma.Community$forumThreadsArgs<ExtArgs>
   forumPosts?: boolean | Prisma.Community$forumPostsArgs<ExtArgs>
   reposts?: boolean | Prisma.Community$repostsArgs<ExtArgs>
+  facebookMilestonePosts?: boolean | Prisma.Community$facebookMilestonePostsArgs<ExtArgs>
   _count?: boolean | Prisma.CommunityCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type CommunityIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3709,6 +3961,7 @@ export type $CommunityPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     forumThreads: Prisma.$ForumThreadPayload<ExtArgs>[]
     forumPosts: Prisma.$ForumPostPayload<ExtArgs>[]
     reposts: Prisma.$RepostPayload<ExtArgs>[]
+    facebookMilestonePosts: Prisma.$FacebookMilestonePostPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -4139,6 +4392,7 @@ export interface Prisma__CommunityClient<T, Null = never, ExtArgs extends runtim
   forumThreads<T extends Prisma.Community$forumThreadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Community$forumThreadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ForumThreadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   forumPosts<T extends Prisma.Community$forumPostsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Community$forumPostsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ForumPostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reposts<T extends Prisma.Community$repostsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Community$repostsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RepostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  facebookMilestonePosts<T extends Prisma.Community$facebookMilestonePostsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Community$facebookMilestonePostsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FacebookMilestonePostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4906,6 +5160,30 @@ export type Community$repostsArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.RepostScalarFieldEnum | Prisma.RepostScalarFieldEnum[]
+}
+
+/**
+ * Community.facebookMilestonePosts
+ */
+export type Community$facebookMilestonePostsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FacebookMilestonePost
+   */
+  select?: Prisma.FacebookMilestonePostSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FacebookMilestonePost
+   */
+  omit?: Prisma.FacebookMilestonePostOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FacebookMilestonePostInclude<ExtArgs> | null
+  where?: Prisma.FacebookMilestonePostWhereInput
+  orderBy?: Prisma.FacebookMilestonePostOrderByWithRelationInput | Prisma.FacebookMilestonePostOrderByWithRelationInput[]
+  cursor?: Prisma.FacebookMilestonePostWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FacebookMilestonePostScalarFieldEnum | Prisma.FacebookMilestonePostScalarFieldEnum[]
 }
 
 /**

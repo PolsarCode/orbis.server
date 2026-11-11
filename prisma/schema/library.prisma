@@ -78,3 +78,15 @@ model FacebookReleasePost {
   postId    String?
   createdAt DateTime @default(now())
 }
+
+model FacebookMilestonePost {
+  scope       String
+  members     Int
+  communityId Int?
+  postId      String?
+  createdAt   DateTime   @default(now())
+  community   Community? @relation(fields: [communityId], references: [id], onDelete: Cascade)
+
+  @@id([scope, members])
+  @@index([communityId])
+}

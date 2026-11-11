@@ -1,38 +1,39 @@
 model Community {
-  id                Int             @id @default(autoincrement())
-  name              String
-  description       String?
-  iconUrl           String?
-  coverUrl          String?
-  backgroundUrl     String?
-  twitchUserId      String?
-  twitchLogin       String?
-  showTwitchLive    Boolean         @default(true)
-  showTwitchClips   Boolean         @default(true)
-  discordGuildId    String?
-  discordGuildName  String?
-  showDiscordOnline Boolean         @default(true)
-  showDiscordInvite Boolean         @default(true)
-  links             Json            @default("{}")
-  ownerId           Int
-  isPublic          Boolean         @default(false)
-  isVerified        Boolean         @default(false)
-  createdAt         DateTime        @default(now())
-  owner             User            @relation(fields: [ownerId], references: [id])
-  memberships       Membership[]
-  roles             Role[]
-  posts             Post[]
-  comments          Comment[]
-  invites           Invite[]
-  discordChannel    DiscordChannel?
-  discordCharts     DiscordChartChannel?
-  discordChartPosts DiscordChartPost[]
-  forumSections     ForumSection[]
-  bans              CommunityBan[]
-  forumCategories   ForumCategory[]
-  forumThreads      ForumThread[]
-  forumPosts        ForumPost[]
-  reposts           Repost[]
+  id                     Int                     @id @default(autoincrement())
+  name                   String
+  description            String?
+  iconUrl                String?
+  coverUrl               String?
+  backgroundUrl          String?
+  twitchUserId           String?
+  twitchLogin            String?
+  showTwitchLive         Boolean                 @default(true)
+  showTwitchClips        Boolean                 @default(true)
+  discordGuildId         String?
+  discordGuildName       String?
+  showDiscordOnline      Boolean                 @default(true)
+  showDiscordInvite      Boolean                 @default(true)
+  links                  Json                    @default("{}")
+  ownerId                Int
+  isPublic               Boolean                 @default(false)
+  isVerified             Boolean                 @default(false)
+  createdAt              DateTime                @default(now())
+  owner                  User                    @relation(fields: [ownerId], references: [id])
+  memberships            Membership[]
+  roles                  Role[]
+  posts                  Post[]
+  comments               Comment[]
+  invites                Invite[]
+  discordChannel         DiscordChannel?
+  discordCharts          DiscordChartChannel?
+  discordChartPosts      DiscordChartPost[]
+  forumSections          ForumSection[]
+  bans                   CommunityBan[]
+  forumCategories        ForumCategory[]
+  forumThreads           ForumThread[]
+  forumPosts             ForumPost[]
+  reposts                Repost[]
+  facebookMilestonePosts FacebookMilestonePost[]
 
   @@index([ownerId])
 }

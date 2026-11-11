@@ -4,14 +4,21 @@ import { LibraryModule } from '../library/library.module';
 import { PrismaService } from '../prisma.service';
 import { FacebookChartPostingService } from './facebook-chart-posting.service';
 import { FacebookChartsController } from './facebook-charts.controller';
+import { FacebookMilestonePostingService } from './facebook-milestone-posting.service';
+import { FacebookMilestonesController } from './facebook-milestones.controller';
 import { FacebookReleasePostingService } from './facebook-release-posting.service';
 import { FacebookReleasesController } from './facebook-releases.controller';
 
 @Module({
   imports: [LibraryModule],
-  controllers: [FacebookChartsController, FacebookReleasesController],
+  controllers: [
+    FacebookChartsController,
+    FacebookMilestonesController,
+    FacebookReleasesController,
+  ],
   providers: [
     FacebookChartPostingService,
+    FacebookMilestonePostingService,
     FacebookReleasePostingService,
     HeadAdminGuard,
     PrismaService,

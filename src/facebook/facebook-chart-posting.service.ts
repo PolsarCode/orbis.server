@@ -2,13 +2,8 @@ import {
   BadGatewayException,
   BadRequestException,
   Injectable,
-  Logger,
-  OnModuleDestroy,
-  OnModuleInit,
 } from '@nestjs/common';
 import { MediaType } from '../../prisma/generated/client';
-import { runLocked } from '../common/locked-job';
-import { isUniqueViolation } from '../common/prisma-errors';
 import { MINUTE } from '../common/throttle';
 import { webUrl } from '../common/web-url';
 import { chartShortPath } from '../library/chart-link';
@@ -29,6 +24,12 @@ import {
   pageName,
   postPhoto,
 } from './facebook-page';
+import {
+  FacebookPostingJob,
+  postFailed,
+  UnclearPostError,
+} from './facebook-posting-job';
+import { readSwitch, saveSwitch } from './facebook-switch';
 
 const POST_MS = 10 * MINUTE;
 const POST_LOCK = 727_012_052;
@@ -47,44 +48,16 @@ export function chartCaption(type: MediaType, chart: ChartWeek) {
 }
 
 @Injectable()
-export class FacebookChartPostingService
-  implements OnModuleInit, OnModuleDestroy
-{
-  private readonly logger = new Logger(FacebookChartPostingService.name);
-  private timer?: NodeJS.Timeout;
-  private running = false;
-
+export class FacebookChartPostingService extends FacebookPostingJob {
   constructor(
-    private prisma: PrismaService,
+    prisma: PrismaService,
     private charts: ChartShareService,
-  ) {}
-
-  onModuleInit() {
-    if (!facebookPage()) return;
-    this.timer = setInterval(() => void this.run(), POST_MS);
-    this.timer.unref();
-    void this.run();
-  }
-
-  onModuleDestroy() {
-    clearInterval(this.timer);
-  }
-
-  async run() {
-    const page = facebookPage();
-    if (!page || this.running) return;
-    this.running = true;
-    try {
-      await runLocked(this.prisma, POST_LOCK, POST_MS, () =>
-        this.postDue(page),
-      );
-    } catch (error) {
-      this.logger.warn(
-        `Posting weekly charts to Facebook failed: ${(error as Error).message}`,
-      );
-    } finally {
-      this.running = false;
-    }
+  ) {
+    super(prisma, {
+      every: POST_MS,
+      lock: POST_LOCK,
+      failure: 'Posting weekly charts to Facebook failed',
+    });
   }
 
   async status(): Promise<FacebookChartsStatus> {
@@ -119,11 +92,7 @@ export class FacebookChartPostingService
   }
 
   async setEnabled(enabled: boolean) {
-    await this.prisma.setting.upsert({
-      where: { key: ENABLED_KEY },
-      create: { key: ENABLED_KEY, value: String(enabled) },
-      update: { value: String(enabled) },
-    });
+    await saveSwitch(this.prisma, ENABLED_KEY, enabled);
     return this.status();
   }
 
@@ -152,13 +121,7 @@ export class FacebookChartPostingService
         this.logger.warn(
           `Posting the ${type} chart to Facebook failed: ${(error as Error).message}`,
         );
-        throw new BadGatewayException(
-          `${this.postedSoFar(posted)}${
-            error instanceof FacebookError
-              ? `Facebook said: ${error.message.replace(/\.$/, '')}`
-              : 'Facebook didn’t answer. Check the Page before trying again, in case it was posted'
-          }`,
-        );
+        throw postFailed(error, this.postedSoFar(posted));
       }
     }
     return { postIds };
@@ -168,15 +131,11 @@ export class FacebookChartPostingService
     return posted.length ? `Posted ${typeList(posted)}, then ` : '';
   }
 
-  private async enabled() {
-    const setting = await this.prisma.setting.findUnique({
-      where: { key: ENABLED_KEY },
-      select: { value: true },
-    });
-    return setting?.value !== 'false';
+  private enabled() {
+    return readSwitch(this.prisma, ENABLED_KEY, true);
   }
 
-  private async postDue(page: FacebookPage) {
+  protected async postDue(page: FacebookPage) {
     if (!(await this.enabled())) return;
     const started = await this.charts.startedToday(CHART_TYPES);
     const due = [...started].flatMap(([type, chart]) =>
@@ -208,29 +167,20 @@ export class FacebookChartPostingService
   private async post(page: FacebookPage, type: MediaType, chart: ChartWeek) {
     const key = { mediaType: type, week: chart.week };
     const image = await this.charts.image(type, chart);
-    try {
-      await this.prisma.facebookChartPost.create({ data: key });
-    } catch (error) {
-      if (isUniqueViolation(error)) return;
-      throw error;
-    }
-
-    let postId: string;
-    try {
-      postId = await postPhoto(page, image, chartCaption(type, chart));
-    } catch (error) {
-      if (error instanceof FacebookError) {
-        await this.prisma.facebookChartPost.deleteMany({ where: key });
-        throw error;
-      }
-      this.logger.warn(
-        `Facebook didn’t answer when posting the ${type} chart for ${chart.week}, so it won’t be tried again in case it went through: ${(error as Error).message}`,
-      );
-      return;
-    }
-    await this.prisma.facebookChartPost.update({
-      where: { mediaType_week: key },
-      data: { postId },
+    await this.postOnce({
+      page,
+      image,
+      message: chartCaption(type, chart),
+      label: `the ${type} chart for ${chart.week}`,
+      claim: () => this.prisma.facebookChartPost.create({ data: key }),
+      release: () => this.prisma.facebookChartPost.deleteMany({ where: key }),
+      confirm: (postId) =>
+        this.prisma.facebookChartPost.update({
+          where: { mediaType_week: key },
+          data: { postId },
+        }),
+    }).catch((error: Error) => {
+      if (!(error instanceof UnclearPostError)) throw error;
     });
   }
 }

@@ -2,23 +2,18 @@ import {
   BadGatewayException,
   BadRequestException,
   Injectable,
-  Logger,
-  OnModuleDestroy,
-  OnModuleInit,
 } from '@nestjs/common';
-import { runLocked } from '../common/locked-job';
 import { fetchImage } from '../common/fetch-image';
-import { isUniqueViolation } from '../common/prisma-errors';
 import { MINUTE } from '../common/throttle';
 import { webUrl } from '../common/web-url';
 import { PrismaService } from '../prisma.service';
+import { FacebookPage, facebookPage, NOT_SET_UP } from './facebook-page';
 import {
-  FacebookError,
-  FacebookPage,
-  facebookPage,
-  NOT_SET_UP,
-  postPhoto,
-} from './facebook-page';
+  FacebookPostingJob,
+  postFailed,
+  UnclearPostError,
+} from './facebook-posting-job';
+import { readSwitch, saveSwitch } from './facebook-switch';
 
 const CHECK_MS = 30 * MINUTE;
 const POST_LOCK = 727_012_053;
@@ -54,7 +49,6 @@ export type ReleasePost = {
   version: string | null;
 };
 
-class UnclearPostError extends Error {}
 class ReleaseImageError extends Error {}
 
 export function releaseVersion(days: ChangelogDay[]) {
@@ -117,41 +111,13 @@ function changelogDay(value: unknown): ChangelogDay | null {
 }
 
 @Injectable()
-export class FacebookReleasePostingService
-  implements OnModuleInit, OnModuleDestroy
-{
-  private readonly logger = new Logger(FacebookReleasePostingService.name);
-  private timer?: NodeJS.Timeout;
-  private running = false;
-
-  constructor(private prisma: PrismaService) {}
-
-  onModuleInit() {
-    if (!facebookPage()) return;
-    this.timer = setInterval(() => void this.run(), CHECK_MS);
-    this.timer.unref();
-    void this.run();
-  }
-
-  onModuleDestroy() {
-    clearInterval(this.timer);
-  }
-
-  async run() {
-    const page = facebookPage();
-    if (!page || this.running) return;
-    this.running = true;
-    try {
-      await runLocked(this.prisma, POST_LOCK, CHECK_MS, () =>
-        this.postDue(page),
-      );
-    } catch (error) {
-      this.logger.warn(
-        `Posting the latest update to Facebook failed: ${(error as Error).message}`,
-      );
-    } finally {
-      this.running = false;
-    }
+export class FacebookReleasePostingService extends FacebookPostingJob {
+  constructor(prisma: PrismaService) {
+    super(prisma, {
+      every: CHECK_MS,
+      lock: POST_LOCK,
+      failure: 'Posting the latest update to Facebook failed',
+    });
   }
 
   async status(): Promise<FacebookReleasesStatus> {
@@ -171,11 +137,7 @@ export class FacebookReleasePostingService
   }
 
   async setEnabled(enabled: boolean) {
-    await this.prisma.setting.upsert({
-      where: { key: ENABLED_KEY },
-      create: { key: ENABLED_KEY, value: String(enabled) },
-      update: { value: String(enabled) },
-    });
+    await saveSwitch(this.prisma, ENABLED_KEY, enabled);
     if (enabled) await this.run();
     return this.status();
   }
@@ -224,20 +186,12 @@ export class FacebookReleasePostingService
           'Couldn’t make the update image. Try again in a moment',
         );
       }
-      throw new BadGatewayException(
-        error instanceof FacebookError
-          ? `Facebook said: ${error.message.replace(/\.$/, '')}`
-          : 'Facebook didn’t answer. Check the Page before trying again, in case it was posted',
-      );
+      throw postFailed(error);
     }
   }
 
-  private async enabled() {
-    const setting = await this.prisma.setting.findUnique({
-      where: { key: ENABLED_KEY },
-      select: { value: true },
-    });
-    return setting?.value === 'true';
+  private enabled() {
+    return readSwitch(this.prisma, ENABLED_KEY, false);
   }
 
   private async changelog() {
@@ -267,7 +221,7 @@ export class FacebookReleasePostingService
     return last ? days.filter((day) => day.date > last.date) : days.slice(0, 1);
   }
 
-  private async postDue(page: FacebookPage) {
+  protected async postDue(page: FacebookPage) {
     if (!(await this.enabled())) return;
     const due = await this.due(await this.changelog());
     if (due.length === 0) return;
@@ -291,36 +245,21 @@ export class FacebookReleasePostingService
       );
       throw new ReleaseImageError(error.message);
     });
-    try {
-      await this.prisma.facebookReleasePost.create({
-        data: { date, version },
-      });
-    } catch (error) {
-      if (isUniqueViolation(error)) return null;
-      throw error;
-    }
-
-    let postId: string;
-    try {
-      postId = await postPhoto(
-        page,
-        { filename: `orbis-update-${date}.png`, data },
-        releaseMessage(days),
-      );
-    } catch (error) {
-      if (error instanceof FacebookError) {
-        await this.prisma.facebookReleasePost.deleteMany({ where: { date } });
-        throw error;
-      }
-      this.logger.warn(
-        `Facebook didn’t answer when posting the update for ${date}, so it won’t be tried again in case it went through: ${(error as Error).message}`,
-      );
-      throw new UnclearPostError((error as Error).message);
-    }
-    await this.prisma.facebookReleasePost.update({
-      where: { date },
-      data: { postId },
+    const postId = await this.postOnce({
+      page,
+      image: { filename: `orbis-update-${date}.png`, data },
+      message: releaseMessage(days),
+      label: `the update for ${date}`,
+      claim: () =>
+        this.prisma.facebookReleasePost.create({ data: { date, version } }),
+      release: () =>
+        this.prisma.facebookReleasePost.deleteMany({ where: { date } }),
+      confirm: (postId) =>
+        this.prisma.facebookReleasePost.update({
+          where: { date },
+          data: { postId },
+        }),
     });
-    return { postId, date, version };
+    return postId ? { postId, date, version } : null;
   }
 }

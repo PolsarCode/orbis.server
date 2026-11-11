@@ -415,6 +415,7 @@ export const ModelName = {
   ChartDiscussion: 'ChartDiscussion',
   FacebookChartPost: 'FacebookChartPost',
   FacebookReleasePost: 'FacebookReleasePost',
+  FacebookMilestonePost: 'FacebookMilestonePost',
   Conversation: 'Conversation',
   ConversationMember: 'ConversationMember',
   Message: 'Message',
@@ -446,7 +447,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "community" | "membership" | "railFolder" | "role" | "membershipRole" | "invite" | "discordChannel" | "discordMessage" | "discordChartChannel" | "discordChartPost" | "communityBan" | "post" | "repost" | "comment" | "editVersion" | "like" | "bookmark" | "forumSection" | "forumCategory" | "forumThread" | "forumPost" | "friendship" | "suggestionDismissal" | "hashtag" | "hashtagUsage" | "hashtagFollow" | "libraryEntry" | "libraryActivity" | "chartDiscussion" | "facebookChartPost" | "facebookReleasePost" | "conversation" | "conversationMember" | "message" | "messageReaction" | "notification" | "report" | "reportComment" | "contentReport" | "block" | "mute" | "keywordFilter" | "setting" | "steamAccount" | "steamGame" | "user" | "oAuthAccount"
+    modelProps: "community" | "membership" | "railFolder" | "role" | "membershipRole" | "invite" | "discordChannel" | "discordMessage" | "discordChartChannel" | "discordChartPost" | "communityBan" | "post" | "repost" | "comment" | "editVersion" | "like" | "bookmark" | "forumSection" | "forumCategory" | "forumThread" | "forumPost" | "friendship" | "suggestionDismissal" | "hashtag" | "hashtagUsage" | "hashtagFollow" | "libraryEntry" | "libraryActivity" | "chartDiscussion" | "facebookChartPost" | "facebookReleasePost" | "facebookMilestonePost" | "conversation" | "conversationMember" | "message" | "messageReaction" | "notification" | "report" | "reportComment" | "contentReport" | "block" | "mute" | "keywordFilter" | "setting" | "steamAccount" | "steamGame" | "user" | "oAuthAccount"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2744,6 +2745,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    FacebookMilestonePost: {
+      payload: Prisma.$FacebookMilestonePostPayload<ExtArgs>
+      fields: Prisma.FacebookMilestonePostFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.FacebookMilestonePostFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FacebookMilestonePostPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.FacebookMilestonePostFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FacebookMilestonePostPayload>
+        }
+        findFirst: {
+          args: Prisma.FacebookMilestonePostFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FacebookMilestonePostPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.FacebookMilestonePostFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FacebookMilestonePostPayload>
+        }
+        findMany: {
+          args: Prisma.FacebookMilestonePostFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FacebookMilestonePostPayload>[]
+        }
+        create: {
+          args: Prisma.FacebookMilestonePostCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FacebookMilestonePostPayload>
+        }
+        createMany: {
+          args: Prisma.FacebookMilestonePostCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.FacebookMilestonePostCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FacebookMilestonePostPayload>[]
+        }
+        delete: {
+          args: Prisma.FacebookMilestonePostDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FacebookMilestonePostPayload>
+        }
+        update: {
+          args: Prisma.FacebookMilestonePostUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FacebookMilestonePostPayload>
+        }
+        deleteMany: {
+          args: Prisma.FacebookMilestonePostDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.FacebookMilestonePostUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.FacebookMilestonePostUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FacebookMilestonePostPayload>[]
+        }
+        upsert: {
+          args: Prisma.FacebookMilestonePostUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FacebookMilestonePostPayload>
+        }
+        aggregate: {
+          args: Prisma.FacebookMilestonePostAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFacebookMilestonePost>
+        }
+        groupBy: {
+          args: Prisma.FacebookMilestonePostGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FacebookMilestonePostGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.FacebookMilestonePostCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FacebookMilestonePostCountAggregateOutputType> | number
+        }
+      }
+    }
     Conversation: {
       payload: Prisma.$ConversationPayload<ExtArgs>
       fields: Prisma.ConversationFieldRefs
@@ -4400,6 +4475,17 @@ export const FacebookReleasePostScalarFieldEnum = {
 export type FacebookReleasePostScalarFieldEnum = (typeof FacebookReleasePostScalarFieldEnum)[keyof typeof FacebookReleasePostScalarFieldEnum]
 
 
+export const FacebookMilestonePostScalarFieldEnum = {
+  scope: 'scope',
+  members: 'members',
+  communityId: 'communityId',
+  postId: 'postId',
+  createdAt: 'createdAt'
+} as const
+
+export type FacebookMilestonePostScalarFieldEnum = (typeof FacebookMilestonePostScalarFieldEnum)[keyof typeof FacebookMilestonePostScalarFieldEnum]
+
+
 export const ConversationScalarFieldEnum = {
   id: 'id',
   isGroup: 'isGroup',
@@ -5103,6 +5189,7 @@ export type GlobalOmitConfig = {
   chartDiscussion?: Prisma.ChartDiscussionOmit
   facebookChartPost?: Prisma.FacebookChartPostOmit
   facebookReleasePost?: Prisma.FacebookReleasePostOmit
+  facebookMilestonePost?: Prisma.FacebookMilestonePostOmit
   conversation?: Prisma.ConversationOmit
   conversationMember?: Prisma.ConversationMemberOmit
   message?: Prisma.MessageOmit
