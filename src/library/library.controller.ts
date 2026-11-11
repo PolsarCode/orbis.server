@@ -21,6 +21,7 @@ import { SteamSyncService } from './steam-sync.service';
 import { MediaType } from '../../prisma/generated/client';
 import { RateLimit, MINUTE } from '../common/throttle';
 import { UserId } from '../common/user-id';
+import { parseUntil } from '../common/weekly-window';
 
 @Controller('library')
 @UseGuards(JwtAuthGuard)
@@ -59,6 +60,27 @@ export class LibraryController {
     @Param('list') list: string,
   ) {
     return this.libraryService.mediaList(userId, type, list);
+  }
+
+  @AllowGuest()
+  @RateLimit(60, MINUTE)
+  @Get('seasons/:type/:season')
+  season(
+    @UserId() userId: number,
+    @Param('type', new ParseEnumPipe(MediaType)) type: MediaType,
+    @Param('season') season: string,
+  ) {
+    return this.libraryService.season(userId, type, season);
+  }
+
+  @AllowGuest()
+  @RateLimit(60, MINUTE)
+  @Get('most-added/:type')
+  mostAdded(
+    @Param('type', new ParseEnumPipe(MediaType)) type: MediaType,
+    @Query('until') until?: string,
+  ) {
+    return this.libraryService.mostAdded(type, parseUntil(until));
   }
 
   @AllowGuest()

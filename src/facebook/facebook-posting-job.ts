@@ -42,6 +42,7 @@ type PostOnce = {
   claim: () => Promise<unknown>;
   release: () => Promise<unknown>;
   confirm: (postId: string) => Promise<unknown>;
+  publish?: () => Promise<string>;
 };
 
 export abstract class FacebookPostingJob
@@ -92,6 +93,7 @@ export abstract class FacebookPostingJob
     claim,
     release,
     confirm,
+    publish = () => postPhoto(page, image, message),
   }: PostOnce) {
     try {
       if ((await claim()) === false) return null;
@@ -102,7 +104,7 @@ export abstract class FacebookPostingJob
 
     let postId: string;
     try {
-      postId = await postPhoto(page, image, message);
+      postId = await publish();
     } catch (error) {
       if (error instanceof FacebookError) {
         await release();

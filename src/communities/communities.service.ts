@@ -27,6 +27,7 @@ import { discussionCleanup } from '../comments/discussion-cleanup';
 import { requireEstablishedAccount } from '../common/new-account';
 import { isBanned, requireNotBanned } from './bans';
 import { blockedWith } from '../safety/blocks';
+import { windowRange } from '../common/weekly-window';
 
 export type CommunityMember = {
   userId: number;
@@ -82,6 +83,19 @@ export type CommunitySearchResult = {
   members: Author[];
   mutuals: Author[];
   mutualCount: number;
+};
+
+export type CommunityWeekly = {
+  id: number;
+  name: string;
+  description: string | null;
+  iconUrl: string | null;
+  coverUrl: string | null;
+  isVerified: boolean;
+  members: number;
+  gained: number;
+  startsAt: string;
+  endsAt: string;
 };
 
 export const MAX_OWNED_COMMUNITIES = 10;
@@ -185,6 +199,72 @@ export class CommunitiesService {
         ...community,
         memberCount: _count.memberships,
       }));
+  }
+
+  async weekly(communityId: number, until: Date): Promise<CommunityWeekly> {
+    const community =
+      communityId >= 1 && communityId <= MAX_INT
+        ? await this.prisma.community.findFirst({
+            where: { id: communityId, isPublic: true },
+            select: {
+              id: true,
+              name: true,
+              description: true,
+              iconUrl: true,
+              coverUrl: true,
+              isVerified: true,
+              _count: { select: { memberships: true } },
+            },
+          })
+        : null;
+    if (!community) throw new NotFoundException('Community not found');
+
+    const { startsAt, endsAt } = windowRange(until);
+    const gained = await this.prisma.membership.count({
+      where: { communityId, joinedAt: { gte: startsAt, lt: endsAt } },
+    });
+    const { _count, ...details } = community;
+    return {
+      ...details,
+      members: _count.memberships,
+      gained,
+      startsAt: startsAt.toISOString(),
+      endsAt: endsAt.toISOString(),
+    };
+  }
+
+  async topGrowing(
+    until: Date,
+    excludeIds: number[],
+  ): Promise<{ id: number; gained: number } | null> {
+    const { startsAt, endsAt } = windowRange(until);
+    const joined = await this.prisma.membership.groupBy({
+      by: ['communityId'],
+      where: {
+        joinedAt: { gte: startsAt, lt: endsAt },
+        communityId: { notIn: excludeIds },
+        community: { isPublic: true },
+      },
+      _count: { communityId: true },
+    });
+    const gained = Math.max(
+      0,
+      ...joined.map(({ _count }) => _count.communityId),
+    );
+    if (gained === 0) return null;
+
+    const top = await this.prisma.community.findFirst({
+      where: {
+        id: {
+          in: joined.flatMap(({ communityId, _count }) =>
+            _count.communityId === gained ? [communityId] : [],
+          ),
+        },
+      },
+      orderBy: [{ memberships: { _count: 'desc' } }, { id: 'asc' }],
+      select: { id: true },
+    });
+    return top && { id: top.id, gained };
   }
 
   async search(

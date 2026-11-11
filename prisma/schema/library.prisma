@@ -90,3 +90,15 @@ model FacebookMilestonePost {
   @@id([scope, milestone])
   @@index([communityId])
 }
+
+model FacebookPost {
+  kind      String
+  period    String
+  subject   String?
+  label     String
+  postId    String?
+  createdAt DateTime @default(now())
+
+  @@id([kind, period])
+  @@index([kind, subject])
+}

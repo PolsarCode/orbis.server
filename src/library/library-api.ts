@@ -112,6 +112,25 @@ export async function getMediaList(
   return items;
 }
 
+export type SeasonName = 'winter' | 'spring' | 'summer' | 'fall';
+
+export type Season = {
+  type: Media['type'];
+  season: SeasonName;
+  year: number;
+  startsAt: string;
+  endsAt: string;
+  items: Media[];
+  updatedAt: string;
+};
+
+export function getSeason(type: MediaType, season: string, adult: boolean) {
+  return request<Season>(
+    `/api/seasons/${type}/${season}${adult ? '?adult=true' : ''}`,
+    'Season not found',
+  );
+}
+
 export type ChartEntry = {
   rank: number;
   previousRank: number | null;

@@ -8,6 +8,7 @@ import { PostsService } from '../posts/posts.service';
 import { CommentsService } from '../comments/comments.service';
 import { ForumService } from '../forum/forum.service';
 import { visibleThreads } from '../forum/forum-helpers';
+import { ALLOW_GUEST } from '../auth/allow-guest';
 
 jest.mock('../common/rich-text', () => ({ sanitizeRichText: jest.fn() }));
 
@@ -468,6 +469,104 @@ describe('Trending tags', () => {
   });
 });
 
+describe('Weekly tags', () => {
+  const until = new Date('2026-11-05T00:00:00Z');
+  const weekAgo = new Date('2026-10-29T00:00:00Z');
+
+  it('counts different people per tag in the week before the date, from content anyone signed out can see', async () => {
+    const { prisma, service } = setup();
+    prisma.user.findUnique.mockResolvedValue(null);
+    prisma.contentReport.findMany.mockResolvedValue([]);
+
+    await service.weekly(until);
+
+    const [{ by, where }] = prisma.hashtagUsage.groupBy.mock.calls[0];
+    expect(by).toEqual(['hashtagId', 'authorId']);
+    expect(where.AND).toEqual([
+      publicUsages(
+        {
+          id: 0,
+          reported: { post: [], comment: [], forum_post: [] },
+          siteAdmin: false,
+          manages: [],
+        },
+        false,
+      ),
+      { createdAt: { gte: weekAgo, lt: until } },
+    ]);
+    expect(prisma.contentReport.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ reporterId: 0 }),
+      }),
+    );
+  });
+
+  it('keeps the top 8 tags at least two people used, most people first', async () => {
+    const { prisma, service } = setup();
+    const ids = Array.from({ length: 10 }, (_, index) => index + 1);
+    prisma.hashtagUsage.groupBy.mockResolvedValue([
+      ...ids.flatMap((id) =>
+        uses(id, ...Array.from({ length: id % 4 === 0 ? 3 : 2 }, (_, n) => n)),
+      ),
+      ...uses(11, 1),
+    ]);
+    prisma.hashtag.findMany.mockResolvedValue(
+      ids.map((id) => ({ id, name: `tag${id}`, display: `Tag${id}` })),
+    );
+
+    const weekly = await service.weekly(until);
+
+    expect(prisma.hashtag.findMany).toHaveBeenCalledWith({
+      where: { id: { in: ids } },
+      select: { id: true, name: true, display: true },
+    });
+    expect(weekly).toEqual({
+      startsAt: '2026-10-29T00:00:00.000Z',
+      endsAt: '2026-11-05T00:00:00.000Z',
+      tags: [
+        { name: 'tag4', display: 'Tag4', people: 3 },
+        { name: 'tag8', display: 'Tag8', people: 3 },
+        { name: 'tag1', display: 'Tag1', people: 2 },
+        { name: 'tag10', display: 'Tag10', people: 2 },
+        { name: 'tag2', display: 'Tag2', people: 2 },
+        { name: 'tag3', display: 'Tag3', people: 2 },
+        { name: 'tag5', display: 'Tag5', people: 2 },
+        { name: 'tag6', display: 'Tag6', people: 2 },
+      ],
+    });
+  });
+
+  it('lists nothing when no tag reached two people', async () => {
+    const { prisma, service } = setup();
+    prisma.hashtagUsage.groupBy.mockResolvedValue(uses(1, 1));
+
+    await expect(service.weekly(until)).resolves.toEqual({
+      startsAt: '2026-10-29T00:00:00.000Z',
+      endsAt: '2026-11-05T00:00:00.000Z',
+      tags: [],
+    });
+    expect(prisma.hashtag.findMany).not.toHaveBeenCalled();
+  });
+
+  it('lets guests open it, ending today unless a date is given', () => {
+    const tags = { weekly: jest.fn() };
+    const controller = new TagsController(tags as unknown as TagsService);
+
+    expect(
+      Reflect.getMetadata(ALLOW_GUEST, TagsController.prototype.weekly),
+    ).toBe(true);
+    controller.weekly();
+    expect(tags.weekly).toHaveBeenLastCalledWith(
+      new Date('2026-11-05T00:00:00Z'),
+    );
+    controller.weekly('2026-10-20');
+    expect(tags.weekly).toHaveBeenLastCalledWith(
+      new Date('2026-10-20T00:00:00Z'),
+    );
+    expect(() => controller.weekly('2026-11-07')).toThrow(BadRequestException);
+  });
+});
+
 describe('Following tags', () => {
   it('follows a tag, creating it if nobody used it yet', async () => {
     const { prisma, service } = setup();
@@ -593,6 +692,7 @@ describe('Tag routes', () => {
     expect(paths).toEqual(
       expect.arrayContaining([
         'trending',
+        'weekly',
         'following',
         'search',
         ':name/items',

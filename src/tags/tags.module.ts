@@ -10,5 +10,6 @@ import { ForumModule } from '../forum/forum.module';
   imports: [PostsModule, CommentsModule, ForumModule],
   controllers: [TagsController],
   providers: [TagsService, PrismaService],
+  exports: [TagsService],
 })
 export class TagsModule {}

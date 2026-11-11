@@ -58,23 +58,57 @@ export function pageFollowers(page: FacebookPage) {
   return lookup(page, 'followers_count', isCount);
 }
 
-export async function postPhoto(
+const isTrue = (value: unknown): value is true => value === true;
+
+function sendPhoto(
   page: FacebookPage,
   image: Pick<ChartImage, 'filename' | 'data'>,
-  message: string,
+  fields: Record<string, string>,
 ) {
   const form = new FormData();
-  form.append('message', message);
+  for (const [name, value] of Object.entries(fields)) form.append(name, value);
   form.append('access_token', page.token);
   form.append(
     'source',
     new Blob([new Uint8Array(image.data)], { type: 'image/png' }),
     image.filename,
   );
-  const response = await fetch(`${GRAPH_API}/${page.id}/photos`, {
+  return fetch(`${GRAPH_API}/${page.id}/photos`, {
     method: 'POST',
     body: form,
     signal: AbortSignal.timeout(POST_TIMEOUT_MS),
   });
-  return read(response, 'post_id', isString);
+}
+
+export async function postPhoto(
+  page: FacebookPage,
+  image: Pick<ChartImage, 'filename' | 'data'>,
+  message: string,
+) {
+  return read(await sendPhoto(page, image, { message }), 'post_id', isString);
+}
+
+export async function uploadPhoto(
+  page: FacebookPage,
+  image: Pick<ChartImage, 'filename' | 'data'>,
+) {
+  return read(
+    await sendPhoto(page, image, { published: 'false' }),
+    'id',
+    isString,
+  );
+}
+
+export async function setCover(page: FacebookPage, photoId: string) {
+  const response = await fetch(`${GRAPH_API}/${page.id}`, {
+    method: 'POST',
+    body: new URLSearchParams({
+      cover: photoId,
+      no_feed_story: 'true',
+      no_notification: 'true',
+      access_token: page.token,
+    }),
+    signal: AbortSignal.timeout(POST_TIMEOUT_MS),
+  });
+  await read(response, 'success', isTrue);
 }

@@ -20,15 +20,24 @@ import {
 } from '../comments/comments.service';
 import { ForumService } from '../forum/forum.service';
 import { publicUsages } from './public-content';
+import { GUEST_USER_ID } from '../auth/allow-guest';
+import { windowRange } from '../common/weekly-window';
 
 const MIN_PEOPLE = 2;
 const TRENDING_LIMIT = 20;
 const SEARCH_LIMIT = 8;
+const WEEKLY_LIMIT = 8;
 const WEEK = 7 * DAY;
 
 export type TagWindow = 'day' | 'week';
 
 export type TagSummary = { name: string; display: string };
+
+export type WeeklyTags = {
+  startsAt: string;
+  endsAt: string;
+  tags: { name: string; display: string; people: number }[];
+};
 
 type ForumTagItem = Awaited<ReturnType<ForumService['findForTags']>>[number];
 
@@ -69,10 +78,19 @@ export class TagsService {
     return publicUsages(viewer, showNsfw);
   }
 
-  private async peopleByTag(where: Prisma.HashtagUsageWhereInput, since: Date) {
+  private async peopleByTag(
+    where: Prisma.HashtagUsageWhereInput,
+    since: Date,
+    until?: Date,
+  ) {
     const rows = await this.prisma.hashtagUsage.groupBy({
       by: ['hashtagId', 'authorId'],
-      where: { AND: [where, { createdAt: { gte: since } }] },
+      where: {
+        AND: [
+          where,
+          { createdAt: { gte: since, ...(until && { lt: until }) } },
+        ],
+      },
     });
     const people = new Map<number, number>();
     for (const { hashtagId } of rows) {
@@ -90,11 +108,7 @@ export class TagsService {
     return { window: 'week' as TagWindow, since: ago(WEEK), people: null };
   }
 
-  async trending(viewerId: number) {
-    const where = await this.publicWhere(viewerId);
-    const current = await this.currentWindow(where);
-    const people =
-      current.people ?? (await this.peopleByTag(where, current.since));
+  private async ranked(people: Map<number, number>, limit: number) {
     const ids = [...people].flatMap(([id, count]) =>
       count >= MIN_PEOPLE ? [id] : [],
     );
@@ -106,16 +120,37 @@ export class TagsService {
             select: { id: true, name: true, display: true },
           });
 
+    return hashtags
+      .map(({ id, name, display }) => ({
+        name,
+        display,
+        people: people.get(id) ?? 0,
+      }))
+      .sort((a, b) => b.people - a.people || a.name.localeCompare(b.name))
+      .slice(0, limit);
+  }
+
+  async trending(viewerId: number) {
+    const where = await this.publicWhere(viewerId);
+    const current = await this.currentWindow(where);
+    const people =
+      current.people ?? (await this.peopleByTag(where, current.since));
+
     return {
       window: current.window,
-      tags: hashtags
-        .map(({ id, name, display }) => ({
-          name,
-          display,
-          people: people.get(id) ?? 0,
-        }))
-        .sort((a, b) => b.people - a.people || a.name.localeCompare(b.name))
-        .slice(0, TRENDING_LIMIT),
+      tags: await this.ranked(people, TRENDING_LIMIT),
+    };
+  }
+
+  async weekly(until: Date): Promise<WeeklyTags> {
+    const { startsAt, endsAt } = windowRange(until);
+    const where = await this.publicWhere(GUEST_USER_ID);
+    const people = await this.peopleByTag(where, startsAt, endsAt);
+
+    return {
+      startsAt: startsAt.toISOString(),
+      endsAt: endsAt.toISOString(),
+      tags: await this.ranked(people, WEEKLY_LIMIT),
     };
   }
 

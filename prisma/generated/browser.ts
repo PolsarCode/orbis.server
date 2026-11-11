@@ -178,6 +178,11 @@ export type FacebookReleasePost = Prisma.FacebookReleasePostModel
  */
 export type FacebookMilestonePost = Prisma.FacebookMilestonePostModel
 /**
+ * Model FacebookPost
+ * 
+ */
+export type FacebookPost = Prisma.FacebookPostModel
+/**
  * Model Conversation
  * 
  */

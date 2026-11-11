@@ -83,6 +83,7 @@ export const ModelName = {
   FacebookChartPost: 'FacebookChartPost',
   FacebookReleasePost: 'FacebookReleasePost',
   FacebookMilestonePost: 'FacebookMilestonePost',
+  FacebookPost: 'FacebookPost',
   Conversation: 'Conversation',
   ConversationMember: 'ConversationMember',
   Message: 'Message',
@@ -559,6 +560,18 @@ export const FacebookMilestonePostScalarFieldEnum = {
 } as const
 
 export type FacebookMilestonePostScalarFieldEnum = (typeof FacebookMilestonePostScalarFieldEnum)[keyof typeof FacebookMilestonePostScalarFieldEnum]
+
+
+export const FacebookPostScalarFieldEnum = {
+  kind: 'kind',
+  period: 'period',
+  subject: 'subject',
+  label: 'label',
+  postId: 'postId',
+  createdAt: 'createdAt'
+} as const
+
+export type FacebookPostScalarFieldEnum = (typeof FacebookPostScalarFieldEnum)[keyof typeof FacebookPostScalarFieldEnum]
 
 
 export const ConversationScalarFieldEnum = {

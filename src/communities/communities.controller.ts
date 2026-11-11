@@ -21,6 +21,7 @@ import {
   CommunityImage,
   CommunityMember,
   CommunitySearchResult,
+  CommunityWeekly,
   CommunityWithRole,
   RailItem,
 } from './communities.service';
@@ -39,6 +40,7 @@ import { Community as CommunityModel } from '../../prisma/generated/client';
 import { IMAGE_MAX_BYTES } from '../storage/storage.service';
 import { DAY, MINUTE, RateLimit } from '../common/throttle';
 import { UserId } from '../common/user-id';
+import { parseUntil } from '../common/weekly-window';
 
 @Controller('communities')
 @UseGuards(JwtAuthGuard)
@@ -116,6 +118,16 @@ export class CommunitiesController {
     @Param('communityId', ParseIntPipe) communityId: number,
   ): Promise<CommunityMember[]> {
     return this.communitiesService.findMembers(userId, communityId);
+  }
+
+  @Get(':communityId/weekly')
+  @AllowGuest()
+  @RateLimit(60, MINUTE)
+  weekly(
+    @Param('communityId', ParseIntPipe) communityId: number,
+    @Query('until') until?: string,
+  ): Promise<CommunityWeekly> {
+    return this.communitiesService.weekly(communityId, parseUntil(until));
   }
 
   @Put(':communityId/admins/:userId')

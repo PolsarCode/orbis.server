@@ -20,10 +20,12 @@ import {
   getChart,
   getMedia,
   getMediaList,
+  getSeason,
   imageUrl,
   Media,
   MEDIA_LISTS,
   searchMedia,
+  Season,
 } from './library-api';
 import { GUEST_USER_ID } from '../auth/allow-guest';
 import { nsfwEntries, showsNsfw } from '../users/nsfw';
@@ -31,6 +33,7 @@ import { notSuspended } from '../users/suspension';
 import { notBlockedWith } from '../safety/blocks';
 import { loadSteamLinks, SteamLink } from '../steam/steam-links';
 import { DiscordChannelService } from '../discord-channel/discord-channel.service';
+import { windowRange } from '../common/weekly-window';
 
 const PROGRESS_MERGE_WINDOW = 5 * 60 * 1000;
 const SPOTLIGHT_KEY = 'anime-spotlight';
@@ -42,6 +45,7 @@ const PUBLIC_UPDATES = 6;
 const LIST_LIFETIME_MS = 60 * 60 * 1000;
 const LIST_RETRY_MS = 5 * 60 * 1000;
 const PAST_CHART_LIFETIME_MS = 7 * 24 * 60 * 60 * 1000;
+const MOST_ADDED = 5;
 
 export type Spotlight = {
   type: 'anime';
@@ -49,6 +53,20 @@ export type Spotlight = {
   title: string;
   coverImage: string | null;
   bannerImage: string | null;
+};
+
+export type MostAdded = {
+  startsAt: string;
+  endsAt: string;
+  items: {
+    media: {
+      type: MediaType;
+      sourceId: string;
+      title: string;
+      coverImage: string | null;
+    };
+    adds: number;
+  }[];
 };
 
 type StoredSpotlight = Spotlight & { addedAt: number };
@@ -148,6 +166,7 @@ class ExpiringCache<T> {
 export class LibraryService {
   private lists = new ExpiringCache<Media[]>();
   private charts = new ExpiringCache<Chart>();
+  private seasons = new ExpiringCache<Season>();
 
   constructor(
     private prisma: PrismaService,
@@ -213,6 +232,89 @@ export class LibraryService {
       () => LIST_LIFETIME_MS,
     );
     return this.listItems(userId, items);
+  }
+
+  async season(userId: number, type: MediaType, season: string) {
+    if (!/^\d{4}-(winter|spring|summer|fall)$/.test(season)) {
+      throw new NotFoundException('Season not found');
+    }
+
+    const adult = await showsNsfw(this.prisma, userId);
+    const found = await this.seasons.get(
+      `${type}:${season}:${adult}`,
+      () => getSeason(type, season, adult),
+      () => LIST_LIFETIME_MS,
+    );
+    return {
+      type,
+      season: found.season,
+      year: found.year,
+      startsAt: found.startsAt,
+      endsAt: found.endsAt,
+      items: await this.listItems(userId, found.items),
+    };
+  }
+
+  async mostAdded(type: MediaType, until: Date): Promise<MostAdded> {
+    const { startsAt, endsAt } = windowRange(until);
+    const where = {
+      mediaType: type,
+      isPublic: true,
+      isAdult: false,
+      createdAt: { gte: startsAt, lt: endsAt },
+      user: { isPublic: true, ...notSuspended() },
+    } satisfies Prisma.LibraryEntryWhereInput;
+    const counts = await this.prisma.libraryEntry.groupBy({
+      by: ['sourceId'],
+      where,
+      _count: { sourceId: true },
+      orderBy: [
+        { _count: { sourceId: 'desc' } },
+        { _max: { createdAt: 'desc' } },
+        { sourceId: 'asc' },
+      ],
+      take: MOST_ADDED,
+    });
+    const latest =
+      counts.length === 0
+        ? []
+        : await this.prisma.libraryEntry.findMany({
+            where: {
+              ...where,
+              sourceId: { in: counts.map(({ sourceId }) => sourceId) },
+            },
+            orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+            distinct: ['sourceId'],
+            select: {
+              mediaType: true,
+              sourceId: true,
+              title: true,
+              coverImage: true,
+              isAdult: true,
+            },
+          });
+    const bySource = new Map(latest.map((entry) => [entry.sourceId, entry]));
+
+    return {
+      startsAt: startsAt.toISOString(),
+      endsAt: endsAt.toISOString(),
+      items: counts.flatMap(({ sourceId, _count }) => {
+        const entry = bySource.get(sourceId);
+        return entry
+          ? [
+              {
+                media: {
+                  type: entry.mediaType,
+                  sourceId,
+                  title: entry.title,
+                  coverImage: coverUrl(entry),
+                },
+                adds: _count.sourceId,
+              },
+            ]
+          : [];
+      }),
+    };
   }
 
   private async loadChart(userId: number, type: MediaType, week?: string) {
