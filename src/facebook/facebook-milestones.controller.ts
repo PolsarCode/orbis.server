@@ -2,7 +2,7 @@ import { Body, Controller, Get, Patch, Post, UseGuards } from '@nestjs/common';
 import { HeadAdminGuard } from '../admin/head-admin.guard';
 import { JwtAuthGuard } from '../auth/jwt.guard';
 import { MINUTE, RateLimit } from '../common/throttle';
-import { UpdateFacebookPostingDto } from './dto/update-facebook-posting.dto';
+import { UpdateFacebookMilestonesDto } from './dto/update-facebook-milestones.dto';
 import {
   FacebookMilestonePostingService,
   FacebookMilestonesStatus,
@@ -22,9 +22,9 @@ export class FacebookMilestonesController {
   @RateLimit(30, MINUTE)
   @Patch()
   update(
-    @Body() { enabled }: UpdateFacebookPostingDto,
+    @Body() changes: UpdateFacebookMilestonesDto,
   ): Promise<FacebookMilestonesStatus> {
-    return this.posting.setEnabled(enabled);
+    return this.posting.setSwitches(changes);
   }
 
   @RateLimit(3, MINUTE)

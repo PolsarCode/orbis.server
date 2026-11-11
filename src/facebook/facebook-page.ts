@@ -17,11 +17,18 @@ export function facebookPage(): FacebookPage | null {
 
 export class FacebookError extends Error {}
 
-async function read(response: Response, field: string) {
+const isString = (value: unknown): value is string => typeof value === 'string';
+
+const isCount = (value: unknown): value is number =>
+  Number.isInteger(value) && (value as number) >= 0;
+
+async function read<T>(
+  response: Response,
+  field: string,
+  valid: (value: unknown) => value is T,
+): Promise<T> {
   const result = await response.json().catch(() => null);
-  if (response.ok && typeof result?.[field] === 'string') {
-    return result[field] as string;
-  }
+  if (response.ok && valid(result?.[field])) return result[field];
   const error = result?.error;
   if (response.status < 500 && error) {
     throw new FacebookError(
@@ -31,12 +38,24 @@ async function read(response: Response, field: string) {
   throw new Error(`Facebook responded with ${response.status}`);
 }
 
-export async function pageName(page: FacebookPage) {
-  const response = await fetch(`${GRAPH_API}/${page.id}?fields=name`, {
+async function lookup<T>(
+  page: FacebookPage,
+  field: string,
+  valid: (value: unknown) => value is T,
+) {
+  const response = await fetch(`${GRAPH_API}/${page.id}?fields=${field}`, {
     headers: { Authorization: `Bearer ${page.token}` },
     signal: AbortSignal.timeout(LOOKUP_TIMEOUT_MS),
   });
-  return read(response, 'name');
+  return read(response, field, valid);
+}
+
+export function pageName(page: FacebookPage) {
+  return lookup(page, 'name', isString);
+}
+
+export function pageFollowers(page: FacebookPage) {
+  return lookup(page, 'followers_count', isCount);
 }
 
 export async function postPhoto(
@@ -57,5 +76,5 @@ export async function postPhoto(
     body: form,
     signal: AbortSignal.timeout(POST_TIMEOUT_MS),
   });
-  return read(response, 'post_id');
+  return read(response, 'post_id', isString);
 }

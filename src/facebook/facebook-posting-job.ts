@@ -17,13 +17,18 @@ import {
 
 export class UnclearPostError extends Error {}
 
+export function facebookSaid(error: unknown, noAnswer: string) {
+  return error instanceof FacebookError
+    ? `Facebook said: ${error.message.replace(/\.$/, '')}`
+    : noAnswer;
+}
+
 export function postFailed(error: unknown, postedSoFar = '') {
   return new BadGatewayException(
-    `${postedSoFar}${
-      error instanceof FacebookError
-        ? `Facebook said: ${error.message.replace(/\.$/, '')}`
-        : 'Facebook didn’t answer. Check the Page before trying again, in case it was posted'
-    }`,
+    `${postedSoFar}${facebookSaid(
+      error,
+      'Facebook didn’t answer. Check the Page before trying again, in case it was posted',
+    )}`,
   );
 }
 

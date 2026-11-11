@@ -400,6 +400,21 @@ describe('Posting weekly charts to Facebook', () => {
     const controller = () => new FacebookChartsController(service);
     const lookups = () =>
       fetchMock.mock.calls.filter(([url]) => url === `${GRAPH}?fields=name`);
+    const followerLookups = () =>
+      fetchMock.mock.calls.filter(
+        ([url]) => url === `${GRAPH}?fields=followers_count`,
+      );
+    const page = (
+      followers: () => Promise<object> = async () =>
+        graph(200, { followers_count: 1234, id: '321' }),
+    ) =>
+      fetchMock.mockImplementation(async (url: string) => {
+        if (url === `${GRAPH}?fields=name`) {
+          return graph(200, { name: 'Orbis', id: '321' });
+        }
+        if (url === `${GRAPH}?fields=followers_count`) return followers();
+        return answer(url);
+      });
 
     it('says when the Page isn’t set up', async () => {
       delete process.env.FACEBOOK_PAGE_TOKEN;
@@ -408,18 +423,15 @@ describe('Posting weekly charts to Facebook', () => {
         configured: false,
         page: null,
         pageError: null,
+        followersError: null,
         enabled: true,
         lastPost: null,
       });
       expect(fetchMock).not.toHaveBeenCalled();
     });
 
-    it('shows the Page’s name and the last post, keeping the token out of the URL', async () => {
-      fetchMock.mockImplementation(async (url: string) =>
-        url === `${GRAPH}?fields=name`
-          ? graph(200, { name: 'Orbis', id: '321' })
-          : answer(url),
-      );
+    it('shows the Page’s name, its followers and the last post, keeping the token out of the URL', async () => {
+      page();
       prisma.facebookChartPost.findFirst.mockResolvedValue({
         week: '2026-W46',
         postId: '321_900',
@@ -428,8 +440,9 @@ describe('Posting weekly charts to Facebook', () => {
 
       await expect(controller().status()).resolves.toEqual({
         configured: true,
-        page: { id: '321', name: 'Orbis' },
+        page: { id: '321', name: 'Orbis', followers: 1234 },
         pageError: null,
+        followersError: null,
         enabled: true,
         lastPost: {
           week: '2026-W46',
@@ -439,6 +452,10 @@ describe('Posting weekly charts to Facebook', () => {
       });
       expect(lookups()).toHaveLength(1);
       expect(lookups()[0][1].headers).toEqual({
+        Authorization: 'Bearer page-token',
+      });
+      expect(followerLookups()).toHaveLength(1);
+      expect(followerLookups()[0][1].headers).toEqual({
         Authorization: 'Bearer page-token',
       });
       expect(
@@ -477,8 +494,37 @@ describe('Posting weekly charts to Facebook', () => {
 
       await expect(controller().status()).resolves.toMatchObject({
         configured: true,
-        page: { id: '321', name: null },
+        page: { id: '321', name: null, followers: null },
         pageError,
+        followersError: pageError,
+      });
+    });
+
+    it('still shows the Page’s name when its followers can’t be read', async () => {
+      page(async () =>
+        graph(400, {
+          error: {
+            message:
+              '(#100) Tried accessing nonexisting field (followers_count).',
+            code: 100,
+          },
+        }),
+      );
+
+      await expect(controller().status()).resolves.toMatchObject({
+        page: { id: '321', name: 'Orbis', followers: null },
+        pageError: null,
+        followersError:
+          '(#100) Tried accessing nonexisting field (followers_count)',
+      });
+    });
+
+    it('says Facebook didn’t answer when the follower count isn’t a number', async () => {
+      page(async () => graph(200, { followers_count: 'many', id: '321' }));
+
+      await expect(controller().status()).resolves.toMatchObject({
+        page: { id: '321', name: 'Orbis', followers: null },
+        followersError: 'Facebook didn’t answer',
       });
     });
 

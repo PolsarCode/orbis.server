@@ -27,18 +27,18 @@ export type AggregateFacebookMilestonePost = {
 }
 
 export type FacebookMilestonePostAvgAggregateOutputType = {
-  members: number | null
+  milestone: number | null
   communityId: number | null
 }
 
 export type FacebookMilestonePostSumAggregateOutputType = {
-  members: number | null
+  milestone: number | null
   communityId: number | null
 }
 
 export type FacebookMilestonePostMinAggregateOutputType = {
   scope: string | null
-  members: number | null
+  milestone: number | null
   communityId: number | null
   postId: string | null
   createdAt: Date | null
@@ -46,7 +46,7 @@ export type FacebookMilestonePostMinAggregateOutputType = {
 
 export type FacebookMilestonePostMaxAggregateOutputType = {
   scope: string | null
-  members: number | null
+  milestone: number | null
   communityId: number | null
   postId: string | null
   createdAt: Date | null
@@ -54,7 +54,7 @@ export type FacebookMilestonePostMaxAggregateOutputType = {
 
 export type FacebookMilestonePostCountAggregateOutputType = {
   scope: number
-  members: number
+  milestone: number
   communityId: number
   postId: number
   createdAt: number
@@ -63,18 +63,18 @@ export type FacebookMilestonePostCountAggregateOutputType = {
 
 
 export type FacebookMilestonePostAvgAggregateInputType = {
-  members?: true
+  milestone?: true
   communityId?: true
 }
 
 export type FacebookMilestonePostSumAggregateInputType = {
-  members?: true
+  milestone?: true
   communityId?: true
 }
 
 export type FacebookMilestonePostMinAggregateInputType = {
   scope?: true
-  members?: true
+  milestone?: true
   communityId?: true
   postId?: true
   createdAt?: true
@@ -82,7 +82,7 @@ export type FacebookMilestonePostMinAggregateInputType = {
 
 export type FacebookMilestonePostMaxAggregateInputType = {
   scope?: true
-  members?: true
+  milestone?: true
   communityId?: true
   postId?: true
   createdAt?: true
@@ -90,7 +90,7 @@ export type FacebookMilestonePostMaxAggregateInputType = {
 
 export type FacebookMilestonePostCountAggregateInputType = {
   scope?: true
-  members?: true
+  milestone?: true
   communityId?: true
   postId?: true
   createdAt?: true
@@ -185,7 +185,7 @@ export type FacebookMilestonePostGroupByArgs<ExtArgs extends runtime.Types.Exten
 
 export type FacebookMilestonePostGroupByOutputType = {
   scope: string
-  members: number
+  milestone: number
   communityId: number | null
   postId: string | null
   createdAt: Date
@@ -216,7 +216,7 @@ export type FacebookMilestonePostWhereInput = {
   OR?: Prisma.FacebookMilestonePostWhereInput[]
   NOT?: Prisma.FacebookMilestonePostWhereInput | Prisma.FacebookMilestonePostWhereInput[]
   scope?: Prisma.StringFilter<"FacebookMilestonePost"> | string
-  members?: Prisma.IntFilter<"FacebookMilestonePost"> | number
+  milestone?: Prisma.IntFilter<"FacebookMilestonePost"> | number
   communityId?: Prisma.IntNullableFilter<"FacebookMilestonePost"> | number | null
   postId?: Prisma.StringNullableFilter<"FacebookMilestonePost"> | string | null
   createdAt?: Prisma.DateTimeFilter<"FacebookMilestonePost"> | Date | string
@@ -225,7 +225,7 @@ export type FacebookMilestonePostWhereInput = {
 
 export type FacebookMilestonePostOrderByWithRelationInput = {
   scope?: Prisma.SortOrder
-  members?: Prisma.SortOrder
+  milestone?: Prisma.SortOrder
   communityId?: Prisma.SortOrderInput | Prisma.SortOrder
   postId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -233,21 +233,21 @@ export type FacebookMilestonePostOrderByWithRelationInput = {
 }
 
 export type FacebookMilestonePostWhereUniqueInput = Prisma.AtLeast<{
-  scope_members?: Prisma.FacebookMilestonePostScopeMembersCompoundUniqueInput
+  scope_milestone?: Prisma.FacebookMilestonePostScopeMilestoneCompoundUniqueInput
   AND?: Prisma.FacebookMilestonePostWhereInput | Prisma.FacebookMilestonePostWhereInput[]
   OR?: Prisma.FacebookMilestonePostWhereInput[]
   NOT?: Prisma.FacebookMilestonePostWhereInput | Prisma.FacebookMilestonePostWhereInput[]
   scope?: Prisma.StringFilter<"FacebookMilestonePost"> | string
-  members?: Prisma.IntFilter<"FacebookMilestonePost"> | number
+  milestone?: Prisma.IntFilter<"FacebookMilestonePost"> | number
   communityId?: Prisma.IntNullableFilter<"FacebookMilestonePost"> | number | null
   postId?: Prisma.StringNullableFilter<"FacebookMilestonePost"> | string | null
   createdAt?: Prisma.DateTimeFilter<"FacebookMilestonePost"> | Date | string
   community?: Prisma.XOR<Prisma.CommunityNullableScalarRelationFilter, Prisma.CommunityWhereInput> | null
-}, "scope_members">
+}, "scope_milestone">
 
 export type FacebookMilestonePostOrderByWithAggregationInput = {
   scope?: Prisma.SortOrder
-  members?: Prisma.SortOrder
+  milestone?: Prisma.SortOrder
   communityId?: Prisma.SortOrderInput | Prisma.SortOrder
   postId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -263,7 +263,7 @@ export type FacebookMilestonePostScalarWhereWithAggregatesInput = {
   OR?: Prisma.FacebookMilestonePostScalarWhereWithAggregatesInput[]
   NOT?: Prisma.FacebookMilestonePostScalarWhereWithAggregatesInput | Prisma.FacebookMilestonePostScalarWhereWithAggregatesInput[]
   scope?: Prisma.StringWithAggregatesFilter<"FacebookMilestonePost"> | string
-  members?: Prisma.IntWithAggregatesFilter<"FacebookMilestonePost"> | number
+  milestone?: Prisma.IntWithAggregatesFilter<"FacebookMilestonePost"> | number
   communityId?: Prisma.IntNullableWithAggregatesFilter<"FacebookMilestonePost"> | number | null
   postId?: Prisma.StringNullableWithAggregatesFilter<"FacebookMilestonePost"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"FacebookMilestonePost"> | Date | string
@@ -271,7 +271,7 @@ export type FacebookMilestonePostScalarWhereWithAggregatesInput = {
 
 export type FacebookMilestonePostCreateInput = {
   scope: string
-  members: number
+  milestone: number
   postId?: string | null
   createdAt?: Date | string
   community?: Prisma.CommunityCreateNestedOneWithoutFacebookMilestonePostsInput
@@ -279,7 +279,7 @@ export type FacebookMilestonePostCreateInput = {
 
 export type FacebookMilestonePostUncheckedCreateInput = {
   scope: string
-  members: number
+  milestone: number
   communityId?: number | null
   postId?: string | null
   createdAt?: Date | string
@@ -287,7 +287,7 @@ export type FacebookMilestonePostUncheckedCreateInput = {
 
 export type FacebookMilestonePostUpdateInput = {
   scope?: Prisma.StringFieldUpdateOperationsInput | string
-  members?: Prisma.IntFieldUpdateOperationsInput | number
+  milestone?: Prisma.IntFieldUpdateOperationsInput | number
   postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   community?: Prisma.CommunityUpdateOneWithoutFacebookMilestonePostsNestedInput
@@ -295,7 +295,7 @@ export type FacebookMilestonePostUpdateInput = {
 
 export type FacebookMilestonePostUncheckedUpdateInput = {
   scope?: Prisma.StringFieldUpdateOperationsInput | string
-  members?: Prisma.IntFieldUpdateOperationsInput | number
+  milestone?: Prisma.IntFieldUpdateOperationsInput | number
   communityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -303,7 +303,7 @@ export type FacebookMilestonePostUncheckedUpdateInput = {
 
 export type FacebookMilestonePostCreateManyInput = {
   scope: string
-  members: number
+  milestone: number
   communityId?: number | null
   postId?: string | null
   createdAt?: Date | string
@@ -311,14 +311,14 @@ export type FacebookMilestonePostCreateManyInput = {
 
 export type FacebookMilestonePostUpdateManyMutationInput = {
   scope?: Prisma.StringFieldUpdateOperationsInput | string
-  members?: Prisma.IntFieldUpdateOperationsInput | number
+  milestone?: Prisma.IntFieldUpdateOperationsInput | number
   postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type FacebookMilestonePostUncheckedUpdateManyInput = {
   scope?: Prisma.StringFieldUpdateOperationsInput | string
-  members?: Prisma.IntFieldUpdateOperationsInput | number
+  milestone?: Prisma.IntFieldUpdateOperationsInput | number
   communityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -334,27 +334,27 @@ export type FacebookMilestonePostOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type FacebookMilestonePostScopeMembersCompoundUniqueInput = {
+export type FacebookMilestonePostScopeMilestoneCompoundUniqueInput = {
   scope: string
-  members: number
+  milestone: number
 }
 
 export type FacebookMilestonePostCountOrderByAggregateInput = {
   scope?: Prisma.SortOrder
-  members?: Prisma.SortOrder
+  milestone?: Prisma.SortOrder
   communityId?: Prisma.SortOrder
   postId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type FacebookMilestonePostAvgOrderByAggregateInput = {
-  members?: Prisma.SortOrder
+  milestone?: Prisma.SortOrder
   communityId?: Prisma.SortOrder
 }
 
 export type FacebookMilestonePostMaxOrderByAggregateInput = {
   scope?: Prisma.SortOrder
-  members?: Prisma.SortOrder
+  milestone?: Prisma.SortOrder
   communityId?: Prisma.SortOrder
   postId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -362,14 +362,14 @@ export type FacebookMilestonePostMaxOrderByAggregateInput = {
 
 export type FacebookMilestonePostMinOrderByAggregateInput = {
   scope?: Prisma.SortOrder
-  members?: Prisma.SortOrder
+  milestone?: Prisma.SortOrder
   communityId?: Prisma.SortOrder
   postId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type FacebookMilestonePostSumOrderByAggregateInput = {
-  members?: Prisma.SortOrder
+  milestone?: Prisma.SortOrder
   communityId?: Prisma.SortOrder
 }
 
@@ -417,14 +417,14 @@ export type FacebookMilestonePostUncheckedUpdateManyWithoutCommunityNestedInput 
 
 export type FacebookMilestonePostCreateWithoutCommunityInput = {
   scope: string
-  members: number
+  milestone: number
   postId?: string | null
   createdAt?: Date | string
 }
 
 export type FacebookMilestonePostUncheckedCreateWithoutCommunityInput = {
   scope: string
-  members: number
+  milestone: number
   postId?: string | null
   createdAt?: Date | string
 }
@@ -460,7 +460,7 @@ export type FacebookMilestonePostScalarWhereInput = {
   OR?: Prisma.FacebookMilestonePostScalarWhereInput[]
   NOT?: Prisma.FacebookMilestonePostScalarWhereInput | Prisma.FacebookMilestonePostScalarWhereInput[]
   scope?: Prisma.StringFilter<"FacebookMilestonePost"> | string
-  members?: Prisma.IntFilter<"FacebookMilestonePost"> | number
+  milestone?: Prisma.IntFilter<"FacebookMilestonePost"> | number
   communityId?: Prisma.IntNullableFilter<"FacebookMilestonePost"> | number | null
   postId?: Prisma.StringNullableFilter<"FacebookMilestonePost"> | string | null
   createdAt?: Prisma.DateTimeFilter<"FacebookMilestonePost"> | Date | string
@@ -468,28 +468,28 @@ export type FacebookMilestonePostScalarWhereInput = {
 
 export type FacebookMilestonePostCreateManyCommunityInput = {
   scope: string
-  members: number
+  milestone: number
   postId?: string | null
   createdAt?: Date | string
 }
 
 export type FacebookMilestonePostUpdateWithoutCommunityInput = {
   scope?: Prisma.StringFieldUpdateOperationsInput | string
-  members?: Prisma.IntFieldUpdateOperationsInput | number
+  milestone?: Prisma.IntFieldUpdateOperationsInput | number
   postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type FacebookMilestonePostUncheckedUpdateWithoutCommunityInput = {
   scope?: Prisma.StringFieldUpdateOperationsInput | string
-  members?: Prisma.IntFieldUpdateOperationsInput | number
+  milestone?: Prisma.IntFieldUpdateOperationsInput | number
   postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type FacebookMilestonePostUncheckedUpdateManyWithoutCommunityInput = {
   scope?: Prisma.StringFieldUpdateOperationsInput | string
-  members?: Prisma.IntFieldUpdateOperationsInput | number
+  milestone?: Prisma.IntFieldUpdateOperationsInput | number
   postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -498,7 +498,7 @@ export type FacebookMilestonePostUncheckedUpdateManyWithoutCommunityInput = {
 
 export type FacebookMilestonePostSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   scope?: boolean
-  members?: boolean
+  milestone?: boolean
   communityId?: boolean
   postId?: boolean
   createdAt?: boolean
@@ -507,7 +507,7 @@ export type FacebookMilestonePostSelect<ExtArgs extends runtime.Types.Extensions
 
 export type FacebookMilestonePostSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   scope?: boolean
-  members?: boolean
+  milestone?: boolean
   communityId?: boolean
   postId?: boolean
   createdAt?: boolean
@@ -516,7 +516,7 @@ export type FacebookMilestonePostSelectCreateManyAndReturn<ExtArgs extends runti
 
 export type FacebookMilestonePostSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   scope?: boolean
-  members?: boolean
+  milestone?: boolean
   communityId?: boolean
   postId?: boolean
   createdAt?: boolean
@@ -525,13 +525,13 @@ export type FacebookMilestonePostSelectUpdateManyAndReturn<ExtArgs extends runti
 
 export type FacebookMilestonePostSelectScalar = {
   scope?: boolean
-  members?: boolean
+  milestone?: boolean
   communityId?: boolean
   postId?: boolean
   createdAt?: boolean
 }
 
-export type FacebookMilestonePostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"scope" | "members" | "communityId" | "postId" | "createdAt", ExtArgs["result"]["facebookMilestonePost"]>
+export type FacebookMilestonePostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"scope" | "milestone" | "communityId" | "postId" | "createdAt", ExtArgs["result"]["facebookMilestonePost"]>
 export type FacebookMilestonePostInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   community?: boolean | Prisma.FacebookMilestonePost$communityArgs<ExtArgs>
 }
@@ -549,7 +549,7 @@ export type $FacebookMilestonePostPayload<ExtArgs extends runtime.Types.Extensio
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     scope: string
-    members: number
+    milestone: number
     communityId: number | null
     postId: string | null
     createdAt: Date
@@ -978,7 +978,7 @@ export interface Prisma__FacebookMilestonePostClient<T, Null = never, ExtArgs ex
  */
 export interface FacebookMilestonePostFieldRefs {
   readonly scope: Prisma.FieldRef<"FacebookMilestonePost", 'String'>
-  readonly members: Prisma.FieldRef<"FacebookMilestonePost", 'Int'>
+  readonly milestone: Prisma.FieldRef<"FacebookMilestonePost", 'Int'>
   readonly communityId: Prisma.FieldRef<"FacebookMilestonePost", 'Int'>
   readonly postId: Prisma.FieldRef<"FacebookMilestonePost", 'String'>
   readonly createdAt: Prisma.FieldRef<"FacebookMilestonePost", 'DateTime'>

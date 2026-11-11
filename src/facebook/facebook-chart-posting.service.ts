@@ -21,6 +21,7 @@ import {
   FacebookPage,
   facebookPage,
   NOT_SET_UP,
+  pageFollowers,
   pageName,
   postPhoto,
 } from './facebook-page';
@@ -37,11 +38,30 @@ const ENABLED_KEY = 'facebook.charts';
 
 export type FacebookChartsStatus = {
   configured: boolean;
-  page: { id: string; name: string | null } | null;
+  page: { id: string; name: string | null; followers: number | null } | null;
   pageError: string | null;
+  followersError: string | null;
   enabled: boolean;
   lastPost: { week: string; postId: string | null; postedAt: string } | null;
 };
+
+type Lookup<T> = { value: T | null; error: string | null };
+
+const UNASKED = { value: null, error: null };
+
+async function lookup<T>(request: Promise<T>): Promise<Lookup<T>> {
+  try {
+    return { value: await request, error: null };
+  } catch (error) {
+    return {
+      value: null,
+      error:
+        error instanceof FacebookError
+          ? error.message.replace(/\.$/, '')
+          : 'Facebook didn’t answer',
+    };
+  }
+}
 
 export function chartCaption(type: MediaType, chart: ChartWeek) {
   return `Trending ${CHART_LABELS[type]} of ${weekRange(chart)} on Orbis!\n\nJoin the discussion: ${webUrl()}${chartShortPath(type, chart.week)}`;
@@ -62,26 +82,22 @@ export class FacebookChartPostingService extends FacebookPostingJob {
 
   async status(): Promise<FacebookChartsStatus> {
     const page = facebookPage();
-    let name: string | null = null;
-    let pageError: string | null = null;
-    if (page) {
-      try {
-        name = await pageName(page);
-      } catch (error) {
-        pageError =
-          error instanceof FacebookError
-            ? error.message.replace(/\.$/, '')
-            : 'Facebook didn’t answer';
-      }
-    }
+    const [name, followers] = page
+      ? await Promise.all([lookup(pageName(page)), lookup(pageFollowers(page))])
+      : [UNASKED, UNASKED];
     const lastPost = await this.prisma.facebookChartPost.findFirst({
       orderBy: { createdAt: 'desc' },
       select: { week: true, postId: true, createdAt: true },
     });
     return {
       configured: page !== null,
-      page: page && { id: page.id, name },
-      pageError,
+      page: page && {
+        id: page.id,
+        name: name.value,
+        followers: followers.value,
+      },
+      pageError: name.error,
+      followersError: followers.error,
       enabled: await this.enabled(),
       lastPost: lastPost && {
         week: lastPost.week,

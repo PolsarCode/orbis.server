@@ -81,12 +81,12 @@ model FacebookReleasePost {
 
 model FacebookMilestonePost {
   scope       String
-  members     Int
+  milestone   Int
   communityId Int?
   postId      String?
   createdAt   DateTime   @default(now())
   community   Community? @relation(fields: [communityId], references: [id], onDelete: Cascade)
 
-  @@id([scope, members])
+  @@id([scope, milestone])
   @@index([communityId])
 }

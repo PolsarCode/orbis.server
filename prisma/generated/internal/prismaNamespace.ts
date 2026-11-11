@@ -4477,7 +4477,7 @@ export type FacebookReleasePostScalarFieldEnum = (typeof FacebookReleasePostScal
 
 export const FacebookMilestonePostScalarFieldEnum = {
   scope: 'scope',
-  members: 'members',
+  milestone: 'milestone',
   communityId: 'communityId',
   postId: 'postId',
   createdAt: 'createdAt'
