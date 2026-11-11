@@ -30,6 +30,9 @@ const UNCONFIRMED_AFTER_MS = 2 * MINUTE;
 const ORBIS_SCOPE = 'orbis';
 const FACEBOOK_SCOPE = 'facebook';
 const STEPS = [1, 2.5, 5];
+const SHOWN_POSTS = 10;
+const GOAL_KEY = 'facebook.milestones.goal';
+const DEFAULT_GOAL = 1000;
 
 export type MilestoneKind = 'members' | 'communities' | 'followers';
 
@@ -37,17 +40,25 @@ const KINDS: MilestoneKind[] = ['members', 'communities', 'followers'];
 
 export type MilestoneCommunity = { id: number; name: string };
 
-export type FacebookMilestonesStatus = {
-  members: boolean;
-  communities: boolean;
-  followers: boolean;
-  lastPost: {
-    kind: MilestoneKind;
-    milestone: number;
-    community: MilestoneCommunity | null;
-    postId: string | null;
-    postedAt: string;
-  } | null;
+export type MilestoneProgress = { count: number | null; next: number };
+
+export type PostedMilestone = {
+  kind: MilestoneKind;
+  milestone: number;
+  community: MilestoneCommunity | null;
+  postId: string | null;
+  postedAt: string;
+};
+
+export type FacebookMilestonesStatus = Record<MilestoneKind, boolean> & {
+  configured: boolean;
+  goal: number;
+  progress: {
+    followers: MilestoneProgress;
+    members: MilestoneProgress;
+    communities: (MilestoneProgress & { community: MilestoneCommunity }) | null;
+  };
+  recentPosts: PostedMilestone[];
 };
 
 export type MilestonePost = {
@@ -75,6 +86,15 @@ export function milestoneReached(count: number): number | null {
     }
   }
   return reached;
+}
+
+export function nextMilestone(count: number) {
+  for (let base = 10; ; base *= 10) {
+    const next = STEPS.map((step) => base * step).find(
+      (value) => value > count,
+    );
+    if (next) return next;
+  }
 }
 
 export function milestoneMessage({
@@ -153,25 +173,53 @@ export class FacebookMilestonePostingService extends FacebookPostingJob {
   }
 
   async status(): Promise<FacebookMilestonesStatus> {
-    const lastPost = await this.prisma.facebookMilestonePost.findFirst({
-      orderBy: { createdAt: 'desc' },
-      select: {
-        scope: true,
-        milestone: true,
-        postId: true,
-        createdAt: true,
-        community: { select: { id: true, name: true } },
-      },
-    });
+    const [switches, goal, followers, members, biggest, posts] =
+      await Promise.all([
+        this.switches(),
+        this.goal(),
+        this.stats.facebookFollowers(),
+        this.prisma.user.count(),
+        this.prisma.community.findFirst({
+          where: { isPublic: true },
+          orderBy: { memberships: { _count: 'desc' } },
+          select: {
+            id: true,
+            name: true,
+            _count: { select: { memberships: true } },
+          },
+        }),
+        this.prisma.facebookMilestonePost.findMany({
+          orderBy: { createdAt: 'desc' },
+          take: SHOWN_POSTS,
+          select: {
+            scope: true,
+            milestone: true,
+            postId: true,
+            createdAt: true,
+            community: { select: { id: true, name: true } },
+          },
+        }),
+      ]);
     return {
-      ...(await this.switches()),
-      lastPost: lastPost && {
-        kind: kindOf(lastPost.scope),
-        milestone: lastPost.milestone,
-        community: lastPost.community,
-        postId: lastPost.postId,
-        postedAt: lastPost.createdAt.toISOString(),
+      ...switches,
+      configured: facebookPage() !== null,
+      goal,
+      progress: {
+        followers: { count: followers, next: nextMilestone(followers ?? 0) },
+        members: { count: members, next: nextMilestone(members) },
+        communities: biggest && {
+          community: { id: biggest.id, name: biggest.name },
+          count: biggest._count.memberships,
+          next: nextMilestone(biggest._count.memberships),
+        },
       },
+      recentPosts: posts.map((post) => ({
+        kind: kindOf(post.scope),
+        milestone: post.milestone,
+        community: post.community,
+        postId: post.postId,
+        postedAt: post.createdAt.toISOString(),
+      })),
     };
   }
 
@@ -271,6 +319,23 @@ export class FacebookMilestonePostingService extends FacebookPostingJob {
         }
       }
     }
+  }
+
+  async setGoal(goal: number) {
+    await this.prisma.setting.upsert({
+      where: { key: GOAL_KEY },
+      create: { key: GOAL_KEY, value: String(goal) },
+      update: { value: String(goal) },
+    });
+  }
+
+  private async goal() {
+    const setting = await this.prisma.setting.findUnique({
+      where: { key: GOAL_KEY },
+      select: { value: true },
+    });
+    const goal = Number(setting?.value);
+    return Number.isInteger(goal) && goal > 0 ? goal : DEFAULT_GOAL;
   }
 
   private async switches(): Promise<Record<MilestoneKind, boolean>> {

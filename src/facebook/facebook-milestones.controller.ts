@@ -21,10 +21,11 @@ export class FacebookMilestonesController {
 
   @RateLimit(30, MINUTE)
   @Patch()
-  update(
-    @Body() changes: UpdateFacebookMilestonesDto,
+  async update(
+    @Body() { goal, ...switches }: UpdateFacebookMilestonesDto,
   ): Promise<FacebookMilestonesStatus> {
-    return this.posting.setSwitches(changes);
+    if (goal !== undefined) await this.posting.setGoal(goal);
+    return this.posting.setSwitches(switches);
   }
 
   @RateLimit(3, MINUTE)

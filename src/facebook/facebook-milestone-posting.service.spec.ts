@@ -14,6 +14,7 @@ import {
   MilestoneKind,
   milestoneMessage,
   milestoneReached,
+  nextMilestone,
 } from './facebook-milestone-posting.service';
 import { FacebookMilestonesController } from './facebook-milestones.controller';
 
@@ -61,6 +62,22 @@ describe('Posting milestones to Facebook', () => {
     return (a: T, b: T) =>
       time(a).getTime() - time(b).getTime() || id(a) - id(b);
   };
+  const withMembers = (where?: { isPublic?: boolean }) =>
+    communities
+      .filter(
+        (community) =>
+          where?.isPublic === undefined ||
+          community.isPublic === where.isPublic,
+      )
+      .map(({ id, name }) => ({
+        id,
+        name,
+        _count: {
+          memberships: memberships.filter(
+            (membership) => membership.communityId === id,
+          ).length,
+        },
+      }));
   const prisma = {
     setting: {
       findUnique: jest.fn(async ({ where }: { where: { key: string } }) =>
@@ -92,21 +109,13 @@ describe('Posting milestones to Facebook', () => {
     },
     community: {
       findMany: jest.fn(async ({ where }: { where?: { isPublic?: boolean } }) =>
-        communities
-          .filter(
-            (community) =>
-              where?.isPublic === undefined ||
-              community.isPublic === where.isPublic,
-          )
-          .map(({ id, name }) => ({
-            id,
-            name,
-            _count: {
-              memberships: memberships.filter(
-                (membership) => membership.communityId === id,
-              ).length,
-            },
-          })),
+        withMembers(where),
+      ),
+      findFirst: jest.fn(
+        async ({ where }: { where?: { isPublic?: boolean } }) =>
+          withMembers(where).sort(
+            (a, b) => b._count.memberships - a._count.memberships,
+          )[0] ?? null,
       ),
     },
     membership: {
@@ -170,19 +179,22 @@ describe('Posting milestones to Facebook', () => {
               row.scope === where.scope && row.milestone > where.milestone.gt,
           ).length,
       ),
-      findFirst: jest.fn(async () => {
-        const row = [...posts.values()].sort(
-          (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
-        )[0];
-        if (!row) return null;
-        const community = communities.find(({ id }) => id === row.communityId);
-        return {
-          ...row,
-          community: community
-            ? { id: community.id, name: community.name }
-            : null,
-        };
-      }),
+      findMany: jest.fn(async ({ take }: { take: number }) =>
+        [...posts.values()]
+          .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+          .slice(0, take)
+          .map((row) => {
+            const community = communities.find(
+              ({ id }) => id === row.communityId,
+            );
+            return {
+              ...row,
+              community: community
+                ? { id: community.id, name: community.name }
+                : null,
+            };
+          }),
+      ),
       create: jest.fn(
         async ({
           data,
@@ -362,6 +374,18 @@ describe('Posting milestones to Facebook', () => {
     [2600, 2500],
   ])('counts %i as the %p milestone', (count, milestone) => {
     expect(milestoneReached(count)).toBe(milestone);
+  });
+
+  it.each([
+    [0, 10],
+    [9, 10],
+    [10, 25],
+    [24, 25],
+    [99, 100],
+    [1000, 2500],
+    [9999, 10000],
+  ])('puts the next milestone after %i at %i', (count, next) => {
+    expect(nextMilestone(count)).toBe(next);
   });
 
   it('thanks everyone when Orbis reaches a milestone', () => {
@@ -643,6 +667,7 @@ describe('Posting milestones to Facebook', () => {
 
   it('only posts the kinds that are switched on', async () => {
     await turnOn({ communities: true });
+    stats.facebookFollowers.mockClear();
     addUsers(10, AFTER);
     join(7, 10, LATER);
     followers = 100;
@@ -773,7 +798,7 @@ describe('Posting milestones to Facebook', () => {
       );
       await expect(service.status()).resolves.toMatchObject({
         followers: true,
-        lastPost: { ...PAGE, milestone: 100 },
+        recentPosts: [{ ...PAGE, milestone: 100 }],
       });
     });
 
@@ -808,7 +833,6 @@ describe('Posting milestones to Facebook', () => {
       await turnOn({ followers: true });
 
       expect(stats.refreshFacebookFollowers).toHaveBeenCalledTimes(1);
-      expect(stats.facebookFollowers).not.toHaveBeenCalled();
       expect(baseline('followers')).toEqual({ facebook: 250 });
     });
 
@@ -1051,27 +1075,110 @@ describe('Posting milestones to Facebook', () => {
   describe('Admin settings', () => {
     const controller = () => new FacebookMilestonesController(service);
 
-    it('shows the switches and the last post', async () => {
+    it('shows the switches, where each count is, and the recent posts', async () => {
+      followers = null;
       await expect(controller().status()).resolves.toEqual({
         members: false,
         communities: false,
         followers: false,
-        lastPost: null,
+        configured: true,
+        goal: 1000,
+        progress: {
+          followers: { count: null, next: 10 },
+          members: { count: 0, next: 10 },
+          communities: {
+            community: SURVEY_CORPS.community,
+            count: 0,
+            next: 10,
+          },
+        },
+        recentPosts: [],
       });
 
+      followers = 1234;
+      addUsers(18, AFTER);
       join(7, 25, AFTER);
+      join(8, 40, AFTER);
       await controller().update({ communities: true });
       await controller().send();
       await expect(controller().status()).resolves.toEqual({
         members: false,
         communities: true,
         followers: false,
-        lastPost: {
-          ...SURVEY_CORPS,
-          milestone: 25,
-          postId: '321_701',
-          postedAt: POSTED_AT.toISOString(),
+        configured: true,
+        goal: 1000,
+        progress: {
+          followers: { count: 1234, next: 2500 },
+          members: { count: 18, next: 25 },
+          communities: {
+            community: SURVEY_CORPS.community,
+            count: 25,
+            next: 50,
+          },
         },
+        recentPosts: [
+          {
+            ...SURVEY_CORPS,
+            milestone: 25,
+            postId: '321_701',
+            postedAt: POSTED_AT.toISOString(),
+          },
+        ],
+      });
+    });
+
+    it('follows the public community with the most members', async () => {
+      communities = Array.from({ length: 4 }, (_, index) => ({
+        id: index + 1,
+        name: `Community ${index + 1}`,
+        isPublic: index !== 3,
+      }));
+      communities.forEach(({ id }) => join(id, id * 3, AFTER));
+
+      await expect(service.status()).resolves.toMatchObject({
+        progress: {
+          communities: {
+            community: { id: 3, name: 'Community 3' },
+            count: 9,
+            next: 10,
+          },
+        },
+      });
+      expect(prisma.community.findFirst).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          where: { isPublic: true },
+          orderBy: { memberships: { _count: 'desc' } },
+        }),
+      );
+
+      communities = [];
+      await expect(service.status()).resolves.toMatchObject({
+        progress: { communities: null },
+      });
+    });
+
+    it('saves the goal for the progress bars, which starts at 1,000', async () => {
+      await expect(service.status()).resolves.toMatchObject({ goal: 1000 });
+
+      await expect(controller().update({ goal: 5000 })).resolves.toMatchObject({
+        goal: 5000,
+        members: false,
+      });
+      expect(prisma.setting.upsert).toHaveBeenCalledWith({
+        where: { key: 'facebook.milestones.goal' },
+        create: { key: 'facebook.milestones.goal', value: '5000' },
+        update: { value: '5000' },
+      });
+
+      settings.set('facebook.milestones.goal', 'oops');
+      await expect(service.status()).resolves.toMatchObject({ goal: 1000 });
+    });
+
+    it('says when Facebook isn’t set up', async () => {
+      delete process.env.FACEBOOK_PAGE_TOKEN;
+
+      await expect(service.status()).resolves.toMatchObject({
+        configured: false,
       });
     });
 
@@ -1087,11 +1194,11 @@ describe('Posting milestones to Facebook', () => {
           communities: true,
           followers: true,
         }),
-      ).resolves.toEqual({
+      ).resolves.toMatchObject({
         members: true,
         communities: true,
         followers: true,
-        lastPost: null,
+        recentPosts: [],
       });
       expect(baseline('members')).toEqual({ orbis: 10 });
       expect(baseline('communities')).toEqual({ 'community:8': 25 });
@@ -1138,6 +1245,10 @@ describe('Posting milestones to Facebook', () => {
         'members',
         'followers',
       ]);
+      await expect(invalid({ goal: 1000 })).resolves.toEqual([]);
+      await expect(invalid({ goal: 9 })).resolves.toEqual(['goal']);
+      await expect(invalid({ goal: 2_000_000_000 })).resolves.toEqual(['goal']);
+      await expect(invalid({ goal: 12.5 })).resolves.toEqual(['goal']);
     });
 
     it('is only for the signed-in head admin', () => {

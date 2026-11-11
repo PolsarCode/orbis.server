@@ -1,4 +1,4 @@
-import { IsBoolean, IsOptional } from 'class-validator';
+import { IsBoolean, IsInt, IsOptional, Max, Min } from 'class-validator';
 
 export class UpdateFacebookMilestonesDto {
   @IsOptional()
@@ -12,4 +12,10 @@ export class UpdateFacebookMilestonesDto {
   @IsOptional()
   @IsBoolean()
   followers?: boolean;
+
+  @IsOptional()
+  @IsInt()
+  @Min(10)
+  @Max(1_000_000_000)
+  goal?: number;
 }
