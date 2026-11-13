@@ -171,3 +171,37 @@ export function getMedia(type: MediaType, sourceId: string, adult: boolean) {
     `/api/${type}/${sourceId}${adult ? '?adult=true' : ''}`,
   );
 }
+
+export type AiringEpisode = {
+  id: string;
+  episode: number;
+  airsAt: string;
+};
+
+export type Schedule = {
+  month: string;
+  startsAt: string;
+  endsAt: string;
+  episodes: AiringEpisode[];
+};
+
+export const SCHEDULE_BATCH = 50;
+
+export async function getSchedule(
+  month: string,
+  ids: string[],
+  adult: boolean,
+) {
+  const batches: string[][] = [];
+  for (let i = 0; i < ids.length; i += SCHEDULE_BATCH) {
+    batches.push(ids.slice(i, i + SCHEDULE_BATCH));
+  }
+  const schedules = await Promise.all(
+    batches.map((batch) =>
+      request<Schedule>(
+        `/api/schedule?month=${month}&ids=${batch.join(',')}${adult ? '&adult=true' : ''}`,
+      ),
+    ),
+  );
+  return schedules.flatMap((schedule) => schedule.episodes);
+}

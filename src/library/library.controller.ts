@@ -115,6 +115,12 @@ export class LibraryController {
     return this.libraryService.media(userId, type, sourceId);
   }
 
+  @RateLimit(60, MINUTE)
+  @Get('calendar')
+  calendar(@UserId() userId: number, @Query('month') month = '') {
+    return this.libraryService.calendar(userId, month);
+  }
+
   @Get()
   async list(@UserId() userId: number) {
     await this.steamSync.refresh(userId, { waitMs: 2_000 });

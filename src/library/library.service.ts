@@ -20,7 +20,9 @@ import {
   getChart,
   getMedia,
   getMediaList,
+  getSchedule,
   getSeason,
+  AiringEpisode,
   imageUrl,
   Media,
   MEDIA_LISTS,
@@ -68,6 +70,66 @@ export type MostAdded = {
     adds: number;
   }[];
 };
+
+export type CalendarEpisode = {
+  entryId: number;
+  sourceId: string;
+  title: string;
+  coverImage: string | null;
+  episode: number;
+  airsAt: string;
+};
+
+export type CalendarGame = {
+  entryId: number;
+  sourceId: string;
+  title: string;
+  coverImage: string | null;
+  releaseDate: string | null;
+  precision: 'day' | 'month' | 'quarter' | 'year' | null;
+};
+
+export type LibraryCalendar = {
+  month: string;
+  episodes: CalendarEpisode[];
+  games: CalendarGame[];
+};
+
+const MONTH_PATTERN = /^(\d{4})-(0[1-9]|1[0-2])$/;
+const PRECISIONS = ['day', 'month', 'quarter', 'year'] as const;
+
+function scheduledMonth(month: string, now: Date) {
+  const match = MONTH_PATTERN.exec(month);
+  if (!match) throw new BadRequestException('Expected a month like 2026-11');
+  const offset =
+    Number(match[1]) * 12 +
+    Number(match[2]) -
+    1 -
+    (now.getUTCFullYear() * 12 + now.getUTCMonth());
+  return offset >= -1 && offset <= 2;
+}
+
+function releaseOf(media: Media | null) {
+  const date = media?.details?.releaseDate;
+  const precision = media?.details?.releaseDatePrecision;
+  return {
+    releaseDate: typeof date === 'string' ? date : null,
+    precision: PRECISIONS.find((value) => value === precision) ?? null,
+  };
+}
+
+function releaseEnd(releaseDate: string, precision: CalendarGame['precision']) {
+  const date = new Date(releaseDate);
+  const [year, month, day] = [
+    date.getUTCFullYear(),
+    date.getUTCMonth(),
+    date.getUTCDate(),
+  ];
+  if (precision === 'year') return Date.UTC(year + 1, 0, 1);
+  if (precision === 'quarter') return Date.UTC(year, month + 3, 1);
+  if (precision === 'month') return Date.UTC(year, month + 1, 1);
+  return Date.UTC(year, month, day + 1);
+}
 
 type StoredSpotlight = Spotlight & { addedAt: number };
 
@@ -167,6 +229,8 @@ export class LibraryService {
   private lists = new ExpiringCache<Media[]>();
   private charts = new ExpiringCache<Chart>();
   private seasons = new ExpiringCache<Season>();
+  private schedules = new ExpiringCache<AiringEpisode[]>();
+  private games = new ExpiringCache<Media>();
 
   constructor(
     private prisma: PrismaService,
@@ -579,6 +643,93 @@ export class LibraryService {
       details: media.details ?? {},
       entry: entry && (await this.toView(userId, entry)),
       members: others.map(({ status, user }) => ({ status, user })),
+    };
+  }
+
+  async calendar(userId: number, month: string): Promise<LibraryCalendar> {
+    const now = new Date(Date.now());
+    const scheduled = scheduledMonth(month, now);
+    const adult = await showsNsfw(this.prisma, userId);
+    const entries = await this.prisma.libraryEntry.findMany({
+      where: {
+        userId,
+        ...nsfwEntries(adult),
+        OR: [
+          { mediaType: 'anime', status: 'current' },
+          { mediaType: 'game', status: 'planned' },
+        ],
+      },
+      orderBy: { id: 'asc' },
+      select: {
+        id: true,
+        mediaType: true,
+        sourceId: true,
+        title: true,
+        coverImage: true,
+        isAdult: true,
+      },
+    });
+    const anime = entries.filter((entry) => entry.mediaType === 'anime');
+    const games = entries.filter((entry) => entry.mediaType === 'game');
+    const animeIds = anime.map((entry) => entry.sourceId);
+
+    const [airing, profiles] = await Promise.all([
+      scheduled && animeIds.length > 0
+        ? this.schedules.get(
+            `${month}:${adult}:${animeIds.join(',')}`,
+            () => getSchedule(month, animeIds, adult),
+            () => LIST_LIFETIME_MS,
+          )
+        : [],
+      Promise.allSettled(
+        games.map((entry) =>
+          this.games.get(
+            `${entry.sourceId}:${adult}`,
+            () => getMedia('game', entry.sourceId, adult),
+            () => LIST_LIFETIME_MS,
+          ),
+        ),
+      ),
+    ]);
+
+    const animeById = new Map(anime.map((entry) => [entry.sourceId, entry]));
+    return {
+      month,
+      episodes: airing.flatMap(({ id, episode, airsAt }) => {
+        const entry = animeById.get(id);
+        return entry
+          ? [
+              {
+                entryId: entry.id,
+                sourceId: entry.sourceId,
+                title: entry.title,
+                coverImage: coverUrl(entry),
+                episode,
+                airsAt,
+              },
+            ]
+          : [];
+      }),
+      games: games.flatMap((entry, index) => {
+        const profile = profiles[index];
+        if (profile.status === 'rejected') return [];
+        const release = releaseOf(profile.value);
+        if (
+          release.releaseDate &&
+          releaseEnd(release.releaseDate, release.precision) <= now.getTime()
+        ) {
+          return [];
+        }
+        return [
+          {
+            entryId: entry.id,
+            sourceId: entry.sourceId,
+            title: entry.title,
+            coverImage: coverUrl(entry),
+            ...release,
+          },
+        ];
+      }),
     };
   }
 
