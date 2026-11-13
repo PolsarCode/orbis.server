@@ -84,7 +84,10 @@ export const NotificationType = {
   forum_reply: 'forum_reply',
   forum_quote: 'forum_quote',
   repost: 'repost',
-  quote: 'quote'
+  quote: 'quote',
+  episode_aired: 'episode_aired',
+  game_released: 'game_released',
+  game_date: 'game_date'
 } as const
 
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]

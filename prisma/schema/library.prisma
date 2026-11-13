@@ -31,6 +31,7 @@ model LibraryEntry {
   updatedAt  DateTime          @default(now()) @updatedAt
   user       User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   activities LibraryActivity[]
+  notices    LibraryNotice[]
 
   @@unique([userId, mediaId])
 }

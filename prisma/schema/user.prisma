@@ -33,6 +33,7 @@ model User {
   appearOffline         Boolean               @default(false)
   showNsfw              Boolean               @default(false)
   showChangelog         Boolean               @default(true)
+  mutedNotifications    NotificationType[]    @default([])
   status                UserStatus            @default(online)
   isPublic              Boolean               @default(true)
   isAdmin               Boolean               @default(false)

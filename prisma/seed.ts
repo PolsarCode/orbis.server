@@ -1718,10 +1718,11 @@ async function createNotifications() {
     Date.now() - createdAt.getTime() > day ? createdAt : null;
   const notifications: {
     userId: number;
-    actorId: number;
+    actorId: number | null;
     type: NotificationType;
     message: string;
     link: string;
+    imageUrl?: string | null;
     createdAt: Date;
     readAt: Date | null;
   }[] = [];
@@ -2024,6 +2025,62 @@ async function createNotifications() {
       });
     }
   }
+
+  const releases = await prisma.libraryEntry.findMany({
+    where: {
+      OR: [
+        { mediaType: 'anime', status: 'current' },
+        { mediaType: 'game', status: 'planned' },
+      ],
+    },
+    orderBy: { id: 'asc' },
+    select: {
+      id: true,
+      userId: true,
+      mediaType: true,
+      sourceId: true,
+      title: true,
+      coverImage: true,
+      progress: true,
+    },
+  });
+  const notices: { entryId: number; kind: NotificationType; key: string }[] =
+    [];
+  for (const [index, entry] of releases.entries()) {
+    const createdAt = new Date(
+      Date.now() - ((index % 4) + 1) * 5 * 60 * 60 * 1000,
+    );
+    const release =
+      entry.mediaType === 'anime'
+        ? {
+            type: 'episode_aired' as const,
+            key: String(entry.progress + 1),
+            message: `Episode ${entry.progress + 1} of ${entry.title} is out`,
+          }
+        : index % 2 === 0
+          ? {
+              type: 'game_released' as const,
+              key: createdAt.toISOString().slice(0, 10),
+              message: `${entry.title} is out now`,
+            }
+          : {
+              type: 'game_date' as const,
+              key: 'announced:2027-03-04T00:00:00.000Z',
+              message: `${entry.title} comes out on Mar 4, 2027`,
+            };
+    notices.push({ entryId: entry.id, kind: release.type, key: release.key });
+    notifications.push({
+      userId: entry.userId,
+      actorId: null,
+      type: release.type,
+      message: release.message,
+      link: `/library/${entry.mediaType}/${entry.sourceId}`,
+      imageUrl: entry.coverImage,
+      createdAt,
+      readAt: readAt(createdAt),
+    });
+  }
+  await prisma.libraryNotice.createMany({ data: notices });
 
   await prisma.notification.createMany({ data: notifications });
   return notifications.length;

@@ -89,6 +89,7 @@ export const ModelName = {
   Message: 'Message',
   MessageReaction: 'MessageReaction',
   Notification: 'Notification',
+  LibraryNotice: 'LibraryNotice',
   Report: 'Report',
   ReportComment: 'ReportComment',
   ContentReport: 'ContentReport',
@@ -635,11 +636,23 @@ export const NotificationScalarFieldEnum = {
   type: 'type',
   message: 'message',
   link: 'link',
+  imageUrl: 'imageUrl',
   readAt: 'readAt',
   createdAt: 'createdAt'
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const LibraryNoticeScalarFieldEnum = {
+  id: 'id',
+  entryId: 'entryId',
+  kind: 'kind',
+  key: 'key',
+  createdAt: 'createdAt'
+} as const
+
+export type LibraryNoticeScalarFieldEnum = (typeof LibraryNoticeScalarFieldEnum)[keyof typeof LibraryNoticeScalarFieldEnum]
 
 
 export const ReportScalarFieldEnum = {
@@ -771,6 +784,7 @@ export const UserScalarFieldEnum = {
   appearOffline: 'appearOffline',
   showNsfw: 'showNsfw',
   showChangelog: 'showChangelog',
+  mutedNotifications: 'mutedNotifications',
   status: 'status',
   isPublic: 'isPublic',
   isAdmin: 'isAdmin',

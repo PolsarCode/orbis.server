@@ -23,10 +23,14 @@ const filters: Record<string, NotificationType[]> = {
   ],
   friends: ['friend_request', 'friend_accepted'],
   reports: ['report_status', 'report_assigned', 'report_comment'],
+  catalog: ['episode_aired', 'game_released', 'game_date'],
 };
 
 const MODERATION: NotificationType[] = filters.reports;
 const FRIENDS: NotificationType[] = filters.friends;
+export const MUTABLE_NOTIFICATIONS = Object.values(NotificationType).filter(
+  (type) => !MODERATION.includes(type),
+);
 
 export type NotificationQuery = {
   cursor?: number;
@@ -41,6 +45,7 @@ export type NewNotification = {
   type: NotificationType;
   message: string;
   link: string;
+  imageUrl?: string | null;
 };
 
 const notificationSelect = {
@@ -48,6 +53,7 @@ const notificationSelect = {
   type: true,
   message: true,
   link: true,
+  imageUrl: true,
   readAt: true,
   createdAt: true,
   actor: author,
@@ -99,14 +105,32 @@ export class NotificationsService {
     };
   }
 
+  private async muted(notifications: NewNotification[]) {
+    const users = await this.prisma.user.findMany({
+      where: {
+        id: { in: [...new Set(notifications.map(({ userId }) => userId))] },
+        mutedNotifications: { isEmpty: false },
+      },
+      select: { id: true, mutedNotifications: true },
+    });
+    const muted = new Map(
+      users.map(({ id, mutedNotifications }) => [id, mutedNotifications]),
+    );
+    return ({ userId, type }: NewNotification) =>
+      !MODERATION.includes(type) && Boolean(muted.get(userId)?.includes(type));
+  }
+
   async notify(notifications: NewNotification[]) {
     const others = notifications.filter(
       ({ userId, actorId }) => userId !== actorId,
     );
     if (others.length === 0) return;
-    const isSilenced = await this.silenced(others);
+    const [isSilenced, muted] = await Promise.all([
+      this.silenced(others),
+      this.muted(others),
+    ]);
     const recipients = others.filter(
-      (notification) => !isSilenced(notification),
+      (notification) => !isSilenced(notification) && !muted(notification),
     );
     if (recipients.length === 0) return;
 

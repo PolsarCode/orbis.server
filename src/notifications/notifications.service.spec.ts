@@ -17,7 +17,8 @@ describe('NotificationsService.notify', () => {
   const createManyAndReturn = jest.fn();
   const block = { findMany: jest.fn().mockResolvedValue([]) };
   const mute = { findMany: jest.fn().mockResolvedValue([]) };
-  const prisma = { notification: { createManyAndReturn }, block, mute };
+  const user = { findMany: jest.fn().mockResolvedValue([]) };
+  const prisma = { notification: { createManyAndReturn }, block, mute, user };
   const presence = { notify: jest.fn() };
   const service = new NotificationsService(
     prisma as unknown as PrismaService,
@@ -53,6 +54,25 @@ describe('NotificationsService.notify', () => {
     expect(payload.notifications[0]).not.toHaveProperty('userId');
   });
 
+  it('skips types the recipient muted, but never report notifications', async () => {
+    user.findMany.mockResolvedValueOnce([
+      { id: 4, mutedNotifications: ['friend_request', 'report_status'] },
+    ]);
+    createManyAndReturn.mockResolvedValue([row(2, 5)]);
+
+    await service.notify([
+      input(4),
+      input(5),
+      { ...input(4), type: 'report_status' },
+    ]);
+
+    expect(createManyAndReturn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: [input(5), { ...input(4), type: 'report_status' }],
+      }),
+    );
+  });
+
   it('skips notifications about yourself and sends nothing when none remain', async () => {
     await service.notify([input(9, 9)]);
 
@@ -70,7 +90,8 @@ describe('Notifications across blocks and mutes', () => {
   );
   const block = { findMany: jest.fn() };
   const mute = { findMany: jest.fn() };
-  const prisma = { notification: { createManyAndReturn }, block, mute };
+  const user = { findMany: jest.fn().mockResolvedValue([]) };
+  const prisma = { notification: { createManyAndReturn }, block, mute, user };
   const presence = { notify: jest.fn() };
   const service = new NotificationsService(
     prisma as unknown as PrismaService,

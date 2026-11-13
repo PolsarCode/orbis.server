@@ -197,7 +197,7 @@ function chartLifetime(chart: Chart, now: number) {
   return chart.nextWeek ? PAST_CHART_LIFETIME_MS : LIST_LIFETIME_MS;
 }
 
-class ExpiringCache<T> {
+export class ExpiringCache<T> {
   private entries = new Map<string, { value: T; expiresAt: number }>();
 
   async get(

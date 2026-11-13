@@ -141,6 +141,7 @@ export type Profile = Pick<
   | 'isPublic'
   | 'showNsfw'
   | 'showChangelog'
+  | 'mutedNotifications'
   | 'isAdmin'
   | 'emailVerifiedAt'
   | 'createdAt'
@@ -225,6 +226,7 @@ const profile = {
   isPublic: true,
   showNsfw: true,
   showChangelog: true,
+  mutedNotifications: true,
   isAdmin: true,
   emailVerifiedAt: true,
   createdAt: true,
@@ -287,11 +289,22 @@ export class UsersService {
       isPublic,
       showNsfw,
       showChangelog,
+      mutedNotifications,
     }: UpdatePreferencesDto,
   ): Promise<Profile> {
     const user = await this.prisma.user.update({
       where: { id },
-      data: { theme, appearOffline, status, isPublic, showNsfw, showChangelog },
+      data: {
+        theme,
+        appearOffline,
+        status,
+        isPublic,
+        showNsfw,
+        showChangelog,
+        mutedNotifications: mutedNotifications && [
+          ...new Set(mutedNotifications),
+        ],
+      },
       select: profile,
     });
 

@@ -422,6 +422,7 @@ export const ModelName = {
   Message: 'Message',
   MessageReaction: 'MessageReaction',
   Notification: 'Notification',
+  LibraryNotice: 'LibraryNotice',
   Report: 'Report',
   ReportComment: 'ReportComment',
   ContentReport: 'ContentReport',
@@ -448,7 +449,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "community" | "membership" | "railFolder" | "role" | "membershipRole" | "invite" | "discordChannel" | "discordMessage" | "discordChartChannel" | "discordChartPost" | "communityBan" | "post" | "repost" | "comment" | "editVersion" | "like" | "bookmark" | "forumSection" | "forumCategory" | "forumThread" | "forumPost" | "friendship" | "suggestionDismissal" | "hashtag" | "hashtagUsage" | "hashtagFollow" | "libraryEntry" | "libraryActivity" | "chartDiscussion" | "facebookChartPost" | "facebookReleasePost" | "facebookMilestonePost" | "facebookPost" | "conversation" | "conversationMember" | "message" | "messageReaction" | "notification" | "report" | "reportComment" | "contentReport" | "block" | "mute" | "keywordFilter" | "setting" | "steamAccount" | "steamGame" | "user" | "oAuthAccount"
+    modelProps: "community" | "membership" | "railFolder" | "role" | "membershipRole" | "invite" | "discordChannel" | "discordMessage" | "discordChartChannel" | "discordChartPost" | "communityBan" | "post" | "repost" | "comment" | "editVersion" | "like" | "bookmark" | "forumSection" | "forumCategory" | "forumThread" | "forumPost" | "friendship" | "suggestionDismissal" | "hashtag" | "hashtagUsage" | "hashtagFollow" | "libraryEntry" | "libraryActivity" | "chartDiscussion" | "facebookChartPost" | "facebookReleasePost" | "facebookMilestonePost" | "facebookPost" | "conversation" | "conversationMember" | "message" | "messageReaction" | "notification" | "libraryNotice" | "report" | "reportComment" | "contentReport" | "block" | "mute" | "keywordFilter" | "setting" | "steamAccount" | "steamGame" | "user" | "oAuthAccount"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -3264,6 +3265,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    LibraryNotice: {
+      payload: Prisma.$LibraryNoticePayload<ExtArgs>
+      fields: Prisma.LibraryNoticeFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.LibraryNoticeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LibraryNoticePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.LibraryNoticeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LibraryNoticePayload>
+        }
+        findFirst: {
+          args: Prisma.LibraryNoticeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LibraryNoticePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.LibraryNoticeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LibraryNoticePayload>
+        }
+        findMany: {
+          args: Prisma.LibraryNoticeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LibraryNoticePayload>[]
+        }
+        create: {
+          args: Prisma.LibraryNoticeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LibraryNoticePayload>
+        }
+        createMany: {
+          args: Prisma.LibraryNoticeCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.LibraryNoticeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LibraryNoticePayload>[]
+        }
+        delete: {
+          args: Prisma.LibraryNoticeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LibraryNoticePayload>
+        }
+        update: {
+          args: Prisma.LibraryNoticeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LibraryNoticePayload>
+        }
+        deleteMany: {
+          args: Prisma.LibraryNoticeDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.LibraryNoticeUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.LibraryNoticeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LibraryNoticePayload>[]
+        }
+        upsert: {
+          args: Prisma.LibraryNoticeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LibraryNoticePayload>
+        }
+        aggregate: {
+          args: Prisma.LibraryNoticeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateLibraryNotice>
+        }
+        groupBy: {
+          args: Prisma.LibraryNoticeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LibraryNoticeGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.LibraryNoticeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LibraryNoticeCountAggregateOutputType> | number
+        }
+      }
+    }
     Report: {
       payload: Prisma.$ReportPayload<ExtArgs>
       fields: Prisma.ReportFieldRefs
@@ -4634,11 +4709,23 @@ export const NotificationScalarFieldEnum = {
   type: 'type',
   message: 'message',
   link: 'link',
+  imageUrl: 'imageUrl',
   readAt: 'readAt',
   createdAt: 'createdAt'
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const LibraryNoticeScalarFieldEnum = {
+  id: 'id',
+  entryId: 'entryId',
+  kind: 'kind',
+  key: 'key',
+  createdAt: 'createdAt'
+} as const
+
+export type LibraryNoticeScalarFieldEnum = (typeof LibraryNoticeScalarFieldEnum)[keyof typeof LibraryNoticeScalarFieldEnum]
 
 
 export const ReportScalarFieldEnum = {
@@ -4770,6 +4857,7 @@ export const UserScalarFieldEnum = {
   appearOffline: 'appearOffline',
   showNsfw: 'showNsfw',
   showChangelog: 'showChangelog',
+  mutedNotifications: 'mutedNotifications',
   status: 'status',
   isPublic: 'isPublic',
   isAdmin: 'isAdmin',
@@ -5283,6 +5371,7 @@ export type GlobalOmitConfig = {
   message?: Prisma.MessageOmit
   messageReaction?: Prisma.MessageReactionOmit
   notification?: Prisma.NotificationOmit
+  libraryNotice?: Prisma.LibraryNoticeOmit
   report?: Prisma.ReportOmit
   reportComment?: Prisma.ReportCommentOmit
   contentReport?: Prisma.ContentReportOmit

@@ -12,6 +12,9 @@ enum NotificationType {
   forum_quote
   repost
   quote
+  episode_aired
+  game_released
+  game_date
 }
 
 model Notification {
@@ -21,10 +24,22 @@ model Notification {
   type      NotificationType
   message   String
   link      String
+  imageUrl  String?
   readAt    DateTime?
   createdAt DateTime         @default(now())
   user      User             @relation("NotificationRecipient", fields: [userId], references: [id], onDelete: Cascade)
   actor     User?            @relation("NotificationActor", fields: [actorId], references: [id], onDelete: SetNull)
 
   @@index([userId, createdAt(sort: Desc)])
+}
+
+model LibraryNotice {
+  id        Int              @id @default(autoincrement())
+  entryId   Int
+  kind      NotificationType
+  key       String
+  createdAt DateTime         @default(now())
+  entry     LibraryEntry     @relation(fields: [entryId], references: [id], onDelete: Cascade)
+
+  @@unique([entryId, kind, key])
 }

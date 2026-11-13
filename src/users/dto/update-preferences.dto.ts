@@ -1,5 +1,16 @@
-import { IsBoolean, IsIn, IsOptional } from 'class-validator';
-import { Theme, UserStatus } from '../../../prisma/generated/client';
+import {
+  ArrayMaxSize,
+  IsArray,
+  IsBoolean,
+  IsIn,
+  IsOptional,
+} from 'class-validator';
+import {
+  NotificationType,
+  Theme,
+  UserStatus,
+} from '../../../prisma/generated/client';
+import { MUTABLE_NOTIFICATIONS } from '../../notifications/notifications.service';
 
 export class UpdatePreferencesDto {
   @IsOptional()
@@ -25,4 +36,10 @@ export class UpdatePreferencesDto {
   @IsOptional()
   @IsBoolean()
   showChangelog?: boolean;
+
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(MUTABLE_NOTIFICATIONS.length)
+  @IsIn(MUTABLE_NOTIFICATIONS, { each: true })
+  mutedNotifications?: NotificationType[];
 }

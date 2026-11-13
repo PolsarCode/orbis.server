@@ -228,6 +228,11 @@ export type MessageReaction = Prisma.MessageReactionModel
  */
 export type Notification = Prisma.NotificationModel
 /**
+ * Model LibraryNotice
+ * 
+ */
+export type LibraryNotice = Prisma.LibraryNoticeModel
+/**
  * Model Report
  * 
  */
