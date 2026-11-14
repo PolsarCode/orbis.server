@@ -8,6 +8,7 @@ import { PrismaService } from '../prisma.service';
 import { CreateCommunityDto } from './dto/create-community.dto';
 import { UpdateRailLayoutDto } from './dto/update-rail-layout.dto';
 import { SearchCommunitiesDto } from './dto/search-communities.dto';
+import { ExploreCommunitiesDto } from './dto/explore-communities.dto';
 import { UpdateCommunityDto } from './dto/update-community.dto';
 import { ADMINISTRATOR, CommunityRole, isAdministrator } from './permissions';
 import { MAX_INT } from './community-member.guard';
@@ -103,6 +104,31 @@ export const MAX_JOINED_COMMUNITIES = 50;
 
 const MEMBER_PREVIEW = 5;
 const MUTUAL_PREVIEW = 3;
+export const EXPLORE_PAGE_SIZE = 20;
+const FRIEND_PICKS = 6;
+
+const searchSelect = (userId: number) =>
+  ({
+    id: true,
+    name: true,
+    description: true,
+    iconUrl: true,
+    coverUrl: true,
+    isVerified: true,
+    _count: { select: { memberships: true } },
+    memberships: { where: { userId }, select: { userId: true } },
+  }) as const;
+
+type SearchRow = {
+  id: number;
+  name: string;
+  description: string | null;
+  iconUrl: string | null;
+  coverUrl: string | null;
+  isVerified: boolean;
+  _count: { memberships: number };
+  memberships: { userId: number }[];
+};
 
 export type RailItem =
   | { type: 'community'; communityId: number }
@@ -166,6 +192,8 @@ export class CommunitiesService {
       data: {
         name: createCommunityDto.name.trim(),
         isPublic: createCommunityDto.isPublic ?? false,
+        description: createCommunityDto.description?.trim() || null,
+        links: { ...createCommunityDto.links },
         ownerId,
         memberships: { create: { userId: ownerId, position } },
       },
@@ -275,24 +303,100 @@ export class CommunitiesService {
     const communities = await this.prisma.community.findMany({
       where: {
         isPublic: true,
-        ...(query && { name: { contains: query, mode: 'insensitive' } }),
+        ...(query && {
+          OR: [
+            { name: { contains: query, mode: 'insensitive' } },
+            { description: { contains: query, mode: 'insensitive' } },
+          ],
+        }),
       },
       orderBy: [{ memberships: { _count: 'desc' } }, { createdAt: 'desc' }],
       take: 20,
-      select: {
-        id: true,
-        name: true,
-        description: true,
-        iconUrl: true,
-        coverUrl: true,
-        isVerified: true,
-        _count: { select: { memberships: true } },
-        memberships: { where: { userId }, select: { userId: true } },
-      },
+      select: searchSelect(userId),
     });
+    return this.toSearchResults(userId, communities);
+  }
+
+  async explore(
+    userId: number,
+    { sort = 'popular', hideJoined }: ExploreCommunitiesDto,
+    page: number,
+  ): Promise<{ items: CommunitySearchResult[]; nextPage: number | null }> {
+    const communities = await this.prisma.community.findMany({
+      where: {
+        isPublic: true,
+        bans: { none: { userId } },
+        ...(hideJoined === 'true' && { memberships: { none: { userId } } }),
+      },
+      orderBy:
+        sort === 'newest'
+          ? [{ createdAt: 'desc' }, { id: 'desc' }]
+          : [{ memberships: { _count: 'desc' } }, { id: 'desc' }],
+      skip: (page - 1) * EXPLORE_PAGE_SIZE,
+      take: EXPLORE_PAGE_SIZE + 1,
+      select: searchSelect(userId),
+    });
+    return {
+      items: await this.toSearchResults(
+        userId,
+        communities.slice(0, EXPLORE_PAGE_SIZE),
+      ),
+      nextPage: communities.length > EXPLORE_PAGE_SIZE ? page + 1 : null,
+    };
+  }
+
+  async friendPicks(userId: number): Promise<CommunitySearchResult[]> {
+    const friendIds = await this.friendIds(userId);
+    if (friendIds.length === 0) return [];
+    const ranked = await this.prisma.membership.groupBy({
+      by: ['communityId'],
+      where: {
+        userId: { in: friendIds },
+        community: {
+          isPublic: true,
+          memberships: { none: { userId } },
+          bans: { none: { userId } },
+        },
+      },
+      _count: { userId: true },
+      orderBy: [{ _count: { userId: 'desc' } }, { communityId: 'desc' }],
+      take: FRIEND_PICKS,
+    });
+    if (ranked.length === 0) return [];
+    const ids = ranked.map(({ communityId }) => communityId);
+    const communities = await this.prisma.community.findMany({
+      where: { id: { in: ids } },
+      select: searchSelect(userId),
+    });
+    const ordered = ids.flatMap((id) => {
+      const community = communities.find((row) => row.id === id);
+      return community ? [community] : [];
+    });
+    return this.toSearchResults(userId, ordered, friendIds);
+  }
+
+  private async friendIds(userId: number) {
+    const friendships = await this.prisma.friendship.findMany({
+      where: {
+        status: 'accepted',
+        OR: [{ requesterId: userId }, { addresseeId: userId }],
+      },
+      select: { requesterId: true, addresseeId: true },
+    });
+    return friendships.map(({ requesterId, addresseeId }) =>
+      requesterId === userId ? addresseeId : requesterId,
+    );
+  }
+
+  private async toSearchResults(
+    userId: number,
+    communities: SearchRow[],
+    knownFriendIds?: number[],
+  ): Promise<CommunitySearchResult[]> {
+    if (communities.length === 0) return [];
     const ids = communities.map(({ id }) => id);
 
-    const [previews, friendships] = await Promise.all([
+    const [previews, friendIds] = await Promise.all([
       Promise.all(
         ids.map((communityId) =>
           this.prisma.membership.findMany({
@@ -303,17 +407,8 @@ export class CommunitiesService {
           }),
         ),
       ),
-      this.prisma.friendship.findMany({
-        where: {
-          status: 'accepted',
-          OR: [{ requesterId: userId }, { addresseeId: userId }],
-        },
-        select: { requesterId: true, addresseeId: true },
-      }),
+      knownFriendIds ?? this.friendIds(userId),
     ]);
-    const friendIds = friendships.map(({ requesterId, addresseeId }) =>
-      requesterId === userId ? addresseeId : requesterId,
-    );
     const friendMemberships =
       friendIds.length === 0
         ? []

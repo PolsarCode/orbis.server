@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   HttpCode,
@@ -28,6 +29,7 @@ import {
 import { CreateCommunityDto } from './dto/create-community.dto';
 import { UpdateRailLayoutDto } from './dto/update-rail-layout.dto';
 import { SearchCommunitiesDto } from './dto/search-communities.dto';
+import { ExploreCommunitiesDto } from './dto/explore-communities.dto';
 import { UpdateCommunityDto } from './dto/update-community.dto';
 import { UpdateLibraryUpdatesDto } from './dto/update-library-updates.dto';
 import { UpdateNicknameDto } from './dto/update-nickname.dto';
@@ -41,6 +43,8 @@ import { IMAGE_MAX_BYTES } from '../storage/storage.service';
 import { DAY, MINUTE, RateLimit } from '../common/throttle';
 import { UserId } from '../common/user-id';
 import { parseUntil } from '../common/weekly-window';
+
+const MAX_EXPLORE_PAGE = 1000;
 
 @Controller('communities')
 @UseGuards(JwtAuthGuard)
@@ -70,6 +74,26 @@ export class CommunitiesController {
     @Query() searchCommunitiesDto: SearchCommunitiesDto,
   ): Promise<CommunitySearchResult[]> {
     return this.communitiesService.search(userId, searchCommunitiesDto);
+  }
+
+  @RateLimit(60, MINUTE)
+  @Get('explore')
+  explore(
+    @UserId() userId: number,
+    @Query() exploreCommunitiesDto: ExploreCommunitiesDto,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+  ) {
+    return this.communitiesService.explore(
+      userId,
+      exploreCommunitiesDto,
+      Math.min(Math.max(page, 1), MAX_EXPLORE_PAGE),
+    );
+  }
+
+  @RateLimit(60, MINUTE)
+  @Get('explore/friends')
+  friendPicks(@UserId() userId: number): Promise<CommunitySearchResult[]> {
+    return this.communitiesService.friendPicks(userId);
   }
 
   @Post(':communityId/join')
