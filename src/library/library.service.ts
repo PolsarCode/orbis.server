@@ -44,6 +44,7 @@ const SPOTLIGHT_CANDIDATES = 40;
 const SPOTLIGHT_LIFETIME_MS = 24 * 60 * 60 * 1000;
 const SPOTLIGHT_RETRY_MS = 60 * 60 * 1000;
 const PUBLIC_UPDATES = 6;
+const PUBLIC_TITLES = 5000;
 const LIST_LIFETIME_MS = 60 * 60 * 1000;
 const LIST_RETRY_MS = 5 * 60 * 1000;
 const PAST_CHART_LIFETIME_MS = 7 * 24 * 60 * 60 * 1000;
@@ -236,6 +237,26 @@ export class LibraryService {
     private prisma: PrismaService,
     private discordChannel: DiscordChannelService,
   ) {}
+
+  async publicTitles() {
+    const titles = await this.prisma.libraryEntry.groupBy({
+      by: ['mediaType', 'sourceId'],
+      where: {
+        isPublic: true,
+        isAdult: false,
+        user: { isPublic: true, ...notSuspended() },
+      },
+      _max: { updatedAt: true },
+      orderBy: { _max: { updatedAt: 'desc' } },
+      take: PUBLIC_TITLES,
+    });
+
+    return titles.map(({ mediaType, sourceId, _max }) => ({
+      type: mediaType,
+      sourceId,
+      updatedAt: _max.updatedAt,
+    }));
+  }
 
   async publicUpdates() {
     const activities = await this.prisma.libraryActivity.findMany({

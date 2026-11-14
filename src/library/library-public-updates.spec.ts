@@ -3,7 +3,10 @@ import { PrismaService } from '../prisma.service';
 import { DiscordChannelService } from '../discord-channel/discord-channel.service';
 
 describe('Public library updates', () => {
-  const prisma = { libraryActivity: { findMany: jest.fn() } };
+  const prisma = {
+    libraryActivity: { findMany: jest.fn() },
+    libraryEntry: { groupBy: jest.fn() },
+  };
   const library = new LibraryService(
     prisma as unknown as PrismaService,
     {} as DiscordChannelService,
@@ -76,5 +79,32 @@ describe('Public library updates', () => {
       },
     });
     expect(updates[1].progress).toBeNull();
+  });
+
+  it('lists public, non-18+ titles once each, newest first, for the sitemap', async () => {
+    const updatedAt = new Date('2026-11-10T00:00:00Z');
+    prisma.libraryEntry.groupBy.mockResolvedValue([
+      { mediaType: 'anime', sourceId: '21', _max: { updatedAt } },
+    ]);
+
+    await expect(library.publicTitles()).resolves.toEqual([
+      { type: 'anime', sourceId: '21', updatedAt },
+    ]);
+    const [{ by, where, orderBy }] = prisma.libraryEntry.groupBy.mock
+      .calls[0] as [
+      {
+        by: string[];
+        where: Record<string, unknown> & { user: object };
+        orderBy: unknown;
+      },
+    ];
+    expect(by).toEqual(['mediaType', 'sourceId']);
+    expect(where).toMatchObject({
+      isPublic: true,
+      isAdult: false,
+      user: { isPublic: true },
+    });
+    expect(where.user).toHaveProperty('OR');
+    expect(orderBy).toEqual({ _max: { updatedAt: 'desc' } });
   });
 });
