@@ -44,14 +44,14 @@ describe('TwitchLiveService.clips', () => {
   it('loads a page of clips and the cursor for the next one', async () => {
     fetchMock
       .mockResolvedValueOnce(token)
-      .mockResolvedValueOnce(page(24, 'next'));
+      .mockResolvedValueOnce(page(12, 'next'));
 
     const result = await service.clips('141981764', 'prev');
 
     const url = new URL(fetchMock.mock.calls[1][0]);
     expect(url.pathname).toBe('/helix/clips');
     expect(url.searchParams.get('broadcaster_id')).toBe('141981764');
-    expect(url.searchParams.get('first')).toBe('24');
+    expect(url.searchParams.get('first')).toBe('12');
     expect(url.searchParams.get('after')).toBe('prev');
     expect(result.nextCursor).toBe('next');
     expect(result.items[0]).toEqual({

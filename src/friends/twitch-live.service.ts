@@ -18,8 +18,8 @@ const SCHEDULE_TTL_MS = 10 * 60_000;
 const SCHEDULE_RETRY_MS = 60_000;
 const SCHEDULE_TIMEOUT_MS = 3_000;
 const SCHEDULE_SEGMENTS = 10;
-const CLIPS_PAGE_SIZE = 24;
-const CLIPS_TTL_MS = 5 * 60_000;
+const CLIPS_PAGE_SIZE = 12;
+const CLIPS_TTL_MS = 30 * 60_000;
 const CLIPS_CACHE_LIMIT = 500;
 
 export type NextStream = {
